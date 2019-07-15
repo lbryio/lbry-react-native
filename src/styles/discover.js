@@ -163,6 +163,12 @@ const discoverStyle = StyleSheet.create({
   scrollPadding: {
     paddingBottom: 24,
   },
+  listLoading: {
+    flex: 1,
+    height: 64,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   horizontalScrollContainer: {
     marginBottom: 12,
   },

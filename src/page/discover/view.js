@@ -1,33 +1,40 @@
-import React from 'react';
-import NavigationActions from 'react-navigation';
-import { Alert, ActivityIndicator, Linking, NativeModules, SectionList, Text, View } from 'react-native';
-import { Lbry, normalizeURI, parseURI } from 'lbry-redux';
-import AsyncStorage from '@react-native-community/async-storage';
-import moment from 'moment';
-import CategoryList from 'component/categoryList';
-import Constants from 'constants';
-import Colors from 'styles/colors';
-import discoverStyle from 'styles/discover';
-import FloatingWalletBalance from 'component/floatingWalletBalance';
-import UriBar from 'component/uriBar';
+import React from "react";
+import NavigationActions from "react-navigation";
+import { Alert, ActivityIndicator, Linking, NativeModules, SectionList, Text, View } from "react-native";
+import { DEFAULT_FOLLOWED_TAGS, Lbry, normalizeURI, parseURI } from "lbry-redux";
+import AsyncStorage from "@react-native-community/async-storage";
+import moment from "moment";
+import CategoryList from "component/categoryList";
+import ClaimList from "component/claimList";
+import Constants from "constants";
+import Colors from "styles/colors";
+import discoverStyle from "styles/discover";
+import FloatingWalletBalance from "component/floatingWalletBalance";
+import UriBar from "component/uriBar";
 
 class DiscoverPage extends React.PureComponent {
-  componentDidMount() {
-    // Track the total time taken if this is the first launch
-    AsyncStorage.getItem('firstLaunchTime').then(startTime => {
-      if (startTime !== null && !isNaN(parseInt(startTime, 10))) {
-        // We don't need this value anymore once we've retrieved it
-        AsyncStorage.removeItem('firstLaunchTime');
+  state = {
+    tagCollection: []
+  };
 
-        // We know this is the first app launch because firstLaunchTime is set and it's a valid number
+  componentDidMount() {
+    this.buildTagCollection();
+
+    // Track the total time taken if this is the first launch
+    AsyncStorage.getItem("firstLaunchTime").then(startTime => {
+      if (startTime !== null && !isNaN(parseInt(startTime, 10))) {
+        // We don"t need this value anymore once we"ve retrieved it
+        AsyncStorage.removeItem("firstLaunchTime");
+
+        // We know this is the first app launch because firstLaunchTime is set and it"s a valid number
         const start = parseInt(startTime, 10);
         const now = moment().unix();
         const delta = now - start;
-        AsyncStorage.getItem('firstLaunchSuspended').then(suspended => {
-          AsyncStorage.removeItem('firstLaunchSuspended');
-          const appSuspended = suspended === 'true';
+        AsyncStorage.getItem("firstLaunchSuspended").then(suspended => {
+          AsyncStorage.removeItem("firstLaunchSuspended");
+          const appSuspended = suspended === "true";
           if (NativeModules.Firebase) {
-            NativeModules.Firebase.track('first_run_time', {
+            NativeModules.Firebase.track("first_run_time", {
               total_seconds: delta,
               app_suspended: appSuspended,
             });
@@ -36,9 +43,8 @@ class DiscoverPage extends React.PureComponent {
       }
     });
 
-    const { fetchFeaturedUris, fetchRewardedContent, fetchSubscriptions, fileList } = this.props;
+    const { fetchRewardedContent, fetchSubscriptions, fileList } = this.props;
 
-    fetchFeaturedUris();
     fetchRewardedContent();
     fetchSubscriptions();
     fileList();
@@ -88,7 +94,7 @@ class DiscoverPage extends React.PureComponent {
                   const metadata = sub.value.stream.metadata;
                   if (source) {
                     isPlayable =
-                      source.contentType && ['audio', 'video'].indexOf(source.contentType.substring(0, 5)) > -1;
+                      source.contentType && ["audio", "video"].indexOf(source.contentType.substring(0, 5)) > -1;
                   }
                   if (metadata) {
                     utility.showNotificationForContent(
@@ -112,26 +118,26 @@ class DiscoverPage extends React.PureComponent {
     const { ratingReminderDisabled, ratingReminderLastShown, setClientSetting } = this.props;
 
     const now = moment().unix();
-    if ('true' !== ratingReminderDisabled && ratingReminderLastShown) {
-      const lastShownParts = ratingReminderLastShown.split('|');
+    if ("true" !== ratingReminderDisabled && ratingReminderLastShown) {
+      const lastShownParts = ratingReminderLastShown.split("|");
       if (lastShownParts.length === 2) {
         const lastShownTime = parseInt(lastShownParts[0], 10);
         const lastShownCount = parseInt(lastShownParts[1], 10);
         if (!isNaN(lastShownTime) && !isNaN(lastShownCount)) {
           if (now > lastShownTime + Constants.RATING_REMINDER_INTERVAL * lastShownCount) {
             Alert.alert(
-              'Enjoying LBRY?',
-              'Are you enjoying your experience with the LBRY app? You can leave a review for us on the Play Store.',
+              "Enjoying LBRY?",
+              "Are you enjoying your experience with the LBRY app? You can leave a review for us on the Play Store.",
               [
                 {
-                  text: 'Never ask again',
-                  onPress: () => setClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED, 'true'),
+                  text: "Never ask again",
+                  onPress: () => setClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED, "true"),
                 },
-                { text: 'Maybe later', onPress: () => this.updateRatingReminderShown(lastShownCount) },
+                { text: "Maybe later", onPress: () => this.updateRatingReminderShown(lastShownCount) },
                 {
-                  text: 'Rate app',
+                  text: "Rate app",
                   onPress: () => {
-                    setClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED, 'true');
+                    setClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED, "true");
                     Linking.openURL(Constants.PLAY_STORE_URL);
                   },
                 },
@@ -150,46 +156,47 @@ class DiscoverPage extends React.PureComponent {
 
   updateRatingReminderShown = lastShownCount => {
     const { setClientSetting } = this.props;
-    const settingString = moment().unix() + '|' + (lastShownCount + 1);
+    const settingString = moment().unix() + "|" + (lastShownCount + 1);
     setClientSetting(Constants.SETTING_RATING_REMINDER_LAST_SHOWN, settingString);
   };
 
-  trimClaimIdFromCategory(category) {
-    return category.split('#')[0];
+  buildSections = () => {
+    return this.state.tagCollection.map(tags => ({
+      title: (tags.length === 1) ? tags[0] : 'Trending',
+      data: [tags]
+    }));
+  }
+
+  buildTagCollection = () => {
+    // TODO: Use followedTags from state if present
+
+    // each of the followed tags
+    const tagCollection = DEFAULT_FOLLOWED_TAGS.map(tag => [tag]);
+    // everything
+    tagCollection.unshift(DEFAULT_FOLLOWED_TAGS);
+
+    this.setState({ tagCollection });
   }
 
   render() {
-    const { featuredUris, fetchingFeaturedUris, navigation } = this.props;
-    const hasContent = typeof featuredUris === 'object' && Object.keys(featuredUris).length,
-      failedToLoad = !fetchingFeaturedUris && !hasContent;
+    const { navigation } = this.props;
 
     return (
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} />
-        {!hasContent && fetchingFeaturedUris && (
-          <View style={discoverStyle.busyContainer}>
-            <ActivityIndicator size="large" color={Colors.LbryGreen} />
-            <Text style={discoverStyle.title}>Fetching content...</Text>
-          </View>
-        )}
-        {!!hasContent && (
-          <SectionList
+        <SectionList
             style={discoverStyle.scrollContainer}
             contentContainerStyle={discoverStyle.scrollPadding}
             initialNumToRender={4}
             maxToRenderPerBatch={4}
             removeClippedSubviews={true}
             renderItem={({ item, index, section }) => (
-              <CategoryList key={item} category={item} categoryMap={featuredUris} navigation={navigation} />
+              <ClaimList key={item.join(',')} tags={item} navigation={navigation} />
             )}
             renderSectionHeader={({ section: { title } }) => <Text style={discoverStyle.categoryName}>{title}</Text>}
-            sections={Object.keys(featuredUris).map(category => ({
-              title: this.trimClaimIdFromCategory(category),
-              data: [category],
-            }))}
+            sections={this.buildSections()}
             keyExtractor={(item, index) => item}
           />
-        )}
         <FloatingWalletBalance navigation={navigation} />
       </View>
     );
