@@ -10,7 +10,7 @@ const select = (state, props) => {
   const tags = props.tags.join(',');
   return {
     loading: makeSelectFetchingClaimSearchForTags(tags)(state),
-    uris:makeSelectClaimSearchUrisForTags(tags)(state),
+    uris: makeSelectClaimSearchUrisForTags(tags)(state),
   };
 };
 

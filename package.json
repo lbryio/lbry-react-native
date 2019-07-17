@@ -41,7 +41,7 @@
         "redux-persist-transform-compress": "^4.2.0",
         "redux-persist-transform-filter": "0.0.18",
         "redux-thunk": "^2.3.0",
-        "rn-fetch-blob": "^0.10.15"
+        "rn-fetch-blob": "0.10.15"
     },
     "devDependencies": {
         "@babel/core": "^7.5.4",
