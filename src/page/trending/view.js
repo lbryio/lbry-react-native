@@ -1,8 +1,9 @@
 import React from 'react';
 import { ActivityIndicator, NativeModules, FlatList, Text, View } from 'react-native';
-import { normalizeURI } from 'lbry-redux';
+import { DEFAULT_FOLLOWED_TAGS, normalizeURI } from 'lbry-redux';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
+import ClaimList from 'component/claimList';
 import FileItem from 'component/fileItem';
 import discoverStyle from 'styles/discover';
 import fileListStyle from 'styles/fileList';
@@ -12,6 +13,10 @@ import FloatingWalletBalance from 'component/floatingWalletBalance';
 import UriBar from 'component/uriBar';
 
 class TrendingPage extends React.PureComponent {
+  state = {
+    followedTags: DEFAULT_FOLLOWED_TAGS
+  };
+  
   didFocusListener;
 
   componentWillMount() {
@@ -26,10 +31,9 @@ class TrendingPage extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const { fetchTrendingUris, pushDrawerStack, setPlayerVisible } = this.props;
+    const { pushDrawerStack, setPlayerVisible } = this.props;
     pushDrawerStack();
     setPlayerVisible();
-    fetchTrendingUris();
   };
 
   componentDidMount() {
@@ -45,37 +49,16 @@ class TrendingPage extends React.PureComponent {
   }
 
   render() {
-    const { trendingUris, fetchingTrendingUris, navigation } = this.props;
-    const hasContent = typeof trendingUris === 'object' && trendingUris.length,
-      failedToLoad = !fetchingTrendingUris && !hasContent;
-
+    const { navigation } = this.props;
+    
     return (
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} />
-        {!hasContent && fetchingTrendingUris && (
-          <View style={discoverStyle.busyContainer}>
-            <ActivityIndicator size="large" color={Colors.LbryGreen} />
-            <Text style={discoverStyle.title}>Fetching content...</Text>
-          </View>
-        )}
-        {hasContent && (
-          <FlatList
-            style={discoverStyle.trendingContainer}
-            renderItem={({ item }) => (
-              <FileItem
-                style={fileListStyle.fileItem}
-                mediaStyle={fileListStyle.fileItemMedia}
-                key={item}
-                uri={normalizeURI(item)}
-                navigation={navigation}
-                showDetails={true}
-                compactView={false}
-              />
-            )}
-            data={trendingUris.map(uri => uri.url)}
-            keyExtractor={(item, index) => item}
-          />
-        )}
+        <ClaimList
+          style={discoverStyle.verticalClaimList}
+          tags={this.state.followedTags}
+          navigation={navigation}
+          orientation={Constants.ORIENTATION_VERTICAL} />
         <FloatingWalletBalance navigation={navigation} />
       </View>
     );

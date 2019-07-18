@@ -175,6 +175,10 @@ const discoverStyle = StyleSheet.create({
   horizontalScrollPadding: {
     paddingLeft: 20,
   },
+  verticalClaimList: {
+    marginTop: 60,
+    flex: 1
+  }
 });
 
 export default discoverStyle;

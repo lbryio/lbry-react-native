@@ -43,7 +43,7 @@ const Constants = {
   ACTION_REACT_NAVIGATION_NAVIGATE: 'Navigation/NAVIGATE',
   ACTION_REACT_NAVIGATION_REPLACE: 'Navigation/REPLACE',
 
-  ORIENTATION_HORIZTONAL: 'horizontal',
+  ORIENTATION_HORIZONTAL: 'horizontal',
   ORIENTATION_VERTICAL: 'vertical',
 
   PAGE_REWARDS: 'rewards',

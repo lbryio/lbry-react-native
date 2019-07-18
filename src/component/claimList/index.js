@@ -15,7 +15,7 @@ const select = (state, props) => {
 };
 
 const perform = dispatch => ({
-  searchByTags: tags => dispatch(doClaimSearchByTags(tags, 10, { no_totals: true, order_by: ['trending_global'] })),
+  searchByTags: (tags, orderBy = ['trending_global', 'trending_mixed'], page = 1) => dispatch(doClaimSearchByTags(tags, 10, { no_totals: true, order_by: orderBy, page })),
 });
 
 export default connect(

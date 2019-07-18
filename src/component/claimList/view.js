@@ -9,50 +9,73 @@ import Constants from 'constants';
 import claimListStyle from 'styles/claimList';
 import discoverStyle from 'styles/discover';
 
+const softLimit = 500;
+
 class ClaimList extends React.PureComponent {
+  state = {
+    currentPage: 1 // initial page load is page 1
+  };
+  
   componentDidMount() {
-    const { searchByTags, tags } = this.props;
-    searchByTags(tags);
+    const { orderBy, searchByTags, tags } = this.props;
+    searchByTags(tags, orderBy, this.state.currentPgae);
+  }
+  
+  handleVerticalEndReached = () => {
+    // fetch more content
+    const { orderBy, searchByTags, tags, uris } = this.props;
+    if (uris && uris.length >= softLimit) {
+      // don't fetch more than the specified limit to be displayed
+      return;
+    }
+    
+    this.setState({ currentPage: this.state.currentPage + 1 }, () => searchByTags(tags, orderBy, this.state.currentPage));
   }
 
   render() {
-    const { loading, navigation, orientation = Constants.ORIENTATION_HORIZONTAL, uris } = this.props;
-
-    if (loading) {
+    const { loading, navigation, orientation = Constants.ORIENTATION_VERTICAL, style, uris } = this.props;
+    
+    if (Constants.ORIENTATION_VERTICAL === orientation) {
       return (
-        <View style={discoverStyle.listLoading}>
-          <ActivityIndicator size={"small"} color={Colors.LbryGreen} />
+        <View style={style}>
+          <FlatList
+            style={claimListStyle.verticalScrollContainer}
+            contentContainerStyle={claimListStyle.verticalScrollPadding}
+            initialNumToRender={8}
+            maxToRenderPerBatch={24}
+            removeClippedSubviews={true}
+            renderItem={({ item }) => (
+              <FileListItem
+                key={item}
+                uri={item}
+                style={claimListStyle.verticalListItem}
+                navigation={navigation} />
+            )}
+            data={uris}
+            keyExtractor={(item, index) => item}
+            onEndReached={this.handleVerticalEndReached}
+            onEndReachedThreshold={0.9}
+            />
+          {loading && <View style={claimListStyle.verticalLoading}>
+            <ActivityIndicator size={"small"} color={Colors.LbryGreen} />
+          </View>}
         </View>
       );
     }
 
-    if (Constants.ORIENTATION_VERTICAL === orientation) {
-      return (
-        <FlatList
-          style={claimListStyle.verticalScrollContainer}
-          contentContainerStyle={discoverStyle.verticalScrollPadding}
-          initialNumToRender={8}
-          maxToRenderPerBatch={24}
-          removeClippedSubviews={true}
-          renderItem={({ item }) => (
-            <FileListItem
-              key={this.state.currentUri}
-              uri={this.state.currentUri}
-              featuredResult={true}
-              style={claimListStyle.verticalListItem}
-              navigation={navigation} />
-          )}
-          data={uris}
-          keyExtractor={(item, index) => item}
-          />
-      );
-    }
-
     if (Constants.ORIENTATION_HORIZONTAL === orientation) {
+      if (loading) {
+        return (
+          <View style={discoverStyle.listLoading}>
+            <ActivityIndicator size={"small"} color={Colors.LbryGreen} />
+          </View>
+        );
+      }
+      
       return (
         <FlatList
-          style={discoverStyle.horizontalScrollContainer}
-          contentContainerStyle={discoverStyle.horizontalScrollPadding}
+          style={style || claimListStyle.horizontalScrollContainer}
+          contentContainerStyle={claimListStyle.horizontalScrollPadding}
           initialNumToRender={3}
           maxToRenderPerBatch={3}
           removeClippedSubviews={true}
@@ -74,7 +97,7 @@ class ClaimList extends React.PureComponent {
         />
       );
     }
-
+    
     return null;
   }
 }

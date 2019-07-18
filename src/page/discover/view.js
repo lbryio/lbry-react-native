@@ -191,7 +191,7 @@ class DiscoverPage extends React.PureComponent {
             maxToRenderPerBatch={4}
             removeClippedSubviews={true}
             renderItem={({ item, index, section }) => (
-              <ClaimList key={item.join(',')} tags={item} navigation={navigation} />
+              <ClaimList key={item.join(',')} tags={item} navigation={navigation} orientation={Constants.ORIENTATION_HORIZONTAL} />
             )}
             renderSectionHeader={({ section: { title } }) => <Text style={discoverStyle.categoryName}>{title}</Text>}
             sections={this.buildSections()}

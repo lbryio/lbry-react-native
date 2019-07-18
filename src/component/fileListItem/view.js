@@ -40,6 +40,11 @@ class FileListItem extends React.PureComponent {
       resolveUri(uri);
     }
   }
+  
+  defaultOnPress = () => {
+    const { navigation, uri } = this.props;
+    navigateToUri(navigation, uri);
+  }
 
   render() {
     const {
@@ -76,7 +81,7 @@ class FileListItem extends React.PureComponent {
 
     return (
       <View style={style}>
-        <TouchableOpacity style={style} onPress={onPress}>
+        <TouchableOpacity style={style} onPress={onPress || this.defaultOnPress}>
           <FileItemMedia
             style={fileListStyle.thumbnail}
             blurRadius={obscureNsfw ? 15 : 0}
