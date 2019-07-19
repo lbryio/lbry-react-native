@@ -186,7 +186,7 @@ class DiscoverPage extends React.PureComponent {
   handleTagPress = (name) => {
     const { navigation } = this.props;
     if ('trending' !== name.toLowerCase()) {
-      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: 'tagPage', params: { tag: name } });
+      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: `tagPage`, params: { tag: name } });
     }
   }
 

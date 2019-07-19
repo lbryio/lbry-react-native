@@ -10,7 +10,7 @@ const modalPickerStyle = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    elevation: 60
+    zIndex: 300,
   },
   overlayTouchArea: {
     position: 'absolute',

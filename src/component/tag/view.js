@@ -23,7 +23,7 @@ export default class Tag extends React.PureComponent {
 
     if (navigation) {
       // navigate to tag page
-      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: 'tagPage', params: { tag: name }});
+      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: `tagPage`, params: { tag: name } });
     }
   };
 

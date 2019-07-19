@@ -44,7 +44,6 @@ class TagPage extends React.PureComponent {
 
   onComponentFocused = () => {
     const { pushDrawerStack, setPlayerVisible, navigation } = this.props;
-    console.log(navigation.state.params);
     this.setState({ tag: navigation.state.params.tag });
     pushDrawerStack();
     setPlayerVisible();
@@ -55,7 +54,7 @@ class TagPage extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { currentRoute } = nextProps;
+    const { currentRoute, navigation } = nextProps;
     const { currentRoute: prevRoute } = this.props;
     if (Constants.DRAWER_ROUTE_TAG === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
@@ -87,7 +86,7 @@ class TagPage extends React.PureComponent {
     
     return (
       <View style={discoverStyle.container}>
-        <UriBar navigation={navigation} />
+        <UriBar navigation={navigation} belowOverlay={this.state.showSortPicker} />
         <View style={discoverStyle.tagTitleRow}>
           <Text style={discoverStyle.tagPageTitle}>{formatTagTitle(tag)}</Text>
           <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
@@ -101,7 +100,7 @@ class TagPage extends React.PureComponent {
           tags={[tag]}
           navigation={navigation}
           orientation={Constants.ORIENTATION_VERTICAL} />
-        <FloatingWalletBalance navigation={navigation} />
+        {!this.state.showSortPicker && <FloatingWalletBalance navigation={navigation} />}
         {this.state.showSortPicker && <ModalPicker
           title={'Sort content by'}
           onOverlayPress={() => this.setState({ showSortPicker: false })}

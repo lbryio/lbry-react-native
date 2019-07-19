@@ -20,15 +20,15 @@ class ClaimList extends React.PureComponent {
   };
   
   componentDidMount() {
-    const { orderBy, searchByTags, tags } = this.props;
+    const { orderBy = ['trending_global', 'trending_mixed'], searchByTags, tags } = this.props;
     searchByTags(tags, orderBy, this.state.currentPgae);
   }
   
   componentWillReceiveProps(nextProps) {
-    const { orderBy: prevOrderBy, searchByTags, tags } = this.props;
-    const { orderBy } = nextProps;
-    if (!_.isEqual(orderBy, prevOrderBy)) {
-      // reset to page 1 because the order changed
+    const { orderBy: prevOrderBy, searchByTags, tags: prevTags } = this.props;
+    const { orderBy, tags } = nextProps;
+    if (!_.isEqual(orderBy, prevOrderBy) || !_.isEqual(tags, prevTags)) {
+      // reset to page 1 because the order or tags changed
       this.setState({ currentPage: 1 }, () => {
         if (this.scrollView) {
           this.scrollView.scrollToOffset({ animated: true, offset: 0 });
