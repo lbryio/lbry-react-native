@@ -7,6 +7,7 @@ import FilePage from 'page/file';
 import FirstRunScreen from 'page/firstRun';
 import PublishPage from 'page/publish';
 import RewardsPage from 'page/rewards';
+import TagPage from 'page/tag';
 import TrendingPage from 'page/trending';
 import SearchPage from 'page/search';
 import SettingsPage from 'page/settings';
@@ -71,6 +72,12 @@ const discoverStack = createStackNavigator(
       navigationOptions: ({ navigation }) => ({
         header: null,
       }),
+    },
+    Tag: {
+      screen: TagPage,
+      navigationOptions: ({ navigation }) => ({
+        header: null,  
+      })
     },
     Search: {
       screen: SearchPage,

@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import tagStyle from 'styles/tag';
 import Colors from 'styles/colors';
+import Constants from 'constants';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export default class Tag extends React.PureComponent {
@@ -22,6 +23,7 @@ export default class Tag extends React.PureComponent {
 
     if (navigation) {
       // navigate to tag page
+      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: 'tagPage', params: { tag: name }});
     }
   };
 

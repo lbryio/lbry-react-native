@@ -62,6 +62,7 @@ const Constants = {
   DRAWER_ROUTE_ABOUT: 'About',
   DRAWER_ROUTE_SEARCH: 'Search',
   DRAWER_ROUTE_TRANSACTION_HISTORY: 'TransactionHistory',
+  DRAWER_ROUTE_TAG: 'Tag',
 
   FULL_ROUTE_NAME_DISCOVER: 'DiscoverStack',
   FULL_ROUTE_NAME_TRENDING: 'TrendingStack',

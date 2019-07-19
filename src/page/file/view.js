@@ -503,7 +503,8 @@ class FilePage extends React.PureComponent {
   };
 
   renderTags = tags => {
-    return tags.map((tag, i) => <Tag style={filePageStyle.tagItem} key={`${tag}-${i}`} name={tag} />);
+    const { navigation } = this.props;
+    return tags.map((tag, i) => <Tag style={filePageStyle.tagItem} key={`${tag}-${i}`} name={tag} navigation={navigation} />);
   };
 
   onFileDownloadButtonPlayed = () => {

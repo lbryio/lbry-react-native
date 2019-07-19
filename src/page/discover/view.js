@@ -2,6 +2,7 @@ import React from "react";
 import NavigationActions from "react-navigation";
 import { Alert, ActivityIndicator, Linking, NativeModules, SectionList, Text, View } from "react-native";
 import { DEFAULT_FOLLOWED_TAGS, Lbry, normalizeURI, parseURI } from "lbry-redux";
+import { formatTagTitle } from "utils/helper";
 import AsyncStorage from "@react-native-community/async-storage";
 import moment from "moment";
 import CategoryList from "component/categoryList";
@@ -177,6 +178,17 @@ class DiscoverPage extends React.PureComponent {
 
     this.setState({ tagCollection });
   }
+  
+  formatTitle = (title) => {
+    return title.charAt(0).toUpperCase() + title.substring(1);
+  }
+  
+  handleTagPress = (name) => {
+    const { navigation } = this.props;
+    if ('trending' !== name.toLowerCase()) {
+      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: 'tagPage', params: { tag: name } });
+    }
+  }
 
   render() {
     const { navigation } = this.props;
@@ -193,7 +205,9 @@ class DiscoverPage extends React.PureComponent {
             renderItem={({ item, index, section }) => (
               <ClaimList key={item.join(',')} tags={item} navigation={navigation} orientation={Constants.ORIENTATION_HORIZONTAL} />
             )}
-            renderSectionHeader={({ section: { title } }) => <Text style={discoverStyle.categoryName}>{title}</Text>}
+            renderSectionHeader={({ section: { title } }) => (
+              <Text style={discoverStyle.categoryName} onPress={() => this.handleTagPress(title)}>{formatTagTitle(title)}</Text>
+            )}
             sections={this.buildSections()}
             keyExtractor={(item, index) => item}
           />

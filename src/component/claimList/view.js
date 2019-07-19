@@ -2,6 +2,7 @@ import React from 'react';
 import NavigationActions from 'react-navigation';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 import { normalizeURI } from 'lbry-redux';
+import _ from 'lodash';
 import FileItem from 'component/fileItem';
 import FileListItem from 'component/fileListItem';
 import Colors from 'styles/colors';
@@ -12,6 +13,8 @@ import discoverStyle from 'styles/discover';
 const softLimit = 500;
 
 class ClaimList extends React.PureComponent {
+  scrollView = null;
+  
   state = {
     currentPage: 1 // initial page load is page 1
   };
@@ -19,6 +22,20 @@ class ClaimList extends React.PureComponent {
   componentDidMount() {
     const { orderBy, searchByTags, tags } = this.props;
     searchByTags(tags, orderBy, this.state.currentPgae);
+  }
+  
+  componentWillReceiveProps(nextProps) {
+    const { orderBy: prevOrderBy, searchByTags, tags } = this.props;
+    const { orderBy } = nextProps;
+    if (!_.isEqual(orderBy, prevOrderBy)) {
+      // reset to page 1 because the order changed
+      this.setState({ currentPage: 1 }, () => {
+        if (this.scrollView) {
+          this.scrollView.scrollToOffset({ animated: true, offset: 0 });
+        }
+        searchByTags(tags, orderBy, this.state.currentPage)
+      });
+    }
   }
   
   handleVerticalEndReached = () => {
@@ -39,6 +56,7 @@ class ClaimList extends React.PureComponent {
       return (
         <View style={style}>
           <FlatList
+            ref={ref => { this.scrollView = ref; }}
             style={claimListStyle.verticalScrollContainer}
             contentContainerStyle={claimListStyle.verticalScrollPadding}
             initialNumToRender={8}

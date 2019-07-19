@@ -182,3 +182,10 @@ export function uriFromFileInfo(fileInfo) {
   uriParams.claimId = claimId;
   return buildURI(uriParams);
 }
+
+export function formatTagTitle(title) {
+  if (!title) {
+    return null;
+  }
+  return title.charAt(0).toUpperCase() + title.substring(1);
+}
