@@ -10,25 +10,19 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import discoverStyle from 'styles/discover';
 import fileListStyle from 'styles/fileList';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import ModalPicker from 'component/modalPicker';
 import UriBar from 'component/uriBar';
-
-const sortByItems = [
-  { icon: 'fire-alt', name: 'hot', label: 'Hot content' },
-  { icon: 'certificate', name: 'new', label: 'New content' },
-  { icon: 'chart-line', name: 'top', label: 'Top content' }
-];
 
 class TagPage extends React.PureComponent {
   state = {
     tag: null,
     showSortPicker: false,
-    orderBy: ['trending_global', 'trending_mixed'],
-    currentSortByItem: sortByItems[0],
+    orderBy: Constants.DEFAULT_ORDER_BY,
+    currentSortByItem: Constants.SORT_BY_ITEMS[0],
   };
-  
+
   didFocusListener;
 
   componentWillMount() {
@@ -60,30 +54,30 @@ class TagPage extends React.PureComponent {
       this.onComponentFocused();
     }
   }
-  
-  handleSortByItemSelected = (item) => {
+
+  handleSortByItemSelected = item => {
     let orderBy = [];
     switch (item.name) {
       case 'hot':
-        orderBy = ['trending_global', 'trending_mixed'];
+        orderBy = Constants.DEFAULT_ORDER_BY;
         break;
-      
+
       case 'new':
         orderBy = ['release_time'];
         break;
-      
+
       case 'top':
         orderBy = ['effective_amount'];
         break;
     }
-    
+
     this.setState({ currentSortByItem: item, orderBy, showSortPicker: false });
-  }
+  };
 
   render() {
     const { navigation } = this.props;
     const { tag, currentSortByItem } = this.state;
-    
+
     return (
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} belowOverlay={this.state.showSortPicker} />
@@ -91,7 +85,7 @@ class TagPage extends React.PureComponent {
           <Text style={discoverStyle.tagPageTitle}>{formatTagTitle(tag)}</Text>
           <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
             <Text style={discoverStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
-            <Icon style={discoverStyle.tagSortIcon} name={"sort-down"} size={14} />
+            <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
           </TouchableOpacity>
         </View>
         <ClaimList
@@ -99,14 +93,18 @@ class TagPage extends React.PureComponent {
           orderBy={this.state.orderBy}
           tags={[tag]}
           navigation={navigation}
-          orientation={Constants.ORIENTATION_VERTICAL} />
+          orientation={Constants.ORIENTATION_VERTICAL}
+        />
         {!this.state.showSortPicker && <FloatingWalletBalance navigation={navigation} />}
-        {this.state.showSortPicker && <ModalPicker
-          title={'Sort content by'}
-          onOverlayPress={() => this.setState({ showSortPicker: false })}
-          onItemSelected={this.handleSortByItemSelected}
-          selectedItem={this.state.currentSortByItem}
-          items={sortByItems} />}
+        {this.state.showSortPicker && (
+          <ModalPicker
+            title={'Sort content by'}
+            onOverlayPress={() => this.setState({ showSortPicker: false })}
+            onItemSelected={this.handleSortByItemSelected}
+            selectedItem={this.state.currentSortByItem}
+            items={Constants.SORT_BY_ITEMS}
+          />
+        )}
       </View>
     );
   }

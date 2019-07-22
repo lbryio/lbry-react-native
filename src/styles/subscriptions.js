@@ -99,11 +99,6 @@ const subscriptionsStyle = StyleSheet.create({
     marginBottom: 16,
     color: Colors.LbryGreen,
   },
-  titleRow: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
   subscribeButton: {
     alignSelf: 'flex-start',
     marginRight: 24,
@@ -128,6 +123,34 @@ const subscriptionsStyle = StyleSheet.create({
   },
   activeMode: {
     fontFamily: 'Inter-UI-SemiBold',
+  },
+  claimList: {
+    flex: 1,
+  },
+  pageTitle: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 24,
+  },
+  titleRow: {
+    marginTop: 76,
+    marginLeft: 16,
+    marginRight: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  tagSortBy: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 4,
+  },
+  tagSortText: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+    marginRight: 4,
+  },
+  tagSortIcon: {
+    marginTop: -6,
   },
 });
 

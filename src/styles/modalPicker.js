@@ -26,26 +26,26 @@ const modalPickerStyle = StyleSheet.create({
     bottom: 8,
     borderRadius: 8,
     backgroundColor: Colors.White,
-    padding: 12
+    padding: 12,
   },
   title: {
     fontFamily: 'Inter-UI-SemiBold',
     fontSize: 12,
     marginTop: 4,
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
   },
   listItem: {
     paddingTop: 10,
     paddingBottom: 10,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   divider: {
     marginTop: 12,
     marginBottom: 8,
     borderBottomColor: Colors.LighterGrey,
     borderBottomWidth: 1,
-    width: '100%'
+    width: '100%',
   },
   itemIcon: {
     marginLeft: 8,
@@ -54,12 +54,12 @@ const modalPickerStyle = StyleSheet.create({
   itemLabel: {
     alignSelf: 'flex-start',
     fontFamily: 'Inter-UI-Regular',
-    fontSize: 16
+    fontSize: 16,
   },
   itemSelected: {
     position: 'absolute',
-    right: 8
-  }
+    right: 8,
+  },
 });
 
 export default modalPickerStyle;

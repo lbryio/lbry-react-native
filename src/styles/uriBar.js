@@ -18,7 +18,7 @@ const uriBarStyle = StyleSheet.create({
     },
   },
   containerElevated: {
-    elevation: 4
+    elevation: 4,
   },
   uriText: {
     backgroundColor: Colors.VeryLightGrey,
@@ -38,7 +38,7 @@ const uriBarStyle = StyleSheet.create({
     zIndex: 200,
   },
   overlayElevated: {
-    elevation: 16
+    elevation: 16,
   },
   inFocus: {
     height: '100%',

@@ -8,15 +8,15 @@ import FileItem from 'component/fileItem';
 import discoverStyle from 'styles/discover';
 import fileListStyle from 'styles/fileList';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import UriBar from 'component/uriBar';
 
 class TrendingPage extends React.PureComponent {
   state = {
-    followedTags: DEFAULT_FOLLOWED_TAGS
+    followedTags: DEFAULT_FOLLOWED_TAGS,
   };
-  
+
   didFocusListener;
 
   componentWillMount() {
@@ -50,7 +50,7 @@ class TrendingPage extends React.PureComponent {
 
   render() {
     const { navigation } = this.props;
-    
+
     return (
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} />
@@ -58,7 +58,8 @@ class TrendingPage extends React.PureComponent {
           style={discoverStyle.verticalClaimList}
           tags={this.state.followedTags}
           navigation={navigation}
-          orientation={Constants.ORIENTATION_VERTICAL} />
+          orientation={Constants.ORIENTATION_VERTICAL}
+        />
         <FloatingWalletBalance navigation={navigation} />
       </View>
     );

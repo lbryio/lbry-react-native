@@ -1,24 +1,39 @@
 import React from 'react';
 import NavigationActions from 'react-navigation';
-import { ActivityIndicator, FlatList, NativeModules, SectionList, ScrollView, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  FlatList,
+  NativeModules,
+  SectionList,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { buildURI, parseURI } from 'lbry-redux';
 import { uriFromFileInfo } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import Button from 'component/button';
+import ClaimList from 'component/claimList';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import fileListStyle from 'styles/fileList';
 import subscriptionsStyle from 'styles/subscriptions';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import FileItem from 'component/fileItem';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
+import ModalPicker from 'component/modalPicker';
 import SuggestedSubscriptions from 'component/suggestedSubscriptions';
 import UriBar from 'component/uriBar';
 
 class SubscriptionsPage extends React.PureComponent {
   state = {
     showingSuggestedSubs: false,
+    showSortPicker: false,
+    orderBy: ['release_time'],
+    currentSortByItem: Constants.SORT_BY_ITEMS[1], // should always default to sorting subscriptions by new
   };
 
   didFocusListener;
@@ -48,7 +63,7 @@ class SubscriptionsPage extends React.PureComponent {
     setPlayerVisible();
     doFetchMySubscriptions();
     doFetchRecommendedSubscriptions();
-    doSetViewMode(subscriptionsViewMode ? subscriptionsViewMode : Constants.SUBSCRIPTIONS_VIEW_ALL);
+    doSetViewMode(subscriptionsViewMode || Constants.SUBSCRIPTIONS_VIEW_ALL);
   };
 
   componentDidMount() {
@@ -69,6 +84,25 @@ class SubscriptionsPage extends React.PureComponent {
     doSetViewMode(viewMode);
   };
 
+  handleSortByItemSelected = item => {
+    let orderBy = [];
+    switch (item.name) {
+      case 'hot':
+        orderBy = Constants.DEFAULT_ORDER_BY;
+        break;
+
+      case 'new':
+        orderBy = ['release_time'];
+        break;
+
+      case 'top':
+        orderBy = ['effective_amount'];
+        break;
+    }
+
+    this.setState({ currentSortByItem: item, orderBy, showSortPicker: false });
+  };
+
   render() {
     const {
       subscribedChannels,
@@ -84,6 +118,7 @@ class SubscriptionsPage extends React.PureComponent {
       unreadSubscriptions,
       navigation,
     } = this.props;
+    const { currentSortByItem } = this.state;
 
     const numberOfSubscriptions = subscribedChannels ? subscribedChannels.length : 0;
     const hasSubscriptions = numberOfSubscriptions > 0;
@@ -92,91 +127,37 @@ class SubscriptionsPage extends React.PureComponent {
       this.setState({ showingSuggestedSubs: true });
     }
 
+    const channelIds =
+      subscribedChannels &&
+      subscribedChannels.map(channel => {
+        const { claimId } = parseURI(channel.uri);
+        return claimId;
+      });
+
     return (
       <View style={subscriptionsStyle.container}>
-        <UriBar navigation={navigation} />
-
-        {!this.state.showingSuggestedSubs && hasSubscriptions && !loading && (
-          <View style={subscriptionsStyle.viewModeRow}>
-            <Link
-              text={'All Subscriptions'}
-              style={[
-                subscriptionsStyle.viewModeLink,
-                viewMode === Constants.SUBSCRIPTIONS_VIEW_ALL
-                  ? subscriptionsStyle.activeMode
-                  : subscriptionsStyle.inactiveMode,
-              ]}
-              onPress={() => this.changeViewMode(Constants.SUBSCRIPTIONS_VIEW_ALL)}
-            />
-            <Link
-              text={'Latest Only'}
-              style={[
-                subscriptionsStyle.viewModeLink,
-                viewMode === Constants.SUBSCRIPTIONS_VIEW_LATEST_FIRST
-                  ? subscriptionsStyle.activeMode
-                  : subscriptionsStyle.inactiveMode,
-              ]}
-              onPress={() => this.changeViewMode(Constants.SUBSCRIPTIONS_VIEW_LATEST_FIRST)}
-            />
-          </View>
-        )}
-
+        <UriBar navigation={navigation} belowOverlay={this.state.showSortPicker} />
+        <View style={subscriptionsStyle.titleRow}>
+          <Text style={subscriptionsStyle.pageTitle}>Channels you follow</Text>
+          {!this.state.showingSuggestedSubs && hasSubscriptions && (
+            <TouchableOpacity
+              style={subscriptionsStyle.tagSortBy}
+              onPress={() => this.setState({ showSortPicker: true })}
+            >
+              <Text style={subscriptionsStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
+              <Icon style={subscriptionsStyle.tagSortIcon} name={'sort-down'} size={14} />
+            </TouchableOpacity>
+          )}
+        </View>
         {!this.state.showingSuggestedSubs && hasSubscriptions && !loading && (
           <View style={subscriptionsStyle.subContainer}>
-            {viewMode === Constants.SUBSCRIPTIONS_VIEW_ALL && (
-              <FlatList
-                style={subscriptionsStyle.scrollContainer}
-                contentContainerStyle={subscriptionsStyle.scrollPadding}
-                renderItem={({ item }) => (
-                  <FileItem
-                    style={subscriptionsStyle.fileItem}
-                    mediaStyle={fileListStyle.fileItemMedia}
-                    key={item}
-                    uri={uriFromFileInfo(item)}
-                    navigation={navigation}
-                    compactView={false}
-                    showDetails={true}
-                  />
-                )}
-                data={allSubscriptions.sort((a, b) => {
-                  return b.height - a.height;
-                })}
-                keyExtractor={(item, index) => uriFromFileInfo(item)}
-              />
-            )}
-
-            {viewMode === Constants.SUBSCRIPTIONS_VIEW_LATEST_FIRST && (
-              <View style={subscriptionsStyle.subContainer}>
-                {unreadSubscriptions.length ? (
-                  <ScrollView
-                    style={subscriptionsStyle.scrollContainer}
-                    contentContainerStyle={subscriptionsStyle.scrollPadding}
-                  >
-                    {unreadSubscriptions.map(({ channel, uris }) => {
-                      const { claimName } = parseURI(channel);
-                      return uris.map(uri => (
-                        <FileItem
-                          style={subscriptionsStyle.fileItem}
-                          mediaStyle={fileListStyle.fileItemMedia}
-                          key={uri}
-                          uri={uri}
-                          navigation={navigation}
-                          compactView={false}
-                          showDetails={true}
-                        />
-                      ));
-                    })}
-                  </ScrollView>
-                ) : (
-                  <View style={subscriptionsStyle.contentContainer}>
-                    <Text style={subscriptionsStyle.contentText}>
-                      All caught up! You might like the channels below.
-                    </Text>
-                    <SuggestedSubscriptions navigation={navigation} />
-                  </View>
-                )}
-              </View>
-            )}
+            <ClaimList
+              style={subscriptionsStyle.claimList}
+              channelIds={channelIds}
+              orderBy={this.state.orderBy}
+              navigation={navigation}
+              orientation={Constants.ORIENTATION_VERTICAL}
+            />
           </View>
         )}
 
@@ -215,7 +196,16 @@ class SubscriptionsPage extends React.PureComponent {
           </View>
         )}
 
-        <FloatingWalletBalance navigation={navigation} />
+        {!this.state.showSortPicker && <FloatingWalletBalance navigation={navigation} />}
+        {this.state.showSortPicker && (
+          <ModalPicker
+            title={'Sort content by'}
+            onOverlayPress={() => this.setState({ showSortPicker: false })}
+            onItemSelected={this.handleSortByItemSelected}
+            selectedItem={this.state.currentSortByItem}
+            items={Constants.SORT_BY_ITEMS}
+          />
+        )}
       </View>
     );
   }

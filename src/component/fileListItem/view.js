@@ -40,11 +40,11 @@ class FileListItem extends React.PureComponent {
       resolveUri(uri);
     }
   }
-  
+
   defaultOnPress = () => {
     const { navigation, uri } = this.props;
     navigateToUri(navigation, uri);
-  }
+  };
 
   render() {
     const {
@@ -65,7 +65,7 @@ class FileListItem extends React.PureComponent {
     const obscureNsfw = this.props.obscureNsfw && metadata && metadata.nsfw;
     const isResolving = !fileInfo && isResolvingUri;
 
-    let name, channel, height, channelClaimId, fullChannelUri;
+    let name, channel, height, channelClaimId, fullChannelUri, signingChannel;
     if (claim) {
       name = claim.name;
       signingChannel = claim.signing_channel;
@@ -90,13 +90,7 @@ class FileListItem extends React.PureComponent {
             thumbnail={thumbnail}
           />
           {fileInfo && fileInfo.completed && fileInfo.download_path && (
-            <Icon
-              style={fileListStyle.downloadedIcon}
-              solid={true}
-              color={Colors.NextLbryGreen}
-              name={'folder'}
-              size={16}
-            />
+            <Icon style={fileListStyle.downloadedIcon} solid color={Colors.NextLbryGreen} name={'folder'} size={16} />
           )}
           <View style={fileListStyle.detailsContainer}>
             {featuredResult && (

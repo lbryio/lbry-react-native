@@ -25,7 +25,7 @@ import Button from 'component/button';
 import Tag from 'component/tag';
 import ChannelPage from 'page/channel';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import DateTime from 'component/dateTime';
 import FileDownloadButton from 'component/fileDownloadButton';
 import FileItemMedia from 'component/fileItemMedia';
@@ -379,23 +379,23 @@ class FilePage extends React.PureComponent {
         tokens.length === 0
           ? ''
           : tokens.map((token, j) => {
-              let hasSpace = j !== tokens.length - 1;
-              let space = hasSpace ? ' ' : '';
+            let hasSpace = j !== tokens.length - 1;
+            let space = hasSpace ? ' ' : '';
 
-              if (token.match(/^(lbry|https?):\/\//g)) {
-                return (
-                  <Link
-                    key={j}
-                    style={filePageStyle.link}
-                    href={token}
-                    text={token}
-                    effectOnTap={filePageStyle.linkTapped}
-                  />
-                );
-              } else {
-                return token + space;
-              }
-            });
+            if (token.match(/^(lbry|https?):\/\//g)) {
+              return (
+                <Link
+                  key={j}
+                  style={filePageStyle.link}
+                  href={token}
+                  text={token}
+                  effectOnTap={filePageStyle.linkTapped}
+                />
+              );
+            } else {
+              return token + space;
+            }
+          });
 
       lineContent.push('\n');
       return <Text key={i}>{lineContent}</Text>;
@@ -504,7 +504,9 @@ class FilePage extends React.PureComponent {
 
   renderTags = tags => {
     const { navigation } = this.props;
-    return tags.map((tag, i) => <Tag style={filePageStyle.tagItem} key={`${tag}-${i}`} name={tag} navigation={navigation} />);
+    return tags.map((tag, i) => (
+      <Tag style={filePageStyle.tagItem} key={`${tag}-${i}`} name={tag} navigation={navigation} />
+    ));
   };
 
   onFileDownloadButtonPlayed = () => {
@@ -638,15 +640,15 @@ class FilePage extends React.PureComponent {
           this.state.isLandscape
             ? filePageStyle.containedPlayerLandscape
             : this.state.fullscreenMode
-            ? filePageStyle.fullscreenPlayer
-            : filePageStyle.containedPlayer,
+              ? filePageStyle.fullscreenPlayer
+              : filePageStyle.containedPlayer,
         ];
         const playerBgStyle = [filePageStyle.playerBackground, filePageStyle.containedPlayerBackground];
         const fsPlayerBgStyle = [filePageStyle.playerBackground, filePageStyle.fullscreenPlayerBackground];
         // at least 2MB (or the full download) before media can be loaded
         const canLoadMedia =
           this.state.streamingMode ||
-          (fileInfo && (fileInfo.written_bytes >= 2097152 || fileInfo.written_bytes == fileInfo.total_bytes)); // 2MB = 1024*1024*2
+          (fileInfo && (fileInfo.written_bytes >= 2097152 || fileInfo.written_bytes === fileInfo.total_bytes)); // 2MB = 1024*1024*2
         const isViewable = mediaType === 'image' || mediaType === 'text';
         const isWebViewable = mediaType === 'text';
         const canOpen = isViewable && completed;
@@ -680,7 +682,7 @@ class FilePage extends React.PureComponent {
           fileInfo &&
           !this.state.autoDownloadStarted &&
           this.state.uriVars &&
-          'true' === this.state.uriVars.download
+          this.state.uriVars.download === 'true'
         ) {
           this.setState({ autoDownloadStarted: true }, () => {
             purchaseUri(uri, costInfo, !isPlayable);
@@ -728,17 +730,17 @@ class FilePage extends React.PureComponent {
                     canOpen ||
                     (!completed && !this.state.streamingMode)) &&
                     !this.state.downloadPressed && (
-                      <FileDownloadButton
-                        uri={uri}
-                        style={filePageStyle.downloadButton}
-                        openFile={openFile}
-                        isPlayable={isPlayable}
-                        isViewable={isViewable}
-                        onPlay={this.onFileDownloadButtonPlayed}
-                        onView={() => this.setState({ downloadPressed: true })}
-                        onButtonLayout={() => this.setState({ downloadButtonShown: true })}
-                      />
-                    )}
+                    <FileDownloadButton
+                      uri={uri}
+                      style={filePageStyle.downloadButton}
+                      openFile={openFile}
+                      isPlayable={isPlayable}
+                      isViewable={isViewable}
+                      onPlay={this.onFileDownloadButtonPlayed}
+                      onView={() => this.setState({ downloadPressed: true })}
+                      onButtonLayout={() => this.setState({ downloadButtonShown: true })}
+                    />
+                  )}
                   {!fileInfo && (
                     <FilePrice
                       uri={uri}
@@ -809,14 +811,14 @@ class FilePage extends React.PureComponent {
                           !fileInfo.stopped &&
                           fileInfo.written_bytes < fileInfo.total_bytes &&
                           !this.state.stopDownloadConfirmed && (
-                            <Button
-                              style={filePageStyle.actionButton}
-                              icon={'stop'}
-                              theme={'light'}
-                              text={'Stop Download'}
-                              onPress={this.onStopDownloadPressed}
-                            />
-                          )}
+                          <Button
+                            style={filePageStyle.actionButton}
+                            icon={'stop'}
+                            theme={'light'}
+                            text={'Stop Download'}
+                            onPress={this.onStopDownloadPressed}
+                          />
+                        )}
                       </View>
                     )}
                   </View>
@@ -834,7 +836,7 @@ class FilePage extends React.PureComponent {
                     onPress={() => this.setState({ showDescription: !this.state.showDescription })}
                   >
                     <View style={filePageStyle.titleRow}>
-                      <Text style={filePageStyle.title} selectable={true}>
+                      <Text style={filePageStyle.title} selectable>
                         {title}
                       </Text>
                       <View style={filePageStyle.descriptionToggle}>
@@ -847,7 +849,7 @@ class FilePage extends React.PureComponent {
                       <View style={filePageStyle.publishInfo}>
                         <Link
                           style={filePageStyle.channelName}
-                          selectable={true}
+                          selectable
                           text={channelName}
                           numberOfLines={1}
                           ellipsizeMode={'tail'}
@@ -866,13 +868,13 @@ class FilePage extends React.PureComponent {
                       <View style={filePageStyle.subscriptionRow}>
                         {false &&
                           ((isPlayable && !fileInfo) || (isPlayable && fileInfo && !fileInfo.download_path)) && (
-                            <Button
-                              style={[filePageStyle.actionButton, filePageStyle.saveFileButton]}
-                              theme={'light'}
-                              icon={'download'}
-                              onPress={this.onSaveFilePressed}
-                            />
-                          )}
+                          <Button
+                            style={[filePageStyle.actionButton, filePageStyle.saveFileButton]}
+                            theme={'light'}
+                            icon={'download'}
+                            onPress={this.onSaveFilePressed}
+                          />
+                        )}
                         <Button
                           style={[filePageStyle.actionButton, filePageStyle.tipButton]}
                           theme={'light'}
@@ -929,7 +931,7 @@ class FilePage extends React.PureComponent {
                   )}
                   {this.state.showDescription && description && (
                     <View>
-                      <Text style={filePageStyle.description} selectable={true}>
+                      <Text style={filePageStyle.description} selectable>
                         {this.linkify(description)}
                       </Text>
                       {tags && tags.length > 0 && (

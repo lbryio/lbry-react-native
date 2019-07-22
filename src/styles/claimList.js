@@ -9,10 +9,10 @@ const claimListStyle = StyleSheet.create({
     paddingLeft: 20,
   },
   verticalScrollContainer: {
-    flex: 1
+    flex: 1,
   },
   verticalScrollPadding: {
-    paddingBottom: 16
+    paddingBottom: 16,
   },
   verticalListItem: {
     flex: 1,
@@ -26,8 +26,8 @@ const claimListStyle = StyleSheet.create({
     width: '100%',
     height: 48,
     alignItems: 'center',
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 });
 
 export default claimListStyle;

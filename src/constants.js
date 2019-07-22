@@ -80,6 +80,14 @@ const Constants = {
 
   PLAY_STORE_URL: 'https://play.google.com/store/apps/details?id=io.lbry.browser',
   RATING_REMINDER_INTERVAL: 604800, // 7 days (7 * 24 * 3600s)
+
+  SORT_BY_ITEMS: [
+    { icon: 'fire-alt', name: 'hot', label: 'Hot content' },
+    { icon: 'certificate', name: 'new', label: 'New content' },
+    { icon: 'chart-line', name: 'top', label: 'Top content' },
+  ],
+
+  DEFAULT_ORDER_BY: ['trending_global', 'trending_mixed'],
 };
 
 export default Constants;

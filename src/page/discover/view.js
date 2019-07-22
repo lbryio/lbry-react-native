@@ -1,41 +1,41 @@
-import React from "react";
-import NavigationActions from "react-navigation";
-import { Alert, ActivityIndicator, Linking, NativeModules, SectionList, Text, View } from "react-native";
-import { DEFAULT_FOLLOWED_TAGS, Lbry, normalizeURI, parseURI } from "lbry-redux";
-import { formatTagTitle } from "utils/helper";
-import AsyncStorage from "@react-native-community/async-storage";
-import moment from "moment";
-import CategoryList from "component/categoryList";
-import ClaimList from "component/claimList";
-import Constants from "constants";
-import Colors from "styles/colors";
-import discoverStyle from "styles/discover";
-import FloatingWalletBalance from "component/floatingWalletBalance";
-import UriBar from "component/uriBar";
+import React from 'react';
+import NavigationActions from 'react-navigation';
+import { Alert, ActivityIndicator, Linking, NativeModules, SectionList, Text, View } from 'react-native';
+import { DEFAULT_FOLLOWED_TAGS, Lbry, normalizeURI, parseURI } from 'lbry-redux';
+import { formatTagTitle } from 'utils/helper';
+import AsyncStorage from '@react-native-community/async-storage';
+import moment from 'moment';
+import CategoryList from 'component/categoryList';
+import ClaimList from 'component/claimList';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
+import Colors from 'styles/colors';
+import discoverStyle from 'styles/discover';
+import FloatingWalletBalance from 'component/floatingWalletBalance';
+import UriBar from 'component/uriBar';
 
 class DiscoverPage extends React.PureComponent {
   state = {
-    tagCollection: []
+    tagCollection: [],
   };
 
   componentDidMount() {
     this.buildTagCollection();
 
     // Track the total time taken if this is the first launch
-    AsyncStorage.getItem("firstLaunchTime").then(startTime => {
+    AsyncStorage.getItem('firstLaunchTime').then(startTime => {
       if (startTime !== null && !isNaN(parseInt(startTime, 10))) {
         // We don"t need this value anymore once we"ve retrieved it
-        AsyncStorage.removeItem("firstLaunchTime");
+        AsyncStorage.removeItem('firstLaunchTime');
 
         // We know this is the first app launch because firstLaunchTime is set and it"s a valid number
         const start = parseInt(startTime, 10);
         const now = moment().unix();
         const delta = now - start;
-        AsyncStorage.getItem("firstLaunchSuspended").then(suspended => {
-          AsyncStorage.removeItem("firstLaunchSuspended");
-          const appSuspended = suspended === "true";
+        AsyncStorage.getItem('firstLaunchSuspended').then(suspended => {
+          AsyncStorage.removeItem('firstLaunchSuspended');
+          const appSuspended = suspended === 'true';
           if (NativeModules.Firebase) {
-            NativeModules.Firebase.track("first_run_time", {
+            NativeModules.Firebase.track('first_run_time', {
               total_seconds: delta,
               app_suspended: appSuspended,
             });
@@ -95,7 +95,7 @@ class DiscoverPage extends React.PureComponent {
                   const metadata = sub.value.stream.metadata;
                   if (source) {
                     isPlayable =
-                      source.contentType && ["audio", "video"].indexOf(source.contentType.substring(0, 5)) > -1;
+                      source.contentType && ['audio', 'video'].indexOf(source.contentType.substring(0, 5)) > -1;
                   }
                   if (metadata) {
                     utility.showNotificationForContent(
@@ -119,26 +119,26 @@ class DiscoverPage extends React.PureComponent {
     const { ratingReminderDisabled, ratingReminderLastShown, setClientSetting } = this.props;
 
     const now = moment().unix();
-    if ("true" !== ratingReminderDisabled && ratingReminderLastShown) {
-      const lastShownParts = ratingReminderLastShown.split("|");
+    if (ratingReminderDisabled !== 'true' && ratingReminderLastShown) {
+      const lastShownParts = ratingReminderLastShown.split('|');
       if (lastShownParts.length === 2) {
         const lastShownTime = parseInt(lastShownParts[0], 10);
         const lastShownCount = parseInt(lastShownParts[1], 10);
         if (!isNaN(lastShownTime) && !isNaN(lastShownCount)) {
           if (now > lastShownTime + Constants.RATING_REMINDER_INTERVAL * lastShownCount) {
             Alert.alert(
-              "Enjoying LBRY?",
-              "Are you enjoying your experience with the LBRY app? You can leave a review for us on the Play Store.",
+              'Enjoying LBRY?',
+              'Are you enjoying your experience with the LBRY app? You can leave a review for us on the Play Store.',
               [
                 {
-                  text: "Never ask again",
-                  onPress: () => setClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED, "true"),
+                  text: 'Never ask again',
+                  onPress: () => setClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED, 'true'),
                 },
-                { text: "Maybe later", onPress: () => this.updateRatingReminderShown(lastShownCount) },
+                { text: 'Maybe later', onPress: () => this.updateRatingReminderShown(lastShownCount) },
                 {
-                  text: "Rate app",
+                  text: 'Rate app',
                   onPress: () => {
-                    setClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED, "true");
+                    setClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED, 'true');
                     Linking.openURL(Constants.PLAY_STORE_URL);
                   },
                 },
@@ -157,16 +157,16 @@ class DiscoverPage extends React.PureComponent {
 
   updateRatingReminderShown = lastShownCount => {
     const { setClientSetting } = this.props;
-    const settingString = moment().unix() + "|" + (lastShownCount + 1);
+    const settingString = moment().unix() + '|' + (lastShownCount + 1);
     setClientSetting(Constants.SETTING_RATING_REMINDER_LAST_SHOWN, settingString);
   };
 
   buildSections = () => {
     return this.state.tagCollection.map(tags => ({
-      title: (tags.length === 1) ? tags[0] : 'Trending',
-      data: [tags]
+      title: tags.length === 1 ? tags[0] : 'Trending',
+      data: [tags],
     }));
-  }
+  };
 
   buildTagCollection = () => {
     // TODO: Use followedTags from state if present
@@ -177,18 +177,18 @@ class DiscoverPage extends React.PureComponent {
     tagCollection.unshift(DEFAULT_FOLLOWED_TAGS);
 
     this.setState({ tagCollection });
-  }
-  
-  formatTitle = (title) => {
+  };
+
+  formatTitle = title => {
     return title.charAt(0).toUpperCase() + title.substring(1);
-  }
-  
-  handleTagPress = (name) => {
+  };
+
+  handleTagPress = name => {
     const { navigation } = this.props;
-    if ('trending' !== name.toLowerCase()) {
+    if (name.toLowerCase() !== 'trending') {
       navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: `tagPage`, params: { tag: name } });
     }
-  }
+  };
 
   render() {
     const { navigation } = this.props;
@@ -197,20 +197,27 @@ class DiscoverPage extends React.PureComponent {
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} />
         <SectionList
-            style={discoverStyle.scrollContainer}
-            contentContainerStyle={discoverStyle.scrollPadding}
-            initialNumToRender={4}
-            maxToRenderPerBatch={4}
-            removeClippedSubviews={true}
-            renderItem={({ item, index, section }) => (
-              <ClaimList key={item.join(',')} tags={item} navigation={navigation} orientation={Constants.ORIENTATION_HORIZONTAL} />
-            )}
-            renderSectionHeader={({ section: { title } }) => (
-              <Text style={discoverStyle.categoryName} onPress={() => this.handleTagPress(title)}>{formatTagTitle(title)}</Text>
-            )}
-            sections={this.buildSections()}
-            keyExtractor={(item, index) => item}
-          />
+          style={discoverStyle.scrollContainer}
+          contentContainerStyle={discoverStyle.scrollPadding}
+          initialNumToRender={4}
+          maxToRenderPerBatch={4}
+          removeClippedSubviews
+          renderItem={({ item, index, section }) => (
+            <ClaimList
+              key={item.join(',')}
+              tags={item}
+              navigation={navigation}
+              orientation={Constants.ORIENTATION_HORIZONTAL}
+            />
+          )}
+          renderSectionHeader={({ section: { title } }) => (
+            <Text style={discoverStyle.categoryName} onPress={() => this.handleTagPress(title)}>
+              {formatTagTitle(title)}
+            </Text>
+          )}
+          sections={this.buildSections()}
+          keyExtractor={(item, index) => item}
+        />
         <FloatingWalletBalance navigation={navigation} />
       </View>
     );

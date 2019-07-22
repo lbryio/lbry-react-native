@@ -177,14 +177,14 @@ const discoverStyle = StyleSheet.create({
   },
   verticalClaimList: {
     marginTop: 60,
-    flex: 1
+    flex: 1,
   },
   tagPageTitle: {
     fontFamily: 'Inter-UI-Regular',
     fontSize: 24,
   },
   tagPageClaimList: {
-    flex: 1
+    flex: 1,
   },
   tagTitleRow: {
     marginTop: 76,
@@ -192,21 +192,21 @@ const discoverStyle = StyleSheet.create({
     marginRight: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   tagSortBy: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 4
+    marginRight: 4,
   },
   tagSortText: {
     fontFamily: 'Inter-UI-Regular',
     fontSize: 14,
-    marginRight: 4
+    marginRight: 4,
   },
   tagSortIcon: {
-    marginTop: -6
-  }
+    marginTop: -6,
+  },
 });
 
 export default discoverStyle;

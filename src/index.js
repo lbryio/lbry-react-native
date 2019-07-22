@@ -42,7 +42,6 @@ import thunk from 'redux-thunk';
 
 const globalExceptionHandler = (error, isFatal) => {
   if (error && NativeModules.Firebase) {
-    console.log(error);
     NativeModules.Firebase.logException(isFatal, error.message ? error.message : 'No message', JSON.stringify(error));
   }
 };
@@ -76,9 +75,9 @@ function enableBatching(reducer) {
   };
 }
 
-/*const router = AppNavigator.router;
+/* const router = AppNavigator.router;
 const navAction = router.getActionForPathAndParams('FirstRun');
-const initialNavState = router.getStateForAction(navAction);*/
+const initialNavState = router.getStateForAction(navAction); */
 
 const reducers = combineReducers({
   auth: authReducer,

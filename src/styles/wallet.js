@@ -227,7 +227,7 @@ const walletStyle = StyleSheet.create({
     marginTop: 16,
     paddingBottom: 14,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.PageBackground
+    borderBottomColor: Colors.PageBackground,
   },
   syncDriverLink: {
     color: Colors.LbryGreen,
