@@ -25,6 +25,7 @@ import FileItem from 'component/fileItem';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
 import ModalPicker from 'component/modalPicker';
+import SubscribedChannelList from 'component/subscribedChannelList';
 import SuggestedSubscriptions from 'component/suggestedSubscriptions';
 import UriBar from 'component/uriBar';
 
@@ -33,6 +34,7 @@ class SubscriptionsPage extends React.PureComponent {
     showingSuggestedSubs: false,
     showSortPicker: false,
     orderBy: ['release_time'],
+    filteredChannels: [],
     currentSortByItem: Constants.SORT_BY_ITEMS[1], // should always default to sorting subscriptions by new
   };
 
@@ -103,6 +105,18 @@ class SubscriptionsPage extends React.PureComponent {
     this.setState({ currentSortByItem: item, orderBy, showSortPicker: false });
   };
 
+  handleChannelSelected = channelUri => {
+    const { subscribedChannels } = this.props;
+    this.setState({
+      filteredChannels: channelUri === '_all' ? [] : subscribedChannels.filter(channel => channel.uri === channelUri),
+    });
+  };
+
+  prependSubscribedChannelsWithAll = subscribedChannels => {
+    const channelUris = subscribedChannels.map(channel => channel.uri);
+    return ['_all'].concat(channelUris);
+  };
+
   render() {
     const {
       subscribedChannels,
@@ -118,7 +132,7 @@ class SubscriptionsPage extends React.PureComponent {
       unreadSubscriptions,
       navigation,
     } = this.props;
-    const { currentSortByItem } = this.state;
+    const { currentSortByItem, filteredChannels } = this.state;
 
     const numberOfSubscriptions = subscribedChannels ? subscribedChannels.length : 0;
     const hasSubscriptions = numberOfSubscriptions > 0;
@@ -128,11 +142,16 @@ class SubscriptionsPage extends React.PureComponent {
     }
 
     const channelIds =
-      subscribedChannels &&
-      subscribedChannels.map(channel => {
-        const { claimId } = parseURI(channel.uri);
-        return claimId;
-      });
+      filteredChannels.length > 0
+        ? filteredChannels.map(channel => {
+          const { claimId } = parseURI(channel.uri);
+          return claimId;
+        })
+        : subscribedChannels &&
+          subscribedChannels.map(channel => {
+            const { claimId } = parseURI(channel.uri);
+            return claimId;
+          });
 
     return (
       <View style={subscriptionsStyle.container}>
@@ -151,6 +170,10 @@ class SubscriptionsPage extends React.PureComponent {
         </View>
         {!this.state.showingSuggestedSubs && hasSubscriptions && !loading && (
           <View style={subscriptionsStyle.subContainer}>
+            <SubscribedChannelList
+              subscribedChannels={this.prependSubscribedChannelsWithAll(subscribedChannels)}
+              onChannelSelected={this.handleChannelSelected}
+            />
             <ClaimList
               style={subscriptionsStyle.claimList}
               channelIds={channelIds}

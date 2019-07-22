@@ -91,6 +91,14 @@ const subscriptionsStyle = StyleSheet.create({
     marginTop: 8,
     fontSize: 18,
   },
+  channelList: {
+    marginLeft: 16,
+    marginRight: 16,
+    marginTop: 8,
+    paddingBottom: 8,
+    borderBottomColor: Colors.LighterGrey,
+    borderBottomWidth: 1,
+  },
   channelTitle: {
     fontFamily: 'Inter-UI-SemiBold',
     fontSize: 20,
