@@ -47,9 +47,17 @@ export default class TagSearch extends React.PureComponent {
     const suggestedTagsSet = new Set(unfollowedTags.map(tag => tag.name));
     const suggestedTags = Array.from(suggestedTagsSet).filter(tagNotSelected);
     if (tag && tag.trim().length > 0) {
-      results.push(tag.toLowerCase());
+      const lcTag = tag.toLowerCase();
+      if (!results.includes(lcTag)) {
+        results.push(lcTag);
+      }
       const doesTagMatch = name => name.toLowerCase().includes(tag.toLowerCase());
-      results = results.concat(suggestedTags.filter(doesTagMatch).slice(0, 5));
+      results = results.concat(
+        suggestedTags
+          .filter(doesTagMatch)
+          .filter(suggested => lcTag !== suggested.toLowerCase())
+          .slice(0, 5)
+      );
     } else {
       results = results.concat(suggestedTags.slice(0, 5));
     }

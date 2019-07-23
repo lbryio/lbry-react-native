@@ -27,8 +27,23 @@ const discoverStyle = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    paddingTop: 12,
-    marginTop: 60,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    marginTop: 76,
+    marginBottom: 8,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginLeft: 20,
+    marginRight: 20,
+  },
+  pageTitle: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 24,
+  },
+  customizeLink: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
   },
   trendingContainer: {
     flex: 1,
@@ -176,7 +191,6 @@ const discoverStyle = StyleSheet.create({
     paddingLeft: 20,
   },
   verticalClaimList: {
-    marginTop: 60,
     flex: 1,
   },
   tagPageTitle: {

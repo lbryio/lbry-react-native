@@ -71,7 +71,7 @@ class FileListItem extends React.PureComponent {
       signingChannel = claim.signing_channel;
       channel = signingChannel ? signingChannel.name : null;
       height = claim.height;
-      channelClaimId = claim.value && claim.value.publisherSignature && claim.value.publisherSignature.certificateId;
+      channelClaimId = signingChannel ? signingChannel.claim_id : null;
       fullChannelUri = channelClaimId ? `${channel}#${channelClaimId}` : channel;
     }
 

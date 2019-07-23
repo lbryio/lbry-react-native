@@ -1,11 +1,13 @@
 import { connect } from 'react-redux';
+import { selectFollowedTags } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import TrendingPage from './view';
 
 const select = state => ({
   currentRoute: selectCurrentRoute(state),
+  followedTags: selectFollowedTags(state),
 });
 
 const perform = dispatch => ({

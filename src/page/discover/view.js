@@ -11,16 +11,18 @@ import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Colors from 'styles/colors';
 import discoverStyle from 'styles/discover';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
+import Link from 'component/link';
+import ModalTagSelector from 'component/modalTagSelector';
 import UriBar from 'component/uriBar';
+import _ from 'lodash';
 
 class DiscoverPage extends React.PureComponent {
   state = {
     tagCollection: [],
+    showModalTagSelector: false,
   };
 
   componentDidMount() {
-    this.buildTagCollection();
-
     // Track the total time taken if this is the first launch
     AsyncStorage.getItem('firstLaunchTime').then(startTime => {
       if (startTime !== null && !isNaN(parseInt(startTime, 10))) {
@@ -44,8 +46,9 @@ class DiscoverPage extends React.PureComponent {
       }
     });
 
-    const { fetchRewardedContent, fetchSubscriptions, fileList } = this.props;
+    const { fetchRewardedContent, fetchSubscriptions, fileList, followedTags } = this.props;
 
+    this.buildTagCollection(followedTags);
     fetchRewardedContent();
     fetchSubscriptions();
     fileList();
@@ -69,6 +72,14 @@ class DiscoverPage extends React.PureComponent {
 
     return null;
   };
+
+  componentWillReceiveProps(nextProps) {
+    const { followedTags: prevFollowedTags } = this.props;
+    const { followedTags } = nextProps;
+    if (!_.isEqual(followedTags, prevFollowedTags)) {
+      this.buildTagCollection(followedTags);
+    }
+  }
 
   componentDidUpdate(prevProps, prevState) {
     const { unreadSubscriptions, enabledChannelNotifications } = this.props;
@@ -168,13 +179,13 @@ class DiscoverPage extends React.PureComponent {
     }));
   };
 
-  buildTagCollection = () => {
-    // TODO: Use followedTags from state if present
+  buildTagCollection = followedTags => {
+    const tags = followedTags.map(tag => tag.name);
 
     // each of the followed tags
-    const tagCollection = DEFAULT_FOLLOWED_TAGS.map(tag => [tag]);
+    const tagCollection = tags.map(tag => [tag]);
     // everything
-    tagCollection.unshift(DEFAULT_FOLLOWED_TAGS);
+    tagCollection.unshift(tags);
 
     this.setState({ tagCollection });
   };
@@ -192,10 +203,19 @@ class DiscoverPage extends React.PureComponent {
 
   render() {
     const { navigation } = this.props;
+    const { showModalTagSelector } = this.state;
 
     return (
       <View style={discoverStyle.container}>
-        <UriBar navigation={navigation} />
+        <UriBar navigation={navigation} belowOverlay={showModalTagSelector} />
+        <View style={discoverStyle.titleRow}>
+          <Text style={discoverStyle.pageTitle}>Explore</Text>
+          <Link
+            style={discoverStyle.customizeLink}
+            text={'Customize this page'}
+            onPress={() => this.setState({ showModalTagSelector: true })}
+          />
+        </View>
         <SectionList
           style={discoverStyle.scrollContainer}
           contentContainerStyle={discoverStyle.scrollPadding}
@@ -218,7 +238,14 @@ class DiscoverPage extends React.PureComponent {
           sections={this.buildSections()}
           keyExtractor={(item, index) => item}
         />
-        <FloatingWalletBalance navigation={navigation} />
+        {!showModalTagSelector && <FloatingWalletBalance navigation={navigation} />}
+        {showModalTagSelector && (
+          <ModalTagSelector
+            pageName={'Explore'}
+            onOverlayPress={() => this.setState({ showModalTagSelector: false })}
+            onDonePress={() => this.setState({ showModalTagSelector: false })}
+          />
+        )}
       </View>
     );
   }

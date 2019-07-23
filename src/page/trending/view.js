@@ -5,16 +5,17 @@ import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import ClaimList from 'component/claimList';
 import FileItem from 'component/fileItem';
-import discoverStyle from 'styles/discover';
-import fileListStyle from 'styles/fileList';
+import Link from 'component/link';
+import ModalTagSelector from 'component/modalTagSelector';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import UriBar from 'component/uriBar';
+import discoverStyle from 'styles/discover';
 
 class TrendingPage extends React.PureComponent {
   state = {
-    followedTags: DEFAULT_FOLLOWED_TAGS,
+    showModalTagSelector: false,
   };
 
   didFocusListener;
@@ -49,18 +50,34 @@ class TrendingPage extends React.PureComponent {
   }
 
   render() {
-    const { navigation } = this.props;
+    const { followedTags, navigation } = this.props;
+    const { showModalTagSelector } = this.state;
 
     return (
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} />
+        <View style={discoverStyle.titleRow}>
+          <Text style={discoverStyle.pageTitle}>Trending</Text>
+          <Link
+            style={discoverStyle.customizeLink}
+            text={'Customize this page'}
+            onPress={() => this.setState({ showModalTagSelector: true })}
+          />
+        </View>
         <ClaimList
           style={discoverStyle.verticalClaimList}
-          tags={this.state.followedTags}
+          tags={followedTags.map(tag => tag.name)}
           navigation={navigation}
           orientation={Constants.ORIENTATION_VERTICAL}
         />
-        <FloatingWalletBalance navigation={navigation} />
+        {!showModalTagSelector && <FloatingWalletBalance navigation={navigation} />}
+        {showModalTagSelector && (
+          <ModalTagSelector
+            pageName={'Trending'}
+            onOverlayPress={() => this.setState({ showModalTagSelector: false })}
+            onDonePress={() => this.setState({ showModalTagSelector: false })}
+          />
+        )}
       </View>
     );
   }

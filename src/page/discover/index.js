@@ -5,7 +5,7 @@ import {
   selectBalance,
   selectFileInfosDownloaded,
   selectLastClaimSearchUris,
-  selectFetchingClaimSearch,
+  selectFollowedTags,
 } from 'lbry-redux';
 import {
   doFetchFeaturedUris,
@@ -21,7 +21,7 @@ import {
 
 import { doSetClientSetting } from 'redux/actions/settings';
 import { makeSelectClientSetting } from 'redux/selectors/settings';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import DiscoverPage from './view';
 
 const select = state => ({
@@ -31,6 +31,7 @@ const select = state => ({
   featuredUris: selectFeaturedUris(state),
   fetchingFeaturedUris: selectFetchingFeaturedUris(state),
   fileInfos: selectFileInfosDownloaded(state),
+  followedTags: selectFollowedTags(state),
   ratingReminderDisabled: makeSelectClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED)(state),
   ratingReminderLastShown: makeSelectClientSetting(Constants.SETTING_RATING_REMINDER_LAST_SHOWN)(state),
   unreadSubscriptions: selectUnreadSubscriptions(state),

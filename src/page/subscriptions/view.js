@@ -65,7 +65,6 @@ class SubscriptionsPage extends React.PureComponent {
     setPlayerVisible();
     doFetchMySubscriptions();
     doFetchRecommendedSubscriptions();
-    doSetViewMode(subscriptionsViewMode || Constants.SUBSCRIPTIONS_VIEW_ALL);
   };
 
   componentDidMount() {
@@ -79,12 +78,6 @@ class SubscriptionsPage extends React.PureComponent {
       this.onComponentFocused();
     }
   }
-
-  changeViewMode = viewMode => {
-    const { setClientSetting, doSetViewMode } = this.props;
-    setClientSetting(Constants.SETTING_SUBSCRIPTIONS_VIEW_MODE, viewMode);
-    doSetViewMode(viewMode);
-  };
 
   handleSortByItemSelected = item => {
     let orderBy = [];

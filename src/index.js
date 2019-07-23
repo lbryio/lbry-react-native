@@ -121,10 +121,11 @@ const contentFilter = createFilter('content', ['positions']);
 const saveClaimsFilter = createFilter('claims', ['byId', 'claimsByUri']);
 const subscriptionsFilter = createFilter('subscriptions', ['enabledChannelNotifications', 'subscriptions']);
 const settingsFilter = createFilter('settings', ['clientSettings']);
+const tagsFilter = createFilter('tags', ['followedTags']);
 const walletFilter = createFilter('wallet', ['receiveAddress']);
 
 const persistOptions = {
-  whitelist: ['auth', 'claims', 'content', 'subscriptions', 'settings', 'wallet'],
+  whitelist: ['auth', 'claims', 'content', 'subscriptions', 'settings', 'tags', 'wallet'],
   // Order is important. Needs to be compressed last or other transforms can't
   // read the data
   transforms: [authFilter, saveClaimsFilter, subscriptionsFilter, settingsFilter, walletFilter, compressor],
