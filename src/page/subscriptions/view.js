@@ -186,14 +186,13 @@ class SubscriptionsPage extends React.PureComponent {
         {this.state.showingSuggestedSubs && (
           <View style={subscriptionsStyle.suggestedSubsContainer}>
             {!hasSubscriptions && (
-              <Text style={subscriptionsStyle.infoText}>
-                You are not subscribed to any channels at the moment. Here are some channels that we think you might
-                enjoy.
-              </Text>
+              <View style={subscriptionsStyle.infoArea}>
+                <Text style={subscriptionsStyle.infoText}>You are not subscribed to any channels at the moment.</Text>
+              </View>
             )}
 
             {hasSubscriptions && (
-              <View>
+              <View style={subscriptionsStyle.infoArea}>
                 <Text style={subscriptionsStyle.infoText}>
                   You are currently subscribed to {numberOfSubscriptions} channel{numberOfSubscriptions > 1 ? 's' : ''}.
                 </Text>
@@ -206,7 +205,10 @@ class SubscriptionsPage extends React.PureComponent {
             )}
 
             {loadingSuggested && (
-              <ActivityIndicator size="large" colors={Colors.LbryGreen} style={subscriptionsStyle.loading} />
+              <View style={subscriptionsStyle.centered}>
+                <ActivityIndicator size="large" colors={Colors.LbryGreen} style={subscriptionsStyle.loading} />
+                \\
+              </View>
             )}
             {!loadingSuggested && <SuggestedSubscriptions navigation={navigation} />}
           </View>

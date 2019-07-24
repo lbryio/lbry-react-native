@@ -6,7 +6,7 @@ const claimListStyle = StyleSheet.create({
     marginBottom: 12,
   },
   horizontalScrollPadding: {
-    paddingLeft: 20,
+    paddingLeft: 16,
   },
   verticalScrollContainer: {
     flex: 1,
@@ -18,9 +18,10 @@ const claimListStyle = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 8,
     marginLeft: 8,
     marginRight: 8,
+    marginTop: 4,
+    marginBottom: 4,
   },
   verticalLoading: {
     width: '100%',

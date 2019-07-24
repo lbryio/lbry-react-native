@@ -1,22 +1,22 @@
 import { connect } from 'react-redux';
 import {
-  makeSelectFetchingChannelClaims,
-  makeSelectClaimsInChannelForPage,
-  doFetchClaimsByChannel,
-  doResolveUris,
+  doResolveUri,
+  makeSelectClaimForUri,
+  makeSelectThumbnailForUri,
+  makeSelectTitleForUri,
+  makeSelectIsUriResolving,
 } from 'lbry-redux';
-import { selectShowNsfw } from 'redux/selectors/settings';
 import SuggestedSubscriptionItem from './view';
 
 const select = (state, props) => ({
-  claims: makeSelectClaimsInChannelForPage(props.categoryLink)(state),
-  fetching: makeSelectFetchingChannelClaims(props.categoryLink)(state),
-  obscureNsfw: !selectShowNsfw(state),
+  thumbnail: makeSelectThumbnailForUri(props.uri)(state),
+  title: makeSelectTitleForUri(props.uri)(state),
+  claim: makeSelectClaimForUri(props.uri)(state),
+  isResolvingUri: makeSelectIsUriResolving(props.uri)(state),
 });
 
 const perform = dispatch => ({
-  fetchChannel: channel => dispatch(doFetchClaimsByChannel(channel)),
-  resolveUris: uris => dispatch(doResolveUris(uris, true)),
+  resolveUri: uri => dispatch(doResolveUri(uri)),
 });
 
 export default connect(

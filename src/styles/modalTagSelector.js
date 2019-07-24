@@ -11,6 +11,7 @@ const modalTagSelectorStyle = StyleSheet.create({
     top: 0,
     bottom: 0,
     zIndex: 300,
+    alignItems: 'center',
   },
   overlayTouchArea: {
     position: 'absolute',
@@ -20,13 +21,14 @@ const modalTagSelectorStyle = StyleSheet.create({
     bottom: 0,
   },
   container: {
+    flex: 1,
+    borderRadius: 8,
+    backgroundColor: Colors.White,
+    padding: 16,
     position: 'absolute',
     left: 8,
     right: 8,
     bottom: 8,
-    borderRadius: 8,
-    backgroundColor: Colors.White,
-    padding: 16,
   },
   tag: {
     marginRight: 4,
@@ -49,6 +51,8 @@ const modalTagSelectorStyle = StyleSheet.create({
   doneButton: {
     alignSelf: 'flex-start',
     backgroundColor: Colors.LbryGreen,
+    paddingLeft: 16,
+    paddingRight: 16,
   },
 });
 

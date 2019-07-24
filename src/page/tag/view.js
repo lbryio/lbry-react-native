@@ -81,14 +81,16 @@ class TagPage extends React.PureComponent {
     return (
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} belowOverlay={this.state.showSortPicker} />
-        <View style={discoverStyle.tagTitleRow}>
-          <Text style={discoverStyle.tagPageTitle}>{formatTagTitle(tag)}</Text>
-          <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
-            <Text style={discoverStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
-            <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
-          </TouchableOpacity>
-        </View>
         <ClaimList
+          ListHeaderComponent={
+            <View style={discoverStyle.tagTitleRow}>
+              <Text style={discoverStyle.tagPageTitle}>{formatTagTitle(tag)}</Text>
+              <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
+                <Text style={discoverStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
+                <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+              </TouchableOpacity>
+            </View>
+          }
           style={discoverStyle.tagPageClaimList}
           orderBy={this.state.orderBy}
           tags={[tag]}

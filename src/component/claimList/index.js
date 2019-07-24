@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import {
+  MATURE_TAGS,
   doClaimSearch,
   doClaimSearchByTags,
   makeSelectClaimSearchUrisForTags,
@@ -25,7 +26,7 @@ const select = (state, props) => {
 const perform = dispatch => ({
   claimSearch: options => dispatch(doClaimSearch(10, options)),
   searchByTags: (tags, orderBy = defaultOrderBy, page = 1) =>
-    dispatch(doClaimSearchByTags(tags, 10, { no_totals: true, order_by: orderBy, page })),
+    dispatch(doClaimSearchByTags(tags, 10, { no_totals: true, order_by: orderBy, page, not_tags: MATURE_TAGS })),
 });
 
 export default connect(

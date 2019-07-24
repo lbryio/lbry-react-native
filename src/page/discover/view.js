@@ -1,6 +1,15 @@
 import React from 'react';
 import NavigationActions from 'react-navigation';
-import { Alert, ActivityIndicator, Linking, NativeModules, SectionList, Text, View } from 'react-native';
+import {
+  Alert,
+  ActivityIndicator,
+  Linking,
+  NativeModules,
+  SectionList,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { DEFAULT_FOLLOWED_TAGS, Lbry, normalizeURI, parseURI } from 'lbry-redux';
 import { formatTagTitle } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -11,8 +20,10 @@ import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Colors from 'styles/colors';
 import discoverStyle from 'styles/discover';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
 import ModalTagSelector from 'component/modalTagSelector';
+import ModalPicker from 'component/modalPicker';
 import UriBar from 'component/uriBar';
 import _ from 'lodash';
 
@@ -20,6 +31,9 @@ class DiscoverPage extends React.PureComponent {
   state = {
     tagCollection: [],
     showModalTagSelector: false,
+    showSortPicker: false,
+    orderBy: Constants.DEFAULT_ORDER_BY,
+    currentSortByItem: Constants.SORT_BY_ITEMS[0],
   };
 
   componentDidMount() {
@@ -55,6 +69,25 @@ class DiscoverPage extends React.PureComponent {
 
     this.showRatingReminder();
   }
+
+  handleSortByItemSelected = item => {
+    let orderBy = [];
+    switch (item.name) {
+      case 'hot':
+        orderBy = Constants.DEFAULT_ORDER_BY;
+        break;
+
+      case 'new':
+        orderBy = ['release_time'];
+        break;
+
+      case 'top':
+        orderBy = ['effective_amount'];
+        break;
+    }
+
+    this.setState({ currentSortByItem: item, orderBy, showSortPicker: false });
+  };
 
   subscriptionForUri = (uri, channelName) => {
     const { allSubscriptions } = this.props;
@@ -198,25 +231,39 @@ class DiscoverPage extends React.PureComponent {
     const { navigation } = this.props;
     if (name.toLowerCase() !== 'trending') {
       navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: `tagPage`, params: { tag: name } });
+    } else {
+      // navigate to the trending page
+      navigation.navigate({ routeName: Constants.FULL_ROUTE_NAME_TRENDING });
     }
   };
 
   render() {
     const { navigation } = this.props;
-    const { showModalTagSelector } = this.state;
+    const { currentSortByItem, orderBy, showModalTagSelector, showSortPicker } = this.state;
 
     return (
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} belowOverlay={showModalTagSelector} />
-        <View style={discoverStyle.titleRow}>
-          <Text style={discoverStyle.pageTitle}>Explore</Text>
-          <Link
-            style={discoverStyle.customizeLink}
-            text={'Customize this page'}
-            onPress={() => this.setState({ showModalTagSelector: true })}
-          />
-        </View>
         <SectionList
+          ListHeaderComponent={
+            <View style={discoverStyle.titleRow}>
+              <Text style={discoverStyle.pageTitle}>Explore</Text>
+              <View style={discoverStyle.rightTitleRow}>
+                <Link
+                  style={discoverStyle.customizeLink}
+                  text={'Customize'}
+                  onPress={() => this.setState({ showModalTagSelector: true })}
+                />
+                <TouchableOpacity
+                  style={discoverStyle.tagSortBy}
+                  onPress={() => this.setState({ showSortPicker: true })}
+                >
+                  <Text style={discoverStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
+                  <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          }
           style={discoverStyle.scrollContainer}
           contentContainerStyle={discoverStyle.scrollPadding}
           initialNumToRender={4}
@@ -225,25 +272,40 @@ class DiscoverPage extends React.PureComponent {
           renderItem={({ item, index, section }) => (
             <ClaimList
               key={item.join(',')}
+              orderBy={item.length > 1 ? Constants.DEFAULT_ORDER_BY : orderBy}
               tags={item}
               navigation={navigation}
               orientation={Constants.ORIENTATION_HORIZONTAL}
             />
           )}
           renderSectionHeader={({ section: { title } }) => (
-            <Text style={discoverStyle.categoryName} onPress={() => this.handleTagPress(title)}>
-              {formatTagTitle(title)}
-            </Text>
+            <View style={discoverStyle.categoryTitleRow}>
+              <Text style={discoverStyle.categoryName} onPress={() => this.handleTagPress(title)}>
+                {formatTagTitle(title)}
+              </Text>
+              <TouchableOpacity onPress={() => this.handleTagPress(title)}>
+                <Icon name={'ellipsis-v'} size={16} />
+              </TouchableOpacity>
+            </View>
           )}
           sections={this.buildSections()}
           keyExtractor={(item, index) => item}
         />
-        {!showModalTagSelector && <FloatingWalletBalance navigation={navigation} />}
+        {!showModalTagSelector && !showSortPicker && <FloatingWalletBalance navigation={navigation} />}
         {showModalTagSelector && (
           <ModalTagSelector
             pageName={'Explore'}
             onOverlayPress={() => this.setState({ showModalTagSelector: false })}
             onDonePress={() => this.setState({ showModalTagSelector: false })}
+          />
+        )}
+        {showSortPicker && (
+          <ModalPicker
+            title={'Sort content by'}
+            onOverlayPress={() => this.setState({ showSortPicker: false })}
+            onItemSelected={this.handleSortByItemSelected}
+            selectedItem={currentSortByItem}
+            items={Constants.SORT_BY_ITEMS}
           />
         )}
       </View>

@@ -33,7 +33,7 @@ export default class ModalTagSelector extends React.PureComponent {
   };
 
   render() {
-    const { followedTags, onOverlayPress, onDonePress, pageName } = this.props;
+    const { followedTags, onOverlayPress, onDonePress } = this.props;
     const tags = followedTags ? followedTags.map(tag => tag.name) : DEFAULT_FOLLOWED_TAGS;
 
     return (
@@ -56,7 +56,7 @@ export default class ModalTagSelector extends React.PureComponent {
           </View>
           <TagSearch handleAddTag={this.handleAddTag} selectedTags={tags} />
           <View style={modalTagSelectorStyle.buttons}>
-            <Button style={modalTagSelectorStyle.doneButton} text={`Take me to ${pageName}`} onPress={onDonePress} />
+            <Button style={modalTagSelectorStyle.doneButton} text={'Done'} onPress={onDonePress} />
           </View>
         </View>
       </TouchableOpacity>

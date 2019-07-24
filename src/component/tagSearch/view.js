@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Tag from 'component/tag';
 import tagStyle from 'styles/tag';
 import Colors from 'styles/colors';
@@ -78,11 +78,13 @@ export default class TagSearch extends React.PureComponent {
           numberOfLines={1}
           onChangeText={this.handleTagChange}
         />
-        <View style={tagStyle.tagResultsList}>
-          {this.state.tagResults.map(tag => (
-            <Tag key={tag} name={tag} style={tagStyle.tag} type="add" onAddPress={name => this.onAddTagPress(name)} />
-          ))}
-        </View>
+        <KeyboardAvoidingView behavior={'position'}>
+          <View style={tagStyle.tagResultsList}>
+            {this.state.tagResults.map(tag => (
+              <Tag key={tag} name={tag} style={tagStyle.tag} type="add" onAddPress={name => this.onAddTagPress(name)} />
+            ))}
+          </View>
+        </KeyboardAvoidingView>
       </View>
     );
   }

@@ -12,15 +12,16 @@ const subscriptionsStyle = StyleSheet.create({
   },
   suggestedSubsContainer: {
     flex: 1,
-    marginTop: 60,
+  },
+  suggestedScrollPadding: {
+    paddingTop: 8,
   },
   button: {
     alignSelf: 'flex-start',
     backgroundColor: Colors.LbryGreen,
     paddingLeft: 16,
     paddingRight: 16,
-    marginLeft: 16,
-    marginBottom: 16,
+    marginBottom: 8,
   },
   busyContainer: {
     flex: 1,
@@ -38,7 +39,15 @@ const subscriptionsStyle = StyleSheet.create({
   infoText: {
     fontFamily: 'Inter-UI-Regular',
     fontSize: 16,
-    margin: 16,
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  infoArea: {
+    marginLeft: 16,
+    marginRight: 16,
+    paddingBottom: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.LighterGrey,
   },
   suggestedContainer: {
     flex: 1,
@@ -159,6 +168,71 @@ const subscriptionsStyle = StyleSheet.create({
   },
   tagSortIcon: {
     marginTop: -6,
+  },
+  centered: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  suggestedItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+    marginLeft: 16,
+    marginRight: 16,
+  },
+  suggestedItemThumbnailContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: 140,
+    overflow: 'hidden',
+  },
+  suggestedItemThumbnail: {
+    width: '100%',
+    height: '100%',
+  },
+  suggestedItemDetails: {
+    marginLeft: 16,
+    flexDirection: 'row',
+  },
+  suggestedItemSubscribe: {
+    backgroundColor: Colors.White,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+  },
+  suggestedItemTitle: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 16,
+    marginBottom: 4,
+  },
+  suggestedItemName: {
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 14,
+    marginBottom: 4,
+    color: Colors.LbryGreen,
+  },
+  suggestedItemTagList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  suggestedSubTitle: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 20,
+    marginLeft: 16,
+    marginRight: 16,
+    marginBottom: 12,
+  },
+  suggestedSectionSeparator: {
+    marginBottom: 16,
+  },
+  tag: {
+    marginRight: 4,
+    marginBottom: 4,
   },
 });
 

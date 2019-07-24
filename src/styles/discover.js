@@ -34,8 +34,12 @@ const discoverStyle = StyleSheet.create({
     marginBottom: 8,
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginLeft: 20,
-    marginRight: 20,
+    marginLeft: 16,
+    marginRight: 16,
+  },
+  rightTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   pageTitle: {
     fontFamily: 'Inter-UI-Regular',
@@ -44,6 +48,7 @@ const discoverStyle = StyleSheet.create({
   customizeLink: {
     fontFamily: 'Inter-UI-Regular',
     fontSize: 14,
+    marginRight: 48,
   },
   trendingContainer: {
     flex: 1,
@@ -62,12 +67,18 @@ const discoverStyle = StyleSheet.create({
     textAlign: 'center',
     marginLeft: 10,
   },
+  categoryTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginLeft: 16,
+    marginRight: 16,
+    marginTop: 6,
+    marginBottom: 6,
+  },
   categoryName: {
     fontFamily: 'Inter-UI-SemiBold',
     fontSize: 18,
-    marginLeft: 24,
-    marginTop: 12,
-    marginBottom: 6,
     color: Colors.Black,
   },
   fileItem: {
