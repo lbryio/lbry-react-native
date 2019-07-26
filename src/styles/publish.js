@@ -326,6 +326,49 @@ const publishStyle = StyleSheet.create({
     fontSize: 14,
     marginLeft: 8,
   },
+  centered: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 60,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noPublishes: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 60,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+  },
+  noPublishText: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 16,
+  },
+  publishNowButton: {
+    alignSelf: 'center',
+    backgroundColor: Colors.LbryGreen,
+    marginTop: 16,
+  },
+  publishesList: {
+    flex: 1,
+    marginTop: 60,
+  },
+  publishesScrollPadding: {
+    paddingBottom: 16,
+  },
+  listItem: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 8,
+    marginLeft: 8,
+    marginRight: 8,
+  },
 });
 
 export default publishStyle;

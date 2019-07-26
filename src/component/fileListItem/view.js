@@ -58,6 +58,7 @@ class FileListItem extends React.PureComponent {
       onPress,
       navigation,
       thumbnail,
+      hideChannel,
       title,
     } = this.props;
 
@@ -115,7 +116,7 @@ class FileListItem extends React.PureComponent {
                 {this.formatTitle(title) || this.formatTitle(name)}
               </Text>
             )}
-            {channel && (
+            {channel && !hideChannel && (
               <Link
                 style={fileListStyle.publisher}
                 text={channel}

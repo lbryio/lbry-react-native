@@ -6,6 +6,7 @@ import DrawerContent from 'component/drawerContent';
 import FilePage from 'page/file';
 import FirstRunScreen from 'page/firstRun';
 import PublishPage from 'page/publish';
+import PublishesPage from 'page/publishes';
 import RewardsPage from 'page/rewards';
 import TagPage from 'page/tag';
 import TrendingPage from 'page/trending';
@@ -160,6 +161,12 @@ const drawer = createDrawerNavigator(
       screen: PublishPage,
       navigationOptions: {
         drawerIcon: ({ tintColor }) => <Icon name="upload" size={20} style={{ color: tintColor }} />,
+      },
+    },
+    Publishes: {
+      screen: PublishesPage,
+      navigationOptions: {
+        drawerIcon: ({ tintColor }) => <Icon name="cloud-upload-alt" size={20} style={{ color: tintColor }} />,
       },
     },
     Rewards: {
