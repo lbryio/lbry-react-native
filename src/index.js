@@ -24,13 +24,14 @@ import {
   syncReducer,
   userReducer,
 } from 'lbryinc';
-import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import AppWithNavigationState, {
   AppNavigator,
   navigatorReducer,
   reactNavigationMiddleware,
 } from 'component/AppNavigator';
-import { persistStore, autoRehydrate } from 'redux-persist';
+import { REHYDRATE, PURGE, persistCombineReducers, persistStore } from 'redux-persist';
+import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4';
 import AsyncStorage from '@react-native-community/async-storage';
 import FilesystemStorage from 'redux-persist-filesystem-storage';
 import createCompressor from 'redux-persist-transform-compress';
@@ -42,6 +43,7 @@ import thunk from 'redux-thunk';
 
 const globalExceptionHandler = (error, isFatal) => {
   if (error && NativeModules.Firebase) {
+    console.log(error);
     NativeModules.Firebase.logException(isFatal, error.message ? error.message : 'No message', JSON.stringify(error));
   }
 };
@@ -75,11 +77,30 @@ function enableBatching(reducer) {
   };
 }
 
-/* const router = AppNavigator.router;
-const navAction = router.getActionForPathAndParams('FirstRun');
-const initialNavState = router.getStateForAction(navAction); */
+const compressor = createCompressor();
+const authFilter = createFilter('auth', ['authToken']);
+const contentFilter = createFilter('content', ['positions']);
+const saveClaimsFilter = createFilter('claims', ['byId', 'claimsByUri']);
+const subscriptionsFilter = createFilter('subscriptions', ['enabledChannelNotifications', 'subscriptions']);
+const settingsFilter = createFilter('settings', ['clientSettings']);
+const tagsFilter = createFilter('tags', ['followedTags']);
+const walletFilter = createFilter('wallet', ['receiveAddress']);
 
-const reducers = combineReducers({
+const v4PersistOptions = {
+  whitelist: ['auth', 'claims', 'content', 'subscriptions', 'settings', 'tags', 'wallet'],
+  // Order is important. Needs to be compressed last or other transforms can't
+  // read the data
+  transforms: [authFilter, saveClaimsFilter, subscriptionsFilter, settingsFilter, walletFilter, compressor],
+  debounce: 10000,
+  storage: FilesystemStorage,
+};
+
+const persistOptions = Object.assign({}, v4PersistOptions, {
+  key: 'primary',
+  getStoredState: getStoredStateMigrateV4(v4PersistOptions),
+});
+
+const reducers = persistCombineReducers(persistOptions, {
   auth: authReducer,
   blacklist: blacklistReducer,
   claims: claimsReducer,
@@ -111,27 +132,9 @@ const composeEnhancers = compose;
 const store = createStore(
   enableBatching(reducers),
   {}, // initial state,
-  composeEnhancers(autoRehydrate(), applyMiddleware(...middleware))
+  composeEnhancers(applyMiddleware(...middleware))
 );
 window.store = store;
-
-const compressor = createCompressor();
-const authFilter = createFilter('auth', ['authToken']);
-const contentFilter = createFilter('content', ['positions']);
-const saveClaimsFilter = createFilter('claims', ['byId', 'claimsByUri']);
-const subscriptionsFilter = createFilter('subscriptions', ['enabledChannelNotifications', 'subscriptions']);
-const settingsFilter = createFilter('settings', ['clientSettings']);
-const tagsFilter = createFilter('tags', ['followedTags']);
-const walletFilter = createFilter('wallet', ['receiveAddress']);
-
-const persistOptions = {
-  whitelist: ['auth', 'claims', 'content', 'subscriptions', 'settings', 'tags', 'wallet'],
-  // Order is important. Needs to be compressed last or other transforms can't
-  // read the data
-  transforms: [authFilter, saveClaimsFilter, subscriptionsFilter, settingsFilter, walletFilter, compressor],
-  debounce: 10000,
-  storage: FilesystemStorage,
-};
 
 persistStore(store, persistOptions, err => {
   if (err) {
