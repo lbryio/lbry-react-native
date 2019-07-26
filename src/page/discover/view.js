@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { DEFAULT_FOLLOWED_TAGS, Lbry, normalizeURI, parseURI } from 'lbry-redux';
-import __, { formatTagTitle } from 'utils/helper';
+import { __, formatTagTitle } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import CategoryList from 'component/categoryList';

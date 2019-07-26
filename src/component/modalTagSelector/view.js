@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Tag from 'component/tag';
 import TagSearch from 'component/tagSearch';
 import modalTagSelectorStyle from 'styles/modalTagSelector';
-import __ from 'utils/helper';
+import { __ } from 'utils/helper';
 
 export default class ModalTagSelector extends React.PureComponent {
   handleAddTag = tag => {

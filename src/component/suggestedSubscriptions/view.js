@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, FlatList, SectionList, Text, View } from 'react-native';
 import { normalizeURI } from 'lbry-redux';
-import __, { navigateToUri } from 'utils/helper';
+import { __, navigateToUri } from 'utils/helper';
 import SubscribeButton from 'component/subscribeButton';
 import SuggestedSubscriptionItem from 'component/suggestedSubscriptionItem';
 import Colors from 'styles/colors';
