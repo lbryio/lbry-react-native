@@ -1,76 +1,70 @@
 import React from 'react';
 import { buildURI, normalizeURI } from 'lbry-redux';
-import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
 import Colors from 'styles/colors';
 import discoverStyle from 'styles/discover';
 import FileItem from 'component/fileItem';
+import SubscribeButton from 'component/subscribeButton';
 import subscriptionsStyle from 'styles/subscriptions';
+import Tag from 'component/tag';
 
 class SuggestedSubscriptionItem extends React.PureComponent {
   componentDidMount() {
-    const { fetching, categoryLink, fetchChannel, resolveUris, claims } = this.props;
-    if (!fetching && categoryLink && (!claims || claims.length)) {
-      fetchChannel(categoryLink);
+    const { claim, uri, resolveUri } = this.props;
+    if (!claim) {
+      resolveUri(uri);
     }
   }
 
-  uriForClaim = claim => {
-    const { name: claimName, claim_name: claimNameDownloaded, claim_id: claimId } = claim;
-    const uriParams = {};
-
-    // This is unfortunate
-    // https://github.com/lbryio/lbry/issues/1159
-    const name = claimName || claimNameDownloaded;
-    uriParams.contentName = name;
-    uriParams.claimId = claimId;
-    const uri = buildURI(uriParams);
-
-    return uri;
-  };
-
   render() {
-    const { categoryLink, fetching, obscureNsfw, claims, navigation } = this.props;
+    const { claim, isResolvingUri, navigation, thumbnail, title, uri } = this.props;
+    let tags;
+    if (claim && claim.value) {
+      tags = claim.value.tags;
+    }
 
-    if (!claims || !claims.length) {
+    if (isResolvingUri) {
       return (
-        <View style={subscriptionsStyle.busyContainer}>
+        <View style={subscriptionsStyle.itemLoadingContainer}>
           <ActivityIndicator size={'small'} color={Colors.LbryGreen} />
         </View>
       );
     }
 
-    if (claims && claims.length > 0) {
-      return (
-        <View style={subscriptionsStyle.suggestedContainer}>
-          <FileItem
-            style={subscriptionsStyle.compactMainFileItem}
-            mediaStyle={subscriptionsStyle.fileItemMedia}
-            uri={this.uriForClaim(claims[0])}
-            navigation={navigation}
+    return (
+      <View style={subscriptionsStyle.suggestedItem}>
+        <View style={subscriptionsStyle.suggestedItemThumbnailContainer}>
+          <Image
+            style={subscriptionsStyle.suggestedItemThumbnail}
+            resizeMode={'cover'}
+            source={thumbnail ? { uri: thumbnail } : require('../../assets/default_avatar.jpg')}
           />
-          {claims.length > 1 && (
-            <FlatList
-              style={subscriptionsStyle.compactItems}
-              horizontal={true}
-              renderItem={({ item }) => (
-                <FileItem
-                  style={subscriptionsStyle.compactFileItem}
-                  mediaStyle={subscriptionsStyle.compactFileItemMedia}
-                  key={item}
-                  uri={normalizeURI(item)}
-                  navigation={navigation}
-                  compactView={true}
-                />
-              )}
-              data={claims.slice(1, 4).map(claim => this.uriForClaim(claim))}
-              keyExtractor={(item, index) => item}
-            />
-          )}
         </View>
-      );
-    }
 
-    return null;
+        <View style={subscriptionsStyle.suggestedItemDetails}>
+          <View style={subscriptionsStyle.suggestedItemInfo}>
+            {title && (
+              <Text style={subscriptionsStyle.suggestedItemTitle} numberOfLines={1}>
+                {title}
+              </Text>
+            )}
+            <Text style={subscriptionsStyle.suggestedItemName} numberOfLines={1}>
+              {claim && claim.name}
+            </Text>
+            {tags && (
+              <View style={subscriptionsStyle.suggestedItemTagList}>
+                {tags &&
+                  tags
+                    .slice(0, 3)
+                    .map(tag => <Tag style={subscriptionsStyle.tag} key={tag} name={tag} navigation={navigation} />)}
+              </View>
+            )}
+          </View>
+        </View>
+
+        <SubscribeButton style={subscriptionsStyle.suggestedItemSubscribe} uri={normalizeURI(uri)} />
+      </View>
+    );
   }
 }
 

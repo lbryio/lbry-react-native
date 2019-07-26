@@ -22,7 +22,7 @@ import RNFS from 'react-native-fs';
 import Button from 'component/button';
 import ChannelSelector from 'component/channelSelector';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import FastImage from 'react-native-fast-image';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -384,7 +384,7 @@ class PublishPage extends React.PureComponent {
       },
       (error, res) => {
         if (!error) {
-          //console.log(res);
+          // console.log(res);
         }
       }
     );
@@ -439,7 +439,7 @@ class PublishPage extends React.PureComponent {
       newTags.push(tag);
       this.setState({ tags: newTags });
     } else {
-      notify({ message: `You already added the "${tag}" tag.` });
+      notify({ message: __(`You already added the "${tag}" tag.`) });
     }
   };
 
@@ -471,7 +471,7 @@ class PublishPage extends React.PureComponent {
       const mediaType = media.type.substring(0, 5);
       const tempId = this.getRandomFileId();
 
-      if ('video' === mediaType && media.id > -1) {
+      if (mediaType === 'video' && media.id > -1) {
         const uri = `file://${thumbnailPath}/${media.id}.png`;
         this.setState({ currentThumbnailUri: uri, updatingThumbnailUri: false });
 
@@ -479,9 +479,9 @@ class PublishPage extends React.PureComponent {
         if (!this.state.uploadedThumbnailUri) {
           this.setState({ uploadThumbnailStarted: true }, () => uploadThumbnail(this.getFilePathFromUri(uri), RNFS));
         }
-      } else if ('image' === mediaType || 'video' === mediaType) {
+      } else if (mediaType === 'image' || mediaType === 'video') {
         const create =
-          'image' === mediaType
+          mediaType === 'image'
             ? NativeModules.Gallery.createImageThumbnail
             : NativeModules.Gallery.createVideoThumbnail;
         create(tempId, media.filePath)
@@ -867,13 +867,7 @@ class PublishPage extends React.PureComponent {
                     <View style={publishStyle.cameraAction}>
                       <Feather style={publishStyle.cameraActionIcon} name="circle" size={72} color={Colors.White} />
                       {this.state.recordingVideo && (
-                        <Icon
-                          style={publishStyle.recordingIcon}
-                          name="circle"
-                          solid={true}
-                          size={44}
-                          color={Colors.Red}
-                        />
+                        <Icon style={publishStyle.recordingIcon} name="circle" solid size={44} color={Colors.Red} />
                       )}
                     </View>
                   </TouchableOpacity>

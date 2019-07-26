@@ -13,10 +13,6 @@ import NsfwOverlay from 'component/nsfwOverlay';
 import discoverStyle from 'styles/discover';
 
 class FileItem extends React.PureComponent {
-  constructor(props) {
-    super(props);
-  }
-
   componentWillMount() {
     this.resolve(this.props);
   }
@@ -64,8 +60,7 @@ class FileItem extends React.PureComponent {
     const isRewardContent = claim && rewardedContentClaimIds.includes(claim.claim_id);
     const signingChannel = claim ? claim.signing_channel : null;
     const channelName = signingChannel ? signingChannel.name : null;
-    const channelClaimId =
-      claim && claim.value && claim.value.publisherSignature && claim.value.publisherSignature.certificateId;
+    const channelClaimId = signingChannel ? signingChannel.claim_id : null;
     const fullChannelUri = channelClaimId ? `${channelName}#${channelClaimId}` : channelName;
     const height = claim ? claim.height : null;
 
@@ -87,13 +82,7 @@ class FileItem extends React.PureComponent {
           />
 
           {!compactView && fileInfo && fileInfo.completed && fileInfo.download_path && (
-            <Icon
-              style={discoverStyle.downloadedIcon}
-              solid={true}
-              color={Colors.NextLbryGreen}
-              name={'folder'}
-              size={16}
-            />
+            <Icon style={discoverStyle.downloadedIcon} solid color={Colors.NextLbryGreen} name={'folder'} size={16} />
           )}
           {!compactView && (!fileInfo || !fileInfo.completed || !fileInfo.download_path) && (
             <FilePrice uri={uri} style={discoverStyle.filePriceContainer} textStyle={discoverStyle.filePriceText} />

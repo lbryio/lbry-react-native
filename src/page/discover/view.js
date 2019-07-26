@@ -1,17 +1,41 @@
 import React from 'react';
 import NavigationActions from 'react-navigation';
-import { Alert, ActivityIndicator, Linking, NativeModules, SectionList, Text, View } from 'react-native';
-import { Lbry, normalizeURI, parseURI } from 'lbry-redux';
+import {
+  Alert,
+  ActivityIndicator,
+  Linking,
+  NativeModules,
+  SectionList,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { DEFAULT_FOLLOWED_TAGS, Lbry, normalizeURI, parseURI } from 'lbry-redux';
+import __, { formatTagTitle } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import CategoryList from 'component/categoryList';
-import Constants from 'constants';
+import ClaimList from 'component/claimList';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Colors from 'styles/colors';
 import discoverStyle from 'styles/discover';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import Link from 'component/link';
+import ModalTagSelector from 'component/modalTagSelector';
+import ModalPicker from 'component/modalPicker';
 import UriBar from 'component/uriBar';
+import _ from 'lodash';
 
 class DiscoverPage extends React.PureComponent {
+  state = {
+    tagCollection: [],
+    showModalTagSelector: false,
+    showSortPicker: false,
+    orderBy: Constants.DEFAULT_ORDER_BY,
+    currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[0],
+  };
+
   componentDidMount() {
     // Track the total time taken if this is the first launch
     AsyncStorage.getItem('firstLaunchTime').then(startTime => {
@@ -19,7 +43,7 @@ class DiscoverPage extends React.PureComponent {
         // We don't need this value anymore once we've retrieved it
         AsyncStorage.removeItem('firstLaunchTime');
 
-        // We know this is the first app launch because firstLaunchTime is set and it's a valid number
+        // We know this is the first app launch because firstLaunchTime is set and it"s a valid number
         const start = parseInt(startTime, 10);
         const now = moment().unix();
         const delta = now - start;
@@ -36,15 +60,34 @@ class DiscoverPage extends React.PureComponent {
       }
     });
 
-    const { fetchFeaturedUris, fetchRewardedContent, fetchSubscriptions, fileList } = this.props;
+    const { fetchRewardedContent, fetchSubscriptions, fileList, followedTags } = this.props;
 
-    fetchFeaturedUris();
+    this.buildTagCollection(followedTags);
     fetchRewardedContent();
     fetchSubscriptions();
     fileList();
 
     this.showRatingReminder();
   }
+
+  handleSortByItemSelected = item => {
+    let orderBy = [];
+    switch (item.name) {
+      case Constants.SORT_BY_HOT:
+        orderBy = Constants.DEFAULT_ORDER_BY;
+        break;
+
+      case Constants.SORT_BY_NEW:
+        orderBy = ['release_time'];
+        break;
+
+      case Constants.SORT_BY_TOP:
+        orderBy = ['effective_amount'];
+        break;
+    }
+
+    this.setState({ currentSortByItem: item, orderBy, showSortPicker: false });
+  };
 
   subscriptionForUri = (uri, channelName) => {
     const { allSubscriptions } = this.props;
@@ -62,6 +105,14 @@ class DiscoverPage extends React.PureComponent {
 
     return null;
   };
+
+  componentWillReceiveProps(nextProps) {
+    const { followedTags: prevFollowedTags } = this.props;
+    const { followedTags } = nextProps;
+    if (!_.isEqual(followedTags, prevFollowedTags)) {
+      this.buildTagCollection(followedTags);
+    }
+  }
 
   componentDidUpdate(prevProps, prevState) {
     const { unreadSubscriptions, enabledChannelNotifications } = this.props;
@@ -112,7 +163,7 @@ class DiscoverPage extends React.PureComponent {
     const { ratingReminderDisabled, ratingReminderLastShown, setClientSetting } = this.props;
 
     const now = moment().unix();
-    if ('true' !== ratingReminderDisabled && ratingReminderLastShown) {
+    if (ratingReminderDisabled !== 'true' && ratingReminderLastShown) {
       const lastShownParts = ratingReminderLastShown.split('|');
       if (lastShownParts.length === 2) {
         const lastShownTime = parseInt(lastShownParts[0], 10);
@@ -154,43 +205,104 @@ class DiscoverPage extends React.PureComponent {
     setClientSetting(Constants.SETTING_RATING_REMINDER_LAST_SHOWN, settingString);
   };
 
-  trimClaimIdFromCategory(category) {
-    return category.split('#')[0];
-  }
+  buildSections = () => {
+    return this.state.tagCollection.map(tags => ({
+      title: tags.length === 1 ? tags[0] : 'Trending',
+      data: [tags],
+    }));
+  };
+
+  buildTagCollection = followedTags => {
+    const tags = followedTags.map(tag => tag.name);
+
+    // each of the followed tags
+    const tagCollection = tags.map(tag => [tag]);
+    // everything
+    tagCollection.unshift(tags);
+
+    this.setState({ tagCollection });
+  };
+
+  handleTagPress = name => {
+    const { navigation } = this.props;
+    if (name.toLowerCase() !== 'trending') {
+      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: `tagPage`, params: { tag: name } });
+    } else {
+      // navigate to the trending page
+      navigation.navigate({ routeName: Constants.FULL_ROUTE_NAME_TRENDING });
+    }
+  };
 
   render() {
-    const { featuredUris, fetchingFeaturedUris, navigation } = this.props;
-    const hasContent = typeof featuredUris === 'object' && Object.keys(featuredUris).length,
-      failedToLoad = !fetchingFeaturedUris && !hasContent;
+    const { navigation } = this.props;
+    const { currentSortByItem, orderBy, showModalTagSelector, showSortPicker } = this.state;
 
     return (
       <View style={discoverStyle.container}>
-        <UriBar navigation={navigation} />
-        {!hasContent && fetchingFeaturedUris && (
-          <View style={discoverStyle.busyContainer}>
-            <ActivityIndicator size="large" color={Colors.LbryGreen} />
-            <Text style={discoverStyle.title}>Fetching content...</Text>
-          </View>
-        )}
-        {!!hasContent && (
-          <SectionList
-            style={discoverStyle.scrollContainer}
-            contentContainerStyle={discoverStyle.scrollPadding}
-            initialNumToRender={4}
-            maxToRenderPerBatch={4}
-            removeClippedSubviews={true}
-            renderItem={({ item, index, section }) => (
-              <CategoryList key={item} category={item} categoryMap={featuredUris} navigation={navigation} />
-            )}
-            renderSectionHeader={({ section: { title } }) => <Text style={discoverStyle.categoryName}>{title}</Text>}
-            sections={Object.keys(featuredUris).map(category => ({
-              title: this.trimClaimIdFromCategory(category),
-              data: [category],
-            }))}
-            keyExtractor={(item, index) => item}
+        <UriBar navigation={navigation} belowOverlay={showModalTagSelector} />
+        <SectionList
+          ListHeaderComponent={
+            <View style={discoverStyle.titleRow}>
+              <Text style={discoverStyle.pageTitle}>Explore</Text>
+              <View style={discoverStyle.rightTitleRow}>
+                <Link
+                  style={discoverStyle.customizeLink}
+                  text={'Customize'}
+                  onPress={() => this.setState({ showModalTagSelector: true })}
+                />
+                <TouchableOpacity
+                  style={discoverStyle.tagSortBy}
+                  onPress={() => this.setState({ showSortPicker: true })}
+                >
+                  <Text style={discoverStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
+                  <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          }
+          style={discoverStyle.scrollContainer}
+          contentContainerStyle={discoverStyle.scrollPadding}
+          initialNumToRender={4}
+          maxToRenderPerBatch={4}
+          removeClippedSubviews
+          renderItem={({ item, index, section }) => (
+            <ClaimList
+              key={item.join(',')}
+              orderBy={item.length > 1 ? Constants.DEFAULT_ORDER_BY : orderBy}
+              tags={item}
+              navigation={navigation}
+              orientation={Constants.ORIENTATION_HORIZONTAL}
+            />
+          )}
+          renderSectionHeader={({ section: { title } }) => (
+            <View style={discoverStyle.categoryTitleRow}>
+              <Text style={discoverStyle.categoryName} onPress={() => this.handleTagPress(title)}>
+                {formatTagTitle(title)}
+              </Text>
+              <TouchableOpacity onPress={() => this.handleTagPress(title)}>
+                <Icon name={'ellipsis-v'} size={16} />
+              </TouchableOpacity>
+            </View>
+          )}
+          sections={this.buildSections()}
+          keyExtractor={(item, index) => item}
+        />
+        {!showModalTagSelector && !showSortPicker && <FloatingWalletBalance navigation={navigation} />}
+        {showModalTagSelector && (
+          <ModalTagSelector
+            onOverlayPress={() => this.setState({ showModalTagSelector: false })}
+            onDonePress={() => this.setState({ showModalTagSelector: false })}
           />
         )}
-        <FloatingWalletBalance navigation={navigation} />
+        {showSortPicker && (
+          <ModalPicker
+            title={__('Sort content by')}
+            onOverlayPress={() => this.setState({ showSortPicker: false })}
+            onItemSelected={this.handleSortByItemSelected}
+            selectedItem={currentSortByItem}
+            items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
+          />
+        )}
       </View>
     );
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Tag from 'component/tag';
 import tagStyle from 'styles/tag';
 import Colors from 'styles/colors';
@@ -47,9 +47,17 @@ export default class TagSearch extends React.PureComponent {
     const suggestedTagsSet = new Set(unfollowedTags.map(tag => tag.name));
     const suggestedTags = Array.from(suggestedTagsSet).filter(tagNotSelected);
     if (tag && tag.trim().length > 0) {
-      results.push(tag.toLowerCase());
+      const lcTag = tag.toLowerCase();
+      if (!results.includes(lcTag)) {
+        results.push(lcTag);
+      }
       const doesTagMatch = name => name.toLowerCase().includes(tag.toLowerCase());
-      results = results.concat(suggestedTags.filter(doesTagMatch).slice(0, 5));
+      results = results.concat(
+        suggestedTags
+          .filter(doesTagMatch)
+          .filter(suggested => lcTag !== suggested.toLowerCase())
+          .slice(0, 5)
+      );
     } else {
       results = results.concat(suggestedTags.slice(0, 5));
     }
@@ -70,11 +78,13 @@ export default class TagSearch extends React.PureComponent {
           numberOfLines={1}
           onChangeText={this.handleTagChange}
         />
-        <View style={tagStyle.tagResultsList}>
-          {this.state.tagResults.map(tag => (
-            <Tag key={tag} name={tag} style={tagStyle.tag} type="add" onAddPress={name => this.onAddTagPress(name)} />
-          ))}
-        </View>
+        <KeyboardAvoidingView behavior={'position'}>
+          <View style={tagStyle.tagResultsList}>
+            {this.state.tagResults.map(tag => (
+              <Tag key={tag} name={tag} style={tagStyle.tag} type="add" onAddPress={name => this.onAddTagPress(name)} />
+            ))}
+          </View>
+        </KeyboardAvoidingView>
       </View>
     );
   }

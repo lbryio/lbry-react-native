@@ -11,7 +11,7 @@
         "base-64": "^0.1.0",
         "@expo/vector-icons": "^8.1.0",
         "gfycat-style-urls": "^1.0.3",
-        "lbry-redux": "lbryio/lbry-redux",
+        "lbry-redux": "lbryio/lbry-redux#multi-claim-search",
         "lbryinc": "lbryio/lbryinc",
         "lodash": ">=4.17.11",
         "merge": ">=1.2.1",
@@ -41,10 +41,11 @@
         "redux-persist-transform-compress": "^4.2.0",
         "redux-persist-transform-filter": "0.0.18",
         "redux-thunk": "^2.3.0",
-        "rn-fetch-blob": "^0.10.15"
+        "rn-fetch-blob": "0.10.15"
     },
     "devDependencies": {
         "@babel/core": "^7.5.4",
+        "babel-eslint": "10.0.2",
         "@babel/plugin-proposal-object-rest-spread": "^7.5.4",
         "babel-preset-env": "^1.6.1",
         "babel-preset-stage-2": "^6.18.0",
@@ -59,6 +60,7 @@
         "eslint-plugin-react": "^7.12.4",
         "eslint-plugin-standard": "^4.0.0",
         "flow-babel-webpack-plugin": "^1.1.1",
+        "husky": "^0.14.3",
         "lint-staged": "^7.0.4",
         "metro-react-native-babel-preset": "^0.55.0",
         "prettier": "^1.11.1"

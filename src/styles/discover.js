@@ -27,8 +27,28 @@ const discoverStyle = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    paddingTop: 12,
-    marginTop: 60,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    marginTop: 76,
+    marginBottom: 8,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginLeft: 16,
+    marginRight: 16,
+  },
+  rightTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  pageTitle: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 24,
+  },
+  customizeLink: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+    marginRight: 48,
   },
   trendingContainer: {
     flex: 1,
@@ -47,12 +67,18 @@ const discoverStyle = StyleSheet.create({
     textAlign: 'center',
     marginLeft: 10,
   },
+  categoryTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginLeft: 16,
+    marginRight: 16,
+    marginTop: 6,
+    marginBottom: 6,
+  },
   categoryName: {
     fontFamily: 'Inter-UI-SemiBold',
     fontSize: 18,
-    marginLeft: 24,
-    marginTop: 12,
-    marginBottom: 6,
     color: Colors.Black,
   },
   fileItem: {
@@ -163,11 +189,48 @@ const discoverStyle = StyleSheet.create({
   scrollPadding: {
     paddingBottom: 24,
   },
+  listLoading: {
+    flex: 1,
+    height: 64,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   horizontalScrollContainer: {
     marginBottom: 12,
   },
   horizontalScrollPadding: {
     paddingLeft: 20,
+  },
+  verticalClaimList: {
+    flex: 1,
+  },
+  tagPageTitle: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 24,
+  },
+  tagPageClaimList: {
+    flex: 1,
+  },
+  tagTitleRow: {
+    marginTop: 76,
+    marginLeft: 16,
+    marginRight: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  tagSortBy: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 4,
+  },
+  tagSortText: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+    marginRight: 4,
+  },
+  tagSortIcon: {
+    marginTop: -6,
   },
 });
 

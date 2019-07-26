@@ -136,19 +136,19 @@ class UriBar extends React.PureComponent {
   }
 
   render() {
-    const { navigation, suggestions, query, value } = this.props;
+    const { navigation, suggestions, query, value, belowOverlay } = this.props;
     if (this.state.currentValue === null) {
       this.setState({ currentValue: value });
     }
 
-    let style = [uriBarStyle.overlay];
+    let style = [uriBarStyle.overlay, belowOverlay ? null : uriBarStyle.overlayElevated];
 
     // TODO: Add optional setting to enable URI / search bar suggestions
     /*if (this.state.focused) { style.push(uriBarStyle.inFocus); }*/
 
     return (
       <View style={style}>
-        <View style={uriBarStyle.uriContainer}>
+        <View style={[uriBarStyle.uriContainer, belowOverlay ? null : uriBarStyle.containerElevated]}>
           <NavigationButton
             name="bars"
             size={24}

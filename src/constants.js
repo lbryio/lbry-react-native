@@ -1,3 +1,7 @@
+const SORT_BY_NEW = 'new';
+const SORT_BY_HOT = 'hot';
+const SORT_BY_TOP = 'top';
+
 const Constants = {
   FIRST_RUN_PAGE_WELCOME: 'welcome',
   FIRST_RUN_PAGE_EMAIL_COLLECT: 'email-collect',
@@ -43,6 +47,9 @@ const Constants = {
   ACTION_REACT_NAVIGATION_NAVIGATE: 'Navigation/NAVIGATE',
   ACTION_REACT_NAVIGATION_REPLACE: 'Navigation/REPLACE',
 
+  ORIENTATION_HORIZONTAL: 'horizontal',
+  ORIENTATION_VERTICAL: 'vertical',
+
   PAGE_REWARDS: 'rewards',
   PAGE_SETTINGS: 'settings',
   PAGE_TRENDING: 'trending',
@@ -59,6 +66,7 @@ const Constants = {
   DRAWER_ROUTE_ABOUT: 'About',
   DRAWER_ROUTE_SEARCH: 'Search',
   DRAWER_ROUTE_TRANSACTION_HISTORY: 'TransactionHistory',
+  DRAWER_ROUTE_TAG: 'Tag',
 
   FULL_ROUTE_NAME_DISCOVER: 'DiscoverStack',
   FULL_ROUTE_NAME_TRENDING: 'TrendingStack',
@@ -76,6 +84,24 @@ const Constants = {
 
   PLAY_STORE_URL: 'https://play.google.com/store/apps/details?id=io.lbry.browser',
   RATING_REMINDER_INTERVAL: 604800, // 7 days (7 * 24 * 3600s)
+
+  SORT_BY_HOT,
+  SORT_BY_NEW,
+  SORT_BY_TOP,
+
+  CLAIM_SEARCH_SORT_BY_ITEMS: [
+    { icon: 'fire-alt', name: SORT_BY_HOT, label: 'Hot content' },
+    { icon: 'certificate', name: SORT_BY_NEW, label: 'New content' },
+    { icon: 'chart-line', name: SORT_BY_TOP, label: 'Top content' },
+  ],
+
+  DEFAULT_ORDER_BY: ['trending_global', 'trending_mixed'],
+
+  DEFAULT_PAGE_SIZE: 10,
+
+  ALL_PLACEHOLDER: '_all',
+
+  TRUE_STRING: 'true',
 };
 
 export default Constants;

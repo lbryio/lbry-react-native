@@ -7,6 +7,7 @@ import FilePage from 'page/file';
 import FirstRunScreen from 'page/firstRun';
 import PublishPage from 'page/publish';
 import RewardsPage from 'page/rewards';
+import TagPage from 'page/tag';
 import TrendingPage from 'page/trending';
 import SearchPage from 'page/search';
 import SettingsPage from 'page/settings';
@@ -40,7 +41,7 @@ import { decode as atob } from 'base-64';
 import { dispatchNavigateBack, dispatchNavigateToUri } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import NavigationButton from 'component/navigationButton';
 import discoverStyle from 'styles/discover';
@@ -72,6 +73,12 @@ const discoverStack = createStackNavigator(
         header: null,
       }),
     },
+    Tag: {
+      screen: TagPage,
+      navigationOptions: ({ navigation }) => ({
+        header: null,
+      }),
+    },
     Search: {
       screen: SearchPage,
       navigationOptions: ({ navigation }) => ({
@@ -87,9 +94,9 @@ const discoverStack = createStackNavigator(
 
 discoverStack.navigationOptions = ({ navigation }) => {
   let drawerLockMode = 'unlocked';
-  /*if (navigation.state.index > 0) {
+  /* if (navigation.state.index > 0) {
     drawerLockMode = 'locked-closed';
-  }*/
+  } */
 
   return {
     drawerLockMode,
@@ -139,7 +146,7 @@ const drawer = createDrawerNavigator(
       screen: SubscriptionsPage,
       navigationOptions: {
         title: 'Subscriptions',
-        drawerIcon: ({ tintColor }) => <Icon name="heart" solid={true} size={20} style={{ color: tintColor }} />,
+        drawerIcon: ({ tintColor }) => <Icon name="heart" solid size={20} style={{ color: tintColor }} />,
       },
     },
     WalletStack: {
@@ -279,8 +286,8 @@ class AppWithNavigationState extends React.Component {
   checkEmailVerification = () => {
     const { dispatch } = this.props;
     AsyncStorage.getItem(Constants.KEY_EMAIL_VERIFY_PENDING).then(pending => {
-      this.setState({ verifyPending: 'true' === pending });
-      if ('true' === pending) {
+      this.setState({ verifyPending: pending === Constants.TRUE_STRING });
+      if (pending === Constants.TRUE_STRING) {
         dispatch(doUserCheckEmailVerified());
       }
     });
@@ -322,7 +329,7 @@ class AppWithNavigationState extends React.Component {
         currentDisplayType = 'toast';
       }
 
-      if ('toast' === currentDisplayType) {
+      if (currentDisplayType === 'toast') {
         ToastAndroid.show(message, ToastAndroid.LONG);
       }
 
@@ -331,7 +338,7 @@ class AppWithNavigationState extends React.Component {
 
     if (user && !emailVerifyPending && !this.state.emailVerifyDone && (emailToVerify || emailVerifyErrorMessage)) {
       AsyncStorage.getItem(Constants.KEY_SHOULD_VERIFY_EMAIL).then(shouldVerify => {
-        if ('true' === shouldVerify) {
+        if (shouldVerify === 'true') {
           this.setState({ emailVerifyDone: true });
           const message = emailVerifyErrorMessage
             ? String(emailVerifyErrorMessage)

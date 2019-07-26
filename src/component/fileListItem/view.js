@@ -41,6 +41,11 @@ class FileListItem extends React.PureComponent {
     }
   }
 
+  defaultOnPress = () => {
+    const { navigation, uri } = this.props;
+    navigateToUri(navigation, uri);
+  };
+
   render() {
     const {
       claim,
@@ -60,13 +65,13 @@ class FileListItem extends React.PureComponent {
     const obscureNsfw = this.props.obscureNsfw && metadata && metadata.nsfw;
     const isResolving = !fileInfo && isResolvingUri;
 
-    let name, channel, height, channelClaimId, fullChannelUri;
+    let name, channel, height, channelClaimId, fullChannelUri, signingChannel;
     if (claim) {
       name = claim.name;
       signingChannel = claim.signing_channel;
       channel = signingChannel ? signingChannel.name : null;
       height = claim.height;
-      channelClaimId = claim.value && claim.value.publisherSignature && claim.value.publisherSignature.certificateId;
+      channelClaimId = signingChannel ? signingChannel.claim_id : null;
       fullChannelUri = channelClaimId ? `${channel}#${channelClaimId}` : channel;
     }
 
@@ -76,7 +81,7 @@ class FileListItem extends React.PureComponent {
 
     return (
       <View style={style}>
-        <TouchableOpacity style={style} onPress={onPress}>
+        <TouchableOpacity style={style} onPress={onPress || this.defaultOnPress}>
           <FileItemMedia
             style={fileListStyle.thumbnail}
             blurRadius={obscureNsfw ? 15 : 0}
@@ -85,13 +90,7 @@ class FileListItem extends React.PureComponent {
             thumbnail={thumbnail}
           />
           {fileInfo && fileInfo.completed && fileInfo.download_path && (
-            <Icon
-              style={fileListStyle.downloadedIcon}
-              solid={true}
-              color={Colors.NextLbryGreen}
-              name={'folder'}
-              size={16}
-            />
+            <Icon style={fileListStyle.downloadedIcon} solid color={Colors.NextLbryGreen} name={'folder'} size={16} />
           )}
           <View style={fileListStyle.detailsContainer}>
             {featuredResult && (

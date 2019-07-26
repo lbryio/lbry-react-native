@@ -16,6 +16,8 @@ const uriBarStyle = StyleSheet.create({
     shadowOffset: {
       height: StyleSheet.hairlineWidth,
     },
+  },
+  containerElevated: {
     elevation: 4,
   },
   uriText: {
@@ -34,6 +36,8 @@ const uriBarStyle = StyleSheet.create({
     top: 0,
     width: '100%',
     zIndex: 200,
+  },
+  overlayElevated: {
     elevation: 16,
   },
   inFocus: {
