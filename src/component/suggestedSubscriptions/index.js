@@ -6,8 +6,7 @@ import SuggestedSubscriptions from './view';
 const select = state => ({
   followedTags: selectFollowedTags(state),
   suggested: selectSuggestedChannels(state),
-  loading: selectIsFetchingSuggested(state),
-  claimSearchLoading: selectFetchingClaimSearch(state),
+  loading: selectIsFetchingSuggested(state) || selectFetchingClaimSearch(state),
   claimSearchUris: selectLastClaimSearchUris(state),
 });
 

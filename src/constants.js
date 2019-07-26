@@ -1,3 +1,7 @@
+const SORT_BY_NEW = 'new';
+const SORT_BY_HOT = 'hot';
+const SORT_BY_TOP = 'top';
+
 const Constants = {
   FIRST_RUN_PAGE_WELCOME: 'welcome',
   FIRST_RUN_PAGE_EMAIL_COLLECT: 'email-collect',
@@ -81,13 +85,23 @@ const Constants = {
   PLAY_STORE_URL: 'https://play.google.com/store/apps/details?id=io.lbry.browser',
   RATING_REMINDER_INTERVAL: 604800, // 7 days (7 * 24 * 3600s)
 
-  SORT_BY_ITEMS: [
-    { icon: 'fire-alt', name: 'hot', label: 'Hot content' },
-    { icon: 'certificate', name: 'new', label: 'New content' },
-    { icon: 'chart-line', name: 'top', label: 'Top content' },
+  SORT_BY_HOT,
+  SORT_BY_NEW,
+  SORT_BY_TOP,
+
+  CLAIM_SEARCH_SORT_BY_ITEMS: [
+    { icon: 'fire-alt', name: SORT_BY_HOT, label: 'Hot content' },
+    { icon: 'certificate', name: SORT_BY_NEW, label: 'New content' },
+    { icon: 'chart-line', name: SORT_BY_TOP, label: 'Top content' },
   ],
 
   DEFAULT_ORDER_BY: ['trending_global', 'trending_mixed'],
+
+  DEFAULT_PAGE_SIZE: 10,
+
+  ALL_PLACEHOLDER: '_all',
+
+  TRUE_STRING: 'true',
 };
 
 export default Constants;

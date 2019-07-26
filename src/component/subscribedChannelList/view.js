@@ -3,6 +3,7 @@ import { Text, FlatList, View } from 'react-native';
 import { normalizeURI } from 'lbry-redux';
 import ChannelIconItem from 'component/channelIconItem';
 import Colors from 'styles/colors';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import subscriptionsStyle from 'styles/subscriptions';
 
 export default class SubscribedChannelList extends React.PureComponent {
@@ -21,7 +22,7 @@ export default class SubscribedChannelList extends React.PureComponent {
           renderItem={({ item }) => (
             <ChannelIconItem
               key={item}
-              isPlaceholder={item.toLowerCase() === '_all'}
+              isPlaceholder={item.toLowerCase() === Constants.ALL_PLACEHOLDER}
               uri={normalizeURI(item)}
               onPress={() => onChannelSelected(item)}
             />

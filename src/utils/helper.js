@@ -1,8 +1,7 @@
 import { NavigationActions, StackActions } from 'react-navigation';
 import { buildURI, isURIValid } from 'lbry-redux';
 import { doPopDrawerStack, doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
-import { DrawerRoutes } from 'constants';
-import Constants from 'constants';
+import Constants, { DrawerRoutes } from 'constants'; // eslint-disable-line node/no-deprecated-api
 
 function getRouteForSpecialUri(uri) {
   let targetRoute;
@@ -35,7 +34,8 @@ export function dispatchNavigateToUri(dispatch, nav, uri, isNavigatingBack) {
     return;
   }
 
-  let uriVars = {};
+  let uriVars = {},
+    uriVarsStr;
   if (uri.indexOf('?') > -1) {
     uriVarsStr = uri.substring(uri.indexOf('?') + 1);
     uri = uri.substring(0, uri.indexOf('?'));
@@ -49,10 +49,10 @@ export function dispatchNavigateToUri(dispatch, nav, uri, isNavigatingBack) {
     dispatch(doSetPlayerVisible(true));
   }
 
-  if (nav && nav.routes && nav.routes.length > 0 && 'Main' === nav.routes[0].routeName) {
+  if (nav && nav.routes && nav.routes.length > 0 && nav.routes[0].routeName === 'Main') {
     const mainRoute = nav.routes[0];
     const discoverRoute = mainRoute.routes[0];
-    if (discoverRoute.index > 0 && 'File' === discoverRoute.routes[discoverRoute.index].routeName) {
+    if (discoverRoute.index > 0 && discoverRoute.routes[discoverRoute.index].routeName === 'File') {
       const fileRoute = discoverRoute.routes[discoverRoute.index];
       // Currently on a file page, so we can ignore (if the URI is the same) or replace (different URIs)
       if (uri !== fileRoute.params.uri) {
@@ -119,7 +119,8 @@ export function navigateToUri(navigation, uri, additionalParams, isNavigatingBac
     return;
   }
 
-  let uriVars = {};
+  let uriVars = {},
+    uriVarsStr;
   if (uri.indexOf('?') > -1) {
     uriVarsStr = uri.substring(uri.indexOf('?') + 1);
     uri = uri.substring(0, uri.indexOf('?'));
@@ -128,7 +129,7 @@ export function navigateToUri(navigation, uri, additionalParams, isNavigatingBac
 
   const { store } = window;
   const params = Object.assign({ uri, uriVars }, additionalParams);
-  if ('File' === navigation.state.routeName) {
+  if (navigation.state.routeName === 'File') {
     const stackAction = StackActions.replace({ routeName: 'File', newKey: uri, params });
     navigation.dispatch(stackAction);
     if (store && store.dispatch && !isNavigatingBack) {
@@ -188,4 +189,9 @@ export function formatTagTitle(title) {
     return null;
   }
   return title.charAt(0).toUpperCase() + title.substring(1);
+}
+
+// i18n placeholder until we find a good react-native i18n module
+export function __(str) {
+  return str;
 }

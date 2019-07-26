@@ -286,8 +286,8 @@ class AppWithNavigationState extends React.Component {
   checkEmailVerification = () => {
     const { dispatch } = this.props;
     AsyncStorage.getItem(Constants.KEY_EMAIL_VERIFY_PENDING).then(pending => {
-      this.setState({ verifyPending: pending === 'true' });
-      if (pending === 'true') {
+      this.setState({ verifyPending: pending === Constants.TRUE_STRING });
+      if (pending === Constants.TRUE_STRING) {
         dispatch(doUserCheckEmailVerified());
       }
     });

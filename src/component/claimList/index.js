@@ -8,15 +8,13 @@ import {
   selectFetchingClaimSearch,
   selectLastClaimSearchUris,
 } from 'lbry-redux';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import ClaimList from './view';
 
-const defaultOrderBy = ['trending_global', 'trending_mixed'];
-
 const select = (state, props) => {
-  const tags = props.tags ? props.tags.join(',') : '';
   return {
-    loading: makeSelectFetchingClaimSearchForTags(tags)(state),
-    uris: makeSelectClaimSearchUrisForTags(tags)(state),
+    loading: makeSelectFetchingClaimSearchForTags(props.tags)(state),
+    uris: makeSelectClaimSearchUrisForTags(props.tags)(state),
     // for subscriptions
     claimSearchLoading: selectFetchingClaimSearch(state),
     claimSearchUris: selectLastClaimSearchUris(state),
@@ -24,9 +22,16 @@ const select = (state, props) => {
 };
 
 const perform = dispatch => ({
-  claimSearch: options => dispatch(doClaimSearch(10, options)),
-  searchByTags: (tags, orderBy = defaultOrderBy, page = 1) =>
-    dispatch(doClaimSearchByTags(tags, 10, { no_totals: true, order_by: orderBy, page, not_tags: MATURE_TAGS })),
+  claimSearch: options => dispatch(doClaimSearch(Constants.DEFAULT_PAGE_SIZE, options)),
+  searchByTags: (tags, orderBy = Constants.DEFAULT_ORDER_BY, page = 1) =>
+    dispatch(
+      doClaimSearchByTags(tags, Constants.DEFAULT_PAGE_SIZE, {
+        no_totals: true,
+        order_by: orderBy,
+        page,
+        not_tags: MATURE_TAGS,
+      })
+    ),
 });
 
 export default connect(

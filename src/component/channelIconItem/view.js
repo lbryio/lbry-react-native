@@ -36,11 +36,7 @@ export default class ChannelIconItem extends React.PureComponent {
             <Image
               style={channelIconStyle.thumbnail}
               resizeMode={'cover'}
-              source={
-                thumbnail && thumbnail.trim().length > 0
-                  ? { uri: thumbnail }
-                  : require('../../assets/default_avatar.jpg')
-              }
+              source={thumbnail ? { uri: thumbnail } : require('../../assets/default_avatar.jpg')}
             />
           )}
         </View>

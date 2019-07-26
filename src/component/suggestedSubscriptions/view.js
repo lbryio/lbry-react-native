@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, FlatList, SectionList, Text, View } from 'react-native';
 import { normalizeURI } from 'lbry-redux';
-import { navigateToUri } from 'utils/helper';
+import __, { navigateToUri } from 'utils/helper';
 import SubscribeButton from 'component/subscribeButton';
 import SuggestedSubscriptionItem from 'component/suggestedSubscriptionItem';
 import Colors from 'styles/colors';
@@ -27,20 +27,20 @@ class SuggestedSubscriptions extends React.PureComponent {
     const suggestedUris = suggested ? suggested.map(suggested => suggested.uri) : [];
     return [
       {
-        title: 'You might like',
+        title: __('You might like'),
         data: suggestedUris,
       },
       {
-        title: 'Tags you follow',
+        title: __('Tags you follow'),
         data: claimSearchUris ? claimSearchUris.filter(uri => !suggestedUris.includes(uri)) : [],
       },
     ];
   };
 
   render() {
-    const { suggested, loading, claimSearchLoading, navigation } = this.props;
+    const { suggested, loading, navigation } = this.props;
 
-    if (loading || claimSearchLoading) {
+    if (loading) {
       return (
         <View style={subscriptionsStyle.centered}>
           <ActivityIndicator size="large" color={Colors.LbryGreen} />

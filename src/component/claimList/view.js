@@ -41,8 +41,7 @@ class ClaimList extends React.PureComponent {
       if (channelIds) {
         this.setState({ subscriptionsView: true });
         options.channel_ids = channelIds;
-      }
-      if (trendingForAll) {
+      } else if (trendingForAll) {
         this.setState({ trendingForAllView: true });
       }
 

@@ -37,9 +37,7 @@ class SuggestedSubscriptionItem extends React.PureComponent {
           <Image
             style={subscriptionsStyle.suggestedItemThumbnail}
             resizeMode={'cover'}
-            source={
-              thumbnail && thumbnail.trim().length > 0 ? { uri: thumbnail } : require('../../assets/default_avatar.jpg')
-            }
+            source={thumbnail ? { uri: thumbnail } : require('../../assets/default_avatar.jpg')}
           />
         </View>
 

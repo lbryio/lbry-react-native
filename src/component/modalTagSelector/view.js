@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Tag from 'component/tag';
 import TagSearch from 'component/tagSearch';
 import modalTagSelectorStyle from 'styles/modalTagSelector';
+import __ from 'utils/helper';
 
 export default class ModalTagSelector extends React.PureComponent {
   handleAddTag = tag => {
@@ -16,8 +17,8 @@ export default class ModalTagSelector extends React.PureComponent {
     }
 
     const { followedTags, doToast } = this.props;
-    if (followedTags.map(followedTag => followedTag.name.toLowerCase()).includes(tag.toLowerCase())) {
-      doToast({ message: `You already added the "${tag}" tag.` });
+    if (followedTags.map(followedTag => followedTag.name).includes(tag.toLowerCase())) {
+      doToast({ message: __(`You already added the "${tag}" tag.`) });
       return;
     }
 

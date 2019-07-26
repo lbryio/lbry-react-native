@@ -428,7 +428,7 @@ class MediaPlayer extends React.PureComponent {
             bufferForPlaybackMs: 5000,
             bufferForPlaybackAfterRebufferMs: 5000,
           }}
-          ref={(ref: Video) => {
+          ref={ref => {
             this.video = ref;
           }}
           resizeMode={this.state.resizeMode}
@@ -445,7 +445,7 @@ class MediaPlayer extends React.PureComponent {
           minLoadRetryCount={999}
         />
 
-        {this.state.firstPlay && thumbnail && thumbnail.trim().length > 0 && (
+        {this.state.firstPlay && thumbnail && (
           <FastImage
             source={{ uri: thumbnail }}
             resizeMode={FastImage.resizeMode.cover}

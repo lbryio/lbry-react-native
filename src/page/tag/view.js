@@ -20,7 +20,7 @@ class TagPage extends React.PureComponent {
     tag: null,
     showSortPicker: false,
     orderBy: Constants.DEFAULT_ORDER_BY,
-    currentSortByItem: Constants.SORT_BY_ITEMS[0],
+    currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[0],
   };
 
   didFocusListener;
@@ -58,15 +58,15 @@ class TagPage extends React.PureComponent {
   handleSortByItemSelected = item => {
     let orderBy = [];
     switch (item.name) {
-      case 'hot':
+      case Constants.SORT_BY_HOT:
         orderBy = Constants.DEFAULT_ORDER_BY;
         break;
 
-      case 'new':
+      case Constants.SORT_BY_NEW:
         orderBy = ['release_time'];
         break;
 
-      case 'top':
+      case Constants.SORT_BY_TOP:
         orderBy = ['effective_amount'];
         break;
     }
@@ -100,11 +100,11 @@ class TagPage extends React.PureComponent {
         {!this.state.showSortPicker && <FloatingWalletBalance navigation={navigation} />}
         {this.state.showSortPicker && (
           <ModalPicker
-            title={'Sort content by'}
+            title={__('Sort content by')}
             onOverlayPress={() => this.setState({ showSortPicker: false })}
             onItemSelected={this.handleSortByItemSelected}
             selectedItem={this.state.currentSortByItem}
-            items={Constants.SORT_BY_ITEMS}
+            items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
           />
         )}
       </View>

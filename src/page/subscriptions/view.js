@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { buildURI, parseURI } from 'lbry-redux';
-import { uriFromFileInfo } from 'utils/helper';
+import __, { uriFromFileInfo } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import Button from 'component/button';
@@ -35,7 +35,7 @@ class SubscriptionsPage extends React.PureComponent {
     showSortPicker: false,
     orderBy: ['release_time'],
     filteredChannels: [],
-    currentSortByItem: Constants.SORT_BY_ITEMS[1], // should always default to sorting subscriptions by new
+    currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[1], // should always default to sorting subscriptions by new
   };
 
   didFocusListener;
@@ -82,15 +82,15 @@ class SubscriptionsPage extends React.PureComponent {
   handleSortByItemSelected = item => {
     let orderBy = [];
     switch (item.name) {
-      case 'hot':
+      case Constants.SORT_BY_HOT:
         orderBy = Constants.DEFAULT_ORDER_BY;
         break;
 
-      case 'new':
+      case Constants.SORT_BY_NEW:
         orderBy = ['release_time'];
         break;
 
-      case 'top':
+      case Constants.SORT_BY_TOP:
         orderBy = ['effective_amount'];
         break;
     }
@@ -101,13 +101,16 @@ class SubscriptionsPage extends React.PureComponent {
   handleChannelSelected = channelUri => {
     const { subscribedChannels } = this.props;
     this.setState({
-      filteredChannels: channelUri === '_all' ? [] : subscribedChannels.filter(channel => channel.uri === channelUri),
+      filteredChannels:
+        channelUri === Constants.ALL_PLACEHOLDER
+          ? []
+          : subscribedChannels.filter(channel => channel.uri === channelUri),
     });
   };
 
   prependSubscribedChannelsWithAll = subscribedChannels => {
     const channelUris = subscribedChannels.map(channel => channel.uri);
-    return ['_all'].concat(channelUris);
+    return [Constants.ALL_PLACEHOLDER].concat(channelUris);
   };
 
   render() {
@@ -217,11 +220,11 @@ class SubscriptionsPage extends React.PureComponent {
         {!this.state.showSortPicker && <FloatingWalletBalance navigation={navigation} />}
         {this.state.showSortPicker && (
           <ModalPicker
-            title={'Sort content by'}
+            title={__('Sort content by')}
             onOverlayPress={() => this.setState({ showSortPicker: false })}
             onItemSelected={this.handleSortByItemSelected}
             selectedItem={this.state.currentSortByItem}
-            items={Constants.SORT_BY_ITEMS}
+            items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
           />
         )}
       </View>
