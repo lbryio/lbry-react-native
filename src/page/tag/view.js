@@ -19,8 +19,11 @@ class TagPage extends React.PureComponent {
   state = {
     tag: null,
     showSortPicker: false,
+    showTimePicker: false,
     orderBy: Constants.DEFAULT_ORDER_BY,
+    time: Constants.TIME_WEEK,
     currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[0],
+    currentTimeItem: Constants.CLAIM_SEARCH_TIME_ITEMS[1],
   };
 
   didFocusListener;
@@ -67,24 +70,34 @@ class TagPage extends React.PureComponent {
         break;
 
       case Constants.SORT_BY_TOP:
-        orderBy = ['effective_amount'];
+        orderBy = [Constants.ORDER_BY_EFFECTIVE_AMOUNT];
         break;
     }
 
     this.setState({ currentSortByItem: item, orderBy, showSortPicker: false });
   };
 
+  handleTimeItemSelected = item => {
+    this.setState({ time: item.name });
+  };
+
   render() {
     const { navigation } = this.props;
-    const { tag, currentSortByItem } = this.state;
+    const { tag, currentSortByItem, currentTimeItem, showSortPicker, showTimePicker } = this.state;
 
     return (
       <View style={discoverStyle.container}>
-        <UriBar navigation={navigation} belowOverlay={this.state.showSortPicker} />
+        <UriBar navigation={navigation} belowOverlay={showSortPicker || showTimePicker} />
         <ClaimList
           ListHeaderComponent={
             <View style={discoverStyle.tagTitleRow}>
               <Text style={discoverStyle.tagPageTitle}>{formatTagTitle(tag)}</Text>
+              {Constants.SORT_BY_TOP === currentSortByItem.name && (
+                <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
+                  <Text style={discoverStyle.tagSortText}>{currentTimeItem.label}</Text>
+                  <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+                </TouchableOpacity>
+              )}
               <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
                 <Text style={discoverStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
                 <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
@@ -93,18 +106,28 @@ class TagPage extends React.PureComponent {
           }
           style={discoverStyle.tagPageClaimList}
           orderBy={this.state.orderBy}
+          time={this.state.time}
           tags={[tag]}
           navigation={navigation}
           orientation={Constants.ORIENTATION_VERTICAL}
         />
-        {!this.state.showSortPicker && <FloatingWalletBalance navigation={navigation} />}
-        {this.state.showSortPicker && (
+        {!showSortPicker && !showTimePicker && <FloatingWalletBalance navigation={navigation} />}
+        {showSortPicker && (
           <ModalPicker
             title={__('Sort content by')}
             onOverlayPress={() => this.setState({ showSortPicker: false })}
             onItemSelected={this.handleSortByItemSelected}
             selectedItem={this.state.currentSortByItem}
             items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
+          />
+        )}
+        {showTimePicker && (
+          <ModalPicker
+            title={__('Content from')}
+            onOverlayPress={() => this.setState({ showTimePicker: false })}
+            onItemSelected={this.handleTimeItemSelected}
+            selectedItem={this.state.currentTimeItem}
+            items={Constants.CLAIM_SEARCH_TIME_ITEMS}
           />
         )}
       </View>

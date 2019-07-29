@@ -23,14 +23,22 @@ const select = (state, props) => {
 
 const perform = dispatch => ({
   claimSearch: options => dispatch(doClaimSearch(Constants.DEFAULT_PAGE_SIZE, options)),
-  searchByTags: (tags, orderBy = Constants.DEFAULT_ORDER_BY, page = 1) =>
+  searchByTags: (tags, orderBy = Constants.DEFAULT_ORDER_BY, page = 1, additionalOptions = {}) =>
     dispatch(
-      doClaimSearchByTags(tags, Constants.DEFAULT_PAGE_SIZE, {
-        no_totals: true,
-        order_by: orderBy,
-        page,
-        not_tags: MATURE_TAGS,
-      })
+      doClaimSearchByTags(
+        tags,
+        Constants.DEFAULT_PAGE_SIZE,
+        Object.assign(
+          {},
+          {
+            no_totals: true,
+            order_by: orderBy,
+            page,
+            not_tags: MATURE_TAGS,
+          },
+          additionalOptions
+        )
+      )
     ),
 });
 

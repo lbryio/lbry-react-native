@@ -85,6 +85,25 @@ const discoverStyle = StyleSheet.create({
     width: fileItemWidth,
     marginRight: 12,
   },
+  fileItemMore: {
+    alignSelf: 'flex-start',
+    backgroundColor: Colors.LbryGreen,
+    flexDirection: 'row',
+    width: fileItemWidth,
+    height: fileItemMediaHeight,
+    marginRight: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  moreText: {
+    fontFamily: 'Inter-UI-Regular',
+    color: Colors.White,
+    fontSize: 24,
+  },
+  moreIcon: {
+    marginLeft: 12,
+    marginBottom: -4,
+  },
   fileItemMedia: {
     width: fileItemMediaWidth,
     height: fileItemMediaHeight,
@@ -223,6 +242,10 @@ const discoverStyle = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginRight: 4,
+  },
+  tagTime: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   tagSortText: {
     fontFamily: 'Inter-UI-Regular',

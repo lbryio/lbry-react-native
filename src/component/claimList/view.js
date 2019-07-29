@@ -1,14 +1,16 @@
 import React from 'react';
 import NavigationActions from 'react-navigation';
-import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { MATURE_TAGS, normalizeURI } from 'lbry-redux';
 import _ from 'lodash';
 import FileItem from 'component/fileItem';
 import FileListItem from 'component/fileListItem';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import claimListStyle from 'styles/claimList';
 import discoverStyle from 'styles/discover';
+import moment from 'moment';
 
 const horizontalLimit = 10;
 const softLimit = 500;
@@ -30,6 +32,7 @@ class ClaimList extends React.PureComponent {
       orderBy = Constants.DEFAULT_ORDER_BY,
       searchByTags,
       tags,
+      time,
     } = this.props;
     if (channelIds || trendingForAll) {
       const options = {
@@ -47,7 +50,11 @@ class ClaimList extends React.PureComponent {
 
       claimSearch(options);
     } else if (tags && tags.length > 0) {
-      searchByTags(tags, orderBy, this.state.currentPgae);
+      const additionalOptions = {};
+      if (orderBy && orderBy[0] === Constants.ORDER_BY_EFFECTIVE_AMOUNT && Constants.TIME_ALL !== time) {
+        additionalOptions.release_time = this.getReleaseTimeOption(time);
+      }
+      searchByTags(tags, orderBy, this.state.currentPage, additionalOptions);
     }
   }
 
@@ -59,12 +66,14 @@ class ClaimList extends React.PureComponent {
       tags: prevTags,
       channelIds: prevChannelIds,
       trendingForAll: prevTrendingForAll,
+      time: prevTime,
     } = this.props;
-    const { orderBy, tags, channelIds, trendingForAll } = nextProps;
+    const { orderBy, tags, channelIds, trendingForAll, time } = nextProps;
     if (
       !_.isEqual(orderBy, prevOrderBy) ||
       !_.isEqual(tags, prevTags) ||
       !_.isEqual(channelIds, prevChannelIds) ||
+      time !== prevTime ||
       trendingForAll !== prevTrendingForAll
     ) {
       // reset to page 1 because the order, tags or channelIds changed
@@ -90,15 +99,27 @@ class ClaimList extends React.PureComponent {
           claimSearch(options);
         } else if (tags && tags.length > 0) {
           this.setState({ subscriptionsView: false, trendingForAllView: false });
-          searchByTags(tags, orderBy, this.state.currentPage);
+          const additionalOptions = {};
+          if (orderBy && orderBy[0] === Constants.ORDER_BY_EFFECTIVE_AMOUNT && Constants.TIME_ALL !== time) {
+            additionalOptions.release_time = this.getReleaseTimeOption(time);
+          }
+          searchByTags(tags, orderBy, this.state.currentPage, additionalOptions);
         }
       });
     }
   }
 
+  getReleaseTimeOption = time => {
+    return `>${Math.floor(
+      moment()
+        .subtract(1, time)
+        .unix()
+    )}`;
+  };
+
   handleVerticalEndReached = () => {
     // fetch more content
-    const { channelIds, claimSearch, claimSearchUris, orderBy, searchByTags, tags, uris } = this.props;
+    const { channelIds, claimSearch, claimSearchUris, orderBy, searchByTags, tags, time, uris } = this.props;
     const { subscriptionsView, trendingForAllView } = this.state;
     if ((claimSearchUris && claimSearchUris.length >= softLimit) || (uris && uris.length >= softLimit)) {
       // don't fetch more than the specified limit to be displayed
@@ -119,9 +140,38 @@ class ClaimList extends React.PureComponent {
 
         claimSearch(options);
       } else {
-        searchByTags(tags, orderBy, this.state.currentPage);
+        const additionalOptions = {};
+        if (orderBy && orderBy[0] === Constants.ORDER_BY_EFFECTIVE_AMOUNT && Constants.TIME_ALL !== time) {
+          additionalOptions.release_time = this.getReleaseTimeOption(time);
+        }
+        searchByTags(tags, orderBy, this.state.currentPage, additionalOptions);
       }
     });
+  };
+
+  appendMorePlaceholder = items => {
+    items.push(Constants.MORE_PLACEHOLDER);
+    return items;
+  };
+
+  onMorePressed = () => {
+    const { navigation, tags } = this.props;
+
+    // tags.length > 1 means this is the Trending list
+    if (tags.length === 1) {
+      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: 'tagPage', params: { tag: tags[0] } });
+    } else {
+      navigation.navigate({ routeName: Constants.FULL_ROUTE_NAME_TRENDING });
+    }
+  };
+
+  renderMorePlaceholder = () => {
+    return (
+      <TouchableOpacity style={discoverStyle.fileItemMore} onPress={this.onMorePressed}>
+        <Text style={discoverStyle.moreText}>more</Text>
+        <Icon style={discoverStyle.moreIcon} name={'angle-double-down'} color={Colors.White} size={16} />
+      </TouchableOpacity>
+    );
   };
 
   render() {
@@ -130,6 +180,7 @@ class ClaimList extends React.PureComponent {
       loading,
       claimSearchLoading,
       claimSearchUris,
+      morePlaceholder,
       navigation,
       orientation = Constants.ORIENTATION_VERTICAL,
       style,
@@ -184,20 +235,24 @@ class ClaimList extends React.PureComponent {
           initialNumToRender={3}
           maxToRenderPerBatch={3}
           removeClippedSubviews
-          renderItem={({ item }) => (
-            <FileItem
-              style={discoverStyle.fileItem}
-              mediaStyle={discoverStyle.fileItemMedia}
-              key={item}
-              uri={normalizeURI(item)}
-              navigation={navigation}
-              showDetails
-              compactView={false}
-            />
-          )}
+          renderItem={({ item }) => {
+            return item === Constants.MORE_PLACEHOLDER ? (
+              this.renderMorePlaceholder()
+            ) : (
+              <FileItem
+                style={discoverStyle.fileItem}
+                mediaStyle={discoverStyle.fileItemMedia}
+                key={item}
+                uri={normalizeURI(item)}
+                navigation={navigation}
+                showDetails
+                compactView={false}
+              />
+            );
+          }}
           horizontal
           showsHorizontalScrollIndicator={false}
-          data={uris ? uris.slice(0, horizontalLimit) : []}
+          data={uris ? this.appendMorePlaceholder(uris.slice(0, horizontalLimit)) : []}
           keyExtractor={(item, index) => item}
         />
       );
