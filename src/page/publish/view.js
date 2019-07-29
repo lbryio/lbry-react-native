@@ -123,6 +123,17 @@ class PublishPage extends React.PureComponent {
     }
   }
 
+  onComponentFocused = () => {
+    const { pushDrawerStack, setPlayerVisible } = this.props;
+
+    pushDrawerStack();
+    setPlayerVisible();
+
+    NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
+    NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
+    NativeModules.Gallery.getVideos().then(videos => this.setState({ videos }));
+  };
+
   getNewUri(name, channel) {
     const { resolveUri } = this.props;
     // If they are midway through a channel creation, treat it as anonymous until it completes
@@ -210,17 +221,6 @@ class PublishPage extends React.PureComponent {
     };
 
     this.setState({ publishStarted: true }, () => publish(publishParams));
-  };
-
-  onComponentFocused = () => {
-    const { pushDrawerStack, setPlayerVisible } = this.props;
-
-    pushDrawerStack();
-    setPlayerVisible();
-
-    NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
-    NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
-    NativeModules.Gallery.getVideos().then(videos => this.setState({ videos }));
   };
 
   componentDidMount() {
