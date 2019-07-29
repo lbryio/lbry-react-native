@@ -2,6 +2,12 @@ const SORT_BY_NEW = 'new';
 const SORT_BY_HOT = 'hot';
 const SORT_BY_TOP = 'top';
 
+const TIME_DAY = 'day';
+const TIME_WEEK = 'week';
+const TIME_MONTH = 'month';
+const TIME_YEAR = 'year';
+const TIME_ALL = 'all';
+
 const Constants = {
   FIRST_RUN_PAGE_WELCOME: 'welcome',
   FIRST_RUN_PAGE_EMAIL_COLLECT: 'email-collect',
@@ -90,17 +96,35 @@ const Constants = {
   SORT_BY_NEW,
   SORT_BY_TOP,
 
+  TIME_DAY,
+  TIME_WEEK,
+  TIME_MONTH,
+  TIME_YEAR,
+  TIME_ALL,
+
   CLAIM_SEARCH_SORT_BY_ITEMS: [
     { icon: 'fire-alt', name: SORT_BY_HOT, label: 'Hot content' },
     { icon: 'certificate', name: SORT_BY_NEW, label: 'New content' },
     { icon: 'chart-line', name: SORT_BY_TOP, label: 'Top content' },
   ],
 
+  CLAIM_SEARCH_TIME_ITEMS: [
+    { name: TIME_DAY, label: 'Past 24 hours' },
+    { name: TIME_WEEK, label: 'Past week' },
+    { name: TIME_MONTH, label: 'Past month' },
+    { name: TIME_YEAR, label: 'Past year' },
+    { name: TIME_ALL, label: 'All time' },
+  ],
+
   DEFAULT_ORDER_BY: ['trending_global', 'trending_mixed'],
+
+  ORDER_BY_EFFECTIVE_AMOUNT: 'effective_amount',
 
   DEFAULT_PAGE_SIZE: 10,
 
   ALL_PLACEHOLDER: '_all',
+
+  MORE_PLACEHOLDER: '_more',
 
   TRUE_STRING: 'true',
 };
@@ -112,6 +136,8 @@ export const DrawerRoutes = [
   Constants.DRAWER_ROUTE_TRENDING,
   Constants.DRAWER_ROUTE_SUBSCRIPTIONS,
   Constants.DRAWER_ROUTE_MY_LBRY,
+  Constants.DRAWER_ROUTE_TAG,
+  Constants.DRAWER_ROUTE_PUBLISH,
   Constants.DRAWER_ROUTE_REWARDS,
   Constants.DRAWER_ROUTE_WALLET,
   Constants.DRAWER_ROUTE_PUBLISH,

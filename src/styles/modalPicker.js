@@ -49,9 +49,10 @@ const modalPickerStyle = StyleSheet.create({
   },
   itemIcon: {
     marginLeft: 8,
-    marginRight: 12,
+    marginRight: 4,
   },
   itemLabel: {
+    marginLeft: 8,
     alignSelf: 'flex-start',
     fontFamily: 'Inter-UI-Regular',
     fontSize: 16,

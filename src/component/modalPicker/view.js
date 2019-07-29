@@ -45,7 +45,7 @@ export default class ModalPicker extends React.PureComponent {
                   style={modalPickerStyle.listItem}
                   onPress={() => onItemSelected(item)}
                 >
-                  <Icon style={modalPickerStyle.itemIcon} name={item.icon} size={16} />
+                  {item.icon && <Icon style={modalPickerStyle.itemIcon} name={item.icon} size={16} />}
                   <Text style={modalPickerStyle.itemLabel}>{item.label}</Text>
                   {selectedItem && selectedItem.name === item.name && (
                     <Icon style={modalPickerStyle.itemSelected} name={'check'} color={Colors.LbryGreen} size={16} />

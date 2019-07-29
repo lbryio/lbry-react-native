@@ -267,9 +267,10 @@ class DiscoverPage extends React.PureComponent {
           removeClippedSubviews
           renderItem={({ item, index, section }) => (
             <ClaimList
-              key={item.join(',')}
+              key={item.sort().join(',')}
               orderBy={item.length > 1 ? Constants.DEFAULT_ORDER_BY : orderBy}
               tags={item}
+              morePlaceholder
               navigation={navigation}
               orientation={Constants.ORIENTATION_HORIZONTAL}
             />
@@ -280,7 +281,7 @@ class DiscoverPage extends React.PureComponent {
                 {formatTagTitle(title)}
               </Text>
               <TouchableOpacity onPress={() => this.handleTagPress(title)}>
-                <Icon name={'ellipsis-v'} size={16} />
+                <Icon name={'angle-double-down'} size={16} />
               </TouchableOpacity>
             </View>
           )}
