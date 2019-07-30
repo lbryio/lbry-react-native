@@ -11,7 +11,7 @@
         "base-64": "^0.1.0",
         "@expo/vector-icons": "^8.1.0",
         "gfycat-style-urls": "^1.0.3",
-        "lbry-redux": "lbryio/lbry-redux#multi-claim-search",
+        "lbry-redux": "lbryio/lbry-redux#cd23c12fb7fd541d28d7cbf3874b1058b036fd13",
         "lbryinc": "lbryio/lbryinc",
         "lodash": ">=4.17.11",
         "merge": ">=1.2.1",
