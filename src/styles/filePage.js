@@ -93,6 +93,11 @@ const filePageStyle = StyleSheet.create({
     fontSize: 14,
     color: Colors.LbryGreen,
   },
+  anonChannelName: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+    color: Colors.DescriptionGrey,
+  },
   publishDateText: {
     fontFamily: 'Inter-UI-SemiBold',
     fontSize: 12,

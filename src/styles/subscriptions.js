@@ -197,7 +197,8 @@ const subscriptionsStyle = StyleSheet.create({
   },
   suggestedItemDetails: {
     marginLeft: 16,
-    flexDirection: 'row',
+    marginRight: 16,
+    flex: 0.8,
   },
   suggestedItemSubscribe: {
     backgroundColor: Colors.White,
@@ -209,12 +210,14 @@ const subscriptionsStyle = StyleSheet.create({
     fontFamily: 'Inter-UI-Regular',
     fontSize: 16,
     marginBottom: 4,
+    width: '85%',
   },
   suggestedItemName: {
     fontFamily: 'Inter-UI-SemiBold',
     fontSize: 14,
     marginBottom: 4,
     color: Colors.LbryGreen,
+    width: '95%',
   },
   suggestedItemTagList: {
     flexDirection: 'row',

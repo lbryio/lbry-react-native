@@ -42,24 +42,22 @@ class SuggestedSubscriptionItem extends React.PureComponent {
         </View>
 
         <View style={subscriptionsStyle.suggestedItemDetails}>
-          <View style={subscriptionsStyle.suggestedItemInfo}>
-            {title && (
-              <Text style={subscriptionsStyle.suggestedItemTitle} numberOfLines={1}>
-                {title}
-              </Text>
-            )}
-            <Text style={subscriptionsStyle.suggestedItemName} numberOfLines={1}>
-              {claim && claim.name}
+          {title && (
+            <Text style={subscriptionsStyle.suggestedItemTitle} numberOfLines={1}>
+              {title}
             </Text>
-            {tags && (
-              <View style={subscriptionsStyle.suggestedItemTagList}>
-                {tags &&
-                  tags
-                    .slice(0, 3)
-                    .map(tag => <Tag style={subscriptionsStyle.tag} key={tag} name={tag} navigation={navigation} />)}
-              </View>
-            )}
-          </View>
+          )}
+          <Text style={subscriptionsStyle.suggestedItemName} numberOfLines={1}>
+            {claim && claim.name}
+          </Text>
+          {tags && (
+            <View style={subscriptionsStyle.suggestedItemTagList}>
+              {tags &&
+                tags
+                  .slice(0, 3)
+                  .map(tag => <Tag style={subscriptionsStyle.tag} key={tag} name={tag} navigation={navigation} />)}
+            </View>
+          )}
         </View>
 
         <SubscribeButton style={subscriptionsStyle.suggestedItemSubscribe} uri={normalizeURI(uri)} />

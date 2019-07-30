@@ -844,9 +844,9 @@ class FilePage extends React.PureComponent {
                       </View>
                     </View>
                   </TouchableWithoutFeedback>
-                  {channelName && (
-                    <View style={filePageStyle.channelRow}>
-                      <View style={filePageStyle.publishInfo}>
+                  <View style={filePageStyle.channelRow}>
+                    <View style={filePageStyle.publishInfo}>
+                      {channelName && (
                         <Link
                           style={filePageStyle.channelName}
                           selectable
@@ -857,44 +857,52 @@ class FilePage extends React.PureComponent {
                             navigateToUri(navigation, normalizeURI(fullChannelUri));
                           }}
                         />
-                        <DateTime
-                          style={filePageStyle.publishDate}
-                          textStyle={filePageStyle.publishDateText}
-                          uri={uri}
-                          formatOptions={{ day: 'numeric', month: 'long', year: 'numeric' }}
-                          show={DateTime.SHOW_DATE}
-                        />
-                      </View>
-                      <View style={filePageStyle.subscriptionRow}>
-                        {false &&
-                          ((isPlayable && !fileInfo) || (isPlayable && fileInfo && !fileInfo.download_path)) && (
-                          <Button
-                            style={[filePageStyle.actionButton, filePageStyle.saveFileButton]}
-                            theme={'light'}
-                            icon={'download'}
-                            onPress={this.onSaveFilePressed}
-                          />
-                        )}
+                      )}
+                      {!channelName && (
+                        <Text style={filePageStyle.anonChannelName} selectable ellipsizeMode={'tail'}>
+                          Anonymous
+                        </Text>
+                      )}
+                      <DateTime
+                        style={filePageStyle.publishDate}
+                        textStyle={filePageStyle.publishDateText}
+                        uri={uri}
+                        formatOptions={{ day: 'numeric', month: 'long', year: 'numeric' }}
+                        show={DateTime.SHOW_DATE}
+                      />
+                    </View>
+                    <View style={filePageStyle.subscriptionRow}>
+                      {false && ((isPlayable && !fileInfo) || (isPlayable && fileInfo && !fileInfo.download_path)) && (
                         <Button
-                          style={[filePageStyle.actionButton, filePageStyle.tipButton]}
+                          style={[filePageStyle.actionButton, filePageStyle.saveFileButton]}
                           theme={'light'}
-                          icon={'gift'}
-                          onPress={() => this.setState({ showTipView: true })}
+                          icon={'download'}
+                          onPress={this.onSaveFilePressed}
                         />
+                      )}
+                      <Button
+                        style={[filePageStyle.actionButton, filePageStyle.tipButton]}
+                        theme={'light'}
+                        icon={'gift'}
+                        onPress={() => this.setState({ showTipView: true })}
+                      />
+                      {channelName && (
                         <SubscribeButton
                           style={filePageStyle.actionButton}
                           uri={fullChannelUri}
                           name={channelName}
                           hideText={false}
                         />
+                      )}
+                      {channelName && (
                         <SubscribeNotificationButton
                           style={[filePageStyle.actionButton, filePageStyle.bellButton]}
                           uri={fullChannelUri}
                           name={channelName}
                         />
-                      </View>
+                      )}
                     </View>
-                  )}
+                  </View>
 
                   {this.state.showTipView && <View style={filePageStyle.divider} />}
                   {this.state.showTipView && (
