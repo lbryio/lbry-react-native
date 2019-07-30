@@ -77,8 +77,8 @@ const perform = dispatch => ({
   purchaseUri: (uri, costInfo, saveFile) => dispatch(doPurchaseUri(uri, costInfo, saveFile)),
   deletePurchasedUri: uri => dispatch(doDeletePurchasedUri(uri)),
   resolveUri: uri => dispatch(doResolveUri(uri)),
-  sendTip: (amount, claimId, uri, successCallback, errorCallback) =>
-    dispatch(doSendTip(amount, claimId, uri, successCallback, errorCallback)),
+  sendTip: (amount, claimId, isSupport, successCallback, errorCallback) =>
+    dispatch(doSendTip(amount, claimId, isSupport, successCallback, errorCallback)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(true)),
   stopDownload: (uri, fileInfo) => dispatch(doStopDownloadingFile(uri, fileInfo)),
   startDownload: (uri, outpoint, fileInfo) => dispatch(doStartDownload(uri, outpoint, fileInfo)),
