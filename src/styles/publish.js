@@ -369,6 +369,11 @@ const publishStyle = StyleSheet.create({
     marginLeft: 8,
     marginRight: 8,
   },
+  noVideos: {
+    color: Colors.White,
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 16,
+  },
 });
 
 export default publishStyle;
