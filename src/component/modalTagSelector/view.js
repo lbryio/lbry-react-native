@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { NativeModules, Text, TouchableOpacity, View } from 'react-native';
 import { DEFAULT_FOLLOWED_TAGS } from 'lbry-redux';
 import Button from 'component/button';
 import Colors from 'styles/colors';
@@ -23,6 +23,7 @@ export default class ModalTagSelector extends React.PureComponent {
     }
 
     this.props.doToggleTagFollow(tag);
+    NativeModules.Firebase.track('tag_follow', { tag });
   };
 
   handleRemoveTag = tag => {
@@ -31,6 +32,7 @@ export default class ModalTagSelector extends React.PureComponent {
     }
 
     this.props.doToggleTagFollow(tag);
+    NativeModules.Firebase.track('tag_unfollow', { tag });
   };
 
   render() {

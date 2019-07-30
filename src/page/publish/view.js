@@ -2,6 +2,7 @@ import React from 'react';
 import {
   ActivityIndicator,
   Clipboard,
+  DeviceEventEmitter,
   Image,
   NativeModules,
   Picker,
@@ -72,6 +73,7 @@ class PublishPage extends React.PureComponent {
 
     // gallery videos
     videos: null,
+    galleryThumbnailsChecked: false,
 
     // camera
     cameraType: RNCamera.Constants.Type.back,
@@ -115,13 +117,19 @@ class PublishPage extends React.PureComponent {
   componentWillMount() {
     const { navigation } = this.props;
     this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
+    DeviceEventEmitter.addListener('onGalleryThumbnailsChecked', this.handleGalleryThumbnailsChecked);
   }
 
   componentWillUnmount() {
     if (this.didFocusListener) {
       this.didFocusListener.remove();
     }
+    DeviceEventEmitter.removeListener('onGalleryThumbnailsChecked', this.handleGalleryThumbnailsChecked);
   }
+
+  handleGalleryThumbnailsChecked = () => {
+    this.setState({ galleryThumbnailsChecked: true });
+  };
 
   onComponentFocused = () => {
     const { pushDrawerStack, setPlayerVisible } = this.props;
@@ -513,16 +521,14 @@ class PublishPage extends React.PureComponent {
 
   render() {
     const { balance, navigation, notify, publishFormValues } = this.props;
-    const { thumbnailPath } = this.state;
+    const { canUseCamera, currentPhase, galleryThumbnailsChecked, thumbnailPath, videos } = this.state;
 
     let content;
-    if (Constants.PHASE_SELECTOR === this.state.currentPhase) {
+    if (Constants.PHASE_SELECTOR === currentPhase) {
       content = (
         <View style={publishStyle.gallerySelector}>
           <View style={publishStyle.actionsView}>
-            {this.state.canUseCamera && (
-              <RNCamera style={publishStyle.cameraPreview} type={RNCamera.Constants.Type.back} />
-            )}
+            {canUseCamera && <RNCamera style={publishStyle.cameraPreview} type={RNCamera.Constants.Type.back} />}
             <View style={publishStyle.actionsSubView}>
               <TouchableOpacity style={publishStyle.record} onPress={this.handleRecordVideoPressed}>
                 <Icon name="video" size={48} color={Colors.White} />
@@ -542,12 +548,19 @@ class PublishPage extends React.PureComponent {
               </View>
             </View>
           </View>
-          {(!this.state.videos || !thumbnailPath) && (
+          {(!videos || !thumbnailPath || !galleryThumbnailsChecked) && (
             <View style={publishStyle.loadingView}>
               <ActivityIndicator size="large" color={Colors.LbryGreen} />
             </View>
           )}
-          {this.state.videos && thumbnailPath && (
+          {thumbnailPath && (!videos || videos.length === 0) && (
+            <View style={publishStyle.centered}>
+              <Text style={publishStyle.noVideos}>
+                We could not find any videos on your device. Take a photo or record a video to get started.
+              </Text>
+            </View>
+          )}
+          {videos && thumbnailPath && galleryThumbnailsChecked && (
             <FlatGrid
               style={publishStyle.galleryGrid}
               itemDimension={134}
