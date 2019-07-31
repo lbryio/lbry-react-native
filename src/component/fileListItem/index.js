@@ -8,12 +8,15 @@ import {
   makeSelectTitleForUri,
   makeSelectThumbnailForUri,
 } from 'lbry-redux';
+import { selectBlackListedOutpoints, selectFilteredOutpoints } from 'lbryinc';
 import { selectShowNsfw } from 'redux/selectors/settings';
 import FileListItem from './view';
 
 const select = (state, props) => ({
+  blackListedOutpoints: selectBlackListedOutpoints(state),
   claim: makeSelectClaimForUri(props.uri)(state),
   fileInfo: makeSelectFileInfoForUri(props.uri)(state),
+  filteredOutpoints: selectFilteredOutpoints(state),
   isDownloaded: !!makeSelectFileInfoForUri(props.uri)(state),
   metadata: makeSelectMetadataForUri(props.uri)(state),
   isResolvingUri: makeSelectIsUriResolving(props.uri)(state),

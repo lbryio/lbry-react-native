@@ -10,7 +10,7 @@ import Button from 'component/button';
 import ProgressBar from 'component/progressBar';
 import PropTypes from 'prop-types';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import splashStyle from 'styles/splash';
 
 const BLOCK_HEIGHT_INTERVAL = 1000 * 60 * 2.5; // every 2.5 minutes
@@ -50,7 +50,7 @@ class SplashScreen extends React.PureComponent {
   }
 
   navigateToMain = () => {
-    const { navigation } = this.props;
+    const { navigation, notify, verifyUserEmail, verifyUserEmailFailure } = this.props;
     const resetAction = StackActions.reset({
       index: 0,
       actions: [NavigationActions.navigate({ routeName: 'Main' })],
@@ -114,9 +114,8 @@ class SplashScreen extends React.PureComponent {
       balanceSubscribe,
       blacklistedOutpointsSubscribe,
       checkSubscriptionsInit,
+      filteredOutpointsSubscribe,
       getSync,
-      navigation,
-      notify,
       updateBlockHeight,
       user,
     } = this.props;
@@ -125,6 +124,7 @@ class SplashScreen extends React.PureComponent {
       // Leave the splash screen
       balanceSubscribe();
       blacklistedOutpointsSubscribe();
+      filteredOutpointsSubscribe();
       checkSubscriptionsInit();
       updateBlockHeight();
       setInterval(() => {
@@ -186,7 +186,6 @@ class SplashScreen extends React.PureComponent {
               this.finishSplashScreen();
             })
             .catch(() => this.handleAccountUnlockFailed());
-          return;
         } else {
           this.setState({
             message: testingNetwork,
@@ -222,7 +221,7 @@ class SplashScreen extends React.PureComponent {
       });
     } else if (walletStatus && walletStatus.blocks_behind > 0) {
       const behind = walletStatus.blocks_behind;
-      const behindText = behind + ' block' + (behind == 1 ? '' : 's') + ' behind';
+      const behindText = behind + ' block' + (behind === 1 ? '' : 's') + ' behind';
       this.setState({
         message: 'Blockchain Sync',
         details: behindText,
@@ -254,7 +253,7 @@ class SplashScreen extends React.PureComponent {
     // Start measuring the first launch time from the splash screen
     // (time to first user interaction - after first run completed)
     AsyncStorage.getItem('hasLaunched').then(value => {
-      if ('true' !== value) {
+      if (value !== 'true') {
         AsyncStorage.setItem('hasLaunched', 'true');
         // only set firstLaunchTime since we've determined that this is the first app launch ever
         AsyncStorage.setItem('firstLaunchTime', String(moment().unix()));

@@ -3,6 +3,7 @@ import { doBalanceSubscribe, doUpdateBlockHeight, doToast } from 'lbry-redux';
 import {
   doAuthenticate,
   doBlackListedOutpointsSubscribe,
+  doFilteredOutpointsSubscribe,
   doCheckSubscriptionsInit,
   doFetchMySubscriptions,
   doFetchRewardedContent,
@@ -25,6 +26,7 @@ const perform = dispatch => ({
   authenticate: (appVersion, os) => dispatch(doAuthenticate(appVersion, os)),
   balanceSubscribe: () => dispatch(doBalanceSubscribe()),
   blacklistedOutpointsSubscribe: () => dispatch(doBlackListedOutpointsSubscribe()),
+  filteredOutpointsSubscribe: () => dispatch(doFilteredOutpointsSubscribe()),
   checkSubscriptionsInit: () => dispatch(doCheckSubscriptionsInit()),
   fetchRewardedContent: () => dispatch(doFetchRewardedContent()),
   fetchSubscriptions: callback => dispatch(doFetchMySubscriptions(callback)),
