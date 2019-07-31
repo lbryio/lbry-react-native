@@ -2,44 +2,25 @@ import { connect } from 'react-redux';
 import {
   MATURE_TAGS,
   doClaimSearch,
-  doClaimSearchByTags,
-  makeSelectClaimSearchUrisForTags,
-  makeSelectFetchingClaimSearchForTags,
+  selectClaimSearchByQuery,
+  selectFetchingClaimSearchByQuery,
   selectFetchingClaimSearch,
-  selectLastClaimSearchUris,
 } from 'lbry-redux';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import ClaimList from './view';
 
 const select = (state, props) => {
   return {
-    loading: makeSelectFetchingClaimSearchForTags(props.tags)(state),
-    uris: makeSelectClaimSearchUrisForTags(props.tags)(state),
+    // loadingByQuery: selectFetchingClaimSearchByQuery(state),
+    claimSearchByQuery: selectClaimSearchByQuery(state),
     // for subscriptions
-    claimSearchLoading: selectFetchingClaimSearch(state),
-    claimSearchUris: selectLastClaimSearchUris(state),
+    loading: selectFetchingClaimSearch(state),
+    // claimSearchUris: selectLastClaimSearchUris(state),
   };
 };
 
 const perform = dispatch => ({
-  claimSearch: options => dispatch(doClaimSearch(Constants.DEFAULT_PAGE_SIZE, options)),
-  searchByTags: (tags, orderBy = Constants.DEFAULT_ORDER_BY, page = 1, additionalOptions = {}) =>
-    dispatch(
-      doClaimSearchByTags(
-        tags,
-        Constants.DEFAULT_PAGE_SIZE,
-        Object.assign(
-          {},
-          {
-            no_totals: true,
-            order_by: orderBy,
-            page,
-            not_tags: MATURE_TAGS,
-          },
-          additionalOptions
-        )
-      )
-    ),
+  claimSearch: options => dispatch(doClaimSearch(options)),
 });
 
 export default connect(
