@@ -25,7 +25,7 @@ import {
   syncReducer,
   userReducer,
 } from 'lbryinc';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, combineReducers, compose } from 'redux';
 import AppWithNavigationState, {
   AppNavigator,
   navigatorReducer,
@@ -101,7 +101,7 @@ const persistOptions = Object.assign({}, v4PersistOptions, {
   getStoredState: getStoredStateMigrateV4(v4PersistOptions),
 });
 
-const reducers = persistCombineReducers(persistOptions, {
+const reducers = combineReducers({
   auth: authReducer,
   blacklist: blacklistReducer,
   claims: claimsReducer,
@@ -138,11 +138,11 @@ const store = createStore(
 );
 window.store = store;
 
-persistStore(store, persistOptions, err => {
+/* persistStore(store, persistOptions, err => {
   if (err) {
     console.log('Unable to load saved SETTINGS');
   }
-});
+}); */
 
 // TODO: Find i18n module that is compatible with react-native
 global.__ = str => str;
