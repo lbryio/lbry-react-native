@@ -12,7 +12,7 @@ import claimListStyle from 'styles/claimList';
 import discoverStyle from 'styles/discover';
 import moment from 'moment';
 
-const horizontalLimit = 10;
+const horizontalLimit = 7;
 const softLimit = 500;
 
 class ClaimList extends React.PureComponent {

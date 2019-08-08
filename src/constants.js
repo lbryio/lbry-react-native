@@ -103,7 +103,7 @@ const Constants = {
   TIME_ALL,
 
   CLAIM_SEARCH_SORT_BY_ITEMS: [
-    { icon: 'fire-alt', name: SORT_BY_HOT, label: 'Hot content' },
+    { icon: 'fire-alt', name: SORT_BY_HOT, label: 'Trending content' },
     { icon: 'certificate', name: SORT_BY_NEW, label: 'New content' },
     { icon: 'chart-line', name: SORT_BY_TOP, label: 'Top content' },
   ],

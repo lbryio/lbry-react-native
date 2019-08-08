@@ -126,10 +126,6 @@ class SplashScreen extends React.PureComponent {
       blacklistedOutpointsSubscribe();
       filteredOutpointsSubscribe();
       checkSubscriptionsInit();
-      updateBlockHeight();
-      setInterval(() => {
-        updateBlockHeight();
-      }, BLOCK_HEIGHT_INTERVAL);
 
       if (user && user.id && user.has_verified_email) {
         // user already authenticated

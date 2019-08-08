@@ -207,7 +207,7 @@ class DiscoverPage extends React.PureComponent {
 
   buildSections = () => {
     return this.state.tagCollection.map(tags => ({
-      title: tags.length === 1 ? tags[0] : 'Trending',
+      title: tags.length === 1 ? tags[0] : 'All tags you follow',
       data: [tags],
     }));
   };
@@ -216,7 +216,9 @@ class DiscoverPage extends React.PureComponent {
     const tags = followedTags.map(tag => tag.name);
 
     // each of the followed tags
-    const tagCollection = tags.map(tag => [tag]);
+    const tagCollection = _.shuffle(tags)
+      .slice(0, 4)
+      .map(tag => [tag]);
     // everything
     tagCollection.unshift(tags);
 
@@ -268,7 +270,8 @@ class DiscoverPage extends React.PureComponent {
           renderItem={({ item, index, section }) => (
             <ClaimList
               key={item.sort().join(',')}
-              orderBy={item.length > 1 ? Constants.DEFAULT_ORDER_BY : orderBy}
+              orderBy={orderBy}
+              time={Constants.TIME_WEEK}
               tags={item}
               morePlaceholder
               navigation={navigation}

@@ -115,6 +115,7 @@ class SubscriptionsPage extends React.PureComponent {
 
   render() {
     const {
+      suggestedChannels,
       subscribedChannels,
       allSubscriptions,
       loading,
@@ -207,13 +208,12 @@ class SubscriptionsPage extends React.PureComponent {
               </View>
             )}
 
-            {loadingSuggested && (
+            {loadingSuggested && suggestedChannels.length === 0 && (
               <View style={subscriptionsStyle.centered}>
                 <ActivityIndicator size="large" colors={Colors.LbryGreen} style={subscriptionsStyle.loading} />
-                \\
               </View>
             )}
-            {!loadingSuggested && <SuggestedSubscriptions navigation={navigation} />}
+            {suggestedChannels && suggestedChannels.length > 0 && <SuggestedSubscriptions navigation={navigation} />}
           </View>
         )}
 

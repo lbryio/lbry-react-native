@@ -31,8 +31,7 @@ import AppWithNavigationState, {
   navigatorReducer,
   reactNavigationMiddleware,
 } from 'component/AppNavigator';
-import { REHYDRATE, PURGE, persistCombineReducers, persistStore } from 'redux-persist';
-import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4';
+import { autoRehydrate, persistStore } from 'redux-persist';
 import AsyncStorage from '@react-native-community/async-storage';
 import FilesystemStorage from 'redux-persist-filesystem-storage';
 import createCompressor from 'redux-persist-transform-compress';
@@ -44,7 +43,6 @@ import thunk from 'redux-thunk';
 
 const globalExceptionHandler = (error, isFatal) => {
   if (error && NativeModules.Firebase) {
-    console.log(error);
     NativeModules.Firebase.logException(isFatal, error.message ? error.message : 'No message', JSON.stringify(error));
   }
 };
@@ -77,29 +75,6 @@ function enableBatching(reducer) {
     }
   };
 }
-
-const compressor = createCompressor();
-const authFilter = createFilter('auth', ['authToken']);
-const contentFilter = createFilter('content', ['positions']);
-const saveClaimsFilter = createFilter('claims', ['byId', 'claimsByUri']);
-const subscriptionsFilter = createFilter('subscriptions', ['enabledChannelNotifications', 'subscriptions']);
-const settingsFilter = createFilter('settings', ['clientSettings']);
-const tagsFilter = createFilter('tags', ['followedTags']);
-const walletFilter = createFilter('wallet', ['receiveAddress']);
-
-const v4PersistOptions = {
-  whitelist: ['auth', 'claims', 'content', 'subscriptions', 'settings', 'tags', 'wallet'],
-  // Order is important. Needs to be compressed last or other transforms can't
-  // read the data
-  transforms: [authFilter, saveClaimsFilter, subscriptionsFilter, settingsFilter, walletFilter, compressor],
-  debounce: 10000,
-  storage: FilesystemStorage,
-};
-
-const persistOptions = Object.assign({}, v4PersistOptions, {
-  key: 'primary',
-  getStoredState: getStoredStateMigrateV4(v4PersistOptions),
-});
 
 const reducers = combineReducers({
   auth: authReducer,
@@ -138,10 +113,20 @@ const store = createStore(
 );
 window.store = store;
 
-/* persistStore(store, persistOptions, err => {
-  if (err) {
-    console.log('Unable to load saved SETTINGS');
-  }
+const compressor = createCompressor();
+const authFilter = createFilter('auth', ['authToken']);
+/* const contentFilter = createFilter('content', ['positions']);
+const saveClaimsFilter = createFilter('claims', ['byId', 'claimsByUri']);
+const subscriptionsFilter = createFilter('subscriptions', ['enabledChannelNotifications', 'subscriptions']);
+const settingsFilter = createFilter('settings', ['clientSettings']);
+const tagsFilter = createFilter('tags', ['followedTags']);
+const walletFilter = createFilter('wallet', ['receiveAddress']); */
+
+const whitelist = ['auth', 'claims', 'content', 'subscriptions', 'settings', 'tags', 'wallet'];
+/* store.subscribe(() => {
+  const state = store.getState();
+  const filteredState = Object.keys(state).filter(key => whitelist.includes(key)).reduce((o, k) => { o[k] = state[k]; return o; }, {});
+  NativeModules.StatePersistor.update(filteredState);
 }); */
 
 // TODO: Find i18n module that is compatible with react-native

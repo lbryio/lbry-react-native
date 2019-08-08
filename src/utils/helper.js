@@ -3,6 +3,8 @@ import { buildURI, isURIValid } from 'lbry-redux';
 import { doPopDrawerStack, doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import Constants, { DrawerRoutes } from 'constants'; // eslint-disable-line node/no-deprecated-api
 
+const tagNameLength = 10;
+
 function getRouteForSpecialUri(uri) {
   let targetRoute;
   const page = uri.substring(8).trim(); // 'lbry://?'.length == 8
@@ -189,6 +191,17 @@ export function formatTagTitle(title) {
     return null;
   }
   return title.charAt(0).toUpperCase() + title.substring(1);
+}
+
+export function formatTagName(name) {
+  if (!name) {
+    return null;
+  }
+  if (name.length <= tagNameLength) {
+    return name;
+  }
+
+  return name.substring(0, 7) + '...';
 }
 
 // i18n placeholder until we find a good react-native i18n module

@@ -7,6 +7,7 @@ import {
   selectSubscriptions,
   selectSubscriptionsBeingFetched,
   selectIsFetchingSubscriptions,
+  selectSuggestedChannels,
   selectUnreadSubscriptions,
   selectViewMode,
   selectFirstRunCompleted,
@@ -16,13 +17,14 @@ import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doSetClientSetting } from 'redux/actions/settings';
 import { makeSelectClientSetting } from 'redux/selectors/settings';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import SubscriptionsPage from './view';
 
 const select = state => ({
   currentRoute: selectCurrentRoute(state),
   loading: selectIsFetchingSubscriptions(state) || Boolean(Object.keys(selectSubscriptionsBeingFetched(state)).length),
   subscribedChannels: selectSubscriptions(state),
+  suggestedChannels: selectSuggestedChannels(state),
   subscriptionsViewMode: makeSelectClientSetting(Constants.SETTING_SUBSCRIPTIONS_VIEW_MODE)(state),
   allSubscriptions: selectSubscriptionClaims(state),
   unreadSubscriptions: selectUnreadSubscriptions(state),
