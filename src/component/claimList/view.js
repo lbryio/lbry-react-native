@@ -199,8 +199,8 @@ class ClaimList extends React.PureComponent {
             ListHeaderComponent={ListHeaderComponent}
             style={claimListStyle.verticalScrollContainer}
             contentContainerStyle={claimListStyle.verticalScrollPadding}
-            initialNumToRender={8}
-            maxToRenderPerBatch={24}
+            initialNumToRender={10}
+            maxToRenderPerBatch={20}
             removeClippedSubviews
             renderItem={({ item }) => (
               <FileListItem key={item} uri={item} style={claimListStyle.verticalListItem} navigation={navigation} />
@@ -208,7 +208,7 @@ class ClaimList extends React.PureComponent {
             data={data}
             keyExtractor={(item, index) => item}
             onEndReached={this.handleVerticalEndReached}
-            onEndReachedThreshold={0.9}
+            onEndReachedThreshold={0.2}
           />
           {(((subscriptionsView || trendingForAllView) && claimSearchLoading) || loading) && (
             <View style={claimListStyle.verticalLoading}>

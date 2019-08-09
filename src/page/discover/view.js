@@ -217,7 +217,7 @@ class DiscoverPage extends React.PureComponent {
 
     // each of the followed tags
     const tagCollection = _.shuffle(tags)
-      .slice(0, 4)
+      .slice(0, 6)
       .map(tag => [tag]);
     // everything
     tagCollection.unshift(tags);

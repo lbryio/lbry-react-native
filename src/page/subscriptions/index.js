@@ -5,8 +5,8 @@ import {
   doFetchRecommendedSubscriptions,
   selectSubscriptionClaims,
   selectSubscriptions,
-  selectSubscriptionsBeingFetched,
   selectIsFetchingSubscriptions,
+  selectIsFetchingSuggested,
   selectSuggestedChannels,
   selectUnreadSubscriptions,
   selectViewMode,
@@ -22,7 +22,8 @@ import SubscriptionsPage from './view';
 
 const select = state => ({
   currentRoute: selectCurrentRoute(state),
-  loading: selectIsFetchingSubscriptions(state) || Boolean(Object.keys(selectSubscriptionsBeingFetched(state)).length),
+  loading: selectIsFetchingSubscriptions(state),
+  loadingSuggested: selectIsFetchingSuggested(state),
   subscribedChannels: selectSubscriptions(state),
   suggestedChannels: selectSuggestedChannels(state),
   subscriptionsViewMode: makeSelectClientSetting(Constants.SETTING_SUBSCRIPTIONS_VIEW_MODE)(state),

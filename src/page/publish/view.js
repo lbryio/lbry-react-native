@@ -550,7 +550,7 @@ class PublishPage extends React.PureComponent {
           </View>
           {(!videos || !thumbnailPath || !galleryThumbnailsChecked) && (
             <View style={publishStyle.loadingView}>
-              <ActivityIndicator size="large" color={Colors.LbryGreen} />
+              <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
             </View>
           )}
           {thumbnailPath && (!videos || videos.length === 0) && (

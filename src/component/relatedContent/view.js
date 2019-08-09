@@ -6,7 +6,7 @@ import FileListItem from 'component/fileListItem';
 import fileListStyle from 'styles/fileList';
 import relatedContentStyle from 'styles/relatedContent';
 
-export default class RelatedContent extends React.PureComponent<Props> {
+export default class RelatedContent extends React.PureComponent {
   constructor() {
     super();
 
@@ -17,7 +17,7 @@ export default class RelatedContent extends React.PureComponent<Props> {
     this.getRecommendedContent();
   }
 
-  componentDidUpdate(prevProps: Props) {
+  componentDidUpdate(prevProps) {
     const { claim, uri } = this.props;
 
     if (uri !== prevProps.uri) {
@@ -38,7 +38,7 @@ export default class RelatedContent extends React.PureComponent<Props> {
     }
   }
 
-  didSearch: ?boolean;
+  didSearch;
 
   render() {
     const { recommendedContent, isSearching, navigation } = this.props;
@@ -60,7 +60,9 @@ export default class RelatedContent extends React.PureComponent<Props> {
               onPress={() => navigateToUri(navigation, recommendedUri, { autoplay: true })}
             />
           ))}
-        {isSearching && <ActivityIndicator size="small" color={Colors.LbryGreen} style={relatedContentStyle.loading} />}
+        {isSearching && (
+          <ActivityIndicator size="small" color={Colors.NextLbryGreen} style={relatedContentStyle.loading} />
+        )}
       </View>
     );
   }

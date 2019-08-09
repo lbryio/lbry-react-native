@@ -468,7 +468,7 @@ class MediaPlayer extends React.PureComponent {
 
         {this.state.buffering && (
           <View style={mediaPlayerStyle.loadingContainer}>
-            <ActivityIndicator color={Colors.LbryGreen} size="large" />
+            <ActivityIndicator color={Colors.NextLbryGreen} size="large" />
           </View>
         )}
 

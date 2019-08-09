@@ -86,7 +86,7 @@ class RewardCard extends React.PureComponent<Props> {
               )}
             </TouchableOpacity>
           )}
-          {isPending && <ActivityIndicator size="small" color={Colors.LbryGreen} />}
+          {isPending && <ActivityIndicator size="small" color={Colors.NextLbryGreen} />}
         </View>
         <View style={rewardStyle.midCol}>
           <Text style={rewardStyle.rewardTitle}>{reward.reward_title}</Text>

@@ -57,7 +57,7 @@ class CustomRewardCard extends React.PureComponent<Props> {
     return (
       <View style={[rewardStyle.rewardCard, rewardStyle.row]}>
         <View style={rewardStyle.leftCol}>
-          {rewardIsPending && <ActivityIndicator size="small" color={Colors.LbryGreen} />}
+          {rewardIsPending && <ActivityIndicator size="small" color={Colors.NextLbryGreen} />}
         </View>
         <View style={rewardStyle.midCol}>
           <Text style={rewardStyle.rewardTitle}>Custom Code</Text>

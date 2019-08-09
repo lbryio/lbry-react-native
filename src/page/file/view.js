@@ -567,7 +567,7 @@ class FilePage extends React.PureComponent {
         <View style={filePageStyle.container}>
           {isResolvingUri && (
             <View style={filePageStyle.busyContainer}>
-              <ActivityIndicator size="large" color={Colors.LbryGreen} />
+              <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
               <Text style={filePageStyle.infoText}>Loading decentralized data...</Text>
             </View>
           )}
@@ -724,7 +724,7 @@ class FilePage extends React.PureComponent {
                   <FileItemMedia style={filePageStyle.thumbnail} title={title} thumbnail={thumbnail} />
                 )}
                 {(!this.state.downloadButtonShown || this.state.downloadPressed) && !this.state.mediaLoaded && (
-                  <ActivityIndicator size="large" color={Colors.LbryGreen} style={filePageStyle.loading} />
+                  <ActivityIndicator size="large" color={Colors.NextLbryGreen} style={filePageStyle.loading} />
                 )}
                 {((isPlayable && !completed && !canLoadMedia) ||
                   canOpen ||

@@ -4,7 +4,7 @@ import { ActivityIndicator, Dimensions, Image, ScrollView, Text, TouchableOpacit
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { navigateBack } from 'utils/helper';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Button from 'component/button';
 import Link from 'component/link';
 import FileList from 'component/fileList';
@@ -53,7 +53,7 @@ class ChannelPage extends React.PureComponent {
     if (fetching) {
       contentList = (
         <View style={channelPageStyle.busyContainer}>
-          <ActivityIndicator size="large" color={Colors.LbryGreen} />
+          <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
           <Text style={channelPageStyle.infoText}>Fetching content...</Text>
         </View>
       );
@@ -123,21 +123,21 @@ class ChannelPage extends React.PureComponent {
       );
     }
 
-    const { cover, description, thumbnail, email, website_url, title } = claim.value;
+    const { cover, description, thumbnail, email, website_url: websiteUrl, title } = claim.value;
     return (
       <View style={channelPageStyle.aboutTab}>
-        {!website_url && !email && !description && (
+        {!websiteUrl && !email && !description && (
           <View style={channelPageStyle.busyContainer}>
             <Text style={channelPageStyle.infoText}>Nothing here yet. Please check back later.</Text>
           </View>
         )}
 
-        {(website_url || email || description) && (
+        {(websiteUrl || email || description) && (
           <ScrollView style={channelPageStyle.aboutScroll} contentContainerStyle={channelPageStyle.aboutScrollContent}>
-            {website_url && website_url.trim().length > 0 && (
+            {websiteUrl && websiteUrl.trim().length > 0 && (
               <View style={channelPageStyle.aboutItem}>
                 <Text style={channelPageStyle.aboutTitle}>Website</Text>
-                <Link style={channelPageStyle.aboutText} text={website_url} href={website_url} />
+                <Link style={channelPageStyle.aboutText} text={websiteUrl} href={websiteUrl} />
               </View>
             )}
 

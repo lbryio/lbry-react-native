@@ -118,9 +118,9 @@ class SubscriptionsPage extends React.PureComponent {
       suggestedChannels,
       subscribedChannels,
       allSubscriptions,
-      loading,
       viewMode,
       doSetViewMode,
+      loading,
       loadingSuggested,
       firstRunCompleted,
       doCompleteFirstRun,
@@ -183,7 +183,7 @@ class SubscriptionsPage extends React.PureComponent {
 
         {hasSubscriptions && loading && (
           <View style={subscriptionsStyle.busyContainer}>
-            <ActivityIndicator size="large" color={Colors.LbryGreen} style={subscriptionsStyle.loading} />
+            <ActivityIndicator size="large" color={Colors.NextLbryGreen} style={subscriptionsStyle.loading} />
           </View>
         )}
 
@@ -208,12 +208,12 @@ class SubscriptionsPage extends React.PureComponent {
               </View>
             )}
 
-            {loadingSuggested && suggestedChannels.length === 0 && (
+            {loadingSuggested && (
               <View style={subscriptionsStyle.centered}>
-                <ActivityIndicator size="large" colors={Colors.LbryGreen} style={subscriptionsStyle.loading} />
+                <ActivityIndicator size="large" colors={Colors.NextLbryGreen} style={subscriptionsStyle.loading} />
               </View>
             )}
-            {suggestedChannels && suggestedChannels.length > 0 && <SuggestedSubscriptions navigation={navigation} />}
+            {!loadingSuggested && <SuggestedSubscriptions navigation={navigation} />}
           </View>
         )}
 

@@ -95,6 +95,7 @@ class TrendingPage extends React.PureComponent {
           orderBy={Constants.DEFAULT_ORDER_BY}
           trendingForAll={TRENDING_FOR_ITEMS[0].name === currentTrendingForItem.name}
           tags={followedTags.map(tag => tag.name)}
+          time={null}
           navigation={navigation}
           orientation={Constants.ORIENTATION_VERTICAL}
         />
