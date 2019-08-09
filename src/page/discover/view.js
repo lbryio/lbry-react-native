@@ -217,7 +217,7 @@ class DiscoverPage extends React.PureComponent {
 
     // each of the followed tags
     const tagCollection = _.shuffle(tags)
-      .slice(0, 6)
+      .slice(0, 5)
       .map(tag => [tag]);
     // everything
     tagCollection.unshift(tags);
@@ -228,7 +228,14 @@ class DiscoverPage extends React.PureComponent {
   handleTagPress = name => {
     const { navigation } = this.props;
     if (name.toLowerCase() !== 'trending') {
-      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: `tagPage`, params: { tag: name } });
+      navigation.navigate({
+        routeName: Constants.DRAWER_ROUTE_TAG,
+        key: `tagPage`,
+        params: {
+          tag: name,
+          sortByItem: this.state.currentSortByItem,
+        },
+      });
     } else {
       // navigate to the trending page
       navigation.navigate({ routeName: Constants.FULL_ROUTE_NAME_TRENDING });

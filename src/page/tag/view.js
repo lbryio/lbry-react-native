@@ -41,7 +41,8 @@ class TagPage extends React.PureComponent {
 
   onComponentFocused = () => {
     const { pushDrawerStack, setPlayerVisible, navigation } = this.props;
-    this.setState({ tag: navigation.state.params.tag });
+    const { tag, sortByItem } = navigation.state.params;
+    this.setState({ tag, currentSortByItem: sortByItem, orderBy: this.getOrderBy(sortByItem) });
     pushDrawerStack();
     setPlayerVisible();
   };
@@ -58,7 +59,7 @@ class TagPage extends React.PureComponent {
     }
   }
 
-  handleSortByItemSelected = item => {
+  getOrderBy = item => {
     let orderBy = [];
     switch (item.name) {
       case Constants.SORT_BY_HOT:
@@ -74,7 +75,11 @@ class TagPage extends React.PureComponent {
         break;
     }
 
-    this.setState({ currentSortByItem: item, orderBy, showSortPicker: false });
+    return orderBy;
+  };
+
+  handleSortByItemSelected = item => {
+    this.setState({ currentSortByItem: item, orderBy: this.getOrderBy(item), showSortPicker: false });
   };
 
   handleTimeItemSelected = item => {

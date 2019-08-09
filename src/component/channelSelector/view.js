@@ -1,9 +1,9 @@
 import React from 'react';
-import { CLAIM_VALUES, isNameValid } from 'lbry-redux';
+import { CLAIM_VALUES, isURIValid } from 'lbry-redux';
 import { ActivityIndicator, Picker, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Button from 'component/button';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
 import channelSelectorStyle from 'styles/channelSelector';
@@ -102,7 +102,7 @@ export default class ChannelSelector extends React.PureComponent {
     const { balance, createChannel, onChannelChange, notify } = this.props;
     const { newChannelBid, newChannelName } = this.state;
 
-    if (newChannelName.trim().length === 0 || !isNameValid(newChannelName.substr(1), false)) {
+    if (newChannelName.trim().length === 0 || !isURIValid(newChannelName.substr(1), false)) {
       notify({ message: 'Your channel name contains invalid characters.' });
       return;
     }
