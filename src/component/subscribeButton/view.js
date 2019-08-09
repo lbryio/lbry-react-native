@@ -19,7 +19,7 @@ class SubscribeButton extends React.PureComponent {
 
     const iconColor = isSubscribed ? null : Colors.Red;
     const subscriptionHandler = isSubscribed ? doChannelUnsubscribe : doChannelSubscribe;
-    const subscriptionLabel = isSubscribed ? null : __('Subscribe');
+    const subscriptionLabel = isSubscribed ? null : __('Follow');
     const { claimName } = parseURI(uri);
 
     return (
@@ -28,7 +28,7 @@ class SubscribeButton extends React.PureComponent {
         theme={'light'}
         icon={isSubscribed ? 'heart-broken' : 'heart'}
         iconColor={iconColor}
-        solid={isSubscribed ? false : true}
+        solid={!isSubscribed}
         text={hideText ? null : subscriptionLabel}
         onPress={() => {
           subscriptionHandler({

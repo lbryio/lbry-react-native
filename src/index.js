@@ -18,6 +18,7 @@ import {
   authReducer,
   blacklistReducer,
   costInfoReducer,
+  filteredReducer,
   homepageReducer,
   rewardsReducer,
   subscriptionsReducer,
@@ -32,7 +33,6 @@ import AppWithNavigationState, {
 } from 'component/AppNavigator';
 import { REHYDRATE, PURGE, persistCombineReducers, persistStore } from 'redux-persist';
 import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4';
-import AsyncStorage from '@react-native-community/async-storage';
 import FilesystemStorage from 'redux-persist-filesystem-storage';
 import createCompressor from 'redux-persist-transform-compress';
 import createFilter from 'redux-persist-transform-filter';
@@ -43,7 +43,6 @@ import thunk from 'redux-thunk';
 
 const globalExceptionHandler = (error, isFatal) => {
   if (error && NativeModules.Firebase) {
-    console.log(error);
     NativeModules.Firebase.logException(isFatal, error.message ? error.message : 'No message', JSON.stringify(error));
   }
 };
@@ -80,7 +79,7 @@ function enableBatching(reducer) {
 const compressor = createCompressor();
 const authFilter = createFilter('auth', ['authToken']);
 const contentFilter = createFilter('content', ['positions']);
-const saveClaimsFilter = createFilter('claims', ['byId', 'claimsByUri']);
+const saveClaimsFilter = createFilter('claims', ['claimsByUri']);
 const subscriptionsFilter = createFilter('subscriptions', ['enabledChannelNotifications', 'subscriptions']);
 const settingsFilter = createFilter('settings', ['clientSettings']);
 const tagsFilter = createFilter('tags', ['followedTags']);
@@ -109,6 +108,7 @@ const reducers = persistCombineReducers(persistOptions, {
   drawer: drawerReducer,
   file: fileReducer,
   fileInfo: fileInfoReducer,
+  filtered: filteredReducer,
   homepage: homepageReducer,
   nav: navigatorReducer,
   notifications: notificationsReducer,
@@ -136,11 +136,29 @@ const store = createStore(
 );
 window.store = store;
 
-persistStore(store, persistOptions, err => {
+const persistor = persistStore(store, persistOptions, err => {
   if (err) {
     console.log('Unable to load saved SETTINGS');
   }
 });
+window.persistor = persistor;
+
+/*
+const persistFilter = {
+  'auth': ['authToken'],
+  'claims': ['byId', 'claimsByUri'],
+  'content': ['positions'],
+  'subscriptions': ['enabledChannelNotifications', 'subscriptions'],
+  'settings': ['clientSettings'],
+  'tags': ['followedTags'],
+  'wallet': ['receiveAddress']
+};
+
+store.subscribe(() => {
+  const state = (({ auth, claims, content, subscriptions, settings, tags, wallet }) =>
+    ({ auth, claims, content, subscriptions, settings, tags, wallet }))(store.getState());
+  NativeModules.StatePersistor.update(state, persistFilter);
+}); */
 
 // TODO: Find i18n module that is compatible with react-native
 global.__ = str => str;

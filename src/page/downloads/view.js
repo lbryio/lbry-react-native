@@ -3,7 +3,7 @@ import { Lbry, buildURI } from 'lbry-redux';
 import { ActivityIndicator, Button, FlatList, Text, TextInput, View, ScrollView } from 'react-native';
 import { navigateToUri, uriFromFileInfo } from 'utils/helper';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PageHeader from 'component/pageHeader';
 import FileListItem from 'component/fileListItem';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
@@ -65,7 +65,7 @@ class DownloadsPage extends React.PureComponent {
         )}
         {fetching && !hasDownloads && (
           <View style={downloadsStyle.busyContainer}>
-            <ActivityIndicator size="large" color={Colors.LbryGreen} style={downloadsStyle.loading} />
+            <ActivityIndicator size="large" color={Colors.NextLbryGreen} style={downloadsStyle.loading} />
           </View>
         )}
         {hasDownloads && (

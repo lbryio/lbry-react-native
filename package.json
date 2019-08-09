@@ -4,6 +4,7 @@
     "private": "true",
     "scripts": {
         "start": "node node_modules/react-native/local-cli/cli.js start",
+        "devtools": "react-devtools",
         "format": "prettier 'src/**/*.{js,json}' --write",
         "precommit": "lint-staged"
     },
@@ -11,7 +12,7 @@
         "base-64": "^0.1.0",
         "@expo/vector-icons": "^8.1.0",
         "gfycat-style-urls": "^1.0.3",
-        "lbry-redux": "lbryio/lbry-redux#multi-claim-search",
+        "lbry-redux": "lbryio/lbry-redux#67a654f60630710cae72419448a73a18d076d18a",
         "lbryinc": "lbryio/lbryinc",
         "lodash": ">=4.17.11",
         "merge": ">=1.2.1",
@@ -63,6 +64,7 @@
         "husky": "^0.14.3",
         "lint-staged": "^7.0.4",
         "metro-react-native-babel-preset": "^0.55.0",
-        "prettier": "^1.11.1"
+        "prettier": "^1.11.1",
+        "react-devtools": "^3.6.3"
     }
 }

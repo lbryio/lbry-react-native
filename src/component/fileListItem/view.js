@@ -48,8 +48,10 @@ class FileListItem extends React.PureComponent {
 
   render() {
     const {
+      blackListedOutpoints,
       claim,
       fileInfo,
+      filteredOutpoints,
       metadata,
       featuredResult,
       isResolvingUri,
@@ -66,7 +68,7 @@ class FileListItem extends React.PureComponent {
     const obscureNsfw = this.props.obscureNsfw && metadata && metadata.nsfw;
     const isResolving = !fileInfo && isResolvingUri;
 
-    let name, channel, height, channelClaimId, fullChannelUri, signingChannel;
+    let name, channel, height, channelClaimId, fullChannelUri, shouldHide, signingChannel;
     if (claim) {
       name = claim.name;
       signingChannel = claim.signing_channel;
@@ -74,9 +76,14 @@ class FileListItem extends React.PureComponent {
       height = claim.height;
       channelClaimId = signingChannel ? signingChannel.claim_id : null;
       fullChannelUri = channelClaimId ? `${channel}#${channelClaimId}` : channel;
+
+      if (blackListedOutpoints || filteredOutpoints) {
+        const outpointsToHide = blackListedOutpoints.concat(filteredOutpoints);
+        shouldHide = outpointsToHide.some(outpoint => outpoint.txid === claim.txid && outpoint.nout === claim.nout);
+      }
     }
 
-    if (featuredResult && !isResolvingUri && !claim && !title && !name) {
+    if (shouldHide || (featuredResult && !isResolvingUri && !claim && !title && !name)) {
       return null;
     }
 

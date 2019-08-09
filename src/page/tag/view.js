@@ -78,7 +78,7 @@ class TagPage extends React.PureComponent {
   };
 
   handleTimeItemSelected = item => {
-    this.setState({ time: item.name });
+    this.setState({ currentTimeItem: item, time: item.name, showTimePicker: false });
   };
 
   render() {

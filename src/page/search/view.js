@@ -3,7 +3,7 @@ import { Lbry, parseURI, normalizeURI, isURIValid } from 'lbry-redux';
 import { ActivityIndicator, Button, Text, TextInput, View, ScrollView } from 'react-native';
 import { navigateToUri } from 'utils/helper';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PageHeader from 'component/pageHeader';
 import FileListItem from 'component/fileListItem';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
@@ -91,7 +91,7 @@ class SearchPage extends React.PureComponent {
         <UriBar value={query} navigation={navigation} onSearchSubmitted={this.handleSearchSubmitted} />
         {isSearching && (
           <View style={searchStyle.busyContainer}>
-            <ActivityIndicator size="large" color={Colors.LbryGreen} style={searchStyle.loading} />
+            <ActivityIndicator size="large" color={Colors.NextLbryGreen} style={searchStyle.loading} />
           </View>
         )}
 
@@ -105,7 +105,7 @@ class SearchPage extends React.PureComponent {
               <FileListItem
                 key={this.state.currentUri}
                 uri={this.state.currentUri}
-                featuredResult={true}
+                featuredResult
                 style={searchStyle.featuredResultItem}
                 navigation={navigation}
                 onPress={() => navigateToUri(navigation, this.state.currentUri)}
@@ -113,14 +113,14 @@ class SearchPage extends React.PureComponent {
             )}
             {uris && uris.length
               ? uris.map(uri => (
-                  <FileListItem
-                    key={uri}
-                    uri={uri}
-                    style={searchStyle.resultItem}
-                    navigation={navigation}
-                    onPress={() => navigateToUri(navigation, uri)}
-                  />
-                ))
+                <FileListItem
+                  key={uri}
+                  uri={uri}
+                  style={searchStyle.resultItem}
+                  navigation={navigation}
+                  onPress={() => navigateToUri(navigation, uri)}
+                />
+              ))
               : null}
             {(!uris || uris.length === 0) && (
               <View style={searchStyle.noResults}>

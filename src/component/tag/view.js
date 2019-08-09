@@ -1,20 +1,21 @@
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+import { formatTagName } from 'utils/helper';
 import tagStyle from 'styles/tag';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export default class Tag extends React.PureComponent {
   onPressDefault = () => {
     const { name, navigation, type, onAddPress, onRemovePress } = this.props;
-    if ('add' === type) {
+    if (type === 'add') {
       if (onAddPress) {
         onAddPress(name);
       }
       return;
     }
-    if ('remove' === type) {
+    if (type === 'remove') {
       if (onRemovePress) {
         onRemovePress(name);
       }
@@ -48,7 +49,7 @@ export default class Tag extends React.PureComponent {
     return (
       <TouchableOpacity style={styles} onPress={onPress || this.onPressDefault}>
         <View style={tagStyle.content}>
-          <Text style={tagStyle.text}>{name}</Text>
+          <Text style={tagStyle.text}>{formatTagName(name)}</Text>
           {type && <Icon style={tagStyle.icon} name={type === 'add' ? 'plus' : 'times'} size={8} />}
         </View>
       </TouchableOpacity>

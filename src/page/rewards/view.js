@@ -2,7 +2,7 @@ import React from 'react';
 import { Lbry } from 'lbry-redux';
 import { ActivityIndicator, NativeModules, ScrollView, Text, View } from 'react-native';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Link from 'component/link';
 import CustomRewardCard from 'component/customRewardCard';
 import PageHeader from 'component/pageHeader';
@@ -87,7 +87,7 @@ class RewardsPage extends React.PureComponent {
       // claim new_user and new_mobile rewards
       for (let i = 0; i < rewards.length; i++) {
         const { reward_type: type } = rewards[i];
-        if ('new_user' === type || 'new_mobile' === type) {
+        if (type === 'new_user' || type === 'new_mobile') {
           claimReward(rewards[i]);
         }
       }
@@ -127,7 +127,7 @@ class RewardsPage extends React.PureComponent {
     if (fetching) {
       return (
         <View style={rewardStyle.busyContainer}>
-          <ActivityIndicator size="large" color={Colors.LbryGreen} />
+          <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
           <Text style={rewardStyle.infoText}>Fetching rewards...</Text>
         </View>
       );

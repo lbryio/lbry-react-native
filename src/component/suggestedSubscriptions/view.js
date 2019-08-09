@@ -43,7 +43,7 @@ class SuggestedSubscriptions extends React.PureComponent {
     if (loading) {
       return (
         <View style={subscriptionsStyle.centered}>
-          <ActivityIndicator size="large" color={Colors.LbryGreen} />
+          <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
         </View>
       );
     }
