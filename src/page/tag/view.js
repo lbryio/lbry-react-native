@@ -60,6 +60,10 @@ class TagPage extends React.PureComponent {
   }
 
   getOrderBy = item => {
+    if (!item) {
+      return Constants.DEFAULT_ORDER_BY;
+    }
+
     let orderBy = [];
     switch (item.name) {
       case Constants.SORT_BY_HOT:
