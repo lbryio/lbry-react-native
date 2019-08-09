@@ -1,5 +1,6 @@
 import { SETTINGS } from 'lbry-redux';
 import { createSelector } from 'reselect';
+import { getSortByItemForName } from 'utils/helper';
 
 const selectState = state => state.settings || {};
 
@@ -11,6 +12,11 @@ export const selectDaemonSettings = createSelector(
 export const selectClientSettings = createSelector(
   selectState,
   state => state.clientSettings || {}
+);
+
+export const selectSortByItem = createSelector(
+  selectState,
+  state => getSortByItemForName(state.sortByItemName)
 );
 
 export const makeSelectClientSetting = setting =>

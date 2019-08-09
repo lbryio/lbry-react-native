@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { DEFAULT_FOLLOWED_TAGS, Lbry, normalizeURI, parseURI } from 'lbry-redux';
-import { __, formatTagTitle } from 'utils/helper';
+import { __, formatTagTitle, getOrderBy } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import CategoryList from 'component/categoryList';
@@ -33,7 +33,6 @@ class DiscoverPage extends React.PureComponent {
     showModalTagSelector: false,
     showSortPicker: false,
     orderBy: Constants.DEFAULT_ORDER_BY,
-    currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[0],
   };
 
   componentDidMount() {
@@ -60,33 +59,22 @@ class DiscoverPage extends React.PureComponent {
       }
     });
 
-    const { fetchRewardedContent, fetchSubscriptions, fileList, followedTags } = this.props;
+    const { sortByItem, fetchRewardedContent, fetchSubscriptions, fileList, followedTags } = this.props;
 
     this.buildTagCollection(followedTags);
     fetchRewardedContent();
     fetchSubscriptions();
     fileList();
 
+    this.handleSortByItemSelected(sortByItem);
     this.showRatingReminder();
   }
 
   handleSortByItemSelected = item => {
-    let orderBy = [];
-    switch (item.name) {
-      case Constants.SORT_BY_HOT:
-        orderBy = Constants.DEFAULT_ORDER_BY;
-        break;
-
-      case Constants.SORT_BY_NEW:
-        orderBy = ['release_time'];
-        break;
-
-      case Constants.SORT_BY_TOP:
-        orderBy = ['effective_amount'];
-        break;
-    }
-
-    this.setState({ currentSortByItem: item, orderBy, showSortPicker: false });
+    const { setSortByItem } = this.props;
+    setSortByItem(item);
+    const orderBy = getOrderBy(item);
+    this.setState({ orderBy, showSortPicker: false });
   };
 
   subscriptionForUri = (uri, channelName) => {
@@ -226,14 +214,13 @@ class DiscoverPage extends React.PureComponent {
   };
 
   handleTagPress = name => {
-    const { navigation } = this.props;
+    const { navigation, sortByItem } = this.props;
     if (name.toLowerCase() !== 'trending') {
       navigation.navigate({
         routeName: Constants.DRAWER_ROUTE_TAG,
         key: `tagPage`,
         params: {
           tag: name,
-          sortByItem: this.state.currentSortByItem,
         },
       });
     } else {
@@ -243,8 +230,8 @@ class DiscoverPage extends React.PureComponent {
   };
 
   render() {
-    const { navigation } = this.props;
-    const { currentSortByItem, orderBy, showModalTagSelector, showSortPicker } = this.state;
+    const { navigation, sortByItem } = this.props;
+    const { orderBy, showModalTagSelector, showSortPicker } = this.state;
 
     return (
       <View style={discoverStyle.container}>
@@ -263,7 +250,7 @@ class DiscoverPage extends React.PureComponent {
                   style={discoverStyle.tagSortBy}
                   onPress={() => this.setState({ showSortPicker: true })}
                 >
-                  <Text style={discoverStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
+                  <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
                   <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
                 </TouchableOpacity>
               </View>
@@ -310,7 +297,7 @@ class DiscoverPage extends React.PureComponent {
             title={__('Sort content by')}
             onOverlayPress={() => this.setState({ showSortPicker: false })}
             onItemSelected={this.handleSortByItemSelected}
-            selectedItem={currentSortByItem}
+            selectedItem={sortByItem}
             items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
           />
         )}

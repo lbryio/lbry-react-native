@@ -55,7 +55,9 @@ class SuggestedSubscriptionItem extends React.PureComponent {
               {tags &&
                 tags
                   .slice(0, 3)
-                  .map(tag => <Tag style={subscriptionsStyle.tag} key={tag} name={tag} navigation={navigation} />)}
+                  .map(tag => (
+                    <Tag style={subscriptionsStyle.tag} key={tag} name={tag} navigation={navigation} truncate />
+                  ))}
             </View>
           )}
         </View>

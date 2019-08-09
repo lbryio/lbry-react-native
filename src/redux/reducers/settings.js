@@ -1,8 +1,10 @@
 import { ACTIONS } from 'lbry-redux';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 
 const reducers = {};
 const defaultState = {
   clientSettings: {},
+  sortByItemName: Constants.SORT_BY_HOT,
 };
 
 reducers[ACTIONS.CLIENT_SETTING_CHANGED] = (state, action) => {
@@ -15,6 +17,11 @@ reducers[ACTIONS.CLIENT_SETTING_CHANGED] = (state, action) => {
     clientSettings,
   });
 };
+
+reducers[Constants.ACTION_SORT_BY_ITEM_CHANGED] = (state, action) =>
+  Object.assign({}, state, {
+    sortByItemName: action.data.name,
+  });
 
 export default function reducer(state = defaultState, action) {
   const handler = reducers[action.type];

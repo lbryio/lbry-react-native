@@ -1,8 +1,8 @@
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 
 const reducers = {};
 const defaultState = {
-  stack: [Constants.DRAWER_ROUTE_DISCOVER], // Discover is always the first drawer route
+  stack: [{ route: Constants.DRAWER_ROUTE_DISCOVER, params: {} }], // Discover is always the first drawer route
   playerVisible: false,
   currentRoute: null,
 };
@@ -13,11 +13,11 @@ reducers[Constants.ACTION_SET_PLAYER_VISIBLE] = (state, action) =>
   });
 
 reducers[Constants.ACTION_PUSH_DRAWER_STACK] = (state, action) => {
-  const routeName = action.data;
+  const { routeName, params } = action.data;
   const newStack = state.stack.slice();
 
-  if (routeName !== newStack[newStack.length - 1]) {
-    newStack.push(routeName);
+  if (routeName !== newStack[newStack.length - 1].route) {
+    newStack.push({ route: routeName, params });
   }
 
   return {

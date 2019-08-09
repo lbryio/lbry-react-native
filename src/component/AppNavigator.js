@@ -175,7 +175,7 @@ const drawer = createDrawerNavigator(
         drawerIcon: ({ tintColor }) => <Icon name="award" size={20} style={{ color: tintColor }} />,
       },
     },
-    MyLBRYStack: {
+    Downloads: {
       screen: DownloadsPage,
       navigationOptions: {
         title: 'Library',
@@ -200,6 +200,7 @@ const drawer = createDrawerNavigator(
   {
     drawerWidth: 300,
     headerMode: 'none',
+    backBehavior: 'none',
     unmountInactiveRoutes: true,
     contentComponent: DrawerContent,
     contentOptions: {
