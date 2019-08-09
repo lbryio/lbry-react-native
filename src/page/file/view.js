@@ -497,7 +497,7 @@ class FilePage extends React.PureComponent {
       return;
     }
 
-    sendTip(tipAmount, claim.claim_id, isSupport: false, () => {
+    sendTip(tipAmount, claim.claim_id, uri, () => {
       this.setState({ tipAmount: 0, showTipView: false });
     });
   };

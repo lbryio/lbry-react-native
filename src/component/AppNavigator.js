@@ -200,6 +200,7 @@ const drawer = createDrawerNavigator(
   {
     drawerWidth: 300,
     headerMode: 'none',
+    unmountInactiveRoutes: true,
     contentComponent: DrawerContent,
     contentOptions: {
       activeTintColor: Colors.LbryGreen,
