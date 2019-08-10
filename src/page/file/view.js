@@ -913,6 +913,7 @@ class FilePage extends React.PureComponent {
                         <TextInput
                           ref={ref => (this.tipAmountInput = ref)}
                           onChangeText={value => this.setState({ tipAmount: value })}
+                          underlineColorAndroid={Colors.NextLbryGreen}
                           keyboardType={'numeric'}
                           placeholder={'0'}
                           value={this.state.tipAmount}

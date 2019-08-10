@@ -15,7 +15,15 @@ import {
   View,
 } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
-import { isNameValid, buildURI, regexInvalidURI, CLAIM_VALUES, LICENSES, THUMBNAIL_STATUSES } from 'lbry-redux';
+import {
+  isNameValid,
+  buildURI,
+  regexInvalidURI,
+  CLAIM_VALUES,
+  LICENSES,
+  MATURE_TAGS,
+  THUMBNAIL_STATUSES,
+} from 'lbry-redux';
 import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import { RNCamera } from 'react-native-camera';
 import { generateCombination } from 'gfycat-style-urls';
@@ -203,10 +211,6 @@ class PublishPage extends React.PureComponent {
     }
 
     const publishTags = tags.slice();
-    if (mature) {
-      publishTags.push('nsfw');
-    }
-
     const publishParams = {
       filePath: currentMedia.filePath,
       bid: bid || 0.1,
@@ -215,7 +219,7 @@ class PublishPage extends React.PureComponent {
       thumbnail: thumbnail,
       description: description || '',
       language,
-      nsfw: mature,
+      nsfw: publishTags.some(tag => MATURE_TAGS.includes(tag)),
       license,
       licenseUrl: '',
       otherLicenseDescription: '',
@@ -654,7 +658,7 @@ class PublishPage extends React.PureComponent {
                   />
                 ))}
             </View>
-            <TagSearch handleAddTag={this.handleAddTag} selectedTags={this.state.tags} />
+            <TagSearch handleAddTag={this.handleAddTag} selectedTags={this.state.tags} showNsfwTags />
           </View>
 
           <View style={publishStyle.card}>
@@ -727,11 +731,6 @@ class PublishPage extends React.PureComponent {
           {this.state.advancedMode && (
             <View style={publishStyle.card}>
               <Text style={publishStyle.cardTitle}>Additional Options</Text>
-              <View style={publishStyle.toggleField}>
-                <Switch value={this.state.mature} onValueChange={value => this.setState({ mature: value })} />
-                <Text style={publishStyle.toggleText}>Mature content</Text>
-              </View>
-
               <View>
                 <Text style={publishStyle.cardText}>Language</Text>
                 <Picker

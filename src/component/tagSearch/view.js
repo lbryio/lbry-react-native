@@ -1,5 +1,6 @@
 import React from 'react';
 import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { MATURE_TAGS } from 'lbry-redux';
 import Tag from 'component/tag';
 import tagStyle from 'styles/tag';
 import Colors from 'styles/colors';
@@ -66,7 +67,7 @@ export default class TagSearch extends React.PureComponent {
   };
 
   render() {
-    const { name, style, type, selectedTags = [] } = this.props;
+    const { name, style, type, selectedTags = [], showNsfwTags } = this.props;
 
     return (
       <View>
@@ -85,6 +86,22 @@ export default class TagSearch extends React.PureComponent {
             ))}
           </View>
         </KeyboardAvoidingView>
+        {showNsfwTags && (
+          <View style={tagStyle.nsfwTagsContainer}>
+            <Text style={tagStyle.nsfwTagsTitle}>Mature tags</Text>
+            <View style={tagStyle.tagResultsList}>
+              {MATURE_TAGS.map(tag => (
+                <Tag
+                  key={tag}
+                  name={tag}
+                  style={tagStyle.tag}
+                  type="add"
+                  onAddPress={name => this.onAddTagPress(name)}
+                />
+              ))}
+            </View>
+          </View>
+        )}
       </View>
     );
   }

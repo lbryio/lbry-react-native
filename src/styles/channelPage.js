@@ -66,15 +66,21 @@ const channelPageStyle = StyleSheet.create({
     fontFamily: 'Inter-UI-Regular',
     fontSize: 18,
   },
+  subscribeButtonContainer: {
+    position: 'absolute',
+    flexDirection: 'row',
+    left: 8,
+    bottom: -90,
+    zIndex: 100,
+  },
   subscribeButton: {
     alignSelf: 'flex-start',
     backgroundColor: Colors.White,
     paddingLeft: 16,
     paddingRight: 16,
-    position: 'absolute',
-    right: 8,
-    bottom: -88,
-    zIndex: 100,
+  },
+  bellButton: {
+    marginLeft: 8,
   },
   cover: {
     width: '100%',
@@ -120,6 +126,7 @@ const channelPageStyle = StyleSheet.create({
     marginBottom: 24,
   },
   aboutScrollContent: {
+    paddingTop: 52,
     padding: 24,
   },
   aboutTitle: {

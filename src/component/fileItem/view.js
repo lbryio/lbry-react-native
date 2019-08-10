@@ -108,6 +108,7 @@ class FileItem extends React.PureComponent {
                   }}
                 />
               )}
+              {!channelName && <Text style={discoverStyle.anonChannelName}>Anonymous</Text>}
               <DateTime style={discoverStyle.dateTime} textStyle={discoverStyle.dateTimeText} timeAgo uri={uri} />
             </View>
           )}

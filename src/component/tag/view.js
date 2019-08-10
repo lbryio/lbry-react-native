@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+import { MATURE_TAGS } from 'lbry-redux';
 import { formatTagName } from 'utils/helper';
 import tagStyle from 'styles/tag';
 import Colors from 'styles/colors';
@@ -41,7 +42,7 @@ export default class Tag extends React.PureComponent {
     }
 
     styles.push({
-      backgroundColor: Colors.TagGreen,
+      backgroundColor: MATURE_TAGS.includes(name) ? Colors.TagGrape : Colors.TagGreen,
       borderRadius: 8,
       marginBottom: 4,
     });

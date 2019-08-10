@@ -1,11 +1,13 @@
 import React from 'react';
 import { buildURI, normalizeURI } from 'lbry-redux';
 import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
+import { navigateToUri } from 'utils/helper';
 import Colors from 'styles/colors';
 import discoverStyle from 'styles/discover';
 import FileItem from 'component/fileItem';
 import SubscribeButton from 'component/subscribeButton';
 import subscriptionsStyle from 'styles/subscriptions';
+import Link from 'component/link';
 import Tag from 'component/tag';
 
 class SuggestedSubscriptionItem extends React.PureComponent {
@@ -47,9 +49,14 @@ class SuggestedSubscriptionItem extends React.PureComponent {
               {title}
             </Text>
           )}
-          <Text style={subscriptionsStyle.suggestedItemName} numberOfLines={1}>
-            {claim && claim.name}
-          </Text>
+          {claim && (
+            <Link
+              style={subscriptionsStyle.suggestedItemName}
+              numberOfLines={1}
+              text={claim.name}
+              onPress={() => navigateToUri(navigation, normalizeURI(uri))}
+            />
+          )}
           {tags && (
             <View style={subscriptionsStyle.suggestedItemTagList}>
               {tags &&

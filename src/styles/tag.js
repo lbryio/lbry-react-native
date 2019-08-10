@@ -30,6 +30,14 @@ const tagStyle = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
+  nsfwTagsContainer: {
+    marginTop: 8,
+  },
+  nsfwTagsTitle: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 16,
+    marginBottom: 4,
+  },
 });
 
 export default tagStyle;

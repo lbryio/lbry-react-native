@@ -10,6 +10,7 @@ import Link from 'component/link';
 import FileList from 'component/fileList';
 import PageHeader from 'component/pageHeader';
 import SubscribeButton from 'component/subscribeButton';
+import SubscribeNotificationButton from 'component/subscribeNotificationButton';
 import UriBar from 'component/uriBar';
 import channelPageStyle from 'styles/channelPage';
 
@@ -206,7 +207,14 @@ class ChannelPage extends React.PureComponent {
               />
             </View>
 
-            <SubscribeButton style={channelPageStyle.subscribeButton} uri={uri} name={name} />
+            <View style={channelPageStyle.subscribeButtonContainer}>
+              <SubscribeButton style={channelPageStyle.subscribeButton} uri={uri} name={name} />
+              <SubscribeNotificationButton
+                style={[channelPageStyle.subscribeButton, channelPageStyle.bellButton]}
+                uri={uri}
+                name={name}
+              />
+            </View>
           </View>
 
           <View style={channelPageStyle.tabBar}>

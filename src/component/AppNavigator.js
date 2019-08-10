@@ -127,73 +127,76 @@ const walletStack = createStackNavigator(
   }
 );
 
+const drawerIconSize = 18;
 const drawer = createDrawerNavigator(
   {
     DiscoverStack: {
       screen: discoverStack,
       navigationOptions: {
         title: 'Explore',
-        drawerIcon: ({ tintColor }) => <Icon name="home" size={20} style={{ color: tintColor }} />,
+        drawerIcon: ({ tintColor }) => <Icon name="home" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
     TrendingStack: {
       screen: TrendingPage,
       navigationOptions: {
         title: 'Trending',
-        drawerIcon: ({ tintColor }) => <Icon name="fire" size={20} style={{ color: tintColor }} />,
+        drawerIcon: ({ tintColor }) => <Icon name="fire" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
     MySubscriptionsStack: {
       screen: SubscriptionsPage,
       navigationOptions: {
         title: 'Subscriptions',
-        drawerIcon: ({ tintColor }) => <Icon name="heart" solid size={20} style={{ color: tintColor }} />,
+        drawerIcon: ({ tintColor }) => <Icon name="heart" solid size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
     WalletStack: {
       screen: walletStack,
       navigationOptions: {
         title: 'Wallet',
-        drawerIcon: ({ tintColor }) => <Icon name="wallet" size={20} style={{ color: tintColor }} />,
+        drawerIcon: ({ tintColor }) => <Icon name="wallet" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
     Publish: {
       screen: PublishPage,
       navigationOptions: {
-        drawerIcon: ({ tintColor }) => <Icon name="upload" size={20} style={{ color: tintColor }} />,
+        drawerIcon: ({ tintColor }) => <Icon name="upload" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
     Publishes: {
       screen: PublishesPage,
       navigationOptions: {
-        drawerIcon: ({ tintColor }) => <Icon name="cloud-upload-alt" size={20} style={{ color: tintColor }} />,
+        drawerIcon: ({ tintColor }) => (
+          <Icon name="cloud-upload-alt" size={drawerIconSize} style={{ color: tintColor }} />
+        ),
       },
     },
     Rewards: {
       screen: RewardsPage,
       navigationOptions: {
-        drawerIcon: ({ tintColor }) => <Icon name="award" size={20} style={{ color: tintColor }} />,
+        drawerIcon: ({ tintColor }) => <Icon name="award" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
     Downloads: {
       screen: DownloadsPage,
       navigationOptions: {
         title: 'Library',
-        drawerIcon: ({ tintColor }) => <Icon name="download" size={20} style={{ color: tintColor }} />,
+        drawerIcon: ({ tintColor }) => <Icon name="download" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
     Settings: {
       screen: SettingsPage,
       navigationOptions: {
         drawerLockMode: 'locked-closed',
-        drawerIcon: ({ tintColor }) => <Icon name="cog" size={20} style={{ color: tintColor }} />,
+        drawerIcon: ({ tintColor }) => <Icon name="cog" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
     About: {
       screen: AboutPage,
       navigationOptions: {
         drawerLockMode: 'locked-closed',
-        drawerIcon: ({ tintColor }) => <Icon name="info" size={20} style={{ color: tintColor }} />,
+        drawerIcon: ({ tintColor }) => <Icon name="info" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
   },
