@@ -3,12 +3,13 @@ import {
   doPublish,
   doResolveUri,
   doToast,
+  doUpdatePublishForm,
   doUploadThumbnail,
   selectBalance,
   selectPublishFormValues,
 } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PublishPage from './view';
 
 const select = state => ({
@@ -18,6 +19,7 @@ const select = state => ({
 
 const perform = dispatch => ({
   notify: data => dispatch(doToast(data)),
+  updatePublishForm: value => dispatch(doUpdatePublishForm(value)),
   uploadThumbnail: (filePath, fsAdapter) => dispatch(doUploadThumbnail(filePath, null, fsAdapter)),
   publish: params => dispatch(doPublish(params)),
   resolveUri: uri => dispatch(doResolveUri(uri)),
