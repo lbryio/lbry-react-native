@@ -1,11 +1,11 @@
 import React from 'react';
 import { Lbry } from 'lbry-redux';
-import { ActivityIndicator, View, Text, TextInput } from 'react-native';
+import { ActivityIndicator, NativeModules, View, Text, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Button from 'component/button';
 import Link from 'component/link';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import firstRunStyle from 'styles/firstRun';
 import rewardStyle from 'styles/reward';
 
@@ -44,11 +44,12 @@ class EmailVerifyPage extends React.PureComponent {
         notify({ message: String(emailNewErrorMessage), isError: true });
         this.setState({ verifyStarted: false });
       } else {
+        NativeModules.Firebase.track('email_added', { email: this.state.email });
         this.setState({ phase: Constants.PHASE_VERIFICATION });
         if (setEmailVerificationPhase) {
           setEmailVerificationPhase(true);
         }
-        //notify({ message: 'Please follow the instructions in the email sent to your address to continue.' });
+        // notify({ message: 'Please follow the instructions in the email sent to your address to continue.' });
         AsyncStorage.setItem(Constants.KEY_EMAIL_VERIFY_PENDING, 'true');
       }
     }

@@ -23,6 +23,9 @@ export default class ModalTagSelector extends React.PureComponent {
     }
 
     this.props.doToggleTagFollow(tag);
+    if (window.persistor) {
+      window.persistor.flush();
+    }
     NativeModules.Firebase.track('tag_follow', { tag });
   };
 
@@ -32,6 +35,9 @@ export default class ModalTagSelector extends React.PureComponent {
     }
 
     this.props.doToggleTagFollow(tag);
+    if (window.persistor) {
+      window.persistor.flush();
+    }
     NativeModules.Firebase.track('tag_unfollow', { tag });
   };
 

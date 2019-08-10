@@ -315,6 +315,7 @@ class AppWithNavigationState extends React.Component {
       AsyncStorage.setItem(Constants.KEY_EMAIL_VERIFY_PENDING, 'false');
       this.setState({ verifyPending: false });
 
+      NativeModules.Firebase.track('email_verified', { email: user.primary_email });
       ToastAndroid.show('Your email address was successfully verified.', ToastAndroid.LONG);
 
       // upon successful email verification, do wallet sync (if password has been set)

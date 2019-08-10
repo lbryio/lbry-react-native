@@ -4,7 +4,7 @@ import { ActivityIndicator, Linking, NativeModules, Text, TouchableOpacity, View
 import { NavigationActions, StackActions } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import WalletPage from './internal/wallet-page';
 import WelcomePage from './internal/welcome-page';
 import EmailCollectPage from './internal/email-collect-page';
@@ -73,6 +73,7 @@ class FirstRunScreen extends React.PureComponent {
         notify({ message: String(emailNewErrorMessage), isError: true });
       } else {
         // Request successful. Navigate to email verify page.
+        NativeModules.Firebase.track('email_added', { email: this.state.email });
         this.showPage(Constants.FIRST_RUN_PAGE_EMAIL_VERIFY);
       }
     }
@@ -228,7 +229,7 @@ class FirstRunScreen extends React.PureComponent {
 
   onEmailChanged = email => {
     this.setState({ email });
-    if (Constants.FIRST_RUN_PAGE_EMAIL_COLLECT == this.state.currentPage) {
+    if (Constants.FIRST_RUN_PAGE_EMAIL_COLLECT === this.state.currentPage) {
       this.setState({ showSkip: !email || email.trim().length === 0 });
     } else {
       this.setState({ showSkip: false });
@@ -236,14 +237,14 @@ class FirstRunScreen extends React.PureComponent {
   };
 
   onEmailViewLayout = phase => {
-    if ('collect' === phase) {
+    if (phase === 'collect') {
       if (!this.state.emailCollectTracked) {
         // we only want to track this once
         this.setState({ emailCollectTracked: true }, () =>
           NativeModules.Firebase.track('first_run_email_collect', null)
         );
       }
-    } else if ('verify' === phase) {
+    } else if (phase === 'verify') {
       NativeModules.Firebase.track('first_run_email_verify', null);
     }
 
@@ -402,10 +403,10 @@ class FirstRunScreen extends React.PureComponent {
 
                   {Constants.FIRST_RUN_PAGE_SKIP_ACCOUNT !== this.state.currentPage &&
                     Constants.FIRST_RUN_PAGE_EMAIL_VERIFY !== this.state.currentPage && (
-                      <Text style={firstRunStyle.buttonText}>
-                        {Constants.FIRST_RUN_PAGE_WALLET === this.state.currentPage ? 'Use LBRY' : 'Continue'} »
-                      </Text>
-                    )}
+                    <Text style={firstRunStyle.buttonText}>
+                      {Constants.FIRST_RUN_PAGE_WALLET === this.state.currentPage ? 'Use LBRY' : 'Continue'} »
+                    </Text>
+                  )}
                 </TouchableOpacity>
               )}
             </View>

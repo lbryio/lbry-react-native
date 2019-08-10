@@ -31,6 +31,7 @@ class ClaimList extends React.PureComponent {
       claimSearch,
       orderBy = Constants.DEFAULT_ORDER_BY,
       searchByTags,
+      showNsfwContent,
       tags,
       time,
     } = this.props;
@@ -38,9 +39,11 @@ class ClaimList extends React.PureComponent {
       const options = {
         order_by: orderBy,
         no_totals: true,
-        not_tags: MATURE_TAGS,
         page: this.state.currentPage,
       };
+      if (!showNsfwContent) {
+        options.not_tags = MATURE_TAGS;
+      }
       if (channelIds) {
         this.setState({ subscriptionsView: true });
         options.channel_ids = channelIds;
@@ -53,6 +56,9 @@ class ClaimList extends React.PureComponent {
       const additionalOptions = {};
       if (orderBy && orderBy[0] === Constants.ORDER_BY_EFFECTIVE_AMOUNT && Constants.TIME_ALL !== time) {
         additionalOptions.release_time = this.getReleaseTimeOption(time);
+      }
+      if (!showNsfwContent) {
+        additionalOptions.not_tags = MATURE_TAGS;
       }
       searchByTags(tags, orderBy, this.state.currentPage, additionalOptions);
     }
@@ -67,6 +73,7 @@ class ClaimList extends React.PureComponent {
       channelIds: prevChannelIds,
       trendingForAll: prevTrendingForAll,
       time: prevTime,
+      showNsfwContent,
     } = this.props;
     const { orderBy, tags, channelIds, trendingForAll, time } = nextProps;
     if (
@@ -85,9 +92,11 @@ class ClaimList extends React.PureComponent {
           const options = {
             order_by: orderBy,
             no_totals: true,
-            not_tags: MATURE_TAGS,
             page: this.state.currentPage,
           };
+          if (!showNsfwContent) {
+            options.not_tags = MATURE_TAGS;
+          }
           if (channelIds) {
             this.setState({ subscriptionsView: true });
             options.channel_ids = channelIds;
@@ -102,6 +111,9 @@ class ClaimList extends React.PureComponent {
           const additionalOptions = {};
           if (orderBy && orderBy[0] === Constants.ORDER_BY_EFFECTIVE_AMOUNT && Constants.TIME_ALL !== time) {
             additionalOptions.release_time = this.getReleaseTimeOption(time);
+          }
+          if (!showNsfwContent) {
+            additionalOptions.not_tags = MATURE_TAGS;
           }
           searchByTags(tags, orderBy, this.state.currentPage, additionalOptions);
         }
@@ -119,7 +131,17 @@ class ClaimList extends React.PureComponent {
 
   handleVerticalEndReached = () => {
     // fetch more content
-    const { channelIds, claimSearch, claimSearchUris, orderBy, searchByTags, tags, time, uris } = this.props;
+    const {
+      channelIds,
+      claimSearch,
+      claimSearchUris,
+      orderBy,
+      searchByTags,
+      showNsfwContent,
+      tags,
+      time,
+      uris,
+    } = this.props;
     const { subscriptionsView, trendingForAllView } = this.state;
     if ((claimSearchUris && claimSearchUris.length >= softLimit) || (uris && uris.length >= softLimit)) {
       // don't fetch more than the specified limit to be displayed
@@ -131,9 +153,11 @@ class ClaimList extends React.PureComponent {
         const options = {
           order_by: orderBy,
           no_totals: true,
-          not_tags: MATURE_TAGS,
           page: this.state.currentPage,
         };
+        if (!showNsfwContent) {
+          options.not_tags = MATURE_TAGS;
+        }
         if (subscriptionsView) {
           options.channel_ids = channelIds;
         }
@@ -143,6 +167,9 @@ class ClaimList extends React.PureComponent {
         const additionalOptions = {};
         if (orderBy && orderBy[0] === Constants.ORDER_BY_EFFECTIVE_AMOUNT && Constants.TIME_ALL !== time) {
           additionalOptions.release_time = this.getReleaseTimeOption(time);
+        }
+        if (!showNsfwContent) {
+          additionalOptions.not_tags = MATURE_TAGS;
         }
         searchByTags(tags, orderBy, this.state.currentPage, additionalOptions);
       }
@@ -174,6 +201,29 @@ class ClaimList extends React.PureComponent {
     );
   };
 
+  renderVerticalItem = ({ item }) => {
+    const { navigation } = this.props;
+    return <FileListItem key={item} uri={item} style={claimListStyle.verticalListItem} navigation={navigation} />;
+  };
+
+  renderHorizontalItem = ({ item }) => {
+    const { navigation } = this.props;
+
+    return item === Constants.MORE_PLACEHOLDER ? (
+      this.renderMorePlaceholder()
+    ) : (
+      <FileItem
+        style={discoverStyle.fileItem}
+        mediaStyle={discoverStyle.fileItemMedia}
+        key={item}
+        uri={normalizeURI(item)}
+        navigation={navigation}
+        showDetails
+        compactView={false}
+      />
+    );
+  };
+
   render() {
     const {
       ListHeaderComponent,
@@ -202,9 +252,7 @@ class ClaimList extends React.PureComponent {
             initialNumToRender={10}
             maxToRenderPerBatch={20}
             removeClippedSubviews
-            renderItem={({ item }) => (
-              <FileListItem key={item} uri={item} style={claimListStyle.verticalListItem} navigation={navigation} />
-            )}
+            renderItem={this.renderVerticalItem}
             data={data}
             keyExtractor={(item, index) => item}
             onEndReached={this.handleVerticalEndReached}
@@ -235,21 +283,7 @@ class ClaimList extends React.PureComponent {
           initialNumToRender={3}
           maxToRenderPerBatch={3}
           removeClippedSubviews
-          renderItem={({ item }) => {
-            return item === Constants.MORE_PLACEHOLDER ? (
-              this.renderMorePlaceholder()
-            ) : (
-              <FileItem
-                style={discoverStyle.fileItem}
-                mediaStyle={discoverStyle.fileItemMedia}
-                key={item}
-                uri={normalizeURI(item)}
-                navigation={navigation}
-                showDetails
-                compactView={false}
-              />
-            );
-          }}
+          renderItem={this.renderHorizontalItem}
           horizontal
           showsHorizontalScrollIndicator={false}
           data={uris ? this.appendMorePlaceholder(uris.slice(0, horizontalLimit)) : []}

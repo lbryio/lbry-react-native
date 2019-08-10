@@ -5,6 +5,7 @@ import {
   makeSelectMetadataForUri,
   makeSelectFileInfoForUri,
   makeSelectIsUriResolving,
+  makeSelectClaimIsNsfw,
   makeSelectTitleForUri,
   makeSelectThumbnailForUri,
 } from 'lbry-redux';
@@ -19,6 +20,7 @@ const select = (state, props) => ({
   filteredOutpoints: selectFilteredOutpoints(state),
   isDownloaded: !!makeSelectFileInfoForUri(props.uri)(state),
   metadata: makeSelectMetadataForUri(props.uri)(state),
+  nsfw: makeSelectClaimIsNsfw(props.uri)(state),
   isResolvingUri: makeSelectIsUriResolving(props.uri)(state),
   obscureNsfw: !selectShowNsfw(state),
   title: makeSelectTitleForUri(props.uri)(state),

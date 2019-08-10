@@ -8,6 +8,7 @@ import {
   selectFetchingClaimSearch,
   selectLastClaimSearchUris,
 } from 'lbry-redux';
+import { selectShowNsfw } from 'redux/selectors/settings';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import ClaimList from './view';
 
@@ -18,6 +19,7 @@ const select = (state, props) => {
     // for subscriptions
     claimSearchLoading: selectFetchingClaimSearch(state),
     claimSearchUris: selectLastClaimSearchUris(state),
+    showNsfwContent: selectShowNsfw(state),
   };
 };
 
@@ -34,7 +36,6 @@ const perform = dispatch => ({
             no_totals: true,
             order_by: orderBy,
             page,
-            not_tags: MATURE_TAGS,
           },
           additionalOptions
         )

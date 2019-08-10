@@ -50,13 +50,15 @@ class FileItem extends React.PureComponent {
       style,
       mediaStyle,
       navigation,
+      nsfw,
+      obscureNsfw,
       showDetails,
       compactView,
       titleBeforeThumbnail,
     } = this.props;
 
     const uri = normalizeURI(this.props.uri);
-    const obscureNsfw = this.props.obscureNsfw && metadata && metadata.nsfw;
+    const obscure = obscureNsfw && nsfw;
     const isRewardContent = claim && rewardedContentClaimIds.includes(claim.claim_id);
     const signingChannel = claim ? claim.signing_channel : null;
     const channelName = signingChannel ? signingChannel.name : null;
@@ -75,7 +77,7 @@ class FileItem extends React.PureComponent {
           <FileItemMedia
             title={title}
             thumbnail={thumbnail}
-            blurRadius={obscureNsfw ? 15 : 0}
+            blurRadius={obscure ? 15 : 0}
             resizeMode="cover"
             isResolvingUri={isResolvingUri}
             style={mediaStyle}
@@ -110,9 +112,7 @@ class FileItem extends React.PureComponent {
             </View>
           )}
         </TouchableOpacity>
-        {obscureNsfw && (
-          <NsfwOverlay onPress={() => navigation.navigate({ routeName: 'Settings', key: 'settingsPage' })} />
-        )}
+        {obscure && <NsfwOverlay onPress={() => navigation.navigate({ routeName: 'Settings', key: 'settingsPage' })} />}
       </View>
     );
   }

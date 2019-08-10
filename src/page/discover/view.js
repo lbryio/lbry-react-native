@@ -215,7 +215,7 @@ class DiscoverPage extends React.PureComponent {
 
   handleTagPress = name => {
     const { navigation, sortByItem } = this.props;
-    if (name.toLowerCase() !== 'trending') {
+    if (name.toLowerCase() !== 'all tags you follow') {
       navigation.navigate({
         routeName: Constants.DRAWER_ROUTE_TAG,
         key: `tagPage`,
@@ -229,6 +229,46 @@ class DiscoverPage extends React.PureComponent {
     }
   };
 
+  sectionListHeader = () => (
+    <View style={discoverStyle.titleRow}>
+      <Text style={discoverStyle.pageTitle}>Explore</Text>
+      <View style={discoverStyle.rightTitleRow}>
+        <Link
+          style={discoverStyle.customizeLink}
+          text={'Customize'}
+          onPress={() => this.setState({ showModalTagSelector: true })}
+        />
+        <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
+          <Text style={discoverStyle.tagSortText}>{this.props.sortByItem.label.split(' ')[0]}</Text>
+          <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  renderSectionListItem = ({ item, index, section }) => (
+    <ClaimList
+      key={item.sort().join(',')}
+      orderBy={this.state.orderBy}
+      time={Constants.TIME_WEEK}
+      tags={item}
+      morePlaceholder
+      navigation={this.props.navigation}
+      orientation={Constants.ORIENTATION_HORIZONTAL}
+    />
+  );
+
+  renderSectionHeader = ({ section: { title } }) => (
+    <View style={discoverStyle.categoryTitleRow}>
+      <Text style={discoverStyle.categoryName} onPress={() => this.handleTagPress(title)}>
+        {formatTagTitle(title)}
+      </Text>
+      <TouchableOpacity onPress={() => this.handleTagPress(title)}>
+        <Icon name={'angle-double-down'} size={16} />
+      </TouchableOpacity>
+    </View>
+  );
+
   render() {
     const { navigation, sortByItem } = this.props;
     const { orderBy, showModalTagSelector, showSortPicker } = this.state;
@@ -237,51 +277,14 @@ class DiscoverPage extends React.PureComponent {
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} belowOverlay={showModalTagSelector} />
         <SectionList
-          ListHeaderComponent={
-            <View style={discoverStyle.titleRow}>
-              <Text style={discoverStyle.pageTitle}>Explore</Text>
-              <View style={discoverStyle.rightTitleRow}>
-                <Link
-                  style={discoverStyle.customizeLink}
-                  text={'Customize'}
-                  onPress={() => this.setState({ showModalTagSelector: true })}
-                />
-                <TouchableOpacity
-                  style={discoverStyle.tagSortBy}
-                  onPress={() => this.setState({ showSortPicker: true })}
-                >
-                  <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
-                  <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
-                </TouchableOpacity>
-              </View>
-            </View>
-          }
+          ListHeaderComponent={this.sectionListHeader}
           style={discoverStyle.scrollContainer}
           contentContainerStyle={discoverStyle.scrollPadding}
           initialNumToRender={4}
           maxToRenderPerBatch={4}
           removeClippedSubviews
-          renderItem={({ item, index, section }) => (
-            <ClaimList
-              key={item.sort().join(',')}
-              orderBy={orderBy}
-              time={Constants.TIME_WEEK}
-              tags={item}
-              morePlaceholder
-              navigation={navigation}
-              orientation={Constants.ORIENTATION_HORIZONTAL}
-            />
-          )}
-          renderSectionHeader={({ section: { title } }) => (
-            <View style={discoverStyle.categoryTitleRow}>
-              <Text style={discoverStyle.categoryName} onPress={() => this.handleTagPress(title)}>
-                {formatTagTitle(title)}
-              </Text>
-              <TouchableOpacity onPress={() => this.handleTagPress(title)}>
-                <Icon name={'angle-double-down'} size={16} />
-              </TouchableOpacity>
-            </View>
-          )}
+          renderItem={this.renderSectionListItem}
+          renderSectionHeader={this.renderSectionHeader}
           sections={this.buildSections()}
           keyExtractor={(item, index) => item}
         />
