@@ -133,7 +133,7 @@ class AboutPage extends React.PureComponent {
 
           <View style={aboutStyle.row}>
             <View style={aboutStyle.col}>
-              <Text style={aboutStyle.text}>Daemon (lbrynet)</Text>
+              <Text style={aboutStyle.text}>LBRY SDK</Text>
             </View>
             <View style={aboutStyle.col}>
               <Text selectable style={aboutStyle.valueText}>
