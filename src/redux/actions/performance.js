@@ -88,7 +88,6 @@ export const doNativeSearch = (
       dispatch(batchActions(...actions));
     })
     .catch(e => {
-      console.log(e);
       dispatch({
         type: ACTIONS.SEARCH_FAIL,
       });

@@ -229,6 +229,9 @@ const publishStyle = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  backButtonControl: {
+    flex: 0.1,
+  },
   mainControlsRow: {
     flex: 0.8,
     flexDirection: 'row',
@@ -237,6 +240,7 @@ const publishStyle = StyleSheet.create({
   },
   switchCameraToggle: {
     marginRight: 48,
+    color: Colors.White,
   },
   cameraAction: {
     width: 72,
@@ -266,6 +270,12 @@ const publishStyle = StyleSheet.create({
     marginTop: 24,
     alignItems: 'center',
     justifyContent: 'flex-end',
+  },
+  warning: {
+    marginTop: 24,
+    marginLeft: 16,
+    marginRight: 16,
+    alignItems: 'center',
   },
   rewardDriverCard: {
     alignItems: 'center',
@@ -336,6 +346,15 @@ const publishStyle = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  fullCentered: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   noPublishes: {
     position: 'absolute',
     left: 0,
@@ -374,6 +393,16 @@ const publishStyle = StyleSheet.create({
     color: Colors.White,
     fontFamily: 'Inter-UI-Regular',
     fontSize: 16,
+  },
+  cameraInfo: {
+    color: Colors.White,
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 16,
+  },
+  warningText: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+    color: Colors.DescriptionGrey,
   },
 });
 

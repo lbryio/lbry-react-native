@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry, buildURI } from 'lbry-redux';
+import { Lbry, buildURI, normalizeURI } from 'lbry-redux';
 import { ActivityIndicator, Button, FlatList, Text, TextInput, View, ScrollView } from 'react-native';
 import { navigateToUri, uriFromFileInfo } from 'utils/helper';
 import Colors from 'styles/colors';
@@ -31,9 +31,10 @@ class DownloadsPage extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const { fileList, pushDrawerStack, setPlayerVisible } = this.props;
+    const { fetchMyClaims, fileList, pushDrawerStack, setPlayerVisible } = this.props;
     pushDrawerStack();
     setPlayerVisible();
+    fetchMyClaims();
     fileList();
   };
 
@@ -49,9 +50,16 @@ class DownloadsPage extends React.PureComponent {
     }
   }
 
+  getFilteredUris = () => {
+    const { claims, downloadedUris } = this.props;
+    const claimUris = claims.map(claim => normalizeURI(`${claim.name}#${claim.claim_id}`));
+    return downloadedUris.filter(uri => !claimUris.includes(uri));
+  };
+
   render() {
-    const { fetching, fileInfos, navigation } = this.props;
-    const hasDownloads = fileInfos && Object.values(fileInfos).length > 0;
+    const { fetching, claims, downloadedUris, fileInfos, navigation } = this.props;
+    const filteredUris = this.getFilteredUris();
+    const hasDownloads = filteredUris && filteredUris.length > 0;
 
     return (
       <View style={downloadsStyle.container}>
@@ -63,12 +71,12 @@ class DownloadsPage extends React.PureComponent {
             </Text>
           </View>
         )}
-        {fetching && !hasDownloads && (
+        {fetching && (
           <View style={downloadsStyle.busyContainer}>
             <ActivityIndicator size="large" color={Colors.NextLbryGreen} style={downloadsStyle.loading} />
           </View>
         )}
-        {hasDownloads && (
+        {!fetching && hasDownloads && (
           <View style={downloadsStyle.subContainer}>
             <StorageStatsCard fileInfos={fileInfos} />
             <FlatList
@@ -77,13 +85,13 @@ class DownloadsPage extends React.PureComponent {
               renderItem={({ item }) => (
                 <FileListItem
                   style={fileListStyle.item}
-                  uri={uriFromFileInfo(item)}
+                  uri={item}
                   navigation={navigation}
-                  onPress={() => navigateToUri(navigation, uriFromFileInfo(item), { autoplay: true })}
+                  onPress={() => navigateToUri(navigation, item, { autoplay: true })}
                 />
               )}
-              data={fileInfos}
-              keyExtractor={(item, index) => item.outpoint}
+              data={downloadedUris}
+              keyExtractor={(item, index) => item}
             />
           </View>
         )}

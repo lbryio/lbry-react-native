@@ -65,6 +65,12 @@ const channelSelectorStyle = StyleSheet.create({
   createButton: {
     backgroundColor: Colors.NextLbryGreen,
   },
+  inlineError: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 12,
+    color: Colors.Red,
+    marginTop: 2,
+  },
 });
 
 export default channelSelectorStyle;
