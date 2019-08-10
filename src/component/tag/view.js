@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+import { MATURE_TAGS } from 'lbry-redux';
 import { formatTagName } from 'utils/helper';
 import tagStyle from 'styles/tag';
 import Colors from 'styles/colors';
@@ -29,7 +30,7 @@ export default class Tag extends React.PureComponent {
   };
 
   render() {
-    const { name, onPress, style, type } = this.props;
+    const { name, onPress, style, type, truncate } = this.props;
 
     let styles = [];
     if (style) {
@@ -41,7 +42,7 @@ export default class Tag extends React.PureComponent {
     }
 
     styles.push({
-      backgroundColor: Colors.TagGreen,
+      backgroundColor: MATURE_TAGS.includes(name) ? Colors.TagGrape : Colors.TagGreen,
       borderRadius: 8,
       marginBottom: 4,
     });
@@ -49,7 +50,7 @@ export default class Tag extends React.PureComponent {
     return (
       <TouchableOpacity style={styles} onPress={onPress || this.onPressDefault}>
         <View style={tagStyle.content}>
-          <Text style={tagStyle.text}>{formatTagName(name)}</Text>
+          <Text style={tagStyle.text}>{truncate ? formatTagName(name) : name}</Text>
           {type && <Icon style={tagStyle.icon} name={type === 'add' ? 'plus' : 'times'} size={8} />}
         </View>
       </TouchableOpacity>

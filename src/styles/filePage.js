@@ -289,6 +289,7 @@ const filePageStyle = StyleSheet.create({
   },
   tipAmountInput: {
     alignSelf: 'flex-start',
+    textAlign: 'right',
     width: 80,
     fontSize: 16,
     letterSpacing: 1,

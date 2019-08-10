@@ -88,7 +88,7 @@ class FilePage extends React.PureComponent {
 
   componentWillMount() {
     const { navigation } = this.props;
-    this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
+    // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
   }
 
   onComponentFocused = () => {
@@ -913,6 +913,7 @@ class FilePage extends React.PureComponent {
                         <TextInput
                           ref={ref => (this.tipAmountInput = ref)}
                           onChangeText={value => this.setState({ tipAmount: value })}
+                          underlineColorAndroid={Colors.NextLbryGreen}
                           keyboardType={'numeric'}
                           placeholder={'0'}
                           value={this.state.tipAmount}

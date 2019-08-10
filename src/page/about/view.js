@@ -2,7 +2,7 @@ import React from 'react';
 import { Lbry } from 'lbry-redux';
 import { NativeModules, Text, View, ScrollView } from 'react-native';
 import { navigateBack } from 'utils/helper';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Link from 'component/link';
 import PageHeader from 'component/pageHeader';
 import aboutStyle from 'styles/about';
@@ -18,7 +18,7 @@ class AboutPage extends React.PureComponent {
 
   componentWillMount() {
     const { navigation } = this.props;
-    this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
+    // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
   }
 
   componentWillUnmount() {
@@ -105,7 +105,7 @@ class AboutPage extends React.PureComponent {
                   <Text style={aboutStyle.text}>Connected email</Text>
                 </View>
                 <View style={aboutStyle.col}>
-                  <Text selectable={true} style={aboutStyle.valueText}>
+                  <Text selectable style={aboutStyle.valueText}>
                     {userEmail}
                   </Text>
                 </View>
@@ -125,7 +125,7 @@ class AboutPage extends React.PureComponent {
               <Text style={aboutStyle.text}>App version</Text>
             </View>
             <View style={aboutStyle.col}>
-              <Text selectable={true} style={aboutStyle.valueText}>
+              <Text selectable style={aboutStyle.valueText}>
                 {this.state.appVersion}
               </Text>
             </View>
@@ -136,7 +136,7 @@ class AboutPage extends React.PureComponent {
               <Text style={aboutStyle.text}>Daemon (lbrynet)</Text>
             </View>
             <View style={aboutStyle.col}>
-              <Text selectable={true} style={aboutStyle.valueText}>
+              <Text selectable style={aboutStyle.valueText}>
                 {ver ? ver.lbrynet_version : loading}
               </Text>
             </View>
@@ -147,7 +147,7 @@ class AboutPage extends React.PureComponent {
               <Text style={aboutStyle.text}>Platform</Text>
             </View>
             <View style={aboutStyle.col}>
-              <Text selectable={true} style={aboutStyle.valueText}>
+              <Text selectable style={aboutStyle.valueText}>
                 {ver ? ver.platform : loading}
               </Text>
             </View>
@@ -156,7 +156,7 @@ class AboutPage extends React.PureComponent {
           <View style={aboutStyle.row}>
             <View style={aboutStyle.col}>
               <Text style={aboutStyle.text}>Installation ID</Text>
-              <Text selectable={true} style={aboutStyle.lineValueText}>
+              <Text selectable style={aboutStyle.lineValueText}>
                 {this.state.lbryId ? this.state.lbryId : loading}
               </Text>
             </View>

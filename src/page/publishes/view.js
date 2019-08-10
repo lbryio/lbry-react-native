@@ -14,13 +14,17 @@ class PublishesPage extends React.PureComponent {
 
   componentWillMount() {
     const { navigation } = this.props;
-    this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
+    // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
   }
 
   componentWillUnmount() {
     if (this.didFocusListener) {
       this.didFocusListener.remove();
     }
+  }
+
+  componentDidMount() {
+    this.onComponentFocused();
   }
 
   onComponentFocused = () => {

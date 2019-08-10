@@ -1,9 +1,9 @@
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 
-export const doPushDrawerStack = routeName => dispatch =>
+export const doPushDrawerStack = (routeName, params) => dispatch =>
   dispatch({
     type: Constants.ACTION_PUSH_DRAWER_STACK,
-    data: routeName,
+    data: { routeName, params },
   });
 
 export const doPopDrawerStack = () => dispatch =>

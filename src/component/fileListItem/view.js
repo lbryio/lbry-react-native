@@ -53,10 +53,12 @@ class FileListItem extends React.PureComponent {
       fileInfo,
       filteredOutpoints,
       metadata,
+      nsfw,
       featuredResult,
       isResolvingUri,
       isDownloaded,
       style,
+      obscureNsfw,
       onPress,
       navigation,
       thumbnail,
@@ -65,7 +67,7 @@ class FileListItem extends React.PureComponent {
     } = this.props;
 
     const uri = normalizeURI(this.props.uri);
-    const obscureNsfw = this.props.obscureNsfw && metadata && metadata.nsfw;
+    const obscure = obscureNsfw && nsfw;
     const isResolving = !fileInfo && isResolvingUri;
 
     let name, channel, height, channelClaimId, fullChannelUri, shouldHide, signingChannel;
@@ -92,7 +94,7 @@ class FileListItem extends React.PureComponent {
         <TouchableOpacity style={style} onPress={onPress || this.defaultOnPress}>
           <FileItemMedia
             style={fileListStyle.thumbnail}
-            blurRadius={obscureNsfw ? 15 : 0}
+            blurRadius={obscure ? 15 : 0}
             resizeMode="cover"
             title={title || name}
             thumbnail={thumbnail}
@@ -155,9 +157,7 @@ class FileListItem extends React.PureComponent {
             )}
           </View>
         </TouchableOpacity>
-        {obscureNsfw && (
-          <NsfwOverlay onPress={() => navigation.navigate({ routeName: 'Settings', key: 'settingsPage' })} />
-        )}
+        {obscure && <NsfwOverlay onPress={() => navigation.navigate({ routeName: 'Settings', key: 'settingsPage' })} />}
       </View>
     );
   }

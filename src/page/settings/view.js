@@ -2,7 +2,7 @@ import React from 'react';
 import { SETTINGS } from 'lbry-redux';
 import { Text, View, ScrollView, Switch, NativeModules } from 'react-native';
 import { navigateBack } from 'utils/helper';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PageHeader from 'component/pageHeader';
 import settingsStyle from 'styles/settings';
 
@@ -15,7 +15,7 @@ class SettingsPage extends React.PureComponent {
 
   componentWillMount() {
     const { navigation } = this.props;
-    this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
+    // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
   }
 
   componentWillUnmount() {

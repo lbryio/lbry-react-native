@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, NativeModules, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { DEFAULT_FOLLOWED_TAGS, normalizeURI } from 'lbry-redux';
-import { formatTagTitle } from 'utils/helper';
+import { formatTagTitle, getOrderBy } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import ClaimList from 'component/claimList';
@@ -22,7 +22,6 @@ class TagPage extends React.PureComponent {
     showTimePicker: false,
     orderBy: Constants.DEFAULT_ORDER_BY,
     time: Constants.TIME_WEEK,
-    currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[0],
     currentTimeItem: Constants.CLAIM_SEARCH_TIME_ITEMS[1],
   };
 
@@ -30,7 +29,7 @@ class TagPage extends React.PureComponent {
 
   componentWillMount() {
     const { navigation } = this.props;
-    this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
+    // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
   }
 
   componentWillUnmount() {
@@ -40,9 +39,10 @@ class TagPage extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const { pushDrawerStack, setPlayerVisible, navigation } = this.props;
-    this.setState({ tag: navigation.state.params.tag });
-    pushDrawerStack();
+    const { navigation, pushDrawerStack, setPlayerVisible, sortByItem } = this.props;
+    const { tag } = navigation.state.params;
+    this.setState({ tag, sortByItem, orderBy: getOrderBy(sortByItem) });
+    pushDrawerStack(Constants.DRAWER_ROUTE_TAG, navigation.state.params);
     setPlayerVisible();
   };
 
@@ -59,22 +59,9 @@ class TagPage extends React.PureComponent {
   }
 
   handleSortByItemSelected = item => {
-    let orderBy = [];
-    switch (item.name) {
-      case Constants.SORT_BY_HOT:
-        orderBy = Constants.DEFAULT_ORDER_BY;
-        break;
-
-      case Constants.SORT_BY_NEW:
-        orderBy = ['release_time'];
-        break;
-
-      case Constants.SORT_BY_TOP:
-        orderBy = [Constants.ORDER_BY_EFFECTIVE_AMOUNT];
-        break;
-    }
-
-    this.setState({ currentSortByItem: item, orderBy, showSortPicker: false });
+    const { setSortByItem } = this.props;
+    setSortByItem(item);
+    this.setState({ orderBy: getOrderBy(item), showSortPicker: false });
   };
 
   handleTimeItemSelected = item => {
@@ -82,8 +69,8 @@ class TagPage extends React.PureComponent {
   };
 
   render() {
-    const { navigation } = this.props;
-    const { tag, currentSortByItem, currentTimeItem, showSortPicker, showTimePicker } = this.state;
+    const { navigation, sortByItem } = this.props;
+    const { tag, currentTimeItem, showSortPicker, showTimePicker } = this.state;
 
     return (
       <View style={discoverStyle.container}>
@@ -92,14 +79,14 @@ class TagPage extends React.PureComponent {
           ListHeaderComponent={
             <View style={discoverStyle.tagTitleRow}>
               <Text style={discoverStyle.tagPageTitle}>{formatTagTitle(tag)}</Text>
-              {Constants.SORT_BY_TOP === currentSortByItem.name && (
+              {Constants.SORT_BY_TOP === sortByItem.name && (
                 <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
                   <Text style={discoverStyle.tagSortText}>{currentTimeItem.label}</Text>
                   <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
-                <Text style={discoverStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
+                <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
                 <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
               </TouchableOpacity>
             </View>
@@ -117,7 +104,7 @@ class TagPage extends React.PureComponent {
             title={__('Sort content by')}
             onOverlayPress={() => this.setState({ showSortPicker: false })}
             onItemSelected={this.handleSortByItemSelected}
-            selectedItem={this.state.currentSortByItem}
+            selectedItem={this.state.sortByItem}
             items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
           />
         )}

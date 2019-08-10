@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ScrollView, Text } from 'react-native';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import TransactionList from 'component/transactionList';
 import UriBar from 'component/uriBar';
 import walletStyle from 'styles/wallet';
@@ -10,7 +10,7 @@ class TransactionHistoryPage extends React.PureComponent {
 
   componentWillMount() {
     const { navigation } = this.props;
-    this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
+    // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
   }
 
   componentWillUnmount() {

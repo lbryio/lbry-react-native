@@ -114,6 +114,7 @@ const publishStyle = StyleSheet.create({
     width: 80,
     fontFamily: 'Inter-UI-Regular',
     fontSize: 16,
+    textAlign: 'right',
   },
   currency: {
     fontFamily: 'Inter-UI-Regular',

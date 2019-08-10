@@ -5,17 +5,27 @@ import Button from 'component/button';
 import Colors from 'styles/colors';
 
 class SubscribeNotificationButton extends React.PureComponent {
-  render() {
+  handlePress = () => {
     const {
-      uri,
       name,
       doChannelSubscriptionEnableNotifications,
       doChannelSubscriptionDisableNotifications,
       doToast,
       enabledChannelNotifications,
-      isSubscribed,
-      style,
     } = this.props;
+    const shouldNotify = enabledChannelNotifications.indexOf(name) > -1;
+
+    if (shouldNotify) {
+      doChannelSubscriptionDisableNotifications(name);
+      doToast({ message: 'You will not receive notifications for new content.' });
+    } else {
+      doChannelSubscriptionEnableNotifications(name);
+      doToast({ message: 'You will receive all notifications for new content.' });
+    }
+  };
+
+  render() {
+    const { enabledChannelNotifications, name, uri, isSubscribed, style } = this.props;
 
     if (!isSubscribed) {
       return null;
@@ -31,23 +41,14 @@ class SubscribeNotificationButton extends React.PureComponent {
     }
 
     const shouldNotify = enabledChannelNotifications.indexOf(name) > -1;
-    const { claimName } = parseURI(uri);
 
     return (
       <Button
         style={styles}
         theme={'light'}
         icon={shouldNotify ? 'bell-slash' : 'bell'}
-        solid={true}
-        onPress={() => {
-          if (shouldNotify) {
-            doChannelSubscriptionDisableNotifications(name);
-            doToast({ message: 'You will not receive notifications for new content.' });
-          } else {
-            doChannelSubscriptionEnableNotifications(name);
-            doToast({ message: 'You will receive all notifications for new content.' });
-          }
-        }}
+        solid
+        onPress={this.handlePress}
       />
     );
   }

@@ -18,9 +18,8 @@ import {
   selectSubscriptionClaims,
   selectUnreadSubscriptions,
 } from 'lbryinc';
-
-import { doSetClientSetting } from 'redux/actions/settings';
-import { makeSelectClientSetting } from 'redux/selectors/settings';
+import { doSetClientSetting, doSetSortByItem } from 'redux/actions/settings';
+import { makeSelectClientSetting, selectSortByItem } from 'redux/selectors/settings';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import DiscoverPage from './view';
 
@@ -34,6 +33,7 @@ const select = state => ({
   followedTags: selectFollowedTags(state),
   ratingReminderDisabled: makeSelectClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED)(state),
   ratingReminderLastShown: makeSelectClientSetting(Constants.SETTING_RATING_REMINDER_LAST_SHOWN)(state),
+  sortByItem: selectSortByItem(state),
   unreadSubscriptions: selectUnreadSubscriptions(state),
   uris: selectLastClaimSearchUris(state),
 });
@@ -46,6 +46,7 @@ const perform = dispatch => ({
   fileList: () => dispatch(doFileList()),
   removeUnreadSubscriptions: () => dispatch(doRemoveUnreadSubscriptions()),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
+  setSortByItem: item => dispatch(doSetSortByItem(item)),
 });
 
 export default connect(

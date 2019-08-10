@@ -4,7 +4,7 @@ import { ActivityIndicator, Linking, NativeModules, Text, TouchableOpacity, View
 import { NavigationActions, StackActions } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import EmailVerifyPage from './internal/email-verify-page';
 import ManualVerifyPage from './internal/manual-verify-page';
 import PhoneVerifyPage from './internal/phone-verify-page';
@@ -68,6 +68,9 @@ class VerificationScreen extends React.PureComponent {
           if (this.state.isEmailVerified && this.state.isRewardApproved) {
             // verification steps already completed
             // simply navigate back to the rewards page
+            if (user.primary_email) {
+              NativeModules.Firebase.track('reward_eligibility_completed', { email: user.primary_email });
+            }
             navigation.goBack();
           }
         }

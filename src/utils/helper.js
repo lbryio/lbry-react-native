@@ -154,11 +154,12 @@ export function navigateBack(navigation, drawerStack, popDrawerStack) {
   }
 
   const target = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];
+  const { route, params } = target;
   navigation.goBack(navigation.state.key);
-  if (DrawerRoutes.indexOf(target) === -1 && isURIValid(target)) {
-    navigateToUri(navigation, target, null, true);
+  if (DrawerRoutes.indexOf(route) === -1 && isURIValid(route)) {
+    navigateToUri(navigation, route, null, true);
   } else {
-    navigation.navigate({ routeName: target });
+    navigation.navigate({ routeName: route, params });
   }
 }
 
@@ -166,13 +167,15 @@ export function dispatchNavigateBack(dispatch, nav, drawerStack) {
   dispatch(doPopDrawerStack());
 
   const target = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];
+  const { route } = target;
   dispatch(NavigationActions.back());
-
-  if (DrawerRoutes.indexOf(target) === -1 && isURIValid(target)) {
-    dispatchNavigateToUri(dispatch, nav, target, true);
+  if (DrawerRoutes.indexOf(route) === -1 && isURIValid(route)) {
+    dispatchNavigateToUri(dispatch, nav, route, true);
   } else {
+    const newTarget = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];
     const navigateAction = NavigationActions.navigate({
-      routeName: drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0],
+      routeName: newTarget.route,
+      params: newTarget.params,
     });
     dispatch(navigateAction);
   }
@@ -202,6 +205,35 @@ export function formatTagName(name) {
   }
 
   return name.substring(0, 7) + '...';
+}
+
+export function getSortByItemForName(name) {
+  for (let i = 0; i < Constants.CLAIM_SEARCH_SORT_BY_ITEMS.length; i++) {
+    if (name === Constants.CLAIM_SEARCH_SORT_BY_ITEMS[i].name) {
+      return Constants.CLAIM_SEARCH_SORT_BY_ITEMS[i];
+    }
+  }
+
+  return null;
+}
+
+export function getOrderBy(item) {
+  let orderBy = [];
+  switch (item.name) {
+    case Constants.SORT_BY_HOT:
+      orderBy = Constants.DEFAULT_ORDER_BY;
+      break;
+
+    case Constants.SORT_BY_NEW:
+      orderBy = ['release_time'];
+      break;
+
+    case Constants.SORT_BY_TOP:
+      orderBy = [Constants.ORDER_BY_EFFECTIVE_AMOUNT];
+      break;
+  }
+
+  return orderBy;
 }
 
 // i18n placeholder until we find a good react-native i18n module

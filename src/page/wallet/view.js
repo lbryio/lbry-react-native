@@ -9,7 +9,7 @@ import WalletSyncDriver from 'component/walletSyncDriver';
 import Button from 'component/button';
 import Link from 'component/link';
 import UriBar from 'component/uriBar';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import walletStyle from 'styles/wallet';
 
 class WalletPage extends React.PureComponent {
@@ -17,7 +17,7 @@ class WalletPage extends React.PureComponent {
 
   componentWillMount() {
     const { navigation } = this.props;
-    this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
+    // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
   }
 
   componentWillUnmount() {

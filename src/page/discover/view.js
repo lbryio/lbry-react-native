@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { DEFAULT_FOLLOWED_TAGS, Lbry, normalizeURI, parseURI } from 'lbry-redux';
-import { __, formatTagTitle } from 'utils/helper';
+import { __, formatTagTitle, getOrderBy } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import CategoryList from 'component/categoryList';
@@ -33,7 +33,6 @@ class DiscoverPage extends React.PureComponent {
     showModalTagSelector: false,
     showSortPicker: false,
     orderBy: Constants.DEFAULT_ORDER_BY,
-    currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[0],
   };
 
   componentDidMount() {
@@ -60,33 +59,22 @@ class DiscoverPage extends React.PureComponent {
       }
     });
 
-    const { fetchRewardedContent, fetchSubscriptions, fileList, followedTags } = this.props;
+    const { sortByItem, fetchRewardedContent, fetchSubscriptions, fileList, followedTags } = this.props;
 
     this.buildTagCollection(followedTags);
     fetchRewardedContent();
     fetchSubscriptions();
     fileList();
 
+    this.handleSortByItemSelected(sortByItem);
     this.showRatingReminder();
   }
 
   handleSortByItemSelected = item => {
-    let orderBy = [];
-    switch (item.name) {
-      case Constants.SORT_BY_HOT:
-        orderBy = Constants.DEFAULT_ORDER_BY;
-        break;
-
-      case Constants.SORT_BY_NEW:
-        orderBy = ['release_time'];
-        break;
-
-      case Constants.SORT_BY_TOP:
-        orderBy = ['effective_amount'];
-        break;
-    }
-
-    this.setState({ currentSortByItem: item, orderBy, showSortPicker: false });
+    const { setSortByItem } = this.props;
+    setSortByItem(item);
+    const orderBy = getOrderBy(item);
+    this.setState({ orderBy, showSortPicker: false });
   };
 
   subscriptionForUri = (uri, channelName) => {
@@ -217,7 +205,7 @@ class DiscoverPage extends React.PureComponent {
 
     // each of the followed tags
     const tagCollection = _.shuffle(tags)
-      .slice(0, 6)
+      .slice(0, 5)
       .map(tag => [tag]);
     // everything
     tagCollection.unshift(tags);
@@ -226,68 +214,77 @@ class DiscoverPage extends React.PureComponent {
   };
 
   handleTagPress = name => {
-    const { navigation } = this.props;
-    if (name.toLowerCase() !== 'trending') {
-      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: `tagPage`, params: { tag: name } });
+    const { navigation, sortByItem } = this.props;
+    if (name.toLowerCase() !== 'all tags you follow') {
+      navigation.navigate({
+        routeName: Constants.DRAWER_ROUTE_TAG,
+        key: `tagPage`,
+        params: {
+          tag: name,
+        },
+      });
     } else {
       // navigate to the trending page
       navigation.navigate({ routeName: Constants.FULL_ROUTE_NAME_TRENDING });
     }
   };
 
+  sectionListHeader = () => (
+    <View style={discoverStyle.titleRow}>
+      <Text style={discoverStyle.pageTitle}>Explore</Text>
+      <View style={discoverStyle.rightTitleRow}>
+        <Link
+          style={discoverStyle.customizeLink}
+          text={'Customize'}
+          onPress={() => this.setState({ showModalTagSelector: true })}
+        />
+        <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
+          <Text style={discoverStyle.tagSortText}>{this.props.sortByItem.label.split(' ')[0]}</Text>
+          <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  renderSectionListItem = ({ item, index, section }) => (
+    <ClaimList
+      key={item.sort().join(',')}
+      orderBy={this.state.orderBy}
+      time={Constants.TIME_WEEK}
+      tags={item}
+      morePlaceholder
+      navigation={this.props.navigation}
+      orientation={Constants.ORIENTATION_HORIZONTAL}
+    />
+  );
+
+  renderSectionHeader = ({ section: { title } }) => (
+    <View style={discoverStyle.categoryTitleRow}>
+      <Text style={discoverStyle.categoryName} onPress={() => this.handleTagPress(title)}>
+        {formatTagTitle(title)}
+      </Text>
+      <TouchableOpacity onPress={() => this.handleTagPress(title)}>
+        <Icon name={'angle-double-down'} size={16} />
+      </TouchableOpacity>
+    </View>
+  );
+
   render() {
-    const { navigation } = this.props;
-    const { currentSortByItem, orderBy, showModalTagSelector, showSortPicker } = this.state;
+    const { navigation, sortByItem } = this.props;
+    const { orderBy, showModalTagSelector, showSortPicker } = this.state;
 
     return (
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} belowOverlay={showModalTagSelector} />
         <SectionList
-          ListHeaderComponent={
-            <View style={discoverStyle.titleRow}>
-              <Text style={discoverStyle.pageTitle}>Explore</Text>
-              <View style={discoverStyle.rightTitleRow}>
-                <Link
-                  style={discoverStyle.customizeLink}
-                  text={'Customize'}
-                  onPress={() => this.setState({ showModalTagSelector: true })}
-                />
-                <TouchableOpacity
-                  style={discoverStyle.tagSortBy}
-                  onPress={() => this.setState({ showSortPicker: true })}
-                >
-                  <Text style={discoverStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
-                  <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
-                </TouchableOpacity>
-              </View>
-            </View>
-          }
+          ListHeaderComponent={this.sectionListHeader}
           style={discoverStyle.scrollContainer}
           contentContainerStyle={discoverStyle.scrollPadding}
           initialNumToRender={4}
           maxToRenderPerBatch={4}
           removeClippedSubviews
-          renderItem={({ item, index, section }) => (
-            <ClaimList
-              key={item.sort().join(',')}
-              orderBy={orderBy}
-              time={Constants.TIME_WEEK}
-              tags={item}
-              morePlaceholder
-              navigation={navigation}
-              orientation={Constants.ORIENTATION_HORIZONTAL}
-            />
-          )}
-          renderSectionHeader={({ section: { title } }) => (
-            <View style={discoverStyle.categoryTitleRow}>
-              <Text style={discoverStyle.categoryName} onPress={() => this.handleTagPress(title)}>
-                {formatTagTitle(title)}
-              </Text>
-              <TouchableOpacity onPress={() => this.handleTagPress(title)}>
-                <Icon name={'angle-double-down'} size={16} />
-              </TouchableOpacity>
-            </View>
-          )}
+          renderItem={this.renderSectionListItem}
+          renderSectionHeader={this.renderSectionHeader}
           sections={this.buildSections()}
           keyExtractor={(item, index) => item}
         />
@@ -303,7 +300,7 @@ class DiscoverPage extends React.PureComponent {
             title={__('Sort content by')}
             onOverlayPress={() => this.setState({ showSortPicker: false })}
             onItemSelected={this.handleSortByItemSelected}
-            selectedItem={currentSortByItem}
+            selectedItem={sortByItem}
             items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
           />
         )}

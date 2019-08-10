@@ -121,6 +121,12 @@ const discoverStyle = StyleSheet.create({
     marginTop: 4,
     color: Colors.LbryGreen,
   },
+  anonChannelName: {
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 12,
+    marginTop: 4,
+    color: Colors.DescriptionGrey,
+  },
   downloadedIcon: {
     position: 'absolute',
     right: 8,

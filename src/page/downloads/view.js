@@ -21,7 +21,7 @@ class DownloadsPage extends React.PureComponent {
 
   componentWillMount() {
     const { navigation } = this.props;
-    this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
+    // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
   }
 
   componentWillUnmount() {
@@ -44,7 +44,7 @@ class DownloadsPage extends React.PureComponent {
   componentWillReceiveProps(nextProps) {
     const { currentRoute } = nextProps;
     const { currentRoute: prevRoute } = this.props;
-    if (Constants.FULL_ROUTE_NAME_MY_LBRY === currentRoute && currentRoute !== prevRoute) {
+    if (Constants.DRAWER_ROUTE_MY_LBRY === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
     }
   }
