@@ -76,6 +76,25 @@ const discoverStyle = StyleSheet.create({
     marginTop: 6,
     marginBottom: 6,
   },
+  footer: {
+    marginTop: 12,
+    marginLeft: 16,
+    marginRight: 16,
+    marginBottom: 64,
+  },
+  footerTitle: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 20,
+    marginBottom: 10,
+  },
+  footerTags: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  footerTag: {
+    marginRight: 24,
+    marginBottom: 12,
+  },
   categoryName: {
     fontFamily: 'Inter-UI-SemiBold',
     fontSize: 18,

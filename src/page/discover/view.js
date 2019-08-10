@@ -30,6 +30,7 @@ import _ from 'lodash';
 class DiscoverPage extends React.PureComponent {
   state = {
     tagCollection: [],
+    remainingTags: [],
     showModalTagSelector: false,
     showSortPicker: false,
     orderBy: Constants.DEFAULT_ORDER_BY,
@@ -207,10 +208,14 @@ class DiscoverPage extends React.PureComponent {
     const tagCollection = _.shuffle(tags)
       .slice(0, 5)
       .map(tag => [tag]);
+
+    const usedTags = tagCollection.map(tagList => tagList[0]);
+    const remainingTags = tags.filter(tag => !usedTags.includes(tag));
+
     // everything
     tagCollection.unshift(tags);
 
-    this.setState({ tagCollection });
+    this.setState({ remainingTags, tagCollection });
   };
 
   handleTagPress = name => {
@@ -242,6 +247,23 @@ class DiscoverPage extends React.PureComponent {
           <Text style={discoverStyle.tagSortText}>{this.props.sortByItem.label.split(' ')[0]}</Text>
           <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
         </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  sectionListFooter = () => (
+    <View style={discoverStyle.footer}>
+      <Text style={discoverStyle.footerTitle}>More tags you follow</Text>
+      <View style={discoverStyle.footerTags}>
+        {this.state.remainingTags.map(tag => (
+          <Text
+            key={tag}
+            style={[discoverStyle.categoryName, discoverStyle.footerTag]}
+            onPress={() => this.handleTagPress(tag)}
+          >
+            {formatTagTitle(tag)}
+          </Text>
+        ))}
       </View>
     </View>
   );
@@ -278,6 +300,7 @@ class DiscoverPage extends React.PureComponent {
         <UriBar navigation={navigation} belowOverlay={showModalTagSelector} />
         <SectionList
           ListHeaderComponent={this.sectionListHeader}
+          ListFooterComponent={this.sectionListFooter}
           style={discoverStyle.scrollContainer}
           contentContainerStyle={discoverStyle.scrollPadding}
           initialNumToRender={4}

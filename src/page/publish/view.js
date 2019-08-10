@@ -283,31 +283,41 @@ class PublishPage extends React.PureComponent {
   };
 
   showSelector() {
-    this.setState({
-      publishStarted: false,
+    const { updatePublishForm } = this.props;
 
-      currentMedia: null,
-      currentThumbnailUri: null,
-      currentPhase: Constants.PHASE_SELECTOR,
+    this.setState(
+      {
+        publishStarted: false,
 
-      // publish
-      advancedMode: false,
-      anonymous: true,
-      channelName: CLAIM_VALUES.CHANNEL_ANONYMOUS,
-      priceSet: false,
+        currentMedia: null,
+        currentThumbnailUri: null,
+        currentPhase: Constants.PHASE_SELECTOR,
+        updatingThumbnailUri: false,
+        uploadThumbnailStarted: false,
 
-      // input data
-      bid: 0.1,
-      description: null,
-      title: null,
-      language: 'en',
-      license: LICENSES.NONE,
-      name: null,
-      price: 0,
-      uri: null,
-      tags: [],
-      uploadedThumbnailUri: null,
-    });
+        // publish
+        advancedMode: false,
+        anonymous: true,
+        channelName: CLAIM_VALUES.CHANNEL_ANONYMOUS,
+        priceSet: false,
+
+        // input data
+        bid: 0.1,
+        description: null,
+        title: null,
+        language: 'en',
+        license: LICENSES.NONE,
+        name: null,
+        price: 0,
+        uri: null,
+        tags: [],
+        uploadedThumbnailUri: null,
+      },
+      () => {
+        // reset thumbnail
+        updatePublishForm({ thumbnail: null });
+      }
+    );
   }
 
   handleRecordVideoPressed = () => {
@@ -523,6 +533,10 @@ class PublishPage extends React.PureComponent {
     );
   };
 
+  handleDescriptionChange = description => {
+    this.setState({ description });
+  };
+
   render() {
     const { balance, navigation, notify, publishFormValues } = this.props;
     const { canUseCamera, currentPhase, galleryThumbnailsChecked, thumbnailPath, videos } = this.state;
@@ -605,7 +619,7 @@ class PublishPage extends React.PureComponent {
 
           {this.state.uploadThumbnailStarted && !this.state.uploadedThumbnailUri && (
             <View style={publishStyle.thumbnailUploadContainer}>
-              <ActivityIndicator size={'small'} color={Colors.LbryGreen} />
+              <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
               <Text style={publishStyle.thumbnailUploadText}>Uploading thumbnail...</Text>
             </View>
           )}
@@ -781,11 +795,7 @@ class PublishPage extends React.PureComponent {
             )}
 
             {!publishFormValues.publishing && !this.state.publishStarted && (
-              <Link
-                style={publishStyle.cancelLink}
-                text="Cancel"
-                onPress={() => this.setState({ currentPhase: Constants.PHASE_SELECTOR })}
-              />
+              <Link style={publishStyle.cancelLink} text="Cancel" onPress={() => this.showSelector()} />
             )}
 
             {!publishFormValues.publishing && !this.state.publishStarted && (
