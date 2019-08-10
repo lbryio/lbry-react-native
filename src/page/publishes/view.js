@@ -28,10 +28,11 @@ class PublishesPage extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const { checkPendingPublishes, pushDrawerStack, setPlayerVisible } = this.props;
+    const { checkPendingPublishes, fetchMyClaims, pushDrawerStack, setPlayerVisible } = this.props;
 
     pushDrawerStack();
     setPlayerVisible();
+    fetchMyClaims();
     checkPendingPublishes();
   };
 

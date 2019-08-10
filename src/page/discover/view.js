@@ -251,22 +251,29 @@ class DiscoverPage extends React.PureComponent {
     </View>
   );
 
-  sectionListFooter = () => (
-    <View style={discoverStyle.footer}>
-      <Text style={discoverStyle.footerTitle}>More tags you follow</Text>
-      <View style={discoverStyle.footerTags}>
-        {this.state.remainingTags.map(tag => (
-          <Text
-            key={tag}
-            style={[discoverStyle.categoryName, discoverStyle.footerTag]}
-            onPress={() => this.handleTagPress(tag)}
-          >
-            {formatTagTitle(tag)}
-          </Text>
-        ))}
+  sectionListFooter = () => {
+    const { remainingTags } = this.state;
+    if (remainingTags.length === 0) {
+      return null;
+    }
+
+    return (
+      <View style={discoverStyle.footer}>
+        <Text style={discoverStyle.footerTitle}>More tags you follow</Text>
+        <View style={discoverStyle.footerTags}>
+          {remainingTags.map(tag => (
+            <Text
+              key={tag}
+              style={[discoverStyle.categoryName, discoverStyle.footerTag]}
+              onPress={() => this.handleTagPress(tag)}
+            >
+              {formatTagTitle(tag)}
+            </Text>
+          ))}
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   renderSectionListItem = ({ item, index, section }) => (
     <ClaimList

@@ -114,6 +114,7 @@ class PublishPage extends React.PureComponent {
     price: 0,
     uri: null,
     tags: [],
+    selectedChannel: null,
     uploadedThumbnailUri: null,
 
     // other
@@ -210,16 +211,13 @@ class PublishPage extends React.PureComponent {
       return;
     }
 
-    const publishTags = tags.slice();
     const publishParams = {
       filePath: currentMedia.filePath,
       bid: bid || 0.1,
-      tags: publishTags,
       title: title || '',
-      thumbnail: thumbnail,
+      thumbnail,
       description: description || '',
       language,
-      nsfw: publishTags.some(tag => MATURE_TAGS.includes(tag)),
       license,
       licenseUrl: '',
       otherLicenseDescription: '',
@@ -227,9 +225,13 @@ class PublishPage extends React.PureComponent {
       contentIsFree: !priceSet,
       fee: { currency: 'LBC', price },
       uri: uri || undefined,
-      channel_name: CLAIM_VALUES.CHANNEL_ANONYMOUS === channelName ? undefined : channelName,
+      channel: CLAIM_VALUES.CHANNEL_ANONYMOUS === channelName ? null : channelName,
       isStillEditing: false,
-      claim: null,
+      claim: {
+        value: {
+          tags,
+        },
+      },
     };
 
     this.setState({ publishStarted: true }, () => publish(publishParams));
@@ -241,7 +243,7 @@ class PublishPage extends React.PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { currentRoute, publishFormValues } = nextProps;
-    const { currentRoute: prevRoute } = this.props;
+    const { currentRoute: prevRoute, notify } = this.props;
 
     if (Constants.DRAWER_ROUTE_PUBLISH === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
@@ -257,6 +259,7 @@ class PublishPage extends React.PureComponent {
           this.setState({ publishStarted: false, currentPhase: Constants.PHASE_PUBLISH });
         } else if (publishFormValues.publishError) {
           // TODO: Display error if any
+          notify({ message: 'Your content could not be published at this time. Please try again.' });
         }
 
         if (!publishFormValues.publishing && this.state.publishStarted) {
@@ -279,7 +282,7 @@ class PublishPage extends React.PureComponent {
   }
 
   formatNameForTitle = title => {
-    return title.replace(regexInvalidURI, '-').toLowerCase();
+    return title.replace(new RegExp(regexInvalidURI.source, regexInvalidURI.flags + 'g'), '-').toLowerCase();
   };
 
   showSelector() {
@@ -311,6 +314,7 @@ class PublishPage extends React.PureComponent {
         price: 0,
         uri: null,
         tags: [],
+        selectedChannel: null,
         uploadedThumbnailUri: null,
       },
       () => {
@@ -442,10 +446,10 @@ class PublishPage extends React.PureComponent {
     this.setState({ uri });
   };
 
-  handleChannelChanged = channel => {
-    this.setState({ channelName: channel });
-    const uri = this.getNewUri(name, this.state.channelName);
-    this.setState({ uri });
+  handleChannelChange = channel => {
+    const { name } = this.state;
+    const uri = this.getNewUri(name, channel.name);
+    this.setState({ uri, channelName: channel.name, selectedChannel: channel });
   };
 
   handleAddTag = tag => {
@@ -787,6 +791,13 @@ class PublishPage extends React.PureComponent {
             />
           </View>
 
+          <View style={publishStyle.warning}>
+            <Text style={publishStyle.warningText}>
+              Please ensure that you have filled everything correctly as you cannot edit published content in this
+              release. This feature will be available in a future release.
+            </Text>
+          </View>
+
           <View style={publishStyle.actionButtons}>
             {(this.state.publishStarted || publishFormValues.publishing) && (
               <View style={publishStyle.progress}>
@@ -850,6 +861,7 @@ class PublishPage extends React.PureComponent {
         {this.state.canUseCamera && this.state.showCameraOverlay && (
           <View style={publishStyle.cameraOverlay}>
             <RNCamera
+              captureAudio={this.state.videoRecordingMode}
               style={publishStyle.fullCamera}
               ref={ref => {
                 this.camera = ref;
@@ -868,6 +880,11 @@ class PublishPage extends React.PureComponent {
                 buttonPositive: 'OK',
                 buttonNegative: 'Cancel',
               }}
+              notAuthorizedView={
+                <View style={publishStyle.fullCentered}>
+                  <Text style={publishStyle.cameraInfo}>Camera not authorized</Text>
+                </View>
+              }
             />
             <View
               style={[
@@ -876,7 +893,7 @@ class PublishPage extends React.PureComponent {
               ]}
             >
               <View style={publishStyle.controlsRow}>
-                <TouchableOpacity onPress={this.handleCloseCameraPressed}>
+                <TouchableOpacity onPress={this.handleCloseCameraPressed} style={publishStyle.backButtonControl}>
                   <Icon name="arrow-left" size={28} color={Colors.White} />
                 </TouchableOpacity>
 
