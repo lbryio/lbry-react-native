@@ -74,7 +74,7 @@ class SubscriptionsPage extends React.PureComponent {
   componentWillReceiveProps(nextProps) {
     const { currentRoute } = nextProps;
     const { currentRoute: prevRoute } = this.props;
-    if (Constants.FULL_ROUTE_NAME_MY_SUBSCRIPTIONS === currentRoute && currentRoute !== prevRoute) {
+    if (Constants.DRAWER_ROUTE_SUBSCRIPTIONS === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
     }
   }

@@ -2,6 +2,7 @@
 import React from 'react';
 import { ActivityIndicator, Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
+import { normalizeURI } from 'lbry-redux';
 import { navigateBack } from 'utils/helper';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -164,15 +165,19 @@ class ChannelPage extends React.PureComponent {
     const { fetching, claimsInChannel, claim, navigation, totalPages, uri, drawerStack, popDrawerStack } = this.props;
     const { name, permanent_url: permanentUrl } = claim;
 
-    let thumbnailUrl, coverUrl, title;
-    if (claim && claim.value) {
-      title = claim.value.title;
-      if (claim.value.cover) {
-        coverUrl = claim.value.cover.url;
+    let thumbnailUrl, coverUrl, title, fullUri;
+    if (claim) {
+      if (claim.value) {
+        title = claim.value.title;
+        if (claim.value.cover) {
+          coverUrl = claim.value.cover.url;
+        }
+        if (claim.value.thumbnail) {
+          thumbnailUrl = claim.value.thumbnail.url;
+        }
       }
-      if (claim.value.thumbnail) {
-        thumbnailUrl = claim.value.thumbnail.url;
-      }
+
+      fullUri = normalizeURI(`${claim.name}#${claim.claim_id}`);
     }
 
     return (
@@ -208,10 +213,10 @@ class ChannelPage extends React.PureComponent {
             </View>
 
             <View style={channelPageStyle.subscribeButtonContainer}>
-              <SubscribeButton style={channelPageStyle.subscribeButton} uri={uri} name={name} />
+              <SubscribeButton style={channelPageStyle.subscribeButton} uri={fullUri} name={name} />
               <SubscribeNotificationButton
                 style={[channelPageStyle.subscribeButton, channelPageStyle.bellButton]}
-                uri={uri}
+                uri={fullUri}
                 name={name}
               />
             </View>

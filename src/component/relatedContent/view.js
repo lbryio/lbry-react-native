@@ -57,7 +57,7 @@ export default class RelatedContent extends React.PureComponent {
               key={recommendedUri}
               uri={recommendedUri}
               navigation={navigation}
-              onPress={() => navigateToUri(navigation, recommendedUri, { autoplay: true })}
+              autoplay
             />
           ))}
         {isSearching && (

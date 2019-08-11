@@ -144,7 +144,7 @@ const drawer = createDrawerNavigator(
         drawerIcon: ({ tintColor }) => <Icon name="fire" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
-    MySubscriptionsStack: {
+    Subscriptions: {
       screen: SubscriptionsPage,
       navigationOptions: {
         title: 'Subscriptions',
@@ -270,21 +270,11 @@ class AppWithNavigationState extends React.Component {
       'hardwareBackPress',
       function() {
         const { dispatch, nav, drawerStack } = this.props;
-        // There should be a better way to check this
-        if (nav.routes.length > 0) {
-          if (nav.routes[0].routeName === 'Main') {
-            const mainRoute = nav.routes[0];
-            if (
-              mainRoute.index > 0 ||
-              mainRoute.routes[0].index > 0 /* Discover stack index */ ||
-              mainRoute.routes[4].index > 0 /* Wallet stack index */ ||
-              mainRoute.index >= 5 /* Settings and About screens */
-            ) {
-              dispatchNavigateBack(dispatch, nav, drawerStack);
-              return true;
-            }
-          }
+        if (drawerStack.length > 1) {
+          dispatchNavigateBack(dispatch, nav, drawerStack);
+          return true;
         }
+
         return false;
       }.bind(this)
     );

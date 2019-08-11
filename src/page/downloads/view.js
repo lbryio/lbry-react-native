@@ -83,12 +83,7 @@ class DownloadsPage extends React.PureComponent {
               style={downloadsStyle.scrollContainer}
               contentContainerStyle={downloadsStyle.scrollPadding}
               renderItem={({ item }) => (
-                <FileListItem
-                  style={fileListStyle.item}
-                  uri={item}
-                  navigation={navigation}
-                  onPress={() => navigateToUri(navigation, item, { autoplay: true })}
-                />
+                <FileListItem style={fileListStyle.item} uri={item} navigation={navigation} autoplay />
               )}
               data={downloadedUris}
               keyExtractor={(item, index) => item}
