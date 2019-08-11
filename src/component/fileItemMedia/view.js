@@ -2,24 +2,25 @@ import React from 'react';
 import { ActivityIndicator, Image, Text, View } from 'react-native';
 import Colors from 'styles/colors';
 import FastImage from 'react-native-fast-image';
+import autothumbStyle from 'styles/autothumb';
 import fileItemMediaStyle from 'styles/fileItemMedia';
 
 class FileItemMedia extends React.PureComponent {
   static AUTO_THUMB_STYLES = [
-    fileItemMediaStyle.autothumbPurple,
-    fileItemMediaStyle.autothumbRed,
-    fileItemMediaStyle.autothumbPink,
-    fileItemMediaStyle.autothumbIndigo,
-    fileItemMediaStyle.autothumbBlue,
-    fileItemMediaStyle.autothumbLightBlue,
-    fileItemMediaStyle.autothumbCyan,
-    fileItemMediaStyle.autothumbTeal,
-    fileItemMediaStyle.autothumbGreen,
-    fileItemMediaStyle.autothumbYellow,
-    fileItemMediaStyle.autothumbOrange,
+    autothumbStyle.autothumbPurple,
+    autothumbStyle.autothumbRed,
+    autothumbStyle.autothumbPink,
+    autothumbStyle.autothumbIndigo,
+    autothumbStyle.autothumbBlue,
+    autothumbStyle.autothumbLightBlue,
+    autothumbStyle.autothumbCyan,
+    autothumbStyle.autothumbTeal,
+    autothumbStyle.autothumbGreen,
+    autothumbStyle.autothumbYellow,
+    autothumbStyle.autothumbOrange,
   ];
 
-  state: {
+  state = {
     imageLoadFailed: false,
   };
 
@@ -48,7 +49,7 @@ class FileItemMedia extends React.PureComponent {
       return false;
     }
 
-    if (thumbnail.substring(0, 7) != 'http://' && thumbnail.substring(0, 8) != 'https://') {
+    if (thumbnail.substring(0, 7) !== 'http://' && thumbnail.substring(0, 8) !== 'https://') {
       return false;
     }
 
@@ -67,12 +68,7 @@ class FileItemMedia extends React.PureComponent {
       if (blurRadius > 0) {
         // No blur radius support in FastImage yet
         return (
-          <Image
-            source={{ uri: thumbnail }}
-            blurRadius={blurRadius}
-            resizeMode={resizeMode ? resizeMode : 'cover'}
-            style={style}
-          />
+          <Image source={{ uri: thumbnail }} blurRadius={blurRadius} resizeMode={resizeMode || 'cover'} style={style} />
         );
       }
 
@@ -87,7 +83,7 @@ class FileItemMedia extends React.PureComponent {
     }
 
     return (
-      <View style={[style ? style : fileItemMediaStyle.autothumb, atStyle]}>
+      <View style={[style || fileItemMediaStyle.autothumb, atStyle]}>
         {isResolvingUri && (
           <View style={fileItemMediaStyle.resolving}>
             <ActivityIndicator color={Colors.White} size={'large'} />

@@ -22,6 +22,7 @@ class ClaimList extends React.PureComponent {
     currentPage: 1, // initial page load is page 1
     subscriptionsView: false, // whether or not this claim list is for subscriptions
     trendingForAllView: false,
+    lastPageReached: false,
   };
 
   componentDidMount() {
@@ -73,9 +74,10 @@ class ClaimList extends React.PureComponent {
       channelIds: prevChannelIds,
       trendingForAll: prevTrendingForAll,
       time: prevTime,
+      claimSearchUris: prevClaimSearchUris,
       showNsfwContent,
     } = this.props;
-    const { orderBy, tags, channelIds, trendingForAll, time } = nextProps;
+    const { orderBy, tags, channelIds, trendingForAll, time, claimSearchUris } = nextProps;
     if (
       !_.isEqual(orderBy, prevOrderBy) ||
       !_.isEqual(tags, prevTags) ||
@@ -119,6 +121,17 @@ class ClaimList extends React.PureComponent {
         }
       });
     }
+
+    if (
+      this.state.currentPage > 1 &&
+      prevClaimSearchUris &&
+      prevClaimSearchUris.length > 0 &&
+      _.isEqual(prevClaimSearchUris, claimSearchUris)
+    ) {
+      this.setState({ lastPageReached: true });
+    } else {
+      this.setState({ lastPageReached: false });
+    }
   }
 
   getReleaseTimeOption = time => {
@@ -130,6 +143,10 @@ class ClaimList extends React.PureComponent {
   };
 
   handleVerticalEndReached = () => {
+    if (this.state.lastPageReached) {
+      return;
+    }
+
     // fetch more content
     const {
       channelIds,

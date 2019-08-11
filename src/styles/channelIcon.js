@@ -18,6 +18,8 @@ const channelIconStyle = StyleSheet.create({
     height: 80,
     borderRadius: 160,
     overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   borderedThumbnailContainer: {
     borderWidth: 1,
@@ -42,6 +44,11 @@ const channelIconStyle = StyleSheet.create({
     width: 80,
     marginTop: 4,
     textAlign: 'center',
+  },
+  autothumbCharacter: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 48,
+    color: Colors.White,
   },
 });
 

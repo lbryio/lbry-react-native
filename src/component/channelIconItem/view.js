@@ -1,9 +1,35 @@
 import React from 'react';
 import { ActivityIndicator, Image, Text, TouchableOpacity, View } from 'react-native';
 import Colors from 'styles/colors';
+import autothumbStyle from 'styles/autothumb';
 import channelIconStyle from 'styles/channelIcon';
 
 export default class ChannelIconItem extends React.PureComponent {
+  static AUTO_THUMB_STYLES = [
+    autothumbStyle.autothumbPurple,
+    autothumbStyle.autothumbRed,
+    autothumbStyle.autothumbPink,
+    autothumbStyle.autothumbIndigo,
+    autothumbStyle.autothumbBlue,
+    autothumbStyle.autothumbLightBlue,
+    autothumbStyle.autothumbCyan,
+    autothumbStyle.autothumbTeal,
+    autothumbStyle.autothumbGreen,
+    autothumbStyle.autothumbYellow,
+    autothumbStyle.autothumbOrange,
+  ];
+
+  state = {
+    autoStyle: null,
+  };
+
+  componentWillMount() {
+    this.setState({
+      autoStyle:
+        ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)],
+    });
+  }
+
   componentDidMount() {
     const { claim, isPlaceholder, uri, resolveUri } = this.props;
     if (!claim && !isPlaceholder) {
@@ -13,6 +39,8 @@ export default class ChannelIconItem extends React.PureComponent {
 
   render() {
     const { claim, isPlaceholder, isResolvingUri, onPress, thumbnail, title } = this.props;
+    const displayName = title || (claim ? claim.name : '');
+    const substrIndex = displayName.startsWith('@') ? 1 : 0;
 
     return (
       <TouchableOpacity style={channelIconStyle.container} onPress={onPress}>
@@ -25,6 +53,7 @@ export default class ChannelIconItem extends React.PureComponent {
           style={[
             channelIconStyle.thumbnailContainer,
             isPlaceholder ? channelIconStyle.borderedThumbnailContainer : null,
+            isPlaceholder ? null : this.state.autoStyle,
           ]}
         >
           {isPlaceholder && (
@@ -32,17 +61,18 @@ export default class ChannelIconItem extends React.PureComponent {
               <Text style={channelIconStyle.placeholderText}>ALL</Text>
             </View>
           )}
-          {!isPlaceholder && (
-            <Image
-              style={channelIconStyle.thumbnail}
-              resizeMode={'cover'}
-              source={thumbnail ? { uri: thumbnail } : require('../../assets/default_avatar.jpg')}
-            />
+          {!isPlaceholder && thumbnail && (
+            <Image style={channelIconStyle.thumbnail} resizeMode={'cover'} source={{ uri: thumbnail }} />
+          )}
+          {!isPlaceholder && !thumbnail && (
+            <Text style={channelIconStyle.autothumbCharacter}>
+              {displayName.substring(substrIndex, substrIndex + 1).toUpperCase()}
+            </Text>
           )}
         </View>
         {!isPlaceholder && (
           <Text style={channelIconStyle.title} numberOfLines={1}>
-            {title || (claim ? claim.name : '')}
+            {displayName}
           </Text>
         )}
       </TouchableOpacity>
