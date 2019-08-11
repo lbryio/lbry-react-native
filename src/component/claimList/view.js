@@ -123,6 +123,7 @@ class ClaimList extends React.PureComponent {
     }
 
     if (
+      (this.state.subscriptionsView || this.state.trendingForAllView) &&
       this.state.currentPage > 1 &&
       prevClaimSearchUris &&
       prevClaimSearchUris.length > 0 &&
