@@ -11,19 +11,19 @@ function getRouteForSpecialUri(uri) {
 
   switch (page) {
     case Constants.PAGE_REWARDS:
-      targetRoute = 'Rewards';
+      targetRoute = Constants.DRAWER_ROUTE_REWARDS;
       break;
     case Constants.PAGE_SETTINGS:
-      targetRoute = 'Settings';
+      targetRoute = Constants.DRAWER_ROUTE_SETTINGS;
       break;
     case Constants.PAGE_TRENDING:
-      targetRoute = 'TrendingStack';
+      targetRoute = Constants.DRAWER_ROUTE_TRENDING;
       break;
     case Constants.PAGE_WALLET:
-      targetRoute = 'WalletStack';
+      targetRoute = Constants.FULL_ROUTE_NAME_WALLET;
       break;
     default:
-      targetRoute = 'DiscoverStack';
+      targetRoute = Constants.FULL_ROUTE_NAME_DISCOVER;
       break;
   }
 

@@ -137,7 +137,7 @@ const drawer = createDrawerNavigator(
         drawerIcon: ({ tintColor }) => <Icon name="home" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
-    TrendingStack: {
+    Trending: {
       screen: TrendingPage,
       navigationOptions: {
         title: 'Trending',

@@ -160,8 +160,8 @@ class ClaimList extends React.PureComponent {
 
     if (
       this.state.lastPageReached ||
-      (claimSearchUris &&
-        (claimSearchUris.length < Constants.DEFAULT_PAGE_SIZE || claimSearchUris.length >= softLimit)) ||
+      ((claimSearchUris.length > 0 && claimSearchUris.length < Constants.DEFAULT_PAGE_SIZE) ||
+        claimSearchUris.length >= softLimit) ||
       (uris && uris.length >= softLimit)
     ) {
       return;
