@@ -637,6 +637,7 @@ class FilePage extends React.PureComponent {
         (completed || (fileInfo && !fileInfo.stopped && fileInfo.written_bytes < fileInfo.total_bytes));
       const channelClaimId = claim && claim.signing_channel && claim.signing_channel.claim_id;
       const canSendTip = this.state.tipAmount > 0;
+      const fullUri = `${claim.name}#${claim.claim_id}`;
       const fullChannelUri =
         channelClaimId && channelClaimId.trim().length > 0
           ? normalizeURI(`${channelName}#${channelClaimId}`)
@@ -959,7 +960,7 @@ class FilePage extends React.PureComponent {
                 {costInfo && parseFloat(costInfo.cost) > balance && <FileRewardsDriver navigation={navigation} />}
 
                 <View onLayout={this.setRelatedContentPosition} />
-                <RelatedContent navigation={navigation} uri={uri} />
+                <RelatedContent navigation={navigation} uri={uri} fullUri={fullUri} />
               </ScrollView>
             </View>
           )}

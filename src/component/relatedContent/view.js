@@ -1,5 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
+import { normalizeURI } from 'lbry-redux';
 import { navigateToUri } from 'utils/helper';
 import Colors from 'styles/colors';
 import FileListItem from 'component/fileListItem';
@@ -41,7 +42,7 @@ export default class RelatedContent extends React.PureComponent {
   didSearch;
 
   render() {
-    const { recommendedContent, isSearching, navigation } = this.props;
+    const { recommendedContent, isSearching, navigation, uri, fullUri } = this.props;
 
     if (!isSearching && (!recommendedContent || recommendedContent.length === 0)) {
       return null;
@@ -51,15 +52,17 @@ export default class RelatedContent extends React.PureComponent {
       <View style={relatedContentStyle.container}>
         <Text style={relatedContentStyle.title}>Related Content</Text>
         {recommendedContent &&
-          recommendedContent.map(recommendedUri => (
-            <FileListItem
-              style={fileListStyle.item}
-              key={recommendedUri}
-              uri={recommendedUri}
-              navigation={navigation}
-              autoplay
-            />
-          ))}
+          recommendedContent
+            .filter(recommendedUri => recommendedUri !== normalizeURI(fullUri))
+            .map(recommendedUri => (
+              <FileListItem
+                style={fileListStyle.item}
+                key={recommendedUri}
+                uri={recommendedUri}
+                navigation={navigation}
+                autoplay
+              />
+            ))}
         {isSearching && (
           <ActivityIndicator size="small" color={Colors.NextLbryGreen} style={relatedContentStyle.loading} />
         )}

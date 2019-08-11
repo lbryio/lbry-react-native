@@ -144,10 +144,6 @@ class ClaimList extends React.PureComponent {
   };
 
   handleVerticalEndReached = () => {
-    if (this.state.lastPageReached) {
-      return;
-    }
-
     // fetch more content
     const {
       channelIds,
@@ -161,8 +157,13 @@ class ClaimList extends React.PureComponent {
       uris,
     } = this.props;
     const { subscriptionsView, trendingForAllView } = this.state;
-    if ((claimSearchUris && claimSearchUris.length >= softLimit) || (uris && uris.length >= softLimit)) {
-      // don't fetch more than the specified limit to be displayed
+
+    if (
+      this.state.lastPageReached ||
+      (claimSearchUris &&
+        (claimSearchUris.length < Constants.DEFAULT_PAGE_SIZE || claimSearchUris.length >= softLimit)) ||
+      (uris && uris.length >= softLimit)
+    ) {
       return;
     }
 
@@ -219,6 +220,12 @@ class ClaimList extends React.PureComponent {
     );
   };
 
+  verticalListEmptyComponent = () => {
+    return (
+      <Text style={claimListStyle.noContentText}>No content to display at this time. Please check back later.</Text>
+    );
+  };
+
   renderVerticalItem = ({ item }) => {
     const { navigation } = this.props;
     return <FileListItem key={item} uri={item} style={claimListStyle.verticalListItem} navigation={navigation} />;
@@ -259,16 +266,6 @@ class ClaimList extends React.PureComponent {
     if (Constants.ORIENTATION_VERTICAL === orientation) {
       const data = subscriptionsView || trendingForAllView ? claimSearchUris : uris;
 
-      if (!loading && !claimSearchLoading && (!data || data.length === 0)) {
-        return (
-          <View style={style}>
-            <Text style={claimListStyle.noContentText}>
-              No content to display at this time. Please check back later.
-            </Text>
-          </View>
-        );
-      }
-
       return (
         <View style={style}>
           <FlatList
@@ -276,6 +273,7 @@ class ClaimList extends React.PureComponent {
               this.scrollView = ref;
             }}
             ListHeaderComponent={ListHeaderComponent}
+            ListEmptyComponent={loading || claimSearchLoading ? null : this.verticalListEmptyComponent}
             style={claimListStyle.verticalScrollContainer}
             contentContainerStyle={claimListStyle.verticalScrollPadding}
             initialNumToRender={10}
