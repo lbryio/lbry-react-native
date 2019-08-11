@@ -20,9 +20,12 @@ class SuggestedSubscriptionItem extends React.PureComponent {
 
   render() {
     const { claim, isResolvingUri, navigation, thumbnail, title, uri } = this.props;
-    let tags;
-    if (claim && claim.value) {
-      tags = claim.value.tags;
+    let shortUrl, tags;
+    if (claim) {
+      shortUrl = claim.short_url;
+      if (claim.value) {
+        tags = claim.value.tags;
+      }
     }
 
     if (isResolvingUri) {
@@ -54,7 +57,7 @@ class SuggestedSubscriptionItem extends React.PureComponent {
               style={subscriptionsStyle.suggestedItemName}
               numberOfLines={1}
               text={claim.name}
-              onPress={() => navigateToUri(navigation, normalizeURI(uri))}
+              onPress={() => navigateToUri(navigation, normalizeURI(shortUrl || uri))}
             />
           )}
           {tags && (

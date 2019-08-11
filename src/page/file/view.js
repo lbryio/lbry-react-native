@@ -638,7 +638,10 @@ class FilePage extends React.PureComponent {
       const channelClaimId = claim && claim.signing_channel && claim.signing_channel.claim_id;
       const canSendTip = this.state.tipAmount > 0;
       const fullChannelUri =
-        channelClaimId && channelClaimId.trim().length > 0 ? `${channelName}#${channelClaimId}` : channelName;
+        channelClaimId && channelClaimId.trim().length > 0
+          ? normalizeURI(`${channelName}#${channelClaimId}`)
+          : normalizeURI(channelName);
+      const shortChannelUri = signingChannel ? signingChannel.short_url : null;
 
       const playerStyle = [
         filePageStyle.player,
@@ -855,7 +858,7 @@ class FilePage extends React.PureComponent {
                         numberOfLines={1}
                         ellipsizeMode={'tail'}
                         onPress={() => {
-                          navigateToUri(navigation, normalizeURI(fullChannelUri));
+                          navigateToUri(navigation, normalizeURI(shortChannelUri || fullChannelUri));
                         }}
                       />
                     )}

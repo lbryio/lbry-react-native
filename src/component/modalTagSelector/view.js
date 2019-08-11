@@ -10,6 +10,8 @@ import TagSearch from 'component/tagSearch';
 import modalTagSelectorStyle from 'styles/modalTagSelector';
 import { __ } from 'utils/helper';
 
+const minimumTags = 2;
+
 export default class ModalTagSelector extends React.PureComponent {
   handleAddTag = tag => {
     if (!tag) {
@@ -31,6 +33,12 @@ export default class ModalTagSelector extends React.PureComponent {
 
   handleRemoveTag = tag => {
     if (!tag) {
+      return;
+    }
+
+    const { followedTags, doToast } = this.props;
+    if (followedTags.length <= minimumTags) {
+      doToast({ message: __(`You can follow a minimum of ${minimumTags} tags.`) });
       return;
     }
 

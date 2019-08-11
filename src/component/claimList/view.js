@@ -258,6 +258,17 @@ class ClaimList extends React.PureComponent {
 
     if (Constants.ORIENTATION_VERTICAL === orientation) {
       const data = subscriptionsView || trendingForAllView ? claimSearchUris : uris;
+
+      if (!loading && !claimSearchLoading && (!data || data.length === 0)) {
+        return (
+          <View style={style}>
+            <Text style={claimListStyle.noContentText}>
+              No content to display at this time. Please check back later.
+            </Text>
+          </View>
+        );
+      }
+
       return (
         <View style={style}>
           <FlatList

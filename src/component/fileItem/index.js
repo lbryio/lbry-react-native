@@ -8,6 +8,7 @@ import {
   makeSelectTitleForUri,
   makeSelectIsUriResolving,
   makeSelectClaimIsNsfw,
+  makeSelectShortUrlForUri,
 } from 'lbry-redux';
 import { selectRewardContentClaimIds } from 'lbryinc';
 import { selectShowNsfw } from 'redux/selectors/settings';
@@ -20,6 +21,7 @@ const select = (state, props) => ({
   rewardedContentClaimIds: selectRewardContentClaimIds(state, props),
   isResolvingUri: makeSelectIsUriResolving(props.uri)(state),
   obscureNsfw: !selectShowNsfw(state),
+  shortUrl: makeSelectShortUrlForUri(props.uri)(state),
   thumbnail: makeSelectThumbnailForUri(props.uri)(state),
   title: makeSelectTitleForUri(props.uri)(state),
   nsfw: makeSelectClaimIsNsfw(props.uri)(state),

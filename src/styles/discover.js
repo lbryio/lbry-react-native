@@ -80,7 +80,7 @@ const discoverStyle = StyleSheet.create({
     marginTop: 12,
     marginLeft: 16,
     marginRight: 16,
-    marginBottom: 64,
+    marginBottom: 56,
   },
   footerTitle: {
     fontFamily: 'Inter-UI-Regular',

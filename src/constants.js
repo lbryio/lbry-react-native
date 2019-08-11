@@ -79,7 +79,6 @@ const Constants = {
 
   FULL_ROUTE_NAME_DISCOVER: 'DiscoverStack',
   FULL_ROUTE_NAME_TRENDING: 'TrendingStack',
-  FULL_ROUTE_NAME_MY_SUBSCRIPTIONS: 'MySubscriptionsStack',
   FULL_ROUTE_NAME_WALLET: 'WalletStack',
 
   ROUTE_FILE: 'File',

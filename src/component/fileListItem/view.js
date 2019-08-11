@@ -42,8 +42,8 @@ class FileListItem extends React.PureComponent {
   }
 
   defaultOnPress = () => {
-    const { navigation, uri } = this.props;
-    navigateToUri(navigation, uri);
+    const { autoplay, navigation, uri, shortUrl } = this.props;
+    navigateToUri(navigation, shortUrl || uri, { autoplay });
   };
 
   render() {
@@ -70,7 +70,7 @@ class FileListItem extends React.PureComponent {
     const obscure = obscureNsfw && nsfw;
     const isResolving = !fileInfo && isResolvingUri;
 
-    let name, channel, height, channelClaimId, fullChannelUri, shouldHide, signingChannel;
+    let name, channel, height, channelClaimId, fullChannelUri, shortChannelUri, shouldHide, signingChannel;
     if (claim) {
       name = claim.name;
       signingChannel = claim.signing_channel;
@@ -78,14 +78,18 @@ class FileListItem extends React.PureComponent {
       height = claim.height;
       channelClaimId = signingChannel ? signingChannel.claim_id : null;
       fullChannelUri = channelClaimId ? `${channel}#${channelClaimId}` : channel;
+      shortChannelUri = signingChannel ? signingChannel.short_url : null;
 
       if (blackListedOutpoints || filteredOutpoints) {
         const outpointsToHide = blackListedOutpoints.concat(filteredOutpoints);
         shouldHide = outpointsToHide.some(outpoint => outpoint.txid === claim.txid && outpoint.nout === claim.nout);
       }
+
+      // TODO: hide channels on tag pages?
+      // shouldHide = 'channel' === claim.value_type;
     }
 
-    if (shouldHide || (featuredResult && !isResolvingUri && !claim && !title && !name)) {
+    if (shouldHide || (!isResolvingUri && !claim) || (featuredResult && !isResolvingUri && !claim && !title && !name)) {
       return null;
     }
 
@@ -130,7 +134,7 @@ class FileListItem extends React.PureComponent {
                 style={fileListStyle.publisher}
                 text={channel}
                 onPress={() => {
-                  navigateToUri(navigation, normalizeURI(fullChannelUri));
+                  navigateToUri(navigation, normalizeURI(shortChannelUri || fullChannelUri));
                 }}
               />
             )}

@@ -113,13 +113,7 @@ class SearchPage extends React.PureComponent {
             )}
             {uris && uris.length
               ? uris.map(uri => (
-                <FileListItem
-                  key={uri}
-                  uri={uri}
-                  style={searchStyle.resultItem}
-                  navigation={navigation}
-                  onPress={() => navigateToUri(navigation, uri)}
-                />
+                <FileListItem key={uri} uri={uri} style={searchStyle.resultItem} navigation={navigation} />
               ))
               : null}
             {(!uris || uris.length === 0) && (

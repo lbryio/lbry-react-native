@@ -11,6 +11,13 @@ const claimListStyle = StyleSheet.create({
   verticalScrollContainer: {
     flex: 1,
   },
+  noContentText: {
+    color: Colors.DescriptionGrey,
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+    margin: 16,
+    textAlign: 'center',
+  },
   verticalScrollPadding: {
     paddingBottom: 16,
   },

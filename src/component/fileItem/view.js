@@ -30,12 +30,12 @@ class FileItem extends React.PureComponent {
   }
 
   navigateToFileUri = () => {
-    const { navigation, uri } = this.props;
+    const { navigation, uri, shortUrl } = this.props;
     const normalizedUri = normalizeURI(uri);
     if (NativeModules.Firebase) {
-      NativeModules.Firebase.track('explore_click', { uri: normalizedUri });
+      NativeModules.Firebase.track('explore_click', { uri: normalizedUri, short_url: shortUrl });
     }
-    navigateToUri(navigation, normalizedUri);
+    navigateToUri(navigation, shortUrl || uri);
   };
 
   render() {
@@ -57,6 +57,11 @@ class FileItem extends React.PureComponent {
       titleBeforeThumbnail,
     } = this.props;
 
+    if (claim && claim.value_type === 'channel') {
+      // don't display channels in the lists on the Explore page
+      return null;
+    }
+
     const uri = normalizeURI(this.props.uri);
     const obscure = obscureNsfw && nsfw;
     const isRewardContent = claim && rewardedContentClaimIds.includes(claim.claim_id);
@@ -64,6 +69,7 @@ class FileItem extends React.PureComponent {
     const channelName = signingChannel ? signingChannel.name : null;
     const channelClaimId = signingChannel ? signingChannel.claim_id : null;
     const fullChannelUri = channelClaimId ? `${channelName}#${channelClaimId}` : channelName;
+    const shortChannelUri = signingChannel ? signingChannel.short_url : null;
     const height = claim ? claim.height : null;
 
     return (
@@ -104,7 +110,7 @@ class FileItem extends React.PureComponent {
                   style={discoverStyle.channelName}
                   text={channelName}
                   onPress={() => {
-                    navigateToUri(navigation, normalizeURI(fullChannelUri));
+                    navigateToUri(navigation, normalizeURI(shortChannelUri || fullChannelUri));
                   }}
                 />
               )}
