@@ -37,7 +37,7 @@ export default class ChannelSelector extends React.PureComponent {
   };
 
   handlePickerValueChange = (itemValue, itemIndex) => {
-    if (Constants.ITEM_CREATE_A_CHANNEL === itemValue) {
+    if (Constants.ITEM_CREATE_A_CHANNEL === itemValue.name) {
       this.setState({ showCreateChannel: true });
     } else {
       this.handleCreateCancel();
