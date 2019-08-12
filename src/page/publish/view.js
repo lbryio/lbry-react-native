@@ -109,6 +109,8 @@ class PublishPage extends React.PureComponent {
     title: null,
     language: 'en',
     license: LICENSES.NONE,
+    licenseUrl: '',
+    otherLicenseDescription: '',
     mature: false,
     name: null,
     price: 0,
@@ -191,6 +193,8 @@ class PublishPage extends React.PureComponent {
       description,
       language,
       license,
+      licenseUrl,
+      otherLicenseDescription,
       mature,
       name,
       price,
@@ -219,17 +223,18 @@ class PublishPage extends React.PureComponent {
       description: description || '',
       language,
       license,
-      licenseUrl: '',
-      otherLicenseDescription: '',
+      licenseUrl,
+      otherLicenseDescription,
       name: name || undefined,
       contentIsFree: !priceSet,
-      fee: { currency: 'LBC', price },
+      fee: { currency: 'LBC', amount: price },
       uri: uri || undefined,
       channel: CLAIM_VALUES.CHANNEL_ANONYMOUS === channelName ? null : channelName,
       isStillEditing: false,
       claim: {
         value: {
           tags,
+          release_time: Math.round(Date.now() / 1000), // set now as the release time
         },
       },
     };
@@ -310,6 +315,8 @@ class PublishPage extends React.PureComponent {
         title: null,
         language: 'en',
         license: LICENSES.NONE,
+        licenseUrl: '',
+        otherLicenseDescription: '',
         name: null,
         price: 0,
         uri: null,
@@ -539,6 +546,34 @@ class PublishPage extends React.PureComponent {
 
   handleDescriptionChange = description => {
     this.setState({ description });
+  };
+
+  handleLanguageValueChange = language => {
+    this.setState({ language });
+  };
+
+  handleLicenseValueChange = license => {
+    const otherLicenseDescription = [LICENSES.COPYRIGHT, LICENSES.OTHER].includes(license)
+      ? this.state.otherLicenseDescription
+      : '';
+
+    this.setState({
+      otherLicenseDescription,
+      license,
+      licenseUrl: LICENSES.CC_LICENSES.reduce((value, item) => {
+        if (typeof value === 'object') {
+          value = '';
+        }
+        if (license === item.value) {
+          value = item.url;
+        }
+        return value;
+      }),
+    });
+  };
+
+  handleChangeLicenseDescription = otherLicenseDescription => {
+    this.setState({ otherLicenseDescription });
   };
 
   render() {
@@ -779,6 +814,16 @@ class PublishPage extends React.PureComponent {
                   <Picker.Item label={'Copyrighted...'} value={LICENSES.COPYRIGHT} key={LICENSES.COPYRIGHT} />
                   <Picker.Item label={'Other...'} value={LICENSES.OTHER} key={LICENSES.OTHER} />
                 </Picker>
+                {[LICENSES.COPYRIGHT, LICENSES.OTHER].includes(this.state.license) && (
+                  <TextInput
+                    placeholder={'License description'}
+                    style={publishStyle.inputText}
+                    underlineColorAndroid={Colors.NextLbryGreen}
+                    numberOfLines={1}
+                    value={this.state.otherLicenseDescription}
+                    onChangeText={this.handleChangeLicenseDescription}
+                  />
+                )}
               </View>
             </View>
           )}
