@@ -3,7 +3,7 @@ import React from 'react';
 import { SEARCH_TYPES, isNameValid, isURIValid, normalizeURI } from 'lbry-redux';
 import { FlatList, Keyboard, TextInput, View } from 'react-native';
 import { navigateToUri } from 'utils/helper';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import UriBarItem from './internal/uri-bar-item';
 import NavigationButton from 'component/navigationButton';
 import discoverStyle from 'styles/discover';
@@ -49,7 +49,7 @@ class UriBar extends React.PureComponent {
   }
 
   handleChangeText = text => {
-    const newValue = text ? text : '';
+    const newValue = text || '';
     clearTimeout(this.state.changeTextTimeout);
     const { updateSearchQuery, onSearchSubmitted, navigation } = this.props;
 
@@ -144,7 +144,7 @@ class UriBar extends React.PureComponent {
     let style = [uriBarStyle.overlay, belowOverlay ? null : uriBarStyle.overlayElevated];
 
     // TODO: Add optional setting to enable URI / search bar suggestions
-    /*if (this.state.focused) { style.push(uriBarStyle.inFocus); }*/
+    /* if (this.state.focused) { style.push(uriBarStyle.inFocus); } */
 
     return (
       <View style={style}>
@@ -160,11 +160,12 @@ class UriBar extends React.PureComponent {
             ref={ref => {
               this.textInput = ref;
             }}
+            autoCorrect={false}
             style={uriBarStyle.uriText}
             onLayout={() => {
               this.setSelection();
             }}
-            selectTextOnFocus={true}
+            selectTextOnFocus
             placeholder={'Search movies, music, and more'}
             underlineColorAndroid={'transparent'}
             numberOfLines={1}
