@@ -185,7 +185,7 @@ class PublishPage extends React.PureComponent {
   };
 
   handlePublishPressed = () => {
-    const { notify, publish } = this.props;
+    const { notify, publish, updatePublishForm } = this.props;
     const {
       bid,
       channelName,
@@ -239,7 +239,18 @@ class PublishPage extends React.PureComponent {
       },
     };
 
-    this.setState({ publishStarted: true }, () => publish(publishParams));
+    updatePublishForm(publishParams);
+    this.setState({ publishStarted: true }, () => publish(this.handlePublishSuccess, this.handlePublishFailure));
+  };
+
+  handlePublishSuccess = data => {
+    this.setState({ publishStarted: false, currentPhase: Constants.PHASE_PUBLISH });
+  };
+
+  handlePublishFailure = error => {
+    const { notify } = this.props;
+    notify({ message: 'Your content could not be published at this time. Please try again.' });
+    this.setState({ publishStarted: false });
   };
 
   componentDidMount() {
@@ -256,20 +267,10 @@ class PublishPage extends React.PureComponent {
 
     if (publishFormValues) {
       if (publishFormValues.thumbnail && !this.state.uploadedThumbnailUri) {
-        this.setState({ uploadedThumbnailUri: publishFormValues.thumbnail });
-      }
-
-      if (this.state.publishStarted) {
-        if (publishFormValues.publishSuccess) {
-          this.setState({ publishStarted: false, currentPhase: Constants.PHASE_PUBLISH });
-        } else if (publishFormValues.publishError) {
-          // TODO: Display error if any
-          notify({ message: 'Your content could not be published at this time. Please try again.' });
-        }
-
-        if (!publishFormValues.publishing && this.state.publishStarted) {
-          this.setState({ publishStarted: false });
-        }
+        this.setState({
+          currentThumbnailUri: publishFormValues.thumbnail,
+          uploadedThumbnailUri: publishFormValues.thumbnail,
+        });
       }
     }
   }

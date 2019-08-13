@@ -1,7 +1,7 @@
 import React from 'react';
 import NavigationActions from 'react-navigation';
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
-import { MATURE_TAGS, normalizeURI } from 'lbry-redux';
+import { MATURE_TAGS, normalizeURI, createNormalizedClaimSearchKey } from 'lbry-redux';
 import _ from 'lodash';
 import FileItem from 'component/fileItem';
 import FileListItem from 'component/fileListItem';
@@ -26,58 +26,30 @@ class ClaimList extends React.PureComponent {
   };
 
   componentDidMount() {
-    const {
-      channelIds,
-      trendingForAll,
-      claimSearch,
-      orderBy = Constants.DEFAULT_ORDER_BY,
-      searchByTags,
-      showNsfwContent,
-      tags,
-      time,
-    } = this.props;
-    if (channelIds || trendingForAll) {
-      const options = {
-        order_by: orderBy,
-        no_totals: true,
-        page: this.state.currentPage,
-      };
-      if (!showNsfwContent) {
-        options.not_tags = MATURE_TAGS;
-      }
-      if (channelIds) {
-        this.setState({ subscriptionsView: true });
-        options.channel_ids = channelIds;
-      } else if (trendingForAll) {
-        this.setState({ trendingForAllView: true });
-      }
+    const { channelIds, trendingForAll } = this.props;
 
-      claimSearch(options);
-    } else if (tags && tags.length > 0) {
-      const additionalOptions = {};
-      if (orderBy && orderBy[0] === Constants.ORDER_BY_EFFECTIVE_AMOUNT && Constants.TIME_ALL !== time) {
-        additionalOptions.release_time = this.getReleaseTimeOption(time);
-      }
-      if (!showNsfwContent) {
-        additionalOptions.not_tags = MATURE_TAGS;
-      }
-      searchByTags(tags, orderBy, this.state.currentPage, additionalOptions);
+    if (channelIds) {
+      this.setState({ subscriptionsView: true });
+    } else if (trendingForAll) {
+      this.setState({ trendingForAllView: true });
     }
+
+    this.doClaimSearch();
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     const {
-      claimSearch,
+      claimSearchByQuery: prevClaimSearchByQuery,
       orderBy: prevOrderBy,
       searchByTags,
       tags: prevTags,
       channelIds: prevChannelIds,
       trendingForAll: prevTrendingForAll,
       time: prevTime,
-      claimSearchUris: prevClaimSearchUris,
       showNsfwContent,
-    } = this.props;
-    const { orderBy, tags, channelIds, trendingForAll, time, claimSearchUris } = nextProps;
+    } = prevProps;
+    const { claimSearchByQuery, orderBy, tags, channelIds, trendingForAll, time } = this.props;
+
     if (
       !_.isEqual(orderBy, prevOrderBy) ||
       !_.isEqual(tags, prevTags) ||
@@ -90,49 +62,55 @@ class ClaimList extends React.PureComponent {
         if (this.scrollView) {
           this.scrollView.scrollToOffset({ animated: true, offset: 0 });
         }
+
         if (trendingForAll || (prevChannelIds && channelIds)) {
-          const options = {
-            order_by: orderBy,
-            no_totals: true,
-            page: this.state.currentPage,
-          };
-          if (!showNsfwContent) {
-            options.not_tags = MATURE_TAGS;
-          }
           if (channelIds) {
             this.setState({ subscriptionsView: true });
-            options.channel_ids = channelIds;
           }
           if (trendingForAll) {
             this.setState({ trendingForAllView: true });
           }
-
-          claimSearch(options);
         } else if (tags && tags.length > 0) {
           this.setState({ subscriptionsView: false, trendingForAllView: false });
-          const additionalOptions = {};
-          if (orderBy && orderBy[0] === Constants.ORDER_BY_EFFECTIVE_AMOUNT && Constants.TIME_ALL !== time) {
-            additionalOptions.release_time = this.getReleaseTimeOption(time);
-          }
-          if (!showNsfwContent) {
-            additionalOptions.not_tags = MATURE_TAGS;
-          }
-          searchByTags(tags, orderBy, this.state.currentPage, additionalOptions);
         }
+
+        this.doClaimSearch();
       });
     }
+  }
 
-    if (
-      (this.state.subscriptionsView || this.state.trendingForAllView) &&
-      this.state.currentPage > 1 &&
-      prevClaimSearchUris &&
-      prevClaimSearchUris.length > 0 &&
-      _.isEqual(prevClaimSearchUris, claimSearchUris)
-    ) {
-      this.setState({ lastPageReached: true });
-    } else {
-      this.setState({ lastPageReached: false });
+  buildClaimSearchOptions() {
+    const {
+      orderBy = Constants.DEFAULT_ORDER_BY,
+      channelIds,
+      showNsfwContent,
+      tags,
+      time,
+      trendingForAll,
+    } = this.props;
+    const { currentPage, subscriptionsView, trendingForAllView } = this.state;
+
+    const options = {
+      order_by: orderBy,
+      no_totals: true,
+      page: currentPage,
+      page_size: Constants.DEFAULT_PAGE_SIZE,
+    };
+
+    if (channelIds) {
+      options.channel_ids = channelIds;
+    } else if (!trendingForAll && !trendingForAllView && tags && tags.length > 0) {
+      options.any_tags = tags;
     }
+    if (!showNsfwContent) {
+      options.not_tags = MATURE_TAGS;
+    }
+
+    if (orderBy && orderBy[0] === Constants.ORDER_BY_EFFECTIVE_AMOUNT && Constants.TIME_ALL !== time) {
+      options.release_time = this.getReleaseTimeOption(time);
+    }
+
+    return options;
   }
 
   getReleaseTimeOption = time => {
@@ -143,56 +121,27 @@ class ClaimList extends React.PureComponent {
     )}`;
   };
 
+  doClaimSearch() {
+    const { claimSearch } = this.props;
+    const options = this.buildClaimSearchOptions();
+    claimSearch(options);
+  }
+
   handleVerticalEndReached = () => {
     // fetch more content
-    const {
-      channelIds,
-      claimSearch,
-      claimSearchUris,
-      orderBy,
-      searchByTags,
-      showNsfwContent,
-      tags,
-      time,
-      uris,
-    } = this.props;
-    const { subscriptionsView, trendingForAllView } = this.state;
+    const { claimSearchByQuery, lastPageReached } = this.props;
 
+    const options = this.buildClaimSearchOptions();
+    const claimSearchKey = createNormalizedClaimSearchKey(options);
+    const uris = claimSearchByQuery[claimSearchKey];
     if (
-      this.state.lastPageReached ||
-      ((claimSearchUris.length > 0 && claimSearchUris.length < Constants.DEFAULT_PAGE_SIZE) ||
-        claimSearchUris.length >= softLimit) ||
-      (uris && uris.length >= softLimit)
+      lastPageReached[claimSearchKey] ||
+      ((uris.length > 0 && uris.length < Constants.DEFAULT_PAGE_SIZE) || uris.length >= softLimit)
     ) {
       return;
     }
 
-    this.setState({ currentPage: this.state.currentPage + 1 }, () => {
-      if (subscriptionsView || trendingForAllView) {
-        const options = {
-          order_by: orderBy,
-          no_totals: true,
-          page: this.state.currentPage,
-        };
-        if (!showNsfwContent) {
-          options.not_tags = MATURE_TAGS;
-        }
-        if (subscriptionsView) {
-          options.channel_ids = channelIds;
-        }
-
-        claimSearch(options);
-      } else {
-        const additionalOptions = {};
-        if (orderBy && orderBy[0] === Constants.ORDER_BY_EFFECTIVE_AMOUNT && Constants.TIME_ALL !== time) {
-          additionalOptions.release_time = this.getReleaseTimeOption(time);
-        }
-        if (!showNsfwContent) {
-          additionalOptions.not_tags = MATURE_TAGS;
-        }
-        searchByTags(tags, orderBy, this.state.currentPage, additionalOptions);
-      }
-    });
+    this.setState({ currentPage: this.state.currentPage + 1 }, () => this.doClaimSearch());
   };
 
   appendMorePlaceholder = items => {
@@ -253,19 +202,19 @@ class ClaimList extends React.PureComponent {
     const {
       ListHeaderComponent,
       loading,
-      claimSearchLoading,
-      claimSearchUris,
       morePlaceholder,
       navigation,
       orientation = Constants.ORIENTATION_VERTICAL,
       style,
-      uris,
+      claimSearchByQuery,
     } = this.props;
     const { subscriptionsView, trendingForAllView } = this.state;
 
-    if (Constants.ORIENTATION_VERTICAL === orientation) {
-      const data = subscriptionsView || trendingForAllView ? claimSearchUris : uris;
+    const options = this.buildClaimSearchOptions();
+    const claimSearchKey = createNormalizedClaimSearchKey(options);
+    const uris = claimSearchByQuery[claimSearchKey];
 
+    if (Constants.ORIENTATION_VERTICAL === orientation) {
       return (
         <View style={style}>
           <FlatList
@@ -273,19 +222,19 @@ class ClaimList extends React.PureComponent {
               this.scrollView = ref;
             }}
             ListHeaderComponent={ListHeaderComponent}
-            ListEmptyComponent={loading || claimSearchLoading ? null : this.verticalListEmptyComponent}
+            ListEmptyComponent={loading ? null : this.verticalListEmptyComponent}
             style={claimListStyle.verticalScrollContainer}
             contentContainerStyle={claimListStyle.verticalScrollPadding}
             initialNumToRender={10}
             maxToRenderPerBatch={20}
             removeClippedSubviews
             renderItem={this.renderVerticalItem}
-            data={data}
+            data={uris}
             keyExtractor={(item, index) => item}
             onEndReached={this.handleVerticalEndReached}
             onEndReachedThreshold={0.2}
           />
-          {(((subscriptionsView || trendingForAllView) && claimSearchLoading) || loading) && (
+          {loading && (
             <View style={claimListStyle.verticalLoading}>
               <ActivityIndicator size={'small'} color={Colors.LbryGreen} />
             </View>

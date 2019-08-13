@@ -1,12 +1,5 @@
 import { connect } from 'react-redux';
-import {
-  doClaimSearch,
-  doFileList,
-  selectBalance,
-  selectFileInfosDownloaded,
-  selectLastClaimSearchUris,
-  selectFollowedTags,
-} from 'lbry-redux';
+import { doClaimSearch, doFileList, selectBalance, selectFileInfosDownloaded, selectFollowedTags } from 'lbry-redux';
 import {
   doFetchFeaturedUris,
   doFetchRewardedContent,
@@ -35,7 +28,6 @@ const select = state => ({
   ratingReminderLastShown: makeSelectClientSetting(Constants.SETTING_RATING_REMINDER_LAST_SHOWN)(state),
   sortByItem: selectSortByItem(state),
   unreadSubscriptions: selectUnreadSubscriptions(state),
-  uris: selectLastClaimSearchUris(state),
 });
 
 const perform = dispatch => ({

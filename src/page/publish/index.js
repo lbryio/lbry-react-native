@@ -21,7 +21,7 @@ const perform = dispatch => ({
   notify: data => dispatch(doToast(data)),
   updatePublishForm: value => dispatch(doUpdatePublishForm(value)),
   uploadThumbnail: (filePath, fsAdapter) => dispatch(doUploadThumbnail(filePath, null, fsAdapter)),
-  publish: params => dispatch(doPublish(params)),
+  publish: (success, fail) => dispatch(doPublish(success, fail)),
   resolveUri: uri => dispatch(doResolveUri(uri)),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),

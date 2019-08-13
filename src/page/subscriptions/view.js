@@ -150,6 +150,8 @@ class SubscriptionsPage extends React.PureComponent {
             return claimId;
           });
 
+    console.log(channelIds);
+
     return (
       <View style={subscriptionsStyle.container}>
         <UriBar navigation={navigation} belowOverlay={this.state.showSortPicker} />

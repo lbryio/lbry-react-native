@@ -75,29 +75,37 @@ class TagPage extends React.PureComponent {
     return (
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} belowOverlay={showSortPicker || showTimePicker} />
-        <ClaimList
-          ListHeaderComponent={
-            <View style={discoverStyle.tagTitleRow}>
-              <Text style={discoverStyle.tagPageTitle}>{formatTagTitle(tag)}</Text>
-              {Constants.SORT_BY_TOP === sortByItem.name && (
-                <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
-                  <Text style={discoverStyle.tagSortText}>{currentTimeItem.label}</Text>
+        {this.state.tag && (
+          <ClaimList
+            ListHeaderComponent={
+              <View style={discoverStyle.tagTitleRow}>
+                <Text style={discoverStyle.tagPageTitle}>{formatTagTitle(tag)}</Text>
+                {Constants.SORT_BY_TOP === sortByItem.name && (
+                  <TouchableOpacity
+                    style={discoverStyle.tagTime}
+                    onPress={() => this.setState({ showTimePicker: true })}
+                  >
+                    <Text style={discoverStyle.tagSortText}>{currentTimeItem.label}</Text>
+                    <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity
+                  style={discoverStyle.tagSortBy}
+                  onPress={() => this.setState({ showSortPicker: true })}
+                >
+                  <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
                   <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
                 </TouchableOpacity>
-              )}
-              <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
-                <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
-                <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
-              </TouchableOpacity>
-            </View>
-          }
-          style={discoverStyle.tagPageClaimList}
-          orderBy={this.state.orderBy}
-          time={this.state.time}
-          tags={[tag]}
-          navigation={navigation}
-          orientation={Constants.ORIENTATION_VERTICAL}
-        />
+              </View>
+            }
+            style={discoverStyle.tagPageClaimList}
+            orderBy={this.state.orderBy}
+            time={this.state.time}
+            tags={[tag]}
+            navigation={navigation}
+            orientation={Constants.ORIENTATION_VERTICAL}
+          />
+        )}
         {!showSortPicker && !showTimePicker && <FloatingWalletBalance navigation={navigation} />}
         {showSortPicker && (
           <ModalPicker
