@@ -17,7 +17,8 @@ import SubscriptionsPage from 'page/subscriptions';
 import TransactionHistoryPage from 'page/transactionHistory';
 import VerificationScreen from 'page/verification';
 import WalletPage from 'page/wallet';
-import { createDrawerNavigator, createStackNavigator, NavigationActions } from 'react-navigation';
+import { createStackNavigator, NavigationActions } from 'react-navigation';
+import { createDrawerNavigator } from 'react-navigation-drawer';
 import {
   createReduxContainer,
   createReactNavigationReduxMiddleware,
