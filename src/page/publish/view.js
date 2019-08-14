@@ -280,7 +280,7 @@ class PublishPage extends React.PureComponent {
       {
         currentMedia: media,
         title: media.name,
-        name: this.formatNameForTitle(media.name),
+        name: generateCombination(2, ' ', true),
         currentPhase: Constants.PHASE_DETAILS,
       },
       () => this.handleNameChange(this.state.name)
@@ -366,7 +366,6 @@ class PublishPage extends React.PureComponent {
           const currentMedia = {
             id: -1,
             filePath: this.getFilePathFromUri(data.uri),
-            name: generateCombination(2, ' ', true),
             type: 'video/mp4', // always MP4
             duration: 0,
           };
