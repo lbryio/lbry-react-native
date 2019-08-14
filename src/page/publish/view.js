@@ -276,11 +276,12 @@ class PublishPage extends React.PureComponent {
   }
 
   setCurrentMedia(media) {
+    const name = generateCombination(2, ' ', true);
     this.setState(
       {
         currentMedia: media,
-        title: media.name,
-        name: generateCombination(2, ' ', true),
+        title: name,
+        name: this.formatNameForTitle(name),
         currentPhase: Constants.PHASE_DETAILS,
       },
       () => this.handleNameChange(this.state.name)
