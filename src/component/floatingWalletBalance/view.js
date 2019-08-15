@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
-import { formatCredits } from 'lbry-redux';
+import { formatBigNumberCredits } from 'lbry-redux';
 import Address from 'component/address';
 import Button from 'component/button';
 import Colors from 'styles/colors';
@@ -34,7 +34,7 @@ class FloatingWalletBalance extends React.PureComponent<Props> {
           <Icon name="wallet" size={12} style={floatingButtonStyle.balanceIcon} />
           {isNaN(balance) && <ActivityIndicator size="small" color={Colors.White} />}
           {(!isNaN(balance) || balance === 0) && (
-            <Text style={floatingButtonStyle.text}>{formatCredits(parseFloat(balance), 0)}</Text>
+            <Text style={floatingButtonStyle.text}>{formatBigNumberCredits(parseFloat(balance), 0)}</Text>
           )}
         </TouchableOpacity>
       </View>
