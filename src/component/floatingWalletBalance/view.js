@@ -31,7 +31,7 @@ class FloatingWalletBalance extends React.PureComponent<Props> {
           style={floatingButtonStyle.container}
           onPress={() => navigation && navigation.navigate({ routeName: 'WalletStack' })}
         >
-          <Icon name="wallet" size={12} style={floatingButtonStyle.balanceIcon} />
+          <Icon name="coins" size={12} style={floatingButtonStyle.balanceIcon} />
           {isNaN(balance) && <ActivityIndicator size="small" color={Colors.White} />}
           {(!isNaN(balance) || balance === 0) && (
             <Text style={floatingButtonStyle.text}>{formatBigNumberCredits(parseFloat(balance), 0)}</Text>
