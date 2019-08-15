@@ -53,7 +53,7 @@ class TrendingPage extends React.PureComponent {
   componentWillReceiveProps(nextProps) {
     const { currentRoute } = nextProps;
     const { currentRoute: prevRoute } = this.props;
-    if (Constants.FULL_ROUTE_NAME_TRENDING === currentRoute && currentRoute !== prevRoute) {
+    if (Constants.DRAWER_ROUTE_TRENDING === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
     }
   }

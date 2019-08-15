@@ -230,7 +230,7 @@ class DiscoverPage extends React.PureComponent {
       });
     } else {
       // navigate to the trending page
-      navigation.navigate({ routeName: Constants.FULL_ROUTE_NAME_TRENDING });
+      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TRENDING });
     }
   };
 

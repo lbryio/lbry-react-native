@@ -156,7 +156,7 @@ class ClaimList extends React.PureComponent {
     if (tags.length === 1) {
       navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: 'tagPage', params: { tag: tags[0] } });
     } else {
-      navigation.navigate({ routeName: Constants.FULL_ROUTE_NAME_TRENDING });
+      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TRENDING });
     }
   };
 
