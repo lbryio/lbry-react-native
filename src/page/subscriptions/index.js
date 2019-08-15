@@ -14,8 +14,8 @@ import {
   selectShowSuggestedSubs,
 } from 'lbryinc';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
-import { doSetClientSetting } from 'redux/actions/settings';
-import { makeSelectClientSetting } from 'redux/selectors/settings';
+import { doSetClientSetting, doSetTimeItem } from 'redux/actions/settings';
+import { makeSelectClientSetting, selectTimeItem } from 'redux/selectors/settings';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import SubscriptionsPage from './view';
@@ -32,6 +32,7 @@ const select = state => ({
   viewMode: selectViewMode(state),
   firstRunCompleted: selectFirstRunCompleted(state),
   showSuggestedSubs: selectShowSuggestedSubs(state),
+  timeItem: selectTimeItem(state),
 });
 
 const perform = dispatch => ({
@@ -41,6 +42,7 @@ const perform = dispatch => ({
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_SUBSCRIPTIONS)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
+  setTimeItem: item => dispatch(doSetTimeItem(item)),
 });
 
 export default connect(

@@ -12,6 +12,7 @@ import fileListStyle from 'styles/fileList';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import FloatingWalletBalance from 'component/floatingWalletBalance';
+import Link from 'component/link';
 import ModalPicker from 'component/modalPicker';
 import UriBar from 'component/uriBar';
 
@@ -21,8 +22,6 @@ class TagPage extends React.PureComponent {
     showSortPicker: false,
     showTimePicker: false,
     orderBy: Constants.DEFAULT_ORDER_BY,
-    time: Constants.TIME_WEEK,
-    currentTimeItem: Constants.CLAIM_SEARCH_TIME_ITEMS[1],
   };
 
   didFocusListener;
@@ -41,7 +40,7 @@ class TagPage extends React.PureComponent {
   onComponentFocused = () => {
     const { navigation, pushDrawerStack, setPlayerVisible, sortByItem } = this.props;
     const { tag } = navigation.state.params;
-    this.setState({ tag, sortByItem, orderBy: getOrderBy(sortByItem) });
+    this.setState({ tag, orderBy: getOrderBy(sortByItem) });
     pushDrawerStack(Constants.DRAWER_ROUTE_TAG, navigation.state.params);
     setPlayerVisible();
   };
@@ -65,42 +64,80 @@ class TagPage extends React.PureComponent {
   };
 
   handleTimeItemSelected = item => {
-    this.setState({ currentTimeItem: item, time: item.name, showTimePicker: false });
+    const { setTimeItem } = this.props;
+    setTimeItem(item);
+    this.setState({ showTimePicker: false });
+  };
+
+  isFollowingTag = tag => {
+    const { followedTags } = this.props;
+    return followedTags.map(tag => tag.name).includes(tag);
+  };
+
+  handleFollowTagToggle = () => {
+    const { toggleTagFollow } = this.props;
+    const { tag } = this.state;
+    const isFollowing = this.isFollowingTag(tag);
+    if (isFollowing) {
+      // unfollow
+      NativeModules.Firebase.track('tag_unfollow', { tag });
+    } else {
+      // follow
+      NativeModules.Firebase.track('tag_follow', { tag });
+    }
+
+    toggleTagFollow(tag);
+    if (window.persistor) {
+      window.persistor.flush();
+    }
+  };
+
+  listHeader = () => {
+    const { sortByItem, timeItem } = this.props;
+    const { tag } = this.state;
+
+    return (
+      <View style={discoverStyle.listHeader}>
+        <View style={discoverStyle.titleRow}>
+          <Text style={discoverStyle.pageTitle}>{formatTagTitle(tag)}</Text>
+        </View>
+        <View style={discoverStyle.pickerRow}>
+          <View style={discoverStyle.leftPickerRow}>
+            <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
+              <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
+              <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+            </TouchableOpacity>
+            {Constants.SORT_BY_TOP === sortByItem.name && (
+              <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
+                <Text style={discoverStyle.tagSortText}>{timeItem.label}</Text>
+                <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <Link
+            style={discoverStyle.customizeLink}
+            text={this.isFollowingTag(tag) ? 'Unfollow' : 'Follow'}
+            onPress={this.handleFollowTagToggle}
+          />
+        </View>
+      </View>
+    );
   };
 
   render() {
-    const { navigation, sortByItem } = this.props;
-    const { tag, currentTimeItem, showSortPicker, showTimePicker } = this.state;
+    const { navigation, sortByItem, timeItem } = this.props;
+    const { tag, showSortPicker, showTimePicker } = this.state;
 
     return (
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} belowOverlay={showSortPicker || showTimePicker} />
         {this.state.tag && (
           <ClaimList
-            ListHeaderComponent={
-              <View style={discoverStyle.tagTitleRow}>
-                <Text style={discoverStyle.tagPageTitle}>{formatTagTitle(tag)}</Text>
-                {Constants.SORT_BY_TOP === sortByItem.name && (
-                  <TouchableOpacity
-                    style={discoverStyle.tagTime}
-                    onPress={() => this.setState({ showTimePicker: true })}
-                  >
-                    <Text style={discoverStyle.tagSortText}>{currentTimeItem.label}</Text>
-                    <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
-                  </TouchableOpacity>
-                )}
-                <TouchableOpacity
-                  style={discoverStyle.tagSortBy}
-                  onPress={() => this.setState({ showSortPicker: true })}
-                >
-                  <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
-                  <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
-                </TouchableOpacity>
-              </View>
-            }
+            ListHeaderComponent={this.listHeader}
             style={discoverStyle.tagPageClaimList}
             orderBy={this.state.orderBy}
-            time={this.state.time}
+            time={timeItem.name}
             tags={[tag]}
             navigation={navigation}
             orientation={Constants.ORIENTATION_VERTICAL}
@@ -112,7 +149,7 @@ class TagPage extends React.PureComponent {
             title={__('Sort content by')}
             onOverlayPress={() => this.setState({ showSortPicker: false })}
             onItemSelected={this.handleSortByItemSelected}
-            selectedItem={this.state.sortByItem}
+            selectedItem={sortByItem}
             items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
           />
         )}
@@ -121,7 +158,7 @@ class TagPage extends React.PureComponent {
             title={__('Content from')}
             onOverlayPress={() => this.setState({ showTimePicker: false })}
             onItemSelected={this.handleTimeItemSelected}
-            selectedItem={this.state.currentTimeItem}
+            selectedItem={timeItem}
             items={Constants.CLAIM_SEARCH_TIME_ITEMS}
           />
         )}

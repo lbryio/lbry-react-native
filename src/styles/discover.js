@@ -28,16 +28,25 @@ const discoverStyle = StyleSheet.create({
   scrollContainer: {
     flex: 1,
   },
+  listHeader: {
+    marginBottom: 8,
+    marginLeft: 16,
+    marginRight: 16,
+  },
   titleRow: {
     flexDirection: 'row',
     marginTop: 76,
     marginBottom: 8,
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginLeft: 16,
-    marginRight: 16,
   },
-  rightTitleRow: {
+  pickerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+  },
+  leftPickerRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
@@ -48,7 +57,6 @@ const discoverStyle = StyleSheet.create({
   customizeLink: {
     fontFamily: 'Inter-UI-Regular',
     fontSize: 14,
-    marginRight: 48,
   },
   trendingContainer: {
     flex: 1,
@@ -266,7 +274,12 @@ const discoverStyle = StyleSheet.create({
   tagSortBy: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 4,
+    marginRight: 24,
+  },
+  allTagSortBy: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 8,
   },
   tagTime: {
     flexDirection: 'row',
@@ -279,6 +292,12 @@ const discoverStyle = StyleSheet.create({
   },
   tagSortIcon: {
     marginTop: -6,
+  },
+  pickerLabel: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+    color: Colors.DescriptionGrey,
+    marginRight: 6,
   },
 });
 

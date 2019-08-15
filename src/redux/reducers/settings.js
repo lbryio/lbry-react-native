@@ -5,6 +5,7 @@ const reducers = {};
 const defaultState = {
   clientSettings: {},
   sortByItemName: Constants.SORT_BY_HOT,
+  timeItemName: Constants.TIME_WEEK,
 };
 
 reducers[ACTIONS.CLIENT_SETTING_CHANGED] = (state, action) => {
@@ -21,6 +22,11 @@ reducers[ACTIONS.CLIENT_SETTING_CHANGED] = (state, action) => {
 reducers[Constants.ACTION_SORT_BY_ITEM_CHANGED] = (state, action) =>
   Object.assign({}, state, {
     sortByItemName: action.data.name,
+  });
+
+reducers[Constants.ACTION_TIME_ITEM_CHANGED] = (state, action) =>
+  Object.assign({}, state, {
+    timeItemName: action.data.name,
   });
 
 export default function reducer(state = defaultState, action) {

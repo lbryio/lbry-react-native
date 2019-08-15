@@ -141,7 +141,7 @@ const drawer = createDrawerNavigator(
     Trending: {
       screen: TrendingPage,
       navigationOptions: {
-        title: 'Trending',
+        title: 'All Content',
         drawerIcon: ({ tintColor }) => <Icon name="fire" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
