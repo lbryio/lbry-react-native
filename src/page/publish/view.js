@@ -642,7 +642,7 @@ class PublishPage extends React.PureComponent {
               style={publishStyle.galleryGrid}
               itemDimension={134}
               spacing={2}
-              items={this.state.videos.filter(video => checkedThumbnails.includes(video.id))}
+              items={videos.filter(video => checkedThumbnails.includes(video.id))}
               renderItem={({ item, index }) => {
                 return (
                   <TouchableOpacity key={index} onPress={() => this.setCurrentMedia(item)}>
