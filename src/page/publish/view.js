@@ -42,6 +42,7 @@ import Tag from 'component/tag';
 import TagSearch from 'component/tagSearch';
 import UriBar from 'component/uriBar';
 import publishStyle from 'styles/publish';
+import __ from 'utils/helper';
 
 const languages = {
   en: 'English',
@@ -249,7 +250,7 @@ class PublishPage extends React.PureComponent {
 
   handlePublishFailure = error => {
     const { notify } = this.props;
-    notify({ message: 'Your content could not be published at this time. Please try again.' });
+    notify({ message: __('Your content could not be published at this time. Please try again.') });
     this.setState({ publishStarted: false });
   };
 
