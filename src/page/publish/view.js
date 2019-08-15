@@ -750,38 +750,34 @@ class PublishPage extends React.PureComponent {
             )}
           </View>
 
-          {this.state.advancedMode && (
-            <View style={publishStyle.card}>
-              <Text style={publishStyle.cardTitle}>Content Address</Text>
-              <Text style={publishStyle.helpText}>
-                The address where people can find your content (ex. lbry://myvideo)
-              </Text>
+          <View style={publishStyle.card}>
+            <Text style={publishStyle.cardTitle}>Content Address</Text>
+            <Text style={publishStyle.helpText}>
+              The address where people can find your content (ex. lbry://myvideo)
+            </Text>
 
+            <TextInput
+              placeholder={'lbry://'}
+              style={publishStyle.inputText}
+              underlineColorAndroid={Colors.NextLbryGreen}
+              numberOfLines={1}
+              value={this.state.name}
+              onChangeText={this.handleNameChange}
+            />
+            <View style={publishStyle.inputRow}>
               <TextInput
-                placeholder={'lbry://'}
-                style={publishStyle.inputText}
+                placeholder={'0.00'}
+                style={publishStyle.priceInput}
                 underlineColorAndroid={Colors.NextLbryGreen}
                 numberOfLines={1}
-                value={this.state.name}
-                onChangeText={this.handleNameChange}
+                keyboardType={'numeric'}
+                value={String(this.state.bid)}
+                onChangeText={this.handleBidChange}
               />
-              <View style={publishStyle.inputRow}>
-                <TextInput
-                  placeholder={'0.00'}
-                  style={publishStyle.priceInput}
-                  underlineColorAndroid={Colors.NextLbryGreen}
-                  numberOfLines={1}
-                  keyboardType={'numeric'}
-                  value={String(this.state.bid)}
-                  onChangeText={this.handleBidChange}
-                />
-                <Text style={publishStyle.currency}>LBC</Text>
-              </View>
-              <Text style={publishStyle.helpText}>
-                This LBC remains yours and the deposit can be undone at any time.
-              </Text>
+              <Text style={publishStyle.currency}>LBC</Text>
             </View>
-          )}
+            <Text style={publishStyle.helpText}>This LBC remains yours and the deposit can be undone at any time.</Text>
+          </View>
 
           {this.state.advancedMode && (
             <View style={publishStyle.card}>
