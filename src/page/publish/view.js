@@ -82,7 +82,7 @@ class PublishPage extends React.PureComponent {
 
     // gallery videos
     videos: null,
-    galleryThumbnailsChecked: false,
+    checkedThumbnails: [],
 
     // camera
     cameraType: RNCamera.Constants.Type.back,
@@ -129,18 +129,24 @@ class PublishPage extends React.PureComponent {
   componentWillMount() {
     const { navigation } = this.props;
     // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
-    DeviceEventEmitter.addListener('onGalleryThumbnailsChecked', this.handleGalleryThumbnailsChecked);
+    DeviceEventEmitter.addListener('onGalleryThumbnailChecked', this.handleGalleryThumbnailChecked);
   }
 
   componentWillUnmount() {
     if (this.didFocusListener) {
       this.didFocusListener.remove();
     }
-    DeviceEventEmitter.removeListener('onGalleryThumbnailsChecked', this.handleGalleryThumbnailsChecked);
+    DeviceEventEmitter.removeListener('onGalleryThumbnailChecked', this.handleGalleryThumbnailChecked);
   }
 
-  handleGalleryThumbnailsChecked = () => {
-    this.setState({ galleryThumbnailsChecked: true });
+  handleGalleryThumbnailChecked = evt => {
+    const checkedThumbnails = this.state.checkedThumbnails.slice();
+    const { id } = evt;
+    // using checked because we only want thumbnails that can be displayed
+    if (!checkedThumbnails.includes(id)) {
+      checkedThumbnails.push(id);
+    }
+    this.setState({ checkedThumbnails });
   };
 
   onComponentFocused = () => {
@@ -580,7 +586,7 @@ class PublishPage extends React.PureComponent {
 
   render() {
     const { balance, navigation, notify, publishFormValues } = this.props;
-    const { canUseCamera, currentPhase, galleryThumbnailsChecked, thumbnailPath, videos } = this.state;
+    const { canUseCamera, currentPhase, checkedThumbnails, thumbnailPath, videos } = this.state;
 
     let content;
     if (Constants.PHASE_SELECTOR === currentPhase) {
@@ -589,12 +595,24 @@ class PublishPage extends React.PureComponent {
           <View style={publishStyle.actionsView}>
             {canUseCamera && <RNCamera style={publishStyle.cameraPreview} type={RNCamera.Constants.Type.back} />}
             <View style={publishStyle.actionsSubView}>
-              <TouchableOpacity style={publishStyle.record} onPress={this.handleRecordVideoPressed}>
+              <TouchableOpacity
+                style={[
+                  publishStyle.record,
+                  canUseCamera ? publishStyle.transparentBackground : publishStyle.actionBackground,
+                ]}
+                onPress={this.handleRecordVideoPressed}
+              >
                 <Icon name="video" size={48} color={Colors.White} />
                 <Text style={publishStyle.actionText}>Record</Text>
               </TouchableOpacity>
               <View style={publishStyle.subActions}>
-                <TouchableOpacity style={publishStyle.photo} onPress={this.handleTakePhotoPressed}>
+                <TouchableOpacity
+                  style={[
+                    publishStyle.photo,
+                    canUseCamera ? publishStyle.transparentBackground : publishStyle.actionBackground,
+                  ]}
+                  onPress={this.handleTakePhotoPressed}
+                >
                   <Icon name="camera" size={48} color={Colors.White} />
                   <Text style={publishStyle.actionText}>Take a photo</Text>
                 </TouchableOpacity>
@@ -607,7 +625,7 @@ class PublishPage extends React.PureComponent {
               </View>
             </View>
           </View>
-          {(!videos || !thumbnailPath || !galleryThumbnailsChecked) && (
+          {(!videos || !thumbnailPath || checkedThumbnails.length === 0) && (
             <View style={publishStyle.loadingView}>
               <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
             </View>
@@ -619,12 +637,12 @@ class PublishPage extends React.PureComponent {
               </Text>
             </View>
           )}
-          {videos && thumbnailPath && galleryThumbnailsChecked && (
+          {videos && thumbnailPath && checkedThumbnails.length > 0 && (
             <FlatGrid
               style={publishStyle.galleryGrid}
               itemDimension={134}
               spacing={2}
-              items={this.state.videos}
+              items={this.state.videos.filter(video => checkedThumbnails.includes(video.id))}
               renderItem={({ item, index }) => {
                 return (
                   <TouchableOpacity key={index} onPress={() => this.setCurrentMedia(item)}>
