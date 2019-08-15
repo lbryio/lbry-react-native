@@ -96,11 +96,16 @@ const mediaPlayerStyle = StyleSheet.create({
   seekerCircle: {
     borderRadius: 12,
     position: 'relative',
-    top: 14,
     left: 15,
     height: 12,
     width: 12,
     backgroundColor: Colors.LbryGreen,
+  },
+  seekerCircleTop: {
+    top: 14,
+  },
+  seekerCircleTopFs: {
+    top: 15,
   },
   seekerHandle: {
     backgroundColor: 'transparent',

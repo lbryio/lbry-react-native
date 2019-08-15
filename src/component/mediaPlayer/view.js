@@ -482,7 +482,12 @@ class MediaPlayer extends React.PureComponent {
               ]}
               {...this.seekResponder.panHandlers}
             >
-              <View style={this.state.seeking ? mediaPlayerStyle.bigSeekerCircle : mediaPlayerStyle.seekerCircle} />
+              <View
+                style={[
+                  this.state.seeking ? mediaPlayerStyle.bigSeekerCircle : mediaPlayerStyle.seekerCircle,
+                  this.state.fullscreenMode ? mediaPlayerStyle.seekerCircleTopFs : mediaPlayerStyle.seekerCircleTop,
+                ]}
+              />
             </View>
             <TouchableOpacity
               style={[
