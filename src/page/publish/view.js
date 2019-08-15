@@ -140,7 +140,7 @@ class PublishPage extends React.PureComponent {
   }
 
   handleGalleryThumbnailChecked = evt => {
-    const checkedThumbnails = this.state.checkedThumbnails.slice();
+    const checkedThumbnails = [...this.state.checkedThumbnails];
     const { id } = evt;
     // using checked because we only want thumbnails that can be displayed
     if (!checkedThumbnails.includes(id)) {
