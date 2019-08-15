@@ -957,7 +957,9 @@ class FilePage extends React.PureComponent {
                   </View>
                 )}
 
-                {costInfo && parseFloat(costInfo.cost) > balance && <FileRewardsDriver navigation={navigation} />}
+                {costInfo && parseFloat(costInfo.cost) > balance && !fileInfo && (
+                  <FileRewardsDriver navigation={navigation} />
+                )}
 
                 <View onLayout={this.setRelatedContentPosition} />
                 <RelatedContent navigation={navigation} uri={uri} fullUri={fullUri} />
