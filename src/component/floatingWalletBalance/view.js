@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
-import { formatCredits } from 'lbry-redux';
+import { formatBigNumberCredits } from 'lbry-redux';
 import Address from 'component/address';
 import Button from 'component/button';
 import Colors from 'styles/colors';
@@ -23,7 +23,7 @@ class FloatingWalletBalance extends React.PureComponent<Props> {
             style={floatingButtonStyle.pendingContainer}
             onPress={() => navigation && navigation.navigate({ routeName: 'Rewards' })}
           >
-            <Icon name="award" size={18} style={floatingButtonStyle.rewardIcon} />
+            <Icon name="award" size={14} style={floatingButtonStyle.rewardIcon} />
             <Text style={floatingButtonStyle.text}>{unclaimedRewardAmount}</Text>
           </TouchableOpacity>
         )}
@@ -31,9 +31,10 @@ class FloatingWalletBalance extends React.PureComponent<Props> {
           style={floatingButtonStyle.container}
           onPress={() => navigation && navigation.navigate({ routeName: 'WalletStack' })}
         >
+          <Icon name="coins" size={12} style={floatingButtonStyle.balanceIcon} />
           {isNaN(balance) && <ActivityIndicator size="small" color={Colors.White} />}
           {(!isNaN(balance) || balance === 0) && (
-            <Text style={floatingButtonStyle.text}>{formatCredits(parseFloat(balance), 2) + ' LBC'}</Text>
+            <Text style={floatingButtonStyle.text}>{formatBigNumberCredits(parseFloat(balance), 0)}</Text>
           )}
         </TouchableOpacity>
       </View>
