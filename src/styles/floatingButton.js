@@ -13,13 +13,14 @@ const floatingButtonStyle = StyleSheet.create({
   container: {
     zIndex: 100,
     borderRadius: 24,
-    padding: 14,
-    paddingLeft: 20,
-    paddingRight: 20,
+    padding: 10,
+    paddingLeft: 16,
+    paddingRight: 16,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
     backgroundColor: Colors.LbryGreen,
-    shadowColor: 'black',
+    shadowColor: Colors.Black,
     shadowOpacity: 0.1,
     shadowRadius: StyleSheet.hairlineWidth,
     shadowOffset: {
@@ -29,10 +30,10 @@ const floatingButtonStyle = StyleSheet.create({
   },
   pendingContainer: {
     borderRadius: 24,
-    padding: 14,
-    paddingLeft: 20,
-    paddingRight: 70,
-    marginRight: -60,
+    padding: 10,
+    paddingLeft: 12,
+    paddingRight: 58,
+    marginRight: -52,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.BrighterLbryGreen,
@@ -41,8 +42,8 @@ const floatingButtonStyle = StyleSheet.create({
   },
   text: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-Bold',
-    fontSize: 18,
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 16,
   },
   bottomRight: {
     right: 10,
@@ -50,7 +51,11 @@ const floatingButtonStyle = StyleSheet.create({
   },
   rewardIcon: {
     color: Colors.White,
-    marginRight: 4,
+    marginRight: 2,
+  },
+  balanceIcon: {
+    color: Colors.White,
+    marginRight: 3,
   },
 });
 
