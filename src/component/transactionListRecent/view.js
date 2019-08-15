@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-//import BusyIndicator from 'component/common/busy-indicator';
+// import BusyIndicator from 'component/common/busy-indicator';
 import { Text, View } from 'react-native';
 import Button from '../button';
 import Link from '../link';
@@ -33,7 +33,7 @@ class TransactionListRecent extends React.PureComponent<Props> {
         {!fetchingTransactions && (
           <TransactionList
             navigation={navigation}
-            transactions={transactions}
+            transactions={transactions.slice(0, 5)}
             emptyMessage={"Looks like you don't have any recent transactions."}
           />
         )}
