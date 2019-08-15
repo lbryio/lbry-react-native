@@ -178,7 +178,7 @@ const firstRunStyle = StyleSheet.create({
     marginBottom: 24,
   },
   passwordWarningText: {
-    color: Colors.BrightRed,
+    color: Colors.NextLbryGreen,
     fontFamily: 'Inter-UI-Regular',
     fontSize: 16,
   },
