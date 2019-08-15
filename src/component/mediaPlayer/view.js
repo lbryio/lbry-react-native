@@ -418,6 +418,13 @@ class MediaPlayer extends React.PureComponent {
         : mediaPlayerStyle.containedTrackingControls,
     ];
 
+    const seekerCircleStyle = [this.state.seeking ? mediaPlayerStyle.bigSeekerCircle : mediaPlayerStyle.seekerCircle];
+    if (!this.state.seeking) {
+      seekerCircleStyle.push(
+        this.state.fullscreenMode ? mediaPlayerStyle.seekerCircleTopFs : mediaPlayerStyle.seekerCircleTop
+      );
+    }
+
     return (
       <View style={styles} onLayout={onLayout}>
         <Video
@@ -482,12 +489,7 @@ class MediaPlayer extends React.PureComponent {
               ]}
               {...this.seekResponder.panHandlers}
             >
-              <View
-                style={[
-                  this.state.seeking ? mediaPlayerStyle.bigSeekerCircle : mediaPlayerStyle.seekerCircle,
-                  this.state.fullscreenMode ? mediaPlayerStyle.seekerCircleTopFs : mediaPlayerStyle.seekerCircleTop,
-                ]}
-              />
+              <View style={seekerCircleStyle} />
             </View>
             <TouchableOpacity
               style={[
