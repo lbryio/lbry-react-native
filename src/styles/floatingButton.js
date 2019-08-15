@@ -51,11 +51,12 @@ const floatingButtonStyle = StyleSheet.create({
   },
   rewardIcon: {
     color: Colors.White,
-    marginRight: 2,
+    marginRight: 3,
   },
   balanceIcon: {
     color: Colors.White,
     marginRight: 3,
+    marginTop: -1,
   },
 });
 
