@@ -16,7 +16,7 @@ const publishStyle = StyleSheet.create({
     flex: 1,
   },
   galleryGridImage: {
-    width: 134,
+    width: '100%',
     height: 90,
   },
   inputText: {
@@ -64,15 +64,20 @@ const publishStyle = StyleSheet.create({
     overflow: 'hidden',
   },
   record: {
-    backgroundColor: 'transparent',
     flex: 0.5,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  actionBackground: {
+    backgroundColor: Colors.Black,
+  },
+  transparentBackground: {
+    backgroundColor: 'transparent',
+  },
   subActions: {
     flex: 0.5,
     borderLeftWidth: 2,
-    borderLeftColor: Colors.DarkerGrey,
+    borderLeftColor: Colors.DarkGrey,
   },
   actionText: {
     color: Colors.White,
@@ -81,7 +86,6 @@ const publishStyle = StyleSheet.create({
     marginTop: 8,
   },
   photo: {
-    backgroundColor: 'transparent',
     height: 240,
     justifyContent: 'center',
     alignItems: 'center',
@@ -90,7 +94,7 @@ const publishStyle = StyleSheet.create({
     backgroundColor: Colors.Black,
     height: 120,
     borderTopWidth: 2,
-    borderTopColor: Colors.DarkerGrey,
+    borderTopColor: Colors.DarkGrey,
     justifyContent: 'center',
     alignItems: 'center',
   },
