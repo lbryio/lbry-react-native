@@ -31,13 +31,11 @@ const channelPageStyle = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
   },
   infoText: {
     fontFamily: 'Inter-UI-Regular',
     fontSize: 20,
     textAlign: 'center',
-    marginLeft: 10,
   },
   pageButtons: {
     width: '100%',
@@ -148,6 +146,8 @@ const channelPageStyle = StyleSheet.create({
     left: 24,
     bottom: -40,
     zIndex: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatarImage: {
     width: '100%',

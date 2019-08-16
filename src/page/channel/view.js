@@ -4,6 +4,7 @@ import { ActivityIndicator, Dimensions, Image, ScrollView, Text, TouchableOpacit
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { normalizeURI } from 'lbry-redux';
 import { navigateBack, getOrderBy } from 'utils/helper';
+import ChannelIconItem from 'component/channelIconItem';
 import ClaimList from 'component/claimList';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -15,16 +16,25 @@ import PageHeader from 'component/pageHeader';
 import SubscribeButton from 'component/subscribeButton';
 import SubscribeNotificationButton from 'component/subscribeNotificationButton';
 import UriBar from 'component/uriBar';
+import channelIconStyle from 'styles/channelIcon';
 import channelPageStyle from 'styles/channelPage';
 import discoverStyle from 'styles/discover';
 
 class ChannelPage extends React.PureComponent {
   state = {
+    autoStyle: null,
     showSortPicker: false,
     showTimePicker: false,
     orderBy: Constants.DEFAULT_ORDER_BY,
     activeTab: Constants.CONTENT_TAB,
   };
+
+  componentWillMount() {
+    this.setState({
+      autoStyle:
+        ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)],
+    });
+  }
 
   handleSortByItemSelected = item => {
     const { setSortByItem } = this.props;
@@ -139,9 +149,14 @@ class ChannelPage extends React.PureComponent {
   render() {
     const { claim, navigation, uri, drawerStack, popDrawerStack, sortByItem, timeItem } = this.props;
     const { name, permanent_url: permanentUrl } = claim;
-    const { showSortPicker, showTimePicker } = this.state;
+    const { autoStyle, showSortPicker, showTimePicker } = this.state;
 
-    let thumbnailUrl, coverUrl, title, fullUri;
+    let thumbnailUrl,
+      coverUrl,
+      title,
+      fullUri,
+      displayName = null,
+      substrIndex = 0;
     if (claim) {
       if (claim.value) {
         title = claim.value.title;
@@ -153,6 +168,8 @@ class ChannelPage extends React.PureComponent {
         }
       }
 
+      displayName = title || claim.name;
+      substrIndex = displayName.startsWith('@') ? 1 : 0;
       fullUri = normalizeURI(`${claim.name}#${claim.claim_id}`);
     }
 
@@ -176,16 +193,15 @@ class ChannelPage extends React.PureComponent {
               <Text style={channelPageStyle.channelName}>{title && title.trim().length > 0 ? title : name}</Text>
             </View>
 
-            <View style={channelPageStyle.avatarImageContainer}>
-              <Image
-                style={channelPageStyle.avatarImage}
-                resizeMode={'cover'}
-                source={
-                  thumbnailUrl && thumbnailUrl.trim().length > 0
-                    ? { uri: thumbnailUrl }
-                    : require('../../assets/default_avatar.jpg')
-                }
-              />
+            <View style={[channelPageStyle.avatarImageContainer, autoStyle]}>
+              {thumbnailUrl && (
+                <Image style={channelPageStyle.avatarImage} resizeMode={'cover'} source={{ uri: thumbnailUrl }} />
+              )}
+              {(!thumbnailUrl || thumbnailUrl.trim().length === 0) && (
+                <Text style={channelIconStyle.autothumbCharacter}>
+                  {displayName.substring(substrIndex, substrIndex + 1).toUpperCase()}
+                </Text>
+              )}
             </View>
 
             <View style={channelPageStyle.subscribeButtonContainer}>
