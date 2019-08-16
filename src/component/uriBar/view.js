@@ -1,12 +1,12 @@
 // @flow
 import React from 'react';
 import { SEARCH_TYPES, isNameValid, isURIValid, normalizeURI } from 'lbry-redux';
-import { FlatList, Keyboard, TextInput, View } from 'react-native';
+import { FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { navigateToUri } from 'utils/helper';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import UriBarItem from './internal/uri-bar-item';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import NavigationButton from 'component/navigationButton';
-import discoverStyle from 'styles/discover';
 import uriBarStyle from 'styles/uriBar';
 
 class UriBar extends React.PureComponent {
@@ -15,6 +15,16 @@ class UriBar extends React.PureComponent {
   textInput = null;
 
   keyboardDidHideListener = null;
+
+  state = {
+    changeTextTimeout: null,
+    currentValue: null,
+    inputText: null,
+    focused: false,
+
+    // TODO: Add a setting to enable / disable direct search?
+    directSearch: true,
+  };
 
   componentDidMount() {
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
@@ -34,18 +44,6 @@ class UriBar extends React.PureComponent {
     if (Constants.DRAWER_ROUTE_SEARCH === currentRoute && currentRoute !== prevRoute) {
       this.setState({ currentValue: query, inputText: query });
     }
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      changeTextTimeout: null,
-      currentValue: null,
-      inputText: null,
-      focused: false,
-      // TODO: Add a setting to enable / disable direct search?
-      directSearch: true,
-    };
   }
 
   handleChangeText = text => {
@@ -136,7 +134,17 @@ class UriBar extends React.PureComponent {
   }
 
   render() {
-    const { navigation, suggestions, query, value, belowOverlay } = this.props;
+    const {
+      belowOverlay,
+      navigation,
+      onExitSelectionMode,
+      onDeleteActionPressed,
+      query,
+      selectedItemCount,
+      selectionMode,
+      suggestions,
+      value,
+    } = this.props;
     if (this.state.currentValue === null) {
       this.setState({ currentValue: value });
     }
@@ -146,42 +154,78 @@ class UriBar extends React.PureComponent {
     // TODO: Add optional setting to enable URI / search bar suggestions
     /* if (this.state.focused) { style.push(uriBarStyle.inFocus); } */
 
+    // TODO: selectionModeActions should be dynamically created / specified
     return (
       <View style={style}>
         <View style={[uriBarStyle.uriContainer, belowOverlay ? null : uriBarStyle.containerElevated]}>
-          <NavigationButton
-            name="bars"
-            size={24}
-            style={uriBarStyle.drawerMenuButton}
-            iconStyle={discoverStyle.drawerHamburger}
-            onPress={() => navigation.openDrawer()}
-          />
-          <TextInput
-            ref={ref => {
-              this.textInput = ref;
-            }}
-            autoCorrect={false}
-            style={uriBarStyle.uriText}
-            onLayout={() => {
-              this.setSelection();
-            }}
-            selectTextOnFocus
-            placeholder={'Search movies, music, and more'}
-            underlineColorAndroid={'transparent'}
-            numberOfLines={1}
-            clearButtonMode={'while-editing'}
-            value={this.state.currentValue}
-            returnKeyType={'go'}
-            inlineImageLeft={'baseline_search_black_24'}
-            inlineImagePadding={16}
-            onFocus={() => this.setState({ focused: true })}
-            onBlur={() => {
-              this.setState({ focused: false });
-              this.setSelection();
-            }}
-            onChangeText={this.handleChangeText}
-            onSubmitEditing={this.handleSubmitEditing}
-          />
+          {selectionMode && (
+            <View style={uriBarStyle.selectionModeBar}>
+              <View style={uriBarStyle.selectionModeLeftBar}>
+                <TouchableOpacity
+                  style={uriBarStyle.backTouchArea}
+                  onPress={() => {
+                    if (onExitSelectionMode) {
+                      onExitSelectionMode();
+                    }
+                  }}
+                >
+                  <Icon name="arrow-left" size={20} />
+                </TouchableOpacity>
+                {selectedItemCount > 0 && <Text style={uriBarStyle.itemCount}>{selectedItemCount}</Text>}
+              </View>
+
+              <View style={uriBarStyle.selectionModeActions}>
+                <TouchableOpacity
+                  style={uriBarStyle.actionTouchArea}
+                  onPress={() => {
+                    if (onDeleteActionPressed) {
+                      onDeleteActionPressed();
+                    }
+                  }}
+                >
+                  <Icon name="trash-alt" solid={false} size={20} style={uriBarStyle.actionIcon} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+
+          {!selectionMode && (
+            <NavigationButton
+              name="bars"
+              size={24}
+              style={uriBarStyle.drawerMenuButton}
+              iconStyle={uriBarStyle.drawerHamburger}
+              onPress={() => navigation.openDrawer()}
+            />
+          )}
+          {!selectionMode && (
+            <TextInput
+              ref={ref => {
+                this.textInput = ref;
+              }}
+              autoCorrect={false}
+              style={uriBarStyle.uriText}
+              onLayout={() => {
+                this.setSelection();
+              }}
+              selectTextOnFocus
+              placeholder={'Search movies, music, and more'}
+              underlineColorAndroid={'transparent'}
+              numberOfLines={1}
+              clearButtonMode={'while-editing'}
+              value={this.state.currentValue}
+              returnKeyType={'go'}
+              inlineImageLeft={'baseline_search_black_24'}
+              inlineImagePadding={16}
+              onFocus={() => this.setState({ focused: true })}
+              onBlur={() => {
+                this.setState({ focused: false });
+                this.setSelection();
+              }}
+              onChangeText={this.handleChangeText}
+              onSubmitEditing={this.handleSubmitEditing}
+            />
+          )}
           {this.state.focused && !this.state.directSearch && (
             <View style={uriBarStyle.suggestions}>
               <FlatList
