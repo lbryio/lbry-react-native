@@ -46,6 +46,15 @@ class FileListItem extends React.PureComponent {
     navigateToUri(navigation, shortUrl || uri, { autoplay });
   };
 
+  onPressHandler = () => {
+    const { claim, onPress } = this.props;
+    if (onPress) {
+      onPress(claim);
+    } else {
+      this.defaultOnPress();
+    }
+  };
+
   render() {
     const {
       blackListedOutpoints,
@@ -63,6 +72,8 @@ class FileListItem extends React.PureComponent {
       navigation,
       thumbnail,
       hideChannel,
+      onLongPress,
+      selected,
       title,
     } = this.props;
 
@@ -95,7 +106,7 @@ class FileListItem extends React.PureComponent {
 
     return (
       <View style={style}>
-        <TouchableOpacity style={style} onPress={onPress || this.defaultOnPress}>
+        <TouchableOpacity style={style} onPress={this.onPressHandler} onLongPress={() => onLongPress(claim)}>
           <FileItemMedia
             style={fileListStyle.thumbnail}
             blurRadius={obscure ? 15 : 0}
@@ -103,6 +114,11 @@ class FileListItem extends React.PureComponent {
             title={title || name}
             thumbnail={thumbnail}
           />
+          {selected && (
+            <View style={fileListStyle.selectedOverlay}>
+              <Icon name={'check-circle'} solid color={Colors.NextLbryGreen} size={32} />
+            </View>
+          )}
           {fileInfo && fileInfo.completed && fileInfo.download_path && (
             <Icon style={fileListStyle.downloadedIcon} solid color={Colors.NextLbryGreen} name={'folder'} size={16} />
           )}

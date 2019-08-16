@@ -20,6 +20,10 @@ const uriBarStyle = StyleSheet.create({
   containerElevated: {
     elevation: 4,
   },
+  drawerHamburger: {
+    marginLeft: 16,
+    marginRight: 16,
+  },
   uriText: {
     backgroundColor: Colors.VeryLightGrey,
     borderRadius: 24,
@@ -72,6 +76,36 @@ const uriBarStyle = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     flex: 3,
+  },
+  selectionModeBar: {
+    flex: 1,
+    height: 46,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  selectionModeLeftBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 16,
+  },
+  selectionModeActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  backTouchArea: {
+    height: '100%',
+    alignItems: 'center',
+  },
+  actionTouchArea: {
+    height: '100%',
+    alignItems: 'center',
+  },
+  itemCount: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 20,
+    marginLeft: 30,
   },
 });
 

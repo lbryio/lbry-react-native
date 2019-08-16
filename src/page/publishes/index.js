@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import {
+  doAbandonClaim,
   doCheckPendingPublishes,
   doFetchClaimListMine,
   selectMyClaimUrisWithoutChannels,
@@ -15,6 +16,7 @@ const select = state => ({
 });
 
 const perform = dispatch => ({
+  abandonClaim: (txid, nout) => dispatch(doAbandonClaim(txid, nout)),
   fetchMyClaims: () => dispatch(doFetchClaimListMine()),
   checkPendingPublishes: () => dispatch(doCheckPendingPublishes()),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_PUBLISHES)),
