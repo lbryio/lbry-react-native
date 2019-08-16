@@ -52,7 +52,7 @@ class ChannelPage extends React.PureComponent {
     const { sortByItem, timeItem } = this.props;
 
     return (
-      <View style={discoverStyle.listHeader}>
+      <View style={channelPageStyle.listHeader}>
         <View style={discoverStyle.pickerRow}>
           <View style={discoverStyle.leftPickerRow}>
             <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>

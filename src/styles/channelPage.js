@@ -153,9 +153,17 @@ const channelPageStyle = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  listHeader: {
+    marginTop: 16,
+    marginBottom: 8,
+    marginLeft: 16,
+    marginRight: 16,
+  },
   claimList: {
     flex: 1,
-    marginTop: 16,
+  },
+  claimListContent: {
+    paddingTop: 16,
   },
 });
 
