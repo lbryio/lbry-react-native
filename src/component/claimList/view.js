@@ -161,8 +161,16 @@ class ClaimList extends React.PureComponent {
   };
 
   renderVerticalItem = ({ item }) => {
-    const { navigation } = this.props;
-    return <FileListItem key={item} uri={item} style={claimListStyle.verticalListItem} navigation={navigation} />;
+    const { hideChannel, navigation } = this.props;
+    return (
+      <FileListItem
+        key={item}
+        uri={item}
+        hideChannel={hideChannel}
+        style={claimListStyle.verticalListItem}
+        navigation={navigation}
+      />
+    );
   };
 
   renderHorizontalItem = ({ item }) => {

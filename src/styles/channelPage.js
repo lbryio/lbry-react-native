@@ -69,7 +69,7 @@ const channelPageStyle = StyleSheet.create({
   subscribeButtonContainer: {
     position: 'absolute',
     flexDirection: 'row',
-    left: 8,
+    right: 8,
     bottom: -90,
     zIndex: 100,
   },
@@ -152,6 +152,10 @@ const channelPageStyle = StyleSheet.create({
   avatarImage: {
     width: '100%',
     height: '100%',
+  },
+  claimList: {
+    flex: 1,
+    marginTop: 16,
   },
 });
 
