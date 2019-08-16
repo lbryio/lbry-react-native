@@ -74,16 +74,16 @@ class PublishesPage extends React.PureComponent {
     const { selectedClaimsMap } = this.state;
 
     // show confirm alert
-    Alert.alert('Unpublish', 'Are you sure you want to unpublish the selected content?', [
-      { text: 'No' },
+    Alert.alert(__('Unpublish'), __('Are you sure you want to unpublish the selected content?'), [
+      { text: __('No') },
       {
-        text: 'Yes',
+        text: __('Yes'),
         onPress: () => {
           const uris = Object.keys(selectedClaimsMap);
-          for (let i = 0; i < uris.length; i++) {
-            const { txid, nout } = selectedClaimsMap[uris[i]];
+          uris.forEach(uri => {
+            const { txid, nout } = selectedClaimsMap[uri];
             abandonClaim(txid, nout);
-          }
+          });
           this.onExitSelectionMode();
         },
       },
