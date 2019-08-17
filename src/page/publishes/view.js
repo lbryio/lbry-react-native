@@ -69,7 +69,7 @@ class PublishesPage extends React.PureComponent {
             maxToRenderPerBatch={24}
             removeClippedSubviews
             renderItem={({ item }) => (
-              <FileListItem hideChannel key={item} uri={item} style={publishStyle.listItem} navigation={navigation} />
+              <FileListItem key={item} uri={item} style={publishStyle.listItem} navigation={navigation} />
             )}
             data={uris}
             keyExtractor={(item, index) => item}
