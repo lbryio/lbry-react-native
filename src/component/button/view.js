@@ -34,14 +34,14 @@ export default class Button extends React.PureComponent {
     }
 
     let renderIcon = (
-      <Icon name={icon} size={18} color={iconColor ? iconColor : 'light' === theme ? Colors.DarkGrey : Colors.White} />
+      <Icon name={icon} size={16} color={iconColor || (theme === 'light' ? Colors.DarkGrey : Colors.White)} />
     );
     if (solid) {
       renderIcon = (
         <Icon
           name={icon}
-          size={18}
-          color={iconColor ? iconColor : 'light' === theme ? Colors.DarkGrey : Colors.White}
+          size={16}
+          color={iconColor || (theme === 'light' ? Colors.DarkGrey : Colors.White)}
           solid
         />
       );

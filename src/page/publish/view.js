@@ -79,6 +79,7 @@ class PublishPage extends React.PureComponent {
     canUseCamera: false,
     titleFocused: false,
     descriptionFocused: false,
+    loadingVideos: false,
 
     // gallery videos
     videos: null,
@@ -157,7 +158,14 @@ class PublishPage extends React.PureComponent {
 
     NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
     NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
-    NativeModules.Gallery.getVideos().then(videos => this.setState({ videos }));
+    this.setState(
+      {
+        loadingVideos: true,
+      },
+      () => {
+        NativeModules.Gallery.getVideos().then(videos => this.setState({ videos, loadingVideos: false }));
+      }
+    );
   };
 
   getNewUri(name, channel) {
@@ -586,7 +594,7 @@ class PublishPage extends React.PureComponent {
 
   render() {
     const { balance, navigation, notify, publishFormValues } = this.props;
-    const { canUseCamera, currentPhase, checkedThumbnails, thumbnailPath, videos } = this.state;
+    const { canUseCamera, currentPhase, checkedThumbnails, loadingVideos, thumbnailPath, videos } = this.state;
 
     let content;
     if (Constants.PHASE_SELECTOR === currentPhase) {
@@ -625,13 +633,13 @@ class PublishPage extends React.PureComponent {
               </View>
             </View>
           </View>
-          {(!videos || !thumbnailPath || checkedThumbnails.length === 0) && (
+          {(loadingVideos || !thumbnailPath || checkedThumbnails.length === 0) && (
             <View style={publishStyle.loadingView}>
               <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
             </View>
           )}
-          {thumbnailPath && (!videos || videos.length === 0) && (
-            <View style={publishStyle.centered}>
+          {!loadingVideos && (!videos || videos.length === 0) && (
+            <View style={publishStyle.relativeCentered}>
               <Text style={publishStyle.noVideos}>
                 We could not find any videos on your device. Take a photo or record a video to get started.
               </Text>

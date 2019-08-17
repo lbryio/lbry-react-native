@@ -299,6 +299,47 @@ const discoverStyle = StyleSheet.create({
     color: Colors.DescriptionGrey,
     marginRight: 6,
   },
+  menuScrollContent: {
+    paddingTop: 16,
+  },
+  menuGroup: {
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  menuGroupName: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 12,
+    color: Colors.DescriptionGrey,
+    textTransform: 'uppercase',
+    marginBottom: 4,
+    marginLeft: 16,
+    marginRight: 16,
+  },
+  menuItemTouchArea: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingTop: 12,
+    paddingBottom: 12,
+    paddingLeft: 16,
+    paddingRight: 16,
+    alignItems: 'center',
+  },
+  menuItemTouchAreaFocused: {
+    backgroundColor: Colors.VeryLightGrey,
+  },
+  menuItemFocused: {
+    color: Colors.LbryGreen,
+  },
+  menuItemIcon: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 24,
+  },
+  menuItem: {
+    marginLeft: 8,
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 16,
+  },
 });
 
 export default discoverStyle;
