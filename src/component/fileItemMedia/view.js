@@ -2,6 +2,7 @@ import React from 'react';
 import { ActivityIndicator, Image, Text, View } from 'react-native';
 import Colors from 'styles/colors';
 import FastImage from 'react-native-fast-image';
+import VideoDuration from 'component/videoDuration';
 import autothumbStyle from 'styles/autothumb';
 import fileItemMediaStyle from 'styles/fileItemMedia';
 
@@ -58,7 +59,7 @@ class FileItemMedia extends React.PureComponent {
 
   render() {
     let style = this.props.style;
-    const { blurRadius, isResolvingUri, thumbnail, title, resizeMode } = this.props;
+    const { blurRadius, duration, isResolvingUri, thumbnail, title, resizeMode } = this.props;
     const atStyle = this.state.autoThumbStyle;
     if (this.isThumbnailValid(thumbnail) && !this.state.imageLoadFailed) {
       if (style == null) {
@@ -68,17 +69,40 @@ class FileItemMedia extends React.PureComponent {
       if (blurRadius > 0) {
         // No blur radius support in FastImage yet
         return (
-          <Image source={{ uri: thumbnail }} blurRadius={blurRadius} resizeMode={resizeMode || 'cover'} style={style} />
+          <View style={style}>
+            <Image
+              source={{ uri: thumbnail }}
+              blurRadius={blurRadius}
+              resizeMode={resizeMode || 'cover'}
+              style={fileItemMediaStyle.image}
+            />
+            {duration && (
+              <VideoDuration
+                duration={duration}
+                style={fileItemMediaStyle.duration}
+                textStyle={fileItemMediaStyle.durationText}
+              />
+            )}
+          </View>
         );
       }
 
       return (
-        <FastImage
-          source={{ uri: thumbnail }}
-          onError={() => this.setState({ imageLoadFailed: true })}
-          resizeMode={this.getFastImageResizeMode(resizeMode)}
-          style={style}
-        />
+        <View style={style}>
+          <FastImage
+            source={{ uri: thumbnail }}
+            onError={() => this.setState({ imageLoadFailed: true })}
+            resizeMode={this.getFastImageResizeMode(resizeMode)}
+            style={fileItemMediaStyle.image}
+          />
+          {duration && (
+            <VideoDuration
+              duration={duration}
+              style={fileItemMediaStyle.duration}
+              textStyle={fileItemMediaStyle.durationText}
+            />
+          )}
+        </View>
       );
     }
 
@@ -99,6 +123,13 @@ class FileItemMedia extends React.PureComponent {
                 .substring(0, Math.min(title.replace(' ', '').length, 5))
                 .toUpperCase()}
           </Text>
+        )}
+        {duration && (
+          <VideoDuration
+            duration={duration}
+            style={fileItemMediaStyle.duration}
+            textStyle={fileItemMediaStyle.durationText}
+          />
         )}
       </View>
     );

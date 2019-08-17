@@ -69,6 +69,7 @@ class FileListItem extends React.PureComponent {
     const uri = normalizeURI(this.props.uri);
     const obscure = obscureNsfw && nsfw;
     const isResolving = !fileInfo && isResolvingUri;
+    const duration = claim && claim.value && claim.value.video ? claim.value.video.duration : null;
 
     let name, channel, height, channelClaimId, fullChannelUri, shortChannelUri, shouldHide, signingChannel;
     if (claim) {
@@ -96,13 +97,16 @@ class FileListItem extends React.PureComponent {
     return (
       <View style={style}>
         <TouchableOpacity style={style} onPress={onPress || this.defaultOnPress}>
-          <FileItemMedia
-            style={fileListStyle.thumbnail}
-            blurRadius={obscure ? 15 : 0}
-            resizeMode="cover"
-            title={title || name}
-            thumbnail={thumbnail}
-          />
+          <View style={fileListStyle.thumbnailContainer}>
+            <FileItemMedia
+              style={fileListStyle.thumbnail}
+              blurRadius={obscure ? 15 : 0}
+              duration={duration}
+              resizeMode="cover"
+              title={title || name}
+              thumbnail={thumbnail}
+            />
+          </View>
           {fileInfo && fileInfo.completed && fileInfo.download_path && (
             <Icon style={fileListStyle.downloadedIcon} solid color={Colors.NextLbryGreen} name={'folder'} size={16} />
           )}
