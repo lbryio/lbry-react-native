@@ -152,9 +152,9 @@ class PublishPage extends React.PureComponent {
 
   onComponentFocused = () => {
     const { pushDrawerStack, setPlayerVisible } = this.props;
-
     pushDrawerStack();
     setPlayerVisible();
+    NativeModules.Firebase.setCurrentScreen('Publish');
 
     NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
     NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));

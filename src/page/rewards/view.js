@@ -42,6 +42,8 @@ class RewardsPage extends React.PureComponent {
 
     pushDrawerStack();
     setPlayerVisible();
+    NativeModules.Firebase.setCurrentScreen('Rewards');
+
     fetchRewards();
 
     this.setState({

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ScrollView, Text } from 'react-native';
+import { NativeModules, View, ScrollView, Text } from 'react-native';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import TransactionList from 'component/transactionList';
 import UriBar from 'component/uriBar';
@@ -23,6 +23,8 @@ class TransactionHistoryPage extends React.PureComponent {
     const { fetchTransactions, pushDrawerStack, setPlayerVisible } = this.props;
     pushDrawerStack();
     setPlayerVisible();
+    NativeModules.Firebase.setCurrentScreen('Transaction History');
+
     fetchTransactions();
   };
 

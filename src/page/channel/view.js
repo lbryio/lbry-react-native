@@ -1,6 +1,15 @@
 // @flow
 import React from 'react';
-import { ActivityIndicator, Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  NativeModules,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { normalizeURI } from 'lbry-redux';
 import { navigateBack, getOrderBy } from 'utils/helper';
@@ -34,6 +43,10 @@ class ChannelPage extends React.PureComponent {
       autoStyle:
         ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)],
     });
+  }
+
+  componentDidMount() {
+    NativeModules.Firebase.setCurrentScreen('Channel');
   }
 
   handleSortByItemSelected = item => {

@@ -38,6 +38,8 @@ class DiscoverPage extends React.PureComponent {
   };
 
   componentDidMount() {
+    NativeModules.Firebase.setCurrentScreen('Your tags');
+
     // Track the total time taken if this is the first launch
     AsyncStorage.getItem('firstLaunchTime').then(startTime => {
       if (startTime !== null && !isNaN(parseInt(startTime, 10))) {

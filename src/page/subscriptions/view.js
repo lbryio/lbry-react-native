@@ -64,6 +64,8 @@ class SubscriptionsPage extends React.PureComponent {
 
     pushDrawerStack();
     setPlayerVisible();
+    NativeModules.Firebase.setCurrentScreen('Subscriptions');
+
     doFetchMySubscriptions();
     doFetchRecommendedSubscriptions();
   };

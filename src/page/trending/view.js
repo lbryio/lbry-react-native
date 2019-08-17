@@ -50,6 +50,7 @@ class TrendingPage extends React.PureComponent {
     this.setState({ currentTrendingForItem: TRENDING_FOR_ITEMS[filterForTags ? 1 : 0] });
     pushDrawerStack(Constants.DRAWER_ROUTE_TRENDING, navigation.state.params);
     setPlayerVisible();
+    NativeModules.Firebase.setCurrentScreen('All content');
   };
 
   componentDidMount() {

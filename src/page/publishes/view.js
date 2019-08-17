@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, NativeModules, Text, TouchableOpacity, View } from 'react-native';
 import Button from 'component/button';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -29,9 +29,10 @@ class PublishesPage extends React.PureComponent {
 
   onComponentFocused = () => {
     const { checkPendingPublishes, fetchMyClaims, pushDrawerStack, setPlayerVisible } = this.props;
-
     pushDrawerStack();
     setPlayerVisible();
+    NativeModules.Firebase.setCurrentScreen('Publishes');
+
     fetchMyClaims();
     checkPendingPublishes();
   };

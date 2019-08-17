@@ -43,6 +43,7 @@ class TagPage extends React.PureComponent {
     this.setState({ tag, orderBy: getOrderBy(sortByItem) });
     pushDrawerStack(Constants.DRAWER_ROUTE_TAG, navigation.state.params);
     setPlayerVisible();
+    NativeModules.Firebase.setCurrentScreen('Tag');
   };
 
   componentDidMount() {
