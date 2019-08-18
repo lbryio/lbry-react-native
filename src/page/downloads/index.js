@@ -9,6 +9,7 @@ import {
   selectIsFetchingFileList,
 } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
+import { doDeleteFile } from 'redux/actions/file';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import DownloadsPage from './view';
@@ -22,6 +23,9 @@ const select = state => ({
 });
 
 const perform = dispatch => ({
+  deleteFile: (fileInfo, deleteFromDevice, abandonClaim) => {
+    dispatch(doDeleteFile(fileInfo, deleteFromDevice, abandonClaim));
+  },
   fetchMyClaims: () => dispatch(doFetchClaimListMine()),
   fileList: () => dispatch(doFileList()),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_MY_LBRY)),

@@ -106,7 +106,7 @@ class PublishesPage extends React.PureComponent {
         />
         {fetching && (
           <View style={publishStyle.centered}>
-            <ActivityIndicator size={'small'} color={Colors.LbryGreen} />
+            <ActivityIndicator size={'large'} color={Colors.NextLbryGreen} />
           </View>
         )}
 
