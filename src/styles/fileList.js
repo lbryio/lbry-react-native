@@ -38,6 +38,16 @@ const fileListStyle = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  selectedOverlay: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: thumbnailWidth,
+    height: thumbnailHeight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#000000aa',
+  },
   title: {
     fontFamily: 'Inter-UI-SemiBold',
     fontSize: screenWidthPixels <= 720 ? 12 : 14,

@@ -175,14 +175,6 @@ const discoverStyle = StyleSheet.create({
     textAlign: 'center',
     color: '#0c604b',
   },
-  drawerMenuButton: {
-    height: '100%',
-    justifyContent: 'center',
-  },
-  drawerHamburger: {
-    marginLeft: 16,
-    marginRight: 16,
-  },
   rightHeaderIcon: {
     marginRight: 16,
   },
