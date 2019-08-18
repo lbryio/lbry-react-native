@@ -28,6 +28,7 @@ class SettingsPage extends React.PureComponent {
     const { pushDrawerStack, setPlayerVisible } = this.props;
     pushDrawerStack();
     setPlayerVisible();
+    NativeModules.Firebase.setCurrentScreen('Settings');
   };
 
   componentDidMount() {

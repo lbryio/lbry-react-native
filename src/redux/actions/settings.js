@@ -27,3 +27,14 @@ export function doSetSortByItem(item) {
     });
   };
 }
+
+export function doSetTimeItem(item) {
+  return dispatch => {
+    dispatch({
+      type: Constants.ACTION_TIME_ITEM_CHANGED,
+      data: {
+        name: item.name,
+      },
+    });
+  };
+}

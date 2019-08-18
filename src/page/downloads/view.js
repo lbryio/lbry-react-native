@@ -1,6 +1,6 @@
 import React from 'react';
 import { Lbry, buildURI, normalizeURI } from 'lbry-redux';
-import { ActivityIndicator, Button, FlatList, Text, TextInput, View, ScrollView } from 'react-native';
+import { ActivityIndicator, Button, FlatList, NativeModules, Text, TextInput, View, ScrollView } from 'react-native';
 import { navigateToUri, uriFromFileInfo } from 'utils/helper';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -34,6 +34,8 @@ class DownloadsPage extends React.PureComponent {
     const { fetchMyClaims, fileList, pushDrawerStack, setPlayerVisible } = this.props;
     pushDrawerStack();
     setPlayerVisible();
+    NativeModules.Firebase.setCurrentScreen('Library');
+
     fetchMyClaims();
     fileList();
   };

@@ -1,113 +1,111 @@
 // @flow
 import React from 'react';
-import { ActivityIndicator, Dimensions, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  NativeModules,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { normalizeURI } from 'lbry-redux';
-import { navigateBack } from 'utils/helper';
+import { navigateBack, getOrderBy } from 'utils/helper';
+import ChannelIconItem from 'component/channelIconItem';
+import ClaimList from 'component/claimList';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Button from 'component/button';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
-import FileList from 'component/fileList';
+import ModalPicker from 'component/modalPicker';
 import PageHeader from 'component/pageHeader';
 import SubscribeButton from 'component/subscribeButton';
 import SubscribeNotificationButton from 'component/subscribeNotificationButton';
 import UriBar from 'component/uriBar';
+import channelIconStyle from 'styles/channelIcon';
 import channelPageStyle from 'styles/channelPage';
+import discoverStyle from 'styles/discover';
 
 class ChannelPage extends React.PureComponent {
   state = {
-    page: 1,
-    showPageButtons: false,
+    autoStyle: null,
+    showSortPicker: false,
+    showTimePicker: false,
+    orderBy: Constants.DEFAULT_ORDER_BY,
     activeTab: Constants.CONTENT_TAB,
   };
 
-  componentDidMount() {
-    const { uri, page, claimsInChannel, fetchClaims, fetchClaimCount } = this.props;
-
-    if (!claimsInChannel || !claimsInChannel.length) {
-      fetchClaims(uri, page || this.state.page);
-    }
+  componentWillMount() {
+    this.setState({
+      autoStyle:
+        ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)],
+    });
   }
 
-  handlePreviousPage = () => {
-    const { uri, fetchClaims } = this.props;
-    if (this.state.page > 1) {
-      this.setState({ page: this.state.page - 1, showPageButtons: false }, () => {
-        fetchClaims(uri, this.state.page);
-      });
-    }
+  componentDidMount() {
+    NativeModules.Firebase.setCurrentScreen('Channel');
+  }
+
+  handleSortByItemSelected = item => {
+    const { setSortByItem } = this.props;
+    setSortByItem(item);
+    this.setState({ orderBy: getOrderBy(item), showSortPicker: false });
   };
 
-  handleNextPage = () => {
-    const { uri, fetchClaims, totalPages } = this.props;
-    if (this.state.page < totalPages) {
-      this.setState({ page: this.state.page + 1, showPageButtons: false }, () => {
-        fetchClaims(uri, this.state.page);
-      });
-    }
+  handleTimeItemSelected = item => {
+    const { setTimeItem } = this.props;
+    setTimeItem(item);
+    this.setState({ showTimePicker: false });
+  };
+
+  listHeader = () => {
+    const { sortByItem, timeItem } = this.props;
+
+    return (
+      <View style={channelPageStyle.listHeader}>
+        <View style={discoverStyle.pickerRow}>
+          <View style={discoverStyle.leftPickerRow}>
+            <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
+              <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
+              <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+            </TouchableOpacity>
+            {Constants.SORT_BY_TOP === sortByItem.name && (
+              <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
+                <Text style={discoverStyle.tagSortText}>{timeItem.label}</Text>
+                <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </View>
+    );
   };
 
   renderContent = () => {
-    const { fetching, claimsInChannel, totalPages, navigation } = this.props;
+    const { claim, navigation, timeItem } = this.props;
 
-    let contentList;
-    if (fetching) {
-      contentList = (
-        <View style={channelPageStyle.busyContainer}>
-          <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
-          <Text style={channelPageStyle.infoText}>Fetching content...</Text>
-        </View>
-      );
-    } else {
-      contentList =
-        claimsInChannel && claimsInChannel.length ? (
-          <FileList
-            sortByHeight
-            hideFilter
-            fileInfos={claimsInChannel}
-            navigation={navigation}
-            style={channelPageStyle.fileList}
-            contentContainerStyle={channelPageStyle.fileListContent}
-            onEndReached={() => this.setState({ showPageButtons: true })}
-          />
-        ) : (
-          <View style={channelPageStyle.busyContainer}>
-            <Text style={channelPageStyle.infoText}>No content found.</Text>
-          </View>
-        );
-    }
-
-    let pageButtons;
-    if (totalPages > 1 && this.state.showPageButtons) {
-      pageButtons = (
-        <View style={channelPageStyle.pageButtons}>
-          <View>
-            {this.state.page > 1 && (
-              <Button
-                style={channelPageStyle.button}
-                text={'Previous'}
-                disabled={!!fetching}
-                onPress={this.handlePreviousPage}
-              />
-            )}
-          </View>
-          {this.state.page < totalPages && (
-            <Button
-              style={[channelPageStyle.button, channelPageStyle.nextButton]}
-              text={'Next'}
-              disabled={!!fetching}
-              onPress={this.handleNextPage}
-            />
-          )}
-        </View>
-      );
+    let channelId;
+    if (claim) {
+      channelId = claim.claim_id;
     }
 
     return (
       <View style={channelPageStyle.contentTab}>
-        {contentList}
-        {pageButtons}
+        {channelId && (
+          <ClaimList
+            ListHeaderComponent={this.listHeader}
+            hideChannel
+            orderBy={this.state.orderBy}
+            time={timeItem.name}
+            navigation={navigation}
+            orientation={Constants.ORIENTATION_VERTICAL}
+            channelIds={[channelId]}
+            style={channelPageStyle.claimList}
+          />
+        )}
       </View>
     );
   };
@@ -162,10 +160,16 @@ class ChannelPage extends React.PureComponent {
   };
 
   render() {
-    const { fetching, claimsInChannel, claim, navigation, totalPages, uri, drawerStack, popDrawerStack } = this.props;
+    const { claim, navigation, uri, drawerStack, popDrawerStack, sortByItem, timeItem } = this.props;
     const { name, permanent_url: permanentUrl } = claim;
+    const { autoStyle, showSortPicker, showTimePicker } = this.state;
 
-    let thumbnailUrl, coverUrl, title, fullUri;
+    let thumbnailUrl,
+      coverUrl,
+      title,
+      fullUri,
+      displayName = null,
+      substrIndex = 0;
     if (claim) {
       if (claim.value) {
         title = claim.value.title;
@@ -177,6 +181,8 @@ class ChannelPage extends React.PureComponent {
         }
       }
 
+      displayName = title || claim.name;
+      substrIndex = displayName.startsWith('@') ? 1 : 0;
       fullUri = normalizeURI(`${claim.name}#${claim.claim_id}`);
     }
 
@@ -200,16 +206,15 @@ class ChannelPage extends React.PureComponent {
               <Text style={channelPageStyle.channelName}>{title && title.trim().length > 0 ? title : name}</Text>
             </View>
 
-            <View style={channelPageStyle.avatarImageContainer}>
-              <Image
-                style={channelPageStyle.avatarImage}
-                resizeMode={'cover'}
-                source={
-                  thumbnailUrl && thumbnailUrl.trim().length > 0
-                    ? { uri: thumbnailUrl }
-                    : require('../../assets/default_avatar.jpg')
-                }
-              />
+            <View style={[channelPageStyle.avatarImageContainer, autoStyle]}>
+              {thumbnailUrl && (
+                <Image style={channelPageStyle.avatarImage} resizeMode={'cover'} source={{ uri: thumbnailUrl }} />
+              )}
+              {(!thumbnailUrl || thumbnailUrl.trim().length === 0) && (
+                <Text style={channelIconStyle.autothumbCharacter}>
+                  {displayName.substring(substrIndex, substrIndex + 1).toUpperCase()}
+                </Text>
+              )}
             </View>
 
             <View style={channelPageStyle.subscribeButtonContainer}>
@@ -242,6 +247,25 @@ class ChannelPage extends React.PureComponent {
           {Constants.CONTENT_TAB === this.state.activeTab && this.renderContent()}
           {Constants.ABOUT_TAB === this.state.activeTab && this.renderAbout()}
         </View>
+
+        {showSortPicker && (
+          <ModalPicker
+            title={__('Sort content by')}
+            onOverlayPress={() => this.setState({ showSortPicker: false })}
+            onItemSelected={this.handleSortByItemSelected}
+            selectedItem={sortByItem}
+            items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
+          />
+        )}
+        {showTimePicker && (
+          <ModalPicker
+            title={__('Content from')}
+            onOverlayPress={() => this.setState({ showTimePicker: false })}
+            onItemSelected={this.handleTimeItemSelected}
+            selectedItem={timeItem}
+            items={Constants.CLAIM_SEARCH_TIME_ITEMS}
+          />
+        )}
       </View>
     );
   }

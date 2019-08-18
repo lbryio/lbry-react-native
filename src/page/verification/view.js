@@ -29,6 +29,7 @@ class VerificationScreen extends React.PureComponent {
   componentDidMount() {
     const { user } = this.props;
     this.checkVerificationStatus(user);
+    NativeModules.Firebase.setCurrentScreen('Verification');
   }
 
   setEmailVerificationPhase = value => {

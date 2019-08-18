@@ -239,6 +239,8 @@ class SplashScreen extends React.PureComponent {
       NativeModules.Firebase.track('app_launch', null);
     }
 
+    NativeModules.Firebase.setCurrentScreen('Splash');
+
     this.props.fetchRewardedContent();
     Linking.getInitialURL().then(url => {
       if (url) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Lbry, parseURI, normalizeURI, isURIValid } from 'lbry-redux';
-import { ActivityIndicator, Button, Text, TextInput, View, ScrollView } from 'react-native';
+import { ActivityIndicator, Button, NativeModules, Text, TextInput, View, ScrollView } from 'react-native';
 import { navigateToUri } from 'utils/helper';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -37,6 +37,7 @@ class SearchPage extends React.PureComponent {
     const { pushDrawerStack, setPlayerVisible, query, search } = this.props;
     pushDrawerStack();
     setPlayerVisible();
+    NativeModules.Firebase.setCurrentScreen('Search');
 
     const searchQuery = query || this.getSearchQuery();
     if (searchQuery && searchQuery.trim().length > 0) {

@@ -217,6 +217,16 @@ export function getSortByItemForName(name) {
   return null;
 }
 
+export function getTimeItemForName(name) {
+  for (let i = 0; i < Constants.CLAIM_SEARCH_TIME_ITEMS.length; i++) {
+    if (name === Constants.CLAIM_SEARCH_TIME_ITEMS[i].name) {
+      return Constants.CLAIM_SEARCH_TIME_ITEMS[i];
+    }
+  }
+
+  return null;
+}
+
 export function getOrderBy(item) {
   let orderBy = [];
   switch (item.name) {

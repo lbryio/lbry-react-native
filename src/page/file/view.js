@@ -93,6 +93,7 @@ class FilePage extends React.PureComponent {
 
   onComponentFocused = () => {
     StatusBar.setHidden(false);
+    NativeModules.Firebase.setCurrentScreen('File');
 
     DeviceEventEmitter.addListener('onDownloadStarted', this.handleDownloadStarted);
     DeviceEventEmitter.addListener('onDownloadUpdated', this.handleDownloadUpdated);

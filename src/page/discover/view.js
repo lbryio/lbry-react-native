@@ -33,10 +33,13 @@ class DiscoverPage extends React.PureComponent {
     remainingTags: [],
     showModalTagSelector: false,
     showSortPicker: false,
+    showTimePicker: false,
     orderBy: Constants.DEFAULT_ORDER_BY,
   };
 
   componentDidMount() {
+    NativeModules.Firebase.setCurrentScreen('Your tags');
+
     // Track the total time taken if this is the first launch
     AsyncStorage.getItem('firstLaunchTime').then(startTime => {
       if (startTime !== null && !isNaN(parseInt(startTime, 10))) {
@@ -76,6 +79,12 @@ class DiscoverPage extends React.PureComponent {
     setSortByItem(item);
     const orderBy = getOrderBy(item);
     this.setState({ orderBy, showSortPicker: false });
+  };
+
+  handleTimeItemSelected = item => {
+    const { setTimeItem } = this.props;
+    setTimeItem(item);
+    this.setState({ showTimePicker: false });
   };
 
   subscriptionForUri = (uri, channelName) => {
@@ -230,26 +239,41 @@ class DiscoverPage extends React.PureComponent {
       });
     } else {
       // navigate to the trending page
-      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TRENDING });
+      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TRENDING, params: { filterForTags: true } });
     }
   };
 
-  sectionListHeader = () => (
-    <View style={discoverStyle.titleRow}>
-      <Text style={discoverStyle.pageTitle}>Explore</Text>
-      <View style={discoverStyle.rightTitleRow}>
-        <Link
-          style={discoverStyle.customizeLink}
-          text={'Customize'}
-          onPress={() => this.setState({ showModalTagSelector: true })}
-        />
-        <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
-          <Text style={discoverStyle.tagSortText}>{this.props.sortByItem.label.split(' ')[0]}</Text>
-          <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
-        </TouchableOpacity>
+  sectionListHeader = () => {
+    const { sortByItem, timeItem } = this.props;
+    return (
+      <View style={discoverStyle.listHeader}>
+        <View style={discoverStyle.titleRow}>
+          <Text style={discoverStyle.pageTitle}>Your tags</Text>
+        </View>
+        <View style={discoverStyle.pickerRow}>
+          <View style={discoverStyle.leftPickerRow}>
+            <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
+              <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
+              <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+            </TouchableOpacity>
+
+            {Constants.SORT_BY_TOP === sortByItem.name && (
+              <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
+                <Text style={discoverStyle.tagSortText}>{timeItem.label}</Text>
+                <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
+              </TouchableOpacity>
+            )}
+          </View>
+
+          <Link
+            style={discoverStyle.customizeLink}
+            text={'Customize'}
+            onPress={() => this.setState({ showModalTagSelector: true })}
+          />
+        </View>
       </View>
-    </View>
-  );
+    );
+  };
 
   sectionListFooter = () => {
     const { remainingTags } = this.state;
@@ -279,7 +303,7 @@ class DiscoverPage extends React.PureComponent {
     <ClaimList
       key={item.sort().join(',')}
       orderBy={this.state.orderBy}
-      time={Constants.TIME_WEEK}
+      time={this.props.timeItem.name}
       tags={item}
       morePlaceholder
       navigation={this.props.navigation}
@@ -299,8 +323,8 @@ class DiscoverPage extends React.PureComponent {
   );
 
   render() {
-    const { navigation, sortByItem } = this.props;
-    const { orderBy, showModalTagSelector, showSortPicker } = this.state;
+    const { navigation, sortByItem, timeItem } = this.props;
+    const { orderBy, showModalTagSelector, showSortPicker, showTimePicker } = this.state;
 
     return (
       <View style={discoverStyle.container}>
@@ -318,7 +342,9 @@ class DiscoverPage extends React.PureComponent {
           sections={this.buildSections()}
           keyExtractor={(item, index) => item}
         />
-        {!showModalTagSelector && !showSortPicker && <FloatingWalletBalance navigation={navigation} />}
+        {!showModalTagSelector && !showSortPicker && !showTimePicker && (
+          <FloatingWalletBalance navigation={navigation} />
+        )}
         {showModalTagSelector && (
           <ModalTagSelector
             onOverlayPress={() => this.setState({ showModalTagSelector: false })}
@@ -332,6 +358,15 @@ class DiscoverPage extends React.PureComponent {
             onItemSelected={this.handleSortByItemSelected}
             selectedItem={sortByItem}
             items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
+          />
+        )}
+        {showTimePicker && (
+          <ModalPicker
+            title={__('Content from')}
+            onOverlayPress={() => this.setState({ showTimePicker: false })}
+            onItemSelected={this.handleTimeItemSelected}
+            selectedItem={timeItem}
+            items={Constants.CLAIM_SEARCH_TIME_ITEMS}
           />
         )}
       </View>

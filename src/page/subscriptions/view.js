@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { buildURI, parseURI } from 'lbry-redux';
-import { __, uriFromFileInfo } from 'utils/helper';
+import { __, getOrderBy } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import Button from 'component/button';
@@ -33,6 +33,7 @@ class SubscriptionsPage extends React.PureComponent {
   state = {
     showingSuggestedSubs: false,
     showSortPicker: false,
+    showTimePicker: false,
     orderBy: ['release_time'],
     filteredChannels: [],
     currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[1], // should always default to sorting subscriptions by new
@@ -63,6 +64,8 @@ class SubscriptionsPage extends React.PureComponent {
 
     pushDrawerStack();
     setPlayerVisible();
+    NativeModules.Firebase.setCurrentScreen('Subscriptions');
+
     doFetchMySubscriptions();
     doFetchRecommendedSubscriptions();
   };
@@ -80,22 +83,13 @@ class SubscriptionsPage extends React.PureComponent {
   }
 
   handleSortByItemSelected = item => {
-    let orderBy = [];
-    switch (item.name) {
-      case Constants.SORT_BY_HOT:
-        orderBy = Constants.DEFAULT_ORDER_BY;
-        break;
+    this.setState({ currentSortByItem: item, orderBy: getOrderBy(item), showSortPicker: false });
+  };
 
-      case Constants.SORT_BY_NEW:
-        orderBy = ['release_time'];
-        break;
-
-      case Constants.SORT_BY_TOP:
-        orderBy = ['effective_amount'];
-        break;
-    }
-
-    this.setState({ currentSortByItem: item, orderBy, showSortPicker: false });
+  handleTimeItemSelected = item => {
+    const { setTimeItem } = this.props;
+    setTimeItem(item);
+    this.setState({ showTimePicker: false });
   };
 
   handleChannelSelected = channelUri => {
@@ -118,18 +112,17 @@ class SubscriptionsPage extends React.PureComponent {
       suggestedChannels,
       subscribedChannels,
       allSubscriptions,
-      viewMode,
-      doSetViewMode,
+      doCompleteFirstRun,
+      doShowSuggestedSubs,
       loading,
       loadingSuggested,
       firstRunCompleted,
-      doCompleteFirstRun,
-      doShowSuggestedSubs,
       showSuggestedSubs,
+      timeItem,
       unreadSubscriptions,
       navigation,
     } = this.props;
-    const { currentSortByItem, filteredChannels } = this.state;
+    const { currentSortByItem, filteredChannels, showSortPicker, showTimePicker } = this.state;
 
     const numberOfSubscriptions = subscribedChannels ? subscribedChannels.length : 0;
     const hasSubscriptions = numberOfSubscriptions > 0;
@@ -155,7 +148,9 @@ class SubscriptionsPage extends React.PureComponent {
         <UriBar navigation={navigation} belowOverlay={this.state.showSortPicker} />
         <View style={subscriptionsStyle.titleRow}>
           <Text style={subscriptionsStyle.pageTitle}>Channels you follow</Text>
-          {!this.state.showingSuggestedSubs && hasSubscriptions && (
+        </View>
+        {!this.state.showingSuggestedSubs && hasSubscriptions && (
+          <View style={subscriptionsStyle.pickerRow}>
             <TouchableOpacity
               style={subscriptionsStyle.tagSortBy}
               onPress={() => this.setState({ showSortPicker: true })}
@@ -163,8 +158,18 @@ class SubscriptionsPage extends React.PureComponent {
               <Text style={subscriptionsStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
               <Icon style={subscriptionsStyle.tagSortIcon} name={'sort-down'} size={14} />
             </TouchableOpacity>
-          )}
-        </View>
+
+            {Constants.SORT_BY_TOP === currentSortByItem.name && (
+              <TouchableOpacity
+                style={subscriptionsStyle.tagSortBy}
+                onPress={() => this.setState({ showTimePicker: true })}
+              >
+                <Text style={subscriptionsStyle.tagSortText}>{timeItem.label}</Text>
+                <Icon style={subscriptionsStyle.tagSortIcon} name={'sort-down'} size={14} />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
         {!this.state.showingSuggestedSubs && hasSubscriptions && !loading && (
           <View style={subscriptionsStyle.subContainer}>
             <SubscribedChannelList
@@ -175,6 +180,7 @@ class SubscriptionsPage extends React.PureComponent {
               style={subscriptionsStyle.claimList}
               channelIds={channelIds}
               orderBy={this.state.orderBy}
+              time={timeItem.name}
               navigation={navigation}
               orientation={Constants.ORIENTATION_VERTICAL}
             />
@@ -217,14 +223,23 @@ class SubscriptionsPage extends React.PureComponent {
           </View>
         )}
 
-        {!this.state.showSortPicker && <FloatingWalletBalance navigation={navigation} />}
-        {this.state.showSortPicker && (
+        {!showSortPicker && !showTimePicker && <FloatingWalletBalance navigation={navigation} />}
+        {showSortPicker && (
           <ModalPicker
             title={__('Sort content by')}
             onOverlayPress={() => this.setState({ showSortPicker: false })}
             onItemSelected={this.handleSortByItemSelected}
             selectedItem={this.state.currentSortByItem}
             items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
+          />
+        )}
+        {showTimePicker && (
+          <ModalPicker
+            title={__('Content from')}
+            onOverlayPress={() => this.setState({ showTimePicker: false })}
+            onItemSelected={this.handleTimeItemSelected}
+            selectedItem={timeItem}
+            items={Constants.CLAIM_SEARCH_TIME_ITEMS}
           />
         )}
       </View>

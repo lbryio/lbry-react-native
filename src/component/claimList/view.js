@@ -21,17 +21,14 @@ class ClaimList extends React.PureComponent {
   state = {
     currentPage: 1, // initial page load is page 1
     subscriptionsView: false, // whether or not this claim list is for subscriptions
-    trendingForAllView: false,
     lastPageReached: false,
   };
 
   componentDidMount() {
-    const { channelIds, trendingForAll } = this.props;
+    const { channelIds } = this.props;
 
     if (channelIds) {
       this.setState({ subscriptionsView: true });
-    } else if (trendingForAll) {
-      this.setState({ trendingForAllView: true });
     }
 
     this.doClaimSearch();
@@ -44,18 +41,16 @@ class ClaimList extends React.PureComponent {
       searchByTags,
       tags: prevTags,
       channelIds: prevChannelIds,
-      trendingForAll: prevTrendingForAll,
       time: prevTime,
       showNsfwContent,
     } = prevProps;
-    const { claimSearchByQuery, orderBy, tags, channelIds, trendingForAll, time } = this.props;
+    const { claimSearchByQuery, orderBy, tags, channelIds, time } = this.props;
 
     if (
       !_.isEqual(orderBy, prevOrderBy) ||
       !_.isEqual(tags, prevTags) ||
       !_.isEqual(channelIds, prevChannelIds) ||
-      time !== prevTime ||
-      trendingForAll !== prevTrendingForAll
+      time !== prevTime
     ) {
       // reset to page 1 because the order, tags or channelIds changed
       this.setState({ currentPage: 1 }, () => {
@@ -63,15 +58,12 @@ class ClaimList extends React.PureComponent {
           this.scrollView.scrollToOffset({ animated: true, offset: 0 });
         }
 
-        if (trendingForAll || (prevChannelIds && channelIds)) {
+        if (prevChannelIds && channelIds) {
           if (channelIds) {
             this.setState({ subscriptionsView: true });
           }
-          if (trendingForAll) {
-            this.setState({ trendingForAllView: true });
-          }
         } else if (tags && tags.length > 0) {
-          this.setState({ subscriptionsView: false, trendingForAllView: false });
+          this.setState({ subscriptionsView: false });
         }
 
         this.doClaimSearch();
@@ -80,15 +72,8 @@ class ClaimList extends React.PureComponent {
   }
 
   buildClaimSearchOptions() {
-    const {
-      orderBy = Constants.DEFAULT_ORDER_BY,
-      channelIds,
-      showNsfwContent,
-      tags,
-      time,
-      trendingForAll,
-    } = this.props;
-    const { currentPage, subscriptionsView, trendingForAllView } = this.state;
+    const { orderBy = Constants.DEFAULT_ORDER_BY, channelIds, showNsfwContent, tags, time } = this.props;
+    const { currentPage, subscriptionsView } = this.state;
 
     const options = {
       order_by: orderBy,
@@ -99,7 +84,7 @@ class ClaimList extends React.PureComponent {
 
     if (channelIds) {
       options.channel_ids = channelIds;
-    } else if (!trendingForAll && !trendingForAllView && tags && tags.length > 0) {
+    } else if (tags && tags.length > 0) {
       options.any_tags = tags;
     }
     if (!showNsfwContent) {
@@ -156,7 +141,7 @@ class ClaimList extends React.PureComponent {
     if (tags.length === 1) {
       navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: 'tagPage', params: { tag: tags[0] } });
     } else {
-      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TRENDING });
+      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TRENDING, params: { filterForTags: true } });
     }
   };
 
@@ -176,8 +161,16 @@ class ClaimList extends React.PureComponent {
   };
 
   renderVerticalItem = ({ item }) => {
-    const { navigation } = this.props;
-    return <FileListItem key={item} uri={item} style={claimListStyle.verticalListItem} navigation={navigation} />;
+    const { hideChannel, navigation } = this.props;
+    return (
+      <FileListItem
+        key={item}
+        uri={item}
+        hideChannel={hideChannel}
+        style={claimListStyle.verticalListItem}
+        navigation={navigation}
+      />
+    );
   };
 
   renderHorizontalItem = ({ item }) => {
@@ -208,7 +201,7 @@ class ClaimList extends React.PureComponent {
       style,
       claimSearchByQuery,
     } = this.props;
-    const { subscriptionsView, trendingForAllView } = this.state;
+    const { subscriptionsView } = this.state;
 
     const options = this.buildClaimSearchOptions();
     const claimSearchKey = createNormalizedClaimSearchKey(options);
