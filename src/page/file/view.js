@@ -658,6 +658,7 @@ class FilePage extends React.PureComponent {
       const canLoadMedia =
         this.state.streamingMode ||
         (fileInfo && (fileInfo.written_bytes >= 2097152 || fileInfo.written_bytes === fileInfo.total_bytes)); // 2MB = 1024*1024*2
+      const duration = claim && claim.value && claim.value.video ? claim.value.video.duration : null;
       const isViewable = mediaType === 'image' || mediaType === 'text';
       const isWebViewable = mediaType === 'text';
       const canOpen = isViewable && completed;
@@ -725,7 +726,12 @@ class FilePage extends React.PureComponent {
             >
               <View style={filePageStyle.mediaContainer}>
                 {(canOpen || (!fileInfo || (isPlayable && !canLoadMedia)) || (!canOpen && fileInfo)) && (
-                  <FileItemMedia style={filePageStyle.thumbnail} title={title} thumbnail={thumbnail} />
+                  <FileItemMedia
+                    duration={duration}
+                    style={filePageStyle.thumbnail}
+                    title={title}
+                    thumbnail={thumbnail}
+                  />
                 )}
                 {(!this.state.downloadButtonShown || this.state.downloadPressed) && !this.state.mediaLoaded && (
                   <ActivityIndicator size="large" color={Colors.NextLbryGreen} style={filePageStyle.loading} />
