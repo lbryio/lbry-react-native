@@ -18,7 +18,7 @@ class SuggestedSubscriptions extends React.PureComponent {
   componentDidMount() {
     const { claimSearch, followedTags } = this.props;
     const options = {
-      any_tags: followedTags.map(tag => tag.name),
+      any_tags: _.shuffle(followedTags.map(tag => tag.name)).slice(0, 3),
       page: 1,
       no_totals: true,
       claim_type: 'channel',
@@ -35,12 +35,12 @@ class SuggestedSubscriptions extends React.PureComponent {
     const suggestedUris = suggested ? suggested.map(suggested => suggested.uri) : [];
     return [
       {
-        title: __('You might like'),
-        data: suggestedUris,
-      },
-      {
         title: __('Tags you follow'),
         data: claimSearchUris ? claimSearchUris.filter(uri => !suggestedUris.includes(uri)) : [],
+      },
+      {
+        title: __('You might also like'),
+        data: _.shuffle(suggestedUris),
       },
     ];
   };

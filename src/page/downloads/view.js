@@ -114,21 +114,28 @@ class DownloadsPage extends React.PureComponent {
     const { selectedClaimsMap } = this.state;
 
     // show confirm alert
-    Alert.alert(__('Delete files'), __('Are you sure you want to delete the selected content?'), [
-      { text: __('No') },
-      {
-        text: __('Yes'),
-        onPress: () => {
-          const uris = Object.keys(selectedClaimsMap);
-          uris.forEach(uri => {
-            const { txid, nout } = selectedClaimsMap[uri];
-            deleteFile(`${txid}:${nout}`, true);
-          });
-          this.onExitSelectionMode();
-          fileList();
+    Alert.alert(
+      __('Delete files'),
+      __('Are you sure you want to delete the selected content?'),
+      [
+        { text: __('No') },
+        {
+          text: __('Yes'),
+          onPress: () => {
+            const uris = Object.keys(selectedClaimsMap);
+            uris.forEach(uri => {
+              const { txid, nout } = selectedClaimsMap[uri];
+              deleteFile(`${txid}:${nout}`, true);
+            });
+            this.onExitSelectionMode();
+            fileList();
+          },
         },
-      },
-    ]);
+      ],
+      {
+        cancelable: true,
+      }
+    );
   };
 
   render() {
@@ -148,7 +155,7 @@ class DownloadsPage extends React.PureComponent {
         />
 
         <View style={downloadsStyle.subContainer}>
-          <StorageStatsCard fileInfos={this.getFilteredFileInfos()} />
+          {hasDownloads && <StorageStatsCard fileInfos={this.getFilteredFileInfos()} />}
           {fetching && (
             <View style={downloadsStyle.busyContainer}>
               <ActivityIndicator size="large" color={Colors.NextLbryGreen} style={downloadsStyle.loading} />
