@@ -229,7 +229,7 @@ class ClaimList extends React.PureComponent {
           />
           {loading && (
             <View style={claimListStyle.verticalLoading}>
-              <ActivityIndicator size={'small'} color={Colors.LbryGreen} />
+              <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
             </View>
           )}
         </View>
@@ -240,7 +240,7 @@ class ClaimList extends React.PureComponent {
       if (loading) {
         return (
           <View style={discoverStyle.listLoading}>
-            <ActivityIndicator size={'small'} color={Colors.LbryGreen} />
+            <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
           </View>
         );
       }

@@ -75,20 +75,25 @@ class PublishesPage extends React.PureComponent {
     const { selectedClaimsMap } = this.state;
 
     // show confirm alert
-    Alert.alert(__('Unpublish'), __('Are you sure you want to unpublish the selected content?'), [
-      { text: __('No') },
-      {
-        text: __('Yes'),
-        onPress: () => {
-          const uris = Object.keys(selectedClaimsMap);
-          uris.forEach(uri => {
-            const { txid, nout } = selectedClaimsMap[uri];
-            abandonClaim(txid, nout);
-          });
-          this.onExitSelectionMode();
+    Alert.alert(
+      __('Unpublish'),
+      __('Are you sure you want to unpublish the selected content?'),
+      [
+        { text: __('No') },
+        {
+          text: __('Yes'),
+          onPress: () => {
+            const uris = Object.keys(selectedClaimsMap);
+            uris.forEach(uri => {
+              const { txid, nout } = selectedClaimsMap[uri];
+              abandonClaim(txid, nout);
+            });
+            this.onExitSelectionMode();
+          },
         },
-      },
-    ]);
+      ],
+      { cancelable: true }
+    );
   };
 
   render() {
@@ -106,7 +111,7 @@ class PublishesPage extends React.PureComponent {
         />
         {fetching && (
           <View style={publishStyle.centered}>
-            <ActivityIndicator size={'small'} color={Colors.LbryGreen} />
+            <ActivityIndicator size={'large'} color={Colors.NextLbryGreen} />
           </View>
         )}
 

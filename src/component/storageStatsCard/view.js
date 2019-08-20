@@ -65,7 +65,8 @@ class StorageStatsCard extends React.PureComponent {
   }
 
   render() {
-    if (this.state.totalBytes == 0) {
+    const { fileInfos } = this.props;
+    if (fileInfos.length === 0 || this.state.totalBytes === 0) {
       return null;
     }
 

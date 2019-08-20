@@ -498,9 +498,23 @@ class FilePage extends React.PureComponent {
       return;
     }
 
-    sendTip(tipAmount, claim.claim_id, uri, () => {
-      this.setState({ tipAmount: 0, showTipView: false });
-    });
+    const suffix = 'credit' + (tipAmount === 1 ? '' : 's');
+    Alert.alert(
+      'Send tip',
+      `Are you sure you want to tip ${tipAmount} ${suffix}?`,
+      [
+        { text: 'No' },
+        {
+          text: 'Yes',
+          onPress: () => {
+            sendTip(tipAmount, claim.claim_id, false, () => {
+              this.setState({ tipAmount: 0, showTipView: false });
+            });
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   renderTags = tags => {

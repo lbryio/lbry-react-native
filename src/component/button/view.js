@@ -38,12 +38,7 @@ export default class Button extends React.PureComponent {
     );
     if (solid) {
       renderIcon = (
-        <Icon
-          name={icon}
-          size={16}
-          color={iconColor || (theme === 'light' ? Colors.DarkGrey : Colors.White)}
-          solid
-        />
+        <Icon name={icon} size={16} color={iconColor || (theme === 'light' ? Colors.DarkGrey : Colors.White)} solid />
       );
     }
 
