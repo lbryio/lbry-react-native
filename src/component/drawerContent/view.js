@@ -7,7 +7,7 @@ import discoverStyle from 'styles/discover';
 
 const groupedMenuItems = {
   'Find content': [
-    { icon: 'hashtag', label: 'Your tags', route: Constants.FULL_ROUTE_NAME_DISCOVER },
+    { icon: 'hashtag', label: 'Your tags', route: Constants.DRAWER_ROUTE_DISCOVER },
     { icon: 'heart', solid: true, label: 'Subscriptions', route: Constants.DRAWER_ROUTE_SUBSCRIPTIONS },
     { icon: 'globe-americas', label: 'All content', route: Constants.DRAWER_ROUTE_TRENDING },
   ],
@@ -17,7 +17,7 @@ const groupedMenuItems = {
     { icon: 'upload', label: 'New publish', route: Constants.DRAWER_ROUTE_PUBLISH },
   ],
   Wallet: [
-    { icon: 'wallet', label: 'Wallet', route: Constants.FULL_ROUTE_NAME_WALLET },
+    { icon: 'wallet', label: 'Wallet', route: Constants.DRAWER_ROUTE_WALLET },
     { icon: 'award', label: 'Rewards', route: Constants.DRAWER_ROUTE_REWARDS },
   ],
   Settings: [
