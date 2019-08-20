@@ -80,6 +80,7 @@ class FileListItem extends React.PureComponent {
     const uri = normalizeURI(this.props.uri);
     const obscure = obscureNsfw && nsfw;
     const isResolving = !fileInfo && isResolvingUri;
+    const duration = claim && claim.value && claim.value.video ? claim.value.video.duration : null;
 
     let name, channel, height, channelClaimId, fullChannelUri, shortChannelUri, shouldHide, signingChannel;
     if (claim) {
@@ -110,6 +111,7 @@ class FileListItem extends React.PureComponent {
           <FileItemMedia
             style={fileListStyle.thumbnail}
             blurRadius={obscure ? 15 : 0}
+            duration={duration}
             resizeMode="cover"
             title={title || name}
             thumbnail={thumbnail}

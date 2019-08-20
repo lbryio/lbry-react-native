@@ -26,11 +26,28 @@ const fileItemMediaStyle = StyleSheet.create({
     fontSize: 16,
     marginTop: 8,
   },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
   thumbnail: {
     flex: 1,
     width: '100%',
     height: 200,
     shadowColor: 'transparent',
+  },
+  duration: {
+    backgroundColor: Colors.Black,
+    position: 'absolute',
+    right: 4,
+    bottom: 4,
+    paddingLeft: 2,
+    paddingRight: 2,
+  },
+  durationText: {
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 12,
+    color: Colors.White,
   },
 });
 

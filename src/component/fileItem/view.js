@@ -71,6 +71,7 @@ class FileItem extends React.PureComponent {
     const fullChannelUri = channelClaimId ? `${channelName}#${channelClaimId}` : channelName;
     const shortChannelUri = signingChannel ? signingChannel.short_url : null;
     const height = claim ? claim.height : null;
+    const duration = claim && claim.value && claim.value.video ? claim.value.video.duration : null;
 
     return (
       <View style={style}>
@@ -81,6 +82,7 @@ class FileItem extends React.PureComponent {
             </Text>
           )}
           <FileItemMedia
+            duration={duration}
             title={title}
             thumbnail={thumbnail}
             blurRadius={obscure ? 15 : 0}
@@ -88,7 +90,6 @@ class FileItem extends React.PureComponent {
             isResolvingUri={isResolvingUri}
             style={mediaStyle}
           />
-
           {!compactView && fileInfo && fileInfo.completed && fileInfo.download_path && (
             <Icon style={discoverStyle.downloadedIcon} solid color={Colors.NextLbryGreen} name={'folder'} size={16} />
           )}
