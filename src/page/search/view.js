@@ -1,6 +1,6 @@
 import React from 'react';
 import { Lbry, parseURI, normalizeURI, isURIValid } from 'lbry-redux';
-import { ActivityIndicator, Button, NativeModules, Text, TextInput, View, ScrollView } from 'react-native';
+import { ActivityIndicator, Button, FlatList, NativeModules, Text, TextInput, View } from 'react-native';
 import { navigateToUri } from 'utils/helper';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -84,6 +84,33 @@ class SearchPage extends React.PureComponent {
     search(keywords);
   };
 
+  listHeaderComponent = () => {
+    const { navigation } = this.props;
+    const { currentUri } = this.state;
+
+    return (
+      <FileListItem
+        uri={currentUri}
+        featuredResult
+        style={searchStyle.featuredResultItem}
+        navigation={navigation}
+        onPress={() => navigateToUri(navigation, currentUri)}
+      />
+    );
+  };
+
+  listEmptyComponent = () => {
+    const { query } = this.props;
+    return (
+      <View style={searchStyle.noResults}>
+        <Text style={searchStyle.noResultsText}>
+          There are no results to display for <Text style={searchStyle.boldText}>{query}</Text>. Please try a different
+          search term.
+        </Text>
+      </View>
+    );
+  };
+
   render() {
     const { isSearching, navigation, query, uris, urisByQuery } = this.props;
 
@@ -96,37 +123,21 @@ class SearchPage extends React.PureComponent {
           </View>
         )}
 
-        {!isSearching && (
-          <ScrollView
-            style={searchStyle.scrollContainer}
-            contentContainerStyle={searchStyle.scrollPadding}
-            keyboardShouldPersistTaps={'handled'}
-          >
-            {this.state.currentUri && (
-              <FileListItem
-                key={this.state.currentUri}
-                uri={this.state.currentUri}
-                featuredResult
-                style={searchStyle.featuredResultItem}
-                navigation={navigation}
-                onPress={() => navigateToUri(navigation, this.state.currentUri)}
-              />
-            )}
-            {uris && uris.length
-              ? uris.map(uri => (
-                <FileListItem key={uri} uri={uri} style={searchStyle.resultItem} navigation={navigation} />
-              ))
-              : null}
-            {(!uris || uris.length === 0) && (
-              <View style={searchStyle.noResults}>
-                <Text style={searchStyle.noResultsText}>
-                  There are no results to display for <Text style={searchStyle.boldText}>{query}</Text>. Please try a
-                  different search term.
-                </Text>
-              </View>
-            )}
-          </ScrollView>
-        )}
+        <FlatList
+          style={searchStyle.scrollContainer}
+          contentContainerStyle={searchStyle.scrollPadding}
+          keyboardShouldPersistTaps={'handled'}
+          data={uris}
+          keyExtractor={(item, index) => item}
+          initialNumToRender={10}
+          maxToRenderPerBatch={20}
+          removeClippedSubviews
+          ListEmptyComponent={!isSearching ? this.listEmptyComponent() : null}
+          ListHeaderComponent={this.listHeaderComponent()}
+          renderItem={({ item }) => (
+            <FileListItem key={item} uri={item} style={searchStyle.resultItem} navigation={navigation} />
+          )}
+        />
         <FloatingWalletBalance navigation={navigation} />
       </View>
     );

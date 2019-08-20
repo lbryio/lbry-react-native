@@ -10,19 +10,21 @@ import {
 } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import SearchPage from './view';
+
+const numSearchResults = 50;
 
 const select = state => ({
   currentRoute: selectCurrentRoute(state),
   isSearching: selectIsSearching(state),
   query: selectSearchValue(state),
-  uris: makeSelectSearchUris(makeSelectQueryWithOptions(null, 25)(state))(state),
+  uris: makeSelectSearchUris(makeSelectQueryWithOptions(null, numSearchResults)(state))(state),
   urisByQuery: selectSearchUrisByQuery(state),
 });
 
 const perform = dispatch => ({
-  search: query => dispatch(doSearch(query, 25)),
+  search: query => dispatch(doSearch(query, numSearchResults)),
   updateSearchQuery: query => dispatch(doUpdateSearchQuery(query)),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_SEARCH)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
