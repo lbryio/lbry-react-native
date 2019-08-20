@@ -254,8 +254,9 @@ class PublishPage extends React.PureComponent {
       },
     };
 
-    updatePublishForm(publishParams);
-    this.setState({ publishStarted: true }, () => publish(this.handlePublishSuccess, this.handlePublishFailure));
+    console.log(publishParams);
+    // updatePublishForm(publishParams);
+    // this.setState({ publishStarted: true }, () => publish(this.handlePublishSuccess, this.handlePublishFailure));
   };
 
   handlePublishSuccess = data => {
@@ -471,8 +472,8 @@ class PublishPage extends React.PureComponent {
 
   handleChannelChange = channel => {
     const { name } = this.state;
-    const uri = this.getNewUri(name, channel.name);
-    this.setState({ uri, channelName: channel.name, selectedChannel: channel });
+    const uri = this.getNewUri(name, channel);
+    this.setState({ uri, channelName: channel, selectedChannel: channel });
   };
 
   handleAddTag = tag => {
