@@ -37,13 +37,11 @@ export default class ChannelSelector extends React.PureComponent {
   };
 
   handlePickerValueChange = (itemValue, itemIndex) => {
-    if (Constants.ITEM_CREATE_A_CHANNEL === itemValue.name) {
+    if (Constants.ITEM_CREATE_A_CHANNEL === itemValue) {
       this.setState({ showCreateChannel: true });
     } else {
       this.handleCreateCancel();
-      this.handleChannelChange(
-        Constants.ITEM_ANONYMOUS === itemValue.name ? { name: CLAIM_VALUES.CHANNEL_ANONYMOUS } : itemValue
-      );
+      this.handleChannelChange(Constants.ITEM_ANONYMOUS === itemValue ? CLAIM_VALUES.CHANNEL_ANONYMOUS : itemValue);
     }
     this.setState({ currentSelectedValue: itemValue });
   };
@@ -51,7 +49,7 @@ export default class ChannelSelector extends React.PureComponent {
   handleChannelChange = value => {
     const { onChannelChange } = this.props;
     const { newChannelBid } = this.state;
-    const channel = value.name;
+    const channel = value;
 
     if (channel === CLAIM_VALUES.CHANNEL_NEW) {
       this.setState({ addingChannel: true });
@@ -174,9 +172,7 @@ export default class ChannelSelector extends React.PureComponent {
   render() {
     const channel = this.state.addingChannel ? 'new' : this.props.channel;
     const { fetchingChannels, channels = [] } = this.props;
-    const pickerItems = [{ name: Constants.ITEM_ANONYMOUS }, { name: Constants.ITEM_CREATE_A_CHANNEL }].concat(
-      channels
-    );
+    const pickerItems = [Constants.ITEM_ANONYMOUS, Constants.ITEM_CREATE_A_CHANNEL].concat(channels.map(ch => ch.name));
 
     const {
       newChannelName,
@@ -198,7 +194,7 @@ export default class ChannelSelector extends React.PureComponent {
           onValueChange={this.handlePickerValueChange}
         >
           {pickerItems.map(item => (
-            <Picker.Item label={item.name} value={item} key={item.name} />
+            <Picker.Item label={item} value={item} key={item} />
           ))}
         </Picker>
 
