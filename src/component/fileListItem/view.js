@@ -107,7 +107,15 @@ class FileListItem extends React.PureComponent {
 
     return (
       <View style={style}>
-        <TouchableOpacity style={style} onPress={this.onPressHandler} onLongPress={() => onLongPress(claim)}>
+        <TouchableOpacity
+          style={style}
+          onPress={this.onPressHandler}
+          onLongPress={() => {
+            if (onLongPress) {
+              onLongPress(claim);
+            }
+          }}
+        >
           <FileItemMedia
             style={fileListStyle.thumbnail}
             blurRadius={obscure ? 15 : 0}
