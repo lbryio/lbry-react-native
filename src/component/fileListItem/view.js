@@ -118,7 +118,6 @@ class FileListItem extends React.PureComponent {
         >
           <FileItemMedia
             style={fileListStyle.thumbnail}
-            blurRadius={obscure ? 15 : 0}
             duration={duration}
             resizeMode="cover"
             title={title || name}

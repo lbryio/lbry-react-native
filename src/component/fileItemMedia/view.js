@@ -59,32 +59,11 @@ class FileItemMedia extends React.PureComponent {
 
   render() {
     let style = this.props.style;
-    const { blurRadius, duration, isResolvingUri, thumbnail, title, resizeMode } = this.props;
+    const { duration, isResolvingUri, thumbnail, title, resizeMode } = this.props;
     const atStyle = this.state.autoThumbStyle;
     if (this.isThumbnailValid(thumbnail) && !this.state.imageLoadFailed) {
       if (style == null) {
         style = fileItemMediaStyle.thumbnail;
-      }
-
-      if (blurRadius > 0) {
-        // No blur radius support in FastImage yet
-        return (
-          <View style={style}>
-            <Image
-              source={{ uri: thumbnail }}
-              blurRadius={blurRadius}
-              resizeMode={resizeMode || 'cover'}
-              style={fileItemMediaStyle.image}
-            />
-            {duration && (
-              <VideoDuration
-                duration={duration}
-                style={fileItemMediaStyle.duration}
-                textStyle={fileItemMediaStyle.durationText}
-              />
-            )}
-          </View>
-        );
       }
 
       return (

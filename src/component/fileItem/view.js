@@ -85,7 +85,6 @@ class FileItem extends React.PureComponent {
             duration={duration}
             title={title}
             thumbnail={thumbnail}
-            blurRadius={obscure ? 15 : 0}
             resizeMode="cover"
             isResolvingUri={isResolvingUri}
             style={mediaStyle}
