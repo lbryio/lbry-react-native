@@ -156,10 +156,18 @@ const subscriptionsStyle = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  pickerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 16,
+    marginRight: 16,
+    marginTop: 8,
+    marginBottom: 8,
+  },
   tagSortBy: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 4,
+    marginRight: 24,
   },
   tagSortText: {
     fontFamily: 'Inter-UI-Regular',

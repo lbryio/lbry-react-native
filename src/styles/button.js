@@ -33,7 +33,7 @@ const buttonStyle = StyleSheet.create({
     fontSize: 14,
   },
   textWithIcon: {
-    marginLeft: 8,
+    marginLeft: 4,
   },
 });
 

@@ -341,6 +341,11 @@ const publishStyle = StyleSheet.create({
     fontSize: 14,
     marginLeft: 8,
   },
+  relativeCentered: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 16,
+  },
   centered: {
     position: 'absolute',
     left: 0,

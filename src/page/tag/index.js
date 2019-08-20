@@ -1,19 +1,24 @@
 import { connect } from 'react-redux';
+import { selectFollowedTags, doToggleTagFollow } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
-import { doSetSortByItem } from 'redux/actions/settings';
+import { doSetSortByItem, doSetTimeItem } from 'redux/actions/settings';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
-import { selectSortByItem } from 'redux/selectors/settings';
+import { selectSortByItem, selectTimeItem } from 'redux/selectors/settings';
 import TagPage from './view';
 
 const select = state => ({
   currentRoute: selectCurrentRoute(state),
   sortByItem: selectSortByItem(state),
+  timeItem: selectTimeItem(state),
+  followedTags: selectFollowedTags(state),
 });
 
 const perform = dispatch => ({
   pushDrawerStack: (routeName, params) => dispatch(doPushDrawerStack(routeName, params)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
   setSortByItem: item => dispatch(doSetSortByItem(item)),
+  setTimeItem: item => dispatch(doSetTimeItem(item)),
+  toggleTagFollow: tag => dispatch(doToggleTagFollow(tag)),
 });
 
 export default connect(

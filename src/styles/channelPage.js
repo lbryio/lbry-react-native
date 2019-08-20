@@ -31,13 +31,11 @@ const channelPageStyle = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
   },
   infoText: {
     fontFamily: 'Inter-UI-Regular',
     fontSize: 20,
     textAlign: 'center',
-    marginLeft: 10,
   },
   pageButtons: {
     width: '100%',
@@ -69,7 +67,7 @@ const channelPageStyle = StyleSheet.create({
   subscribeButtonContainer: {
     position: 'absolute',
     flexDirection: 'row',
-    left: 8,
+    right: 8,
     bottom: -90,
     zIndex: 100,
   },
@@ -148,10 +146,24 @@ const channelPageStyle = StyleSheet.create({
     left: 24,
     bottom: -40,
     zIndex: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatarImage: {
     width: '100%',
     height: '100%',
+  },
+  listHeader: {
+    marginTop: 16,
+    marginBottom: 8,
+    marginLeft: 16,
+    marginRight: 16,
+  },
+  claimList: {
+    flex: 1,
+  },
+  claimListContent: {
+    paddingTop: 16,
   },
 });
 

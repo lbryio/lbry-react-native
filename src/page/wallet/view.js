@@ -42,6 +42,7 @@ class WalletPage extends React.PureComponent {
     const { pushDrawerStack, setPlayerVisible } = this.props;
     pushDrawerStack();
     setPlayerVisible();
+    NativeModules.Firebase.setCurrentScreen('Wallet');
 
     const { deviceWalletSynced, getSync, user } = this.props;
     if (deviceWalletSynced && user && user.has_verified_email) {
