@@ -84,21 +84,6 @@ class SearchPage extends React.PureComponent {
     search(keywords);
   };
 
-  listHeaderComponent = () => {
-    const { navigation } = this.props;
-    const { currentUri } = this.state;
-
-    return (
-      <FileListItem
-        uri={currentUri}
-        featuredResult
-        style={searchStyle.featuredResultItem}
-        navigation={navigation}
-        onPress={() => navigateToUri(navigation, currentUri)}
-      />
-    );
-  };
-
   listEmptyComponent = () => {
     const { query } = this.props;
     return (
@@ -111,12 +96,28 @@ class SearchPage extends React.PureComponent {
     );
   };
 
+  listHeaderComponent = () => {
+    const { navigation } = this.props;
+    const { currentUri } = this.state;
+
+    return (
+      <FileListItem
+        uri={currentUri}
+        featuredResult
+        style={searchStyle.featuredResultItem}
+        navigation={navigation}
+        onPress={() => navigateToUri(navigation, this.state.currentUri)}
+      />
+    );
+  };
+
   render() {
     const { isSearching, navigation, query, uris, urisByQuery } = this.props;
 
     return (
       <View style={searchStyle.container}>
         <UriBar value={query} navigation={navigation} onSearchSubmitted={this.handleSearchSubmitted} />
+
         {isSearching && (
           <View style={searchStyle.busyContainer}>
             <ActivityIndicator size="large" color={Colors.NextLbryGreen} style={searchStyle.loading} />
@@ -133,7 +134,7 @@ class SearchPage extends React.PureComponent {
           maxToRenderPerBatch={20}
           removeClippedSubviews
           ListEmptyComponent={!isSearching ? this.listEmptyComponent() : null}
-          ListHeaderComponent={this.listHeaderComponent()}
+          ListHeaderComponent={this.state.currentUri ? this.listHeaderComponent() : null}
           renderItem={({ item }) => (
             <FileListItem key={item} uri={item} style={searchStyle.resultItem} navigation={navigation} />
           )}

@@ -148,6 +148,13 @@ const publishStyle = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  loadingText: {
+    color: Colors.White,
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 16,
+    marginLeft: 8,
   },
   titleRow: {
     flexDirection: 'row',
