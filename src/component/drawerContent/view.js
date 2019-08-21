@@ -49,7 +49,12 @@ class DrawerContent extends React.PureComponent {
                   </Text>
                 )}
                 {menuItems.map(item => {
-                  const focused = activeItemKey === item.route;
+                  const focused =
+                    activeItemKey === item.route ||
+                    (activeItemKey === Constants.FULL_ROUTE_NAME_DISCOVER &&
+                      item.route === Constants.DRAWER_ROUTE_DISCOVER) ||
+                    (activeItemKey === Constants.FULL_ROUTE_NAME_WALLET &&
+                      item.route === Constants.DRAWER_ROUTE_WALLET);
                   return (
                     <TouchableOpacity
                       accessible
