@@ -83,6 +83,7 @@ class PublishPage extends React.PureComponent {
 
     // gallery videos
     videos: null,
+    allThumbnailsChecked: false,
     checkedThumbnails: [],
 
     // camera
@@ -131,6 +132,7 @@ class PublishPage extends React.PureComponent {
     const { navigation } = this.props;
     // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
     DeviceEventEmitter.addListener('onGalleryThumbnailChecked', this.handleGalleryThumbnailChecked);
+    DeviceEventEmitter.addListener('onAllGalleryThumbnailsChecked', this.handleAllGalleryThumbnailsChecked);
   }
 
   componentWillUnmount() {
@@ -138,6 +140,7 @@ class PublishPage extends React.PureComponent {
       this.didFocusListener.remove();
     }
     DeviceEventEmitter.removeListener('onGalleryThumbnailChecked', this.handleGalleryThumbnailChecked);
+    DeviceEventEmitter.removeListener('onAllGalleryThumbnailsChecked', this.handleAllGalleryThumbnailsChecked);
   }
 
   handleGalleryThumbnailChecked = evt => {
@@ -148,6 +151,10 @@ class PublishPage extends React.PureComponent {
       checkedThumbnails.push(id);
     }
     this.setState({ checkedThumbnails });
+  };
+
+  handleAllGalleryThumbnailsChecked = () => {
+    this.setState({ allThumbnailsChecked: true });
   };
 
   onComponentFocused = () => {
@@ -594,7 +601,15 @@ class PublishPage extends React.PureComponent {
 
   render() {
     const { balance, navigation, notify, publishFormValues } = this.props;
-    const { canUseCamera, currentPhase, checkedThumbnails, loadingVideos, thumbnailPath, videos } = this.state;
+    const {
+      allThumbnailsChecked,
+      canUseCamera,
+      currentPhase,
+      checkedThumbnails,
+      loadingVideos,
+      thumbnailPath,
+      videos,
+    } = this.state;
 
     let content;
     if (Constants.PHASE_SELECTOR === currentPhase) {
@@ -633,9 +648,10 @@ class PublishPage extends React.PureComponent {
               </View>
             </View>
           </View>
-          {loadingVideos && (
+          {(loadingVideos || !allThumbnailsChecked) && (
             <View style={publishStyle.loadingView}>
-              <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
+              <ActivityIndicator size="small" color={Colors.NextLbryGreen} />
+              <Text style={publishStyle.loadingText}>Please wait while we load your videos...</Text>
             </View>
           )}
           {!loadingVideos && (!videos || videos.length === 0) && (
@@ -645,7 +661,7 @@ class PublishPage extends React.PureComponent {
               </Text>
             </View>
           )}
-          {videos && thumbnailPath && checkedThumbnails.length > 0 && (
+          {videos && thumbnailPath && allThumbnailsChecked && (
             <FlatGrid
               style={publishStyle.galleryGrid}
               initialNumToRender={18}
