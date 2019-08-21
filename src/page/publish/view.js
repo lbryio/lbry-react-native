@@ -254,9 +254,8 @@ class PublishPage extends React.PureComponent {
       },
     };
 
-    console.log(publishParams);
-    // updatePublishForm(publishParams);
-    // this.setState({ publishStarted: true }, () => publish(this.handlePublishSuccess, this.handlePublishFailure));
+    updatePublishForm(publishParams);
+    this.setState({ publishStarted: true }, () => publish(this.handlePublishSuccess, this.handlePublishFailure));
   };
 
   handlePublishSuccess = data => {
@@ -649,6 +648,9 @@ class PublishPage extends React.PureComponent {
           {videos && thumbnailPath && checkedThumbnails.length > 0 && (
             <FlatGrid
               style={publishStyle.galleryGrid}
+              initialNumToRender={18}
+              maxToRenderPerBatch={24}
+              removeClippedSubviews
               itemDimension={134}
               spacing={2}
               items={videos.filter(video => checkedThumbnails.includes(video.id))}
