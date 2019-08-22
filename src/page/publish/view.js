@@ -43,7 +43,7 @@ import Tag from 'component/tag';
 import TagSearch from 'component/tagSearch';
 import UriBar from 'component/uriBar';
 import publishStyle from 'styles/publish';
-import __ from 'utils/helper';
+import { __, navigateToUri } from 'utils/helper';
 
 const languages = {
   en: 'English',
@@ -992,7 +992,11 @@ class PublishPage extends React.PureComponent {
             <Text style={publishStyle.successTitle}>Success!</Text>
             <Text style={publishStyle.successText}>Congratulations! Your content was successfully uploaded.</Text>
             <View style={publishStyle.successRow}>
-              <Link style={publishStyle.successUrl} text={this.state.uri} href={this.state.uri} />
+              <Link
+                style={publishStyle.successUrl}
+                text={this.state.uri}
+                onPress={() => navigateToUri(navigation, this.state.uri)}
+              />
               <TouchableOpacity
                 onPress={() => {
                   Clipboard.setString(this.state.uri);
