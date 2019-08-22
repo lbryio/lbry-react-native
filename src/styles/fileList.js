@@ -110,7 +110,7 @@ const fileListStyle = StyleSheet.create({
     marginRight: 16,
   },
   rewardIcon: {
-    color: Colors.Red,
+    color: Colors.NextLbryGreen,
     textAlign: 'right',
     marginLeft: 4,
     marginTop: 4,

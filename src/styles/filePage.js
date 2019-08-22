@@ -354,7 +354,7 @@ const filePageStyle = StyleSheet.create({
     fontSize: 14,
   },
   rewardIcon: {
-    color: Colors.Red,
+    color: Colors.NextLbryGreen,
     marginTop: -8,
     marginLeft: 8,
   },
