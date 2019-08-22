@@ -865,7 +865,7 @@ class FilePage extends React.PureComponent {
                     <Text style={filePageStyle.title} selectable>
                       {title}
                     </Text>
-                    {isRewardContent && <Icon name="award" style={filePageStyle.rewardIcon} size={14} />}
+                    {isRewardContent && <Icon name="award" style={filePageStyle.rewardIcon} size={16} />}
                     <View style={filePageStyle.descriptionToggle}>
                       <Icon name={this.state.showDescription ? 'caret-up' : 'caret-down'} size={24} />
                     </View>
