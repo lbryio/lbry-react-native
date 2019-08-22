@@ -70,6 +70,7 @@ class FileListItem extends React.PureComponent {
       obscureNsfw,
       onPress,
       navigation,
+      rewardedContentClaimIds,
       thumbnail,
       hideChannel,
       onLongPress,
@@ -82,12 +83,21 @@ class FileListItem extends React.PureComponent {
     const isResolving = !fileInfo && isResolvingUri;
     const duration = claim && claim.value && claim.value.video ? claim.value.video.duration : null;
 
-    let name, channel, height, channelClaimId, fullChannelUri, shortChannelUri, shouldHide, signingChannel;
+    let name,
+      channel,
+      height,
+      isRewardContent,
+      channelClaimId,
+      fullChannelUri,
+      shortChannelUri,
+      shouldHide,
+      signingChannel;
     if (claim) {
       name = claim.name;
       signingChannel = claim.signing_channel;
       channel = signingChannel ? signingChannel.name : null;
       height = claim.height;
+      isRewardContent = rewardedContentClaimIds.includes(claim.claim_id);
       channelClaimId = signingChannel ? signingChannel.claim_id : null;
       fullChannelUri = channelClaimId ? `${channel}#${channelClaimId}` : channel;
       shortChannelUri = signingChannel ? signingChannel.short_url : null;
@@ -150,9 +160,12 @@ class FileListItem extends React.PureComponent {
             )}
 
             {(title || name) && (
-              <Text style={featuredResult ? fileListStyle.featuredTitle : fileListStyle.title}>
-                {this.formatTitle(title) || this.formatTitle(name)}
-              </Text>
+              <View style={fileListStyle.titleContainer}>
+                <Text style={featuredResult ? fileListStyle.featuredTitle : fileListStyle.title}>
+                  {this.formatTitle(title) || this.formatTitle(name)}
+                </Text>
+                {isRewardContent && <Icon style={fileListStyle.rewardIcon} name="award" size={12} />}
+              </View>
             )}
             {channel && !hideChannel && (
               <Link

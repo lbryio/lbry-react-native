@@ -354,8 +354,9 @@ const filePageStyle = StyleSheet.create({
     fontSize: 14,
   },
   rewardIcon: {
-    color: Colors.White,
-    marginRight: 8,
+    color: Colors.Red,
+    marginTop: -8,
+    marginLeft: 8,
   },
   backButton: {
     position: 'absolute',

@@ -18,7 +18,7 @@ const select = (state, props) => ({
   claim: makeSelectClaimForUri(props.uri)(state),
   fileInfo: makeSelectFileInfoForUri(props.uri)(state),
   metadata: makeSelectMetadataForUri(props.uri)(state),
-  rewardedContentClaimIds: selectRewardContentClaimIds(state, props),
+  rewardedContentClaimIds: selectRewardContentClaimIds(state),
   isResolvingUri: makeSelectIsUriResolving(props.uri)(state),
   obscureNsfw: !selectShowNsfw(state),
   shortUrl: makeSelectShortUrlForUri(props.uri)(state),

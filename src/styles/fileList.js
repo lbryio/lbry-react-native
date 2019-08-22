@@ -105,6 +105,16 @@ const fileListStyle = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  titleContainer: {
+    flexDirection: 'row',
+    marginRight: 16,
+  },
+  rewardIcon: {
+    color: Colors.Red,
+    textAlign: 'right',
+    marginLeft: 4,
+    marginTop: 4,
+  },
 });
 
 export default fileListStyle;
