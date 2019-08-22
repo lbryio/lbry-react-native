@@ -98,6 +98,9 @@ const uriBarStyle = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
   },
+  leftAction: {
+    marginRight: 16,
+  },
   actionTouchArea: {
     height: '100%',
     alignItems: 'center',

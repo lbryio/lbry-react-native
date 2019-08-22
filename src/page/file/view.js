@@ -231,6 +231,11 @@ class FilePage extends React.PureComponent {
     }
   };
 
+  onEditPressed = () => {
+    const { claim, navigation } = this.props;
+    navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISH, params: { editMode: true, claimToEdit: claim } });
+  };
+
   onDeletePressed = () => {
     const { claim, deleteFile, deletePurchasedUri, fileInfo, navigation } = this.props;
 
@@ -243,11 +248,11 @@ class FilePage extends React.PureComponent {
           text: 'Yes',
           onPress: () => {
             const { uri } = navigation.state.params;
+
             deleteFile(`${claim.txid}:${claim.nout}`, true);
             deletePurchasedUri(uri);
-            if (NativeModules.UtilityModule) {
-              NativeModules.UtilityModule.deleteDownload(uri);
-            }
+
+            NativeModules.UtilityModule.deleteDownload(uri);
             this.setState({
               downloadPressed: false,
               fileViewLogged: false,
@@ -568,6 +573,7 @@ class FilePage extends React.PureComponent {
       rewardedContentClaimIds,
       isResolvingUri,
       blackListedOutpoints,
+      myClaimUris,
       navigation,
       position,
       purchaseUri,
@@ -640,19 +646,20 @@ class FilePage extends React.PureComponent {
       const isPlayable = mediaType === 'video' || mediaType === 'audio';
       const { height, signing_channel: signingChannel, value } = claim;
       const channelName = signingChannel && signingChannel.name;
+      const channelClaimId = claim && claim.signing_channel && claim.signing_channel.claim_id;
+      const canSendTip = this.state.tipAmount > 0;
+      const fullUri = `${claim.name}#${claim.claim_id}`;
+      const canEdit = myClaimUris.includes(normalizeURI(fullUri));
       const showActions =
-        fileInfo &&
-        fileInfo.download_path &&
+        (canEdit || (fileInfo && fileInfo.download_path)) &&
         !this.state.fullscreenMode &&
         !this.state.showImageViewer &&
         !this.state.showWebView;
       const showFileActions =
-        fileInfo &&
-        fileInfo.download_path &&
-        (completed || (fileInfo && !fileInfo.stopped && fileInfo.written_bytes < fileInfo.total_bytes));
-      const channelClaimId = claim && claim.signing_channel && claim.signing_channel.claim_id;
-      const canSendTip = this.state.tipAmount > 0;
-      const fullUri = `${claim.name}#${claim.claim_id}`;
+        canEdit ||
+        (fileInfo &&
+          fileInfo.download_path &&
+          (completed || (fileInfo && !fileInfo.stopped && fileInfo.written_bytes < fileInfo.total_bytes)));
       const fullChannelUri =
         channelClaimId && channelClaimId.trim().length > 0
           ? normalizeURI(`${channelName}#${channelClaimId}`)
@@ -823,6 +830,16 @@ class FilePage extends React.PureComponent {
                 <View style={filePageStyle.actions}>
                   {showFileActions && (
                     <View style={filePageStyle.fileActions}>
+                      {canEdit && (
+                        <Button
+                          style={[filePageStyle.actionButton, filePageStyle.editButton]}
+                          theme={'light'}
+                          icon={'edit'}
+                          text={'Edit'}
+                          onPress={this.onEditPressed}
+                        />
+                      )}
+
                       {completed && (
                         <Button
                           style={filePageStyle.actionButton}

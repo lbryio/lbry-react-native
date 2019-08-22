@@ -26,9 +26,16 @@ export default class ChannelSelector extends React.PureComponent {
   }
 
   componentDidMount() {
-    const { channels, fetchChannelListMine, fetchingChannels } = this.props;
+    const { channels, channelName, fetchChannelListMine, fetchingChannels } = this.props;
     if (!channels.length && !fetchingChannels) {
       fetchChannelListMine();
+    }
+  }
+
+  componentDidUpdate() {
+    const { channelName } = this.props;
+    if (this.state.currentSelectedValue !== channelName) {
+      this.setState({ currentSelectedValue: channelName });
     }
   }
 

@@ -135,9 +135,11 @@ class UriBar extends React.PureComponent {
 
   render() {
     const {
+      allowEdit,
       belowOverlay,
       navigation,
       onExitSelectionMode,
+      onEditActionPressed,
       onDeleteActionPressed,
       query,
       selectedItemCount,
@@ -175,6 +177,19 @@ class UriBar extends React.PureComponent {
               </View>
 
               <View style={uriBarStyle.selectionModeActions}>
+                {allowEdit && selectedItemCount === 1 && (
+                  <TouchableOpacity
+                    style={[uriBarStyle.actionTouchArea, uriBarStyle.leftAction]}
+                    onPress={() => {
+                      if (onEditActionPressed) {
+                        onEditActionPressed();
+                      }
+                    }}
+                  >
+                    <Icon name="edit" size={20} style={uriBarStyle.actionIcon} />
+                  </TouchableOpacity>
+                )}
+
                 <TouchableOpacity
                   style={uriBarStyle.actionTouchArea}
                   onPress={() => {

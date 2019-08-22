@@ -70,6 +70,16 @@ class PublishesPage extends React.PureComponent {
     this.setState({ selectionMode: false, selectedUris: [], selectedClaimsMap: {} });
   };
 
+  onEditActionPressed = () => {
+    const { navigation } = this.props;
+    const { selectedClaimsMap, selectedUris } = this.state;
+    // only 1 item can be edited (and edit button should be visible only if there is a single selection)
+    const claim = selectedClaimsMap[selectedUris[0]];
+    this.onExitSelectionMode();
+
+    navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISH, params: { editMode: true, claimToEdit: claim } });
+  };
+
   onDeleteActionPressed = () => {
     const { abandonClaim } = this.props;
     const { selectedClaimsMap } = this.state;
@@ -103,11 +113,13 @@ class PublishesPage extends React.PureComponent {
     return (
       <View style={publishStyle.container}>
         <UriBar
+          allowEdit
           navigation={navigation}
           selectionMode={selectionMode}
           selectedItemCount={selectedUris.length}
-          onExitSelectionMode={this.onExitSelectionMode}
           onDeleteActionPressed={this.onDeleteActionPressed}
+          onEditActionPressed={this.onEditActionPressed}
+          onExitSelectionMode={this.onExitSelectionMode}
         />
         {fetching && (
           <View style={publishStyle.centered}>
@@ -138,7 +150,6 @@ class PublishesPage extends React.PureComponent {
             removeClippedSubviews
             renderItem={({ item }) => (
               <FileListItem
-                hideChannel
                 key={item}
                 uri={item}
                 style={publishStyle.listItem}
