@@ -194,6 +194,10 @@ const filePageStyle = StyleSheet.create({
   },
   fileActions: {
     alignSelf: 'flex-end',
+    flexDirection: 'row',
+  },
+  editButton: {
+    marginRight: 8,
   },
   socialActions: {
     alignSelf: 'flex-start',

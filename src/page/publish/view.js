@@ -18,15 +18,16 @@ import { FlatGrid } from 'react-native-super-grid';
 import {
   isNameValid,
   buildURI,
+  normalizeURI,
   regexInvalidURI,
   CLAIM_VALUES,
   LICENSES,
   MATURE_TAGS,
   THUMBNAIL_STATUSES,
 } from 'lbry-redux';
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import { RNCamera } from 'react-native-camera';
 import { generateCombination } from 'gfycat-style-urls';
+import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import Button from 'component/button';
 import ChannelSelector from 'component/channelSelector';
@@ -42,7 +43,7 @@ import Tag from 'component/tag';
 import TagSearch from 'component/tagSearch';
 import UriBar from 'component/uriBar';
 import publishStyle from 'styles/publish';
-import __ from 'utils/helper';
+import { __, navigateToUri } from 'utils/helper';
 
 const languages = {
   en: 'English',
@@ -76,7 +77,9 @@ class PublishPage extends React.PureComponent {
   camera = null;
 
   state = {
+    canPublish: false,
     canUseCamera: false,
+    editMode: false,
     titleFocused: false,
     descriptionFocused: false,
     loadingVideos: false,
@@ -107,6 +110,7 @@ class PublishPage extends React.PureComponent {
     priceSet: false,
 
     // input data
+    hasEditedContentAddress: false,
     bid: 0.1,
     description: null,
     title: null,
@@ -114,7 +118,6 @@ class PublishPage extends React.PureComponent {
     license: LICENSES.NONE,
     licenseUrl: '',
     otherLicenseDescription: '',
-    mature: false,
     name: null,
     price: 0,
     uri: null,
@@ -158,21 +161,87 @@ class PublishPage extends React.PureComponent {
   };
 
   onComponentFocused = () => {
-    const { pushDrawerStack, setPlayerVisible } = this.props;
+    const { balance, pushDrawerStack, setPlayerVisible, navigation } = this.props;
     pushDrawerStack();
     setPlayerVisible();
-    NativeModules.Firebase.setCurrentScreen('New publish').then(result => {
+
+    NativeModules.Firebase.setCurrentScreen('Publish').then(result => {
       NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
       NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
       this.setState(
         {
+          canPublish: balance >= 0.1,
           loadingVideos: true,
         },
         () => {
           NativeModules.Gallery.getVideos().then(videos => this.setState({ videos, loadingVideos: false }));
         }
       );
+
+      // Check if this is an edit action
+      if (navigation.state.params) {
+        const { editMode, claimToEdit } = navigation.state.params;
+        if (editMode) {
+          this.prepareEdit(claimToEdit);
+        }
+      }
     });
+  };
+
+  prepareEdit = claim => {
+    let channelName;
+    const { amount, name, signing_channel: signingChannel, value } = claim;
+    const { description, fee, languages, license, license_url: licenseUrl, tags, thumbnail, title } = value;
+    if (signingChannel) {
+      channelName = signingChannel.name;
+    }
+
+    const thumbnailUrl = thumbnail ? thumbnail.url : null;
+
+    // Determine the license
+    let licenseType, otherLicenseDescription;
+    if (!LICENSES.CC_LICENSES.some(({ value }) => value === license)) {
+      if (!license || license === LICENSES.NONE || license === LICENSES.PUBLIC_DOMAIN) {
+        licenseType = license;
+      } else if (license && !licenseUrl && license !== LICENSES.NONE) {
+        licenseType = LICENSES.COPYRIGHT;
+      } else {
+        licenseType = LICENSES.OTHER;
+      }
+
+      otherLicenseDescription = license;
+    } else {
+      licenseType = license;
+    }
+
+    this.setState(
+      {
+        editMode: true,
+        currentPhase: Constants.PHASE_DETAILS,
+
+        hasEditedContentAddress: true,
+        bid: amount,
+        channelName,
+        description,
+        language: languages && languages.length > 0 ? languages[0] : 'en', // default to English
+        license: licenseType,
+        licenseUrl,
+        otherLicenseDescription,
+        name,
+        price: fee && fee.amount ? fee.amount : 0,
+        priceSet: fee && fee.amount > 0,
+        tags: tags && tags.length > 0 ? tags : [],
+        title,
+        currentThumbnailUri: thumbnailUrl,
+        uploadedThumbnailUri: thumbnailUrl,
+      },
+      () => {
+        this.handleNameChange(name);
+        if (channelName) {
+          this.handleChannelChange(channelName);
+        }
+      }
+    );
   };
 
   getNewUri(name, channel) {
@@ -184,7 +253,7 @@ class PublishPage extends React.PureComponent {
     // We are only going to store the full uri, but we need to resolve the uri with and without the channel name
     let uri;
     try {
-      uri = buildURI({ contentName: name, channelName });
+      uri = buildURI({ claimName: name, channelName });
     } catch (e) {
       // something wrong with channel or name
     }
@@ -192,7 +261,7 @@ class PublishPage extends React.PureComponent {
     if (uri) {
       if (channelName) {
         // resolve without the channel name so we know the winning bid for it
-        const uriLessChannel = buildURI({ contentName: name });
+        const uriLessChannel = buildURI({ claimName: name });
         resolveUri(uriLessChannel);
       }
       resolveUri(uri);
@@ -209,6 +278,7 @@ class PublishPage extends React.PureComponent {
   handlePublishPressed = () => {
     const { notify, publish, updatePublishForm } = this.props;
     const {
+      editMode,
       bid,
       channelName,
       currentMedia,
@@ -217,7 +287,6 @@ class PublishPage extends React.PureComponent {
       license,
       licenseUrl,
       otherLicenseDescription,
-      mature,
       name,
       price,
       priceSet,
@@ -237,14 +306,21 @@ class PublishPage extends React.PureComponent {
       return;
     }
 
+    if (!currentMedia && !editMode) {
+      // sanity check. normally shouldn't happen
+      notify({ message: 'No file selected. Please select a video or take a photo before publishing.' });
+      return;
+    }
+
     const publishParams = {
-      filePath: currentMedia.filePath,
+      filePath: currentMedia ? currentMedia.filePath : null,
       bid: bid || 0.1,
       title: title || '',
       thumbnail,
       description: description || '',
       language,
       license,
+      licenseType: license,
       licenseUrl,
       otherLicenseDescription,
       name: name || undefined,
@@ -253,12 +329,9 @@ class PublishPage extends React.PureComponent {
       uri: uri || undefined,
       channel: CLAIM_VALUES.CHANNEL_ANONYMOUS === channelName ? null : channelName,
       isStillEditing: false,
-      claim: {
-        value: {
-          tags,
-          release_time: Math.round(Date.now() / 1000), // set now as the release time
-        },
-      },
+      tags: tags.map(tag => {
+        return { name: tag };
+      }),
     };
 
     updatePublishForm(publishParams);
@@ -266,7 +339,11 @@ class PublishPage extends React.PureComponent {
   };
 
   handlePublishSuccess = data => {
-    this.setState({ publishStarted: false, currentPhase: Constants.PHASE_PUBLISH });
+    const { navigation, notify } = this.props;
+    notify({
+      message: `Your content was successfully published to ${this.state.uri}. It will be available in a few mintues.`,
+    });
+    navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISHES, params: { publishSuccess: true } });
   };
 
   handlePublishFailure = error => {
@@ -302,7 +379,7 @@ class PublishPage extends React.PureComponent {
     this.setState(
       {
         currentMedia: media,
-        title: name,
+        title: null, // no title autogeneration (user will fill this in)
         name: this.formatNameForTitle(name),
         currentPhase: Constants.PHASE_DETAILS,
       },
@@ -320,6 +397,7 @@ class PublishPage extends React.PureComponent {
     this.setState(
       {
         publishStarted: false,
+        editMode: false,
 
         currentMedia: null,
         currentThumbnailUri: null,
@@ -334,6 +412,7 @@ class PublishPage extends React.PureComponent {
         priceSet: false,
 
         // input data
+        hasEditedContentAddress: false,
         bid: 0.1,
         description: null,
         title: null,
@@ -434,16 +513,16 @@ class PublishPage extends React.PureComponent {
   };
 
   handleUploadPressed = () => {
-    DocumentPicker.show(
-      {
-        filetype: [DocumentPickerUtil.allFiles()],
-      },
-      (error, res) => {
-        if (!error) {
-          // console.log(res);
+    DocumentPicker.pick({ type: [DocumentPicker.types.allFiles] })
+      .then(file => {
+        // console.log(file);
+      })
+      .catch(error => {
+        if (!DocumentPicker.isCancel(error)) {
+          // notify the user
+          // console.log(error);
         }
-      }
-    );
+      });
   };
 
   getRandomFileId = () => {
@@ -464,9 +543,13 @@ class PublishPage extends React.PureComponent {
     this.setState({ price });
   };
 
-  handleNameChange = name => {
+  handleNameChange = (name, userInput) => {
     const { notify } = this.props;
     this.setState({ name });
+    if (userInput) {
+      this.setState({ hasEditedContentAddress: true });
+    }
+
     if (!isNameValid(name, false)) {
       notify({ message: 'Your content address contains invalid characters' });
       return;
@@ -483,7 +566,7 @@ class PublishPage extends React.PureComponent {
   };
 
   handleAddTag = tag => {
-    if (!tag) {
+    if (!tag || !this.state.canPublish || this.state.publishStarted) {
       return;
     }
 
@@ -500,7 +583,7 @@ class PublishPage extends React.PureComponent {
   };
 
   handleRemoveTag = tag => {
-    if (!tag) {
+    if (!tag || !this.state.canPublish || this.state.publishStarted) {
       return;
     }
 
@@ -556,15 +639,20 @@ class PublishPage extends React.PureComponent {
   };
 
   handleTitleChange = title => {
-    this.setState(
-      {
-        title,
-        name: this.formatNameForTitle(title),
-      },
-      () => {
-        this.handleNameChange(this.state.name);
-      }
-    );
+    this.setState({ title });
+
+    if (!this.state.editMode && !this.state.hasEditedContentAddress) {
+      // only autogenerate url if the user has not yet edited the field
+      // also shouldn't change url in edit mode
+      this.setState(
+        {
+          name: this.formatNameForTitle(title),
+        },
+        () => {
+          this.handleNameChange(this.state.name);
+        }
+      );
+    }
   };
 
   handleDescriptionChange = description => {
@@ -685,9 +773,12 @@ class PublishPage extends React.PureComponent {
           )}
         </View>
       );
-    } else if (Constants.PHASE_DETAILS === this.state.currentPhase && this.state.currentMedia) {
+    } else if (
+      Constants.PHASE_DETAILS === this.state.currentPhase &&
+      (this.state.editMode || this.state.currentMedia)
+    ) {
       const { currentMedia, currentThumbnailUri } = this.state;
-      if (!currentThumbnailUri) {
+      if (!currentThumbnailUri && !this.state.editMode) {
         this.updateThumbnailUriForMedia(currentMedia);
       }
       content = (
@@ -701,7 +792,7 @@ class PublishPage extends React.PureComponent {
               />
             </View>
           )}
-          {balance < 0.1 && <PublishRewardsDriver navigation={navigation} />}
+          {!this.state.canPublish && <PublishRewardsDriver navigation={navigation} />}
 
           {this.state.uploadThumbnailStarted && !this.state.uploadedThumbnailUri && (
             <View style={publishStyle.thumbnailUploadContainer}>
@@ -716,6 +807,7 @@ class PublishPage extends React.PureComponent {
                 <Text style={publishStyle.textInputTitle}>Title</Text>
               )}
               <TextInput
+                editable={this.state.canPublish && !this.state.publishStarted}
                 placeholder={this.state.titleFocused ? '' : 'Title'}
                 style={publishStyle.inputText}
                 value={this.state.title}
@@ -733,6 +825,7 @@ class PublishPage extends React.PureComponent {
                 <Text style={publishStyle.textInputTitle}>Description</Text>
               )}
               <TextInput
+                editable={this.state.canPublish && !this.state.publishStarted}
                 placeholder={this.state.descriptionFocused ? '' : 'Description'}
                 style={publishStyle.inputText}
                 value={this.state.description}
@@ -764,7 +857,11 @@ class PublishPage extends React.PureComponent {
           <View style={publishStyle.card}>
             <Text style={publishStyle.cardTitle}>Channel</Text>
 
-            <ChannelSelector onChannelChange={this.handleChannelChange} />
+            <ChannelSelector
+              enabled={this.state.canPublish && !this.state.publishStarted}
+              channelName={this.state.channelName}
+              onChannelChange={this.handleChannelChange}
+            />
           </View>
 
           <View style={publishStyle.card}>
@@ -782,6 +879,7 @@ class PublishPage extends React.PureComponent {
             {this.state.priceSet && (
               <View style={[publishStyle.inputRow, publishStyle.priceInputRow]}>
                 <TextInput
+                  editable={this.state.canPublish && !this.state.publishStarted}
                   placeholder={'0.00'}
                   keyboardType={'number-pad'}
                   style={publishStyle.priceInput}
@@ -796,21 +894,25 @@ class PublishPage extends React.PureComponent {
           </View>
 
           <View style={publishStyle.card}>
-            <Text style={publishStyle.cardTitle}>Content Address</Text>
+            <Text style={publishStyle.cardTitle}>Content address</Text>
             <Text style={publishStyle.helpText}>
-              The address where people can find your content (ex. lbry://myvideo)
+              The address where people can find your content (ex. lbry://myvideo).
+              {this.state.editMode &&
+                ' You cannot change this address while editing your content. If you wish to use a new address, please republish the content.'}
             </Text>
 
             <TextInput
+              editable={!this.state.editMode && this.state.canPublish && !this.state.publishStarted}
               placeholder={'lbry://'}
               style={publishStyle.inputText}
               underlineColorAndroid={Colors.NextLbryGreen}
               numberOfLines={1}
               value={this.state.name}
-              onChangeText={this.handleNameChange}
+              onChangeText={value => this.handleNameChange(value, true)}
             />
             <View style={publishStyle.inputRow}>
               <TextInput
+                editable={this.state.canPublish && !this.state.publishStarted}
                 placeholder={'0.00'}
                 style={publishStyle.priceInput}
                 underlineColorAndroid={Colors.NextLbryGreen}
@@ -830,6 +932,7 @@ class PublishPage extends React.PureComponent {
               <View>
                 <Text style={publishStyle.cardText}>Language</Text>
                 <Picker
+                  enabled={this.state.canPublish && !this.state.publishStarted}
                   selectedValue={this.state.language}
                   style={publishStyle.picker}
                   itemStyle={publishStyle.pickerItem}
@@ -844,6 +947,7 @@ class PublishPage extends React.PureComponent {
               <View>
                 <Text style={publishStyle.cardText}>License</Text>
                 <Picker
+                  enabled={this.state.canPublish && !this.state.publishStarted}
                   selectedValue={this.state.license}
                   style={publishStyle.picker}
                   itemStyle={publishStyle.pickerItem}
@@ -859,6 +963,7 @@ class PublishPage extends React.PureComponent {
                 </Picker>
                 {[LICENSES.COPYRIGHT, LICENSES.OTHER].includes(this.state.license) && (
                   <TextInput
+                    editable={this.state.canPublish && !this.state.publishStarted}
                     placeholder={'License description'}
                     style={publishStyle.inputText}
                     underlineColorAndroid={Colors.NextLbryGreen}
@@ -901,8 +1006,8 @@ class PublishPage extends React.PureComponent {
               <View style={publishStyle.rightActionButtons}>
                 <Button
                   style={publishStyle.publishButton}
-                  disabled={balance < 0.1 || !this.state.uploadedThumbnailUri}
-                  text="Publish"
+                  disabled={!this.state.canPublish || !this.state.uploadedThumbnailUri}
+                  text={this.state.editMode ? 'Save changes' : 'Publish'}
                   onPress={this.handlePublishPressed}
                 />
               </View>
@@ -917,7 +1022,11 @@ class PublishPage extends React.PureComponent {
             <Text style={publishStyle.successTitle}>Success!</Text>
             <Text style={publishStyle.successText}>Congratulations! Your content was successfully uploaded.</Text>
             <View style={publishStyle.successRow}>
-              <Link style={publishStyle.successUrl} text={this.state.uri} href={this.state.uri} />
+              <Link
+                style={publishStyle.successUrl}
+                text={this.state.uri}
+                onPress={() => navigateToUri(navigation, this.state.uri)}
+              />
               <TouchableOpacity
                 onPress={() => {
                   Clipboard.setString(this.state.uri);
