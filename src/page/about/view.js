@@ -43,21 +43,22 @@ class AboutPage extends React.PureComponent {
     const { pushDrawerStack, setPlayerVisible } = this.props;
     pushDrawerStack();
     setPlayerVisible();
-    NativeModules.Firebase.setCurrentScreen('About');
 
-    if (NativeModules.VersionInfo) {
-      NativeModules.VersionInfo.getAppVersion().then(version => {
-        this.setState({ appVersion: version });
+    NativeModules.Firebase.setCurrentScreen('About').then(result => {
+      if (NativeModules.VersionInfo) {
+        NativeModules.VersionInfo.getAppVersion().then(version => {
+          this.setState({ appVersion: version });
+        });
+      }
+      Lbry.version().then(info => {
+        this.setState({
+          versionInfo: info,
+        });
       });
-    }
-    Lbry.version().then(info => {
-      this.setState({
-        versionInfo: info,
-      });
-    });
-    Lbry.status().then(info => {
-      this.setState({
-        lbryId: info.installation_id,
+      Lbry.status().then(info => {
+        this.setState({
+          lbryId: info.installation_id,
+        });
       });
     });
 

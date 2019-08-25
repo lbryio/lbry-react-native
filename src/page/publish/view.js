@@ -162,26 +162,27 @@ class PublishPage extends React.PureComponent {
     const { pushDrawerStack, setPlayerVisible, navigation } = this.props;
     pushDrawerStack();
     setPlayerVisible();
-    NativeModules.Firebase.setCurrentScreen('Publish');
 
-    NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
-    NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
-    this.setState(
-      {
-        loadingVideos: true,
-      },
-      () => {
-        NativeModules.Gallery.getVideos().then(videos => this.setState({ videos, loadingVideos: false }));
-      }
-    );
+    NativeModules.Firebase.setCurrentScreen('Publish').then(result => {
+      NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
+      NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
+      this.setState(
+        {
+          loadingVideos: true,
+        },
+        () => {
+          NativeModules.Gallery.getVideos().then(videos => this.setState({ videos, loadingVideos: false }));
+        }
+      );
 
-    // Check if this is an edit action
-    if (navigation.state.params) {
-      const { editMode, claimToEdit } = navigation.state.params;
-      if (editMode) {
-        this.prepareEdit(claimToEdit);
+      // Check if this is an edit action
+      if (navigation.state.params) {
+        const { editMode, claimToEdit } = navigation.state.params;
+        if (editMode) {
+          this.prepareEdit(claimToEdit);
+        }
       }
-    }
+    });
   };
 
   prepareEdit = claim => {
@@ -248,7 +249,7 @@ class PublishPage extends React.PureComponent {
     // We are only going to store the full uri, but we need to resolve the uri with and without the channel name
     let uri;
     try {
-      uri = buildURI({ contentName: name, channelName });
+      uri = buildURI({ claimName: name, channelName });
     } catch (e) {
       // something wrong with channel or name
     }
@@ -256,7 +257,7 @@ class PublishPage extends React.PureComponent {
     if (uri) {
       if (channelName) {
         // resolve without the channel name so we know the winning bid for it
-        const uriLessChannel = buildURI({ contentName: name });
+        const uriLessChannel = buildURI({ claimName: name });
         resolveUri(uriLessChannel);
       }
       resolveUri(uri);

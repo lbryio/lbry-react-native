@@ -70,6 +70,7 @@ class FilePage extends React.PureComponent {
       mediaLoaded: false,
       pageSuspended: false,
       relatedContentY: 0,
+      sendTipStarted: false,
       showDescription: false,
       showImageViewer: false,
       showWebView: false,
@@ -503,7 +504,7 @@ class FilePage extends React.PureComponent {
       return;
     }
 
-    const suffix = 'credit' + (tipAmount === 1 ? '' : 's');
+    const suffix = 'credit' + (parseInt(tipAmount, 10) === 1 ? '' : 's');
     Alert.alert(
       'Send tip',
       `Are you sure you want to tip ${tipAmount} ${suffix}?`,
@@ -512,9 +513,11 @@ class FilePage extends React.PureComponent {
         {
           text: 'Yes',
           onPress: () => {
-            sendTip(tipAmount, claim.claim_id, false, () => {
-              this.setState({ tipAmount: 0, showTipView: false });
-            });
+            this.setState({ sendTipStarted: true }, () =>
+              sendTip(tipAmount, claim.claim_id, false, () => {
+                this.setState({ tipAmount: null, showTipView: false, sendTipStarted: false });
+              })
+            );
           },
         },
       ],
@@ -882,6 +885,7 @@ class FilePage extends React.PureComponent {
                     <Text style={filePageStyle.title} selectable>
                       {title}
                     </Text>
+                    {isRewardContent && <Icon name="award" style={filePageStyle.rewardIcon} size={16} />}
                     <View style={filePageStyle.descriptionToggle}>
                       <Icon name={this.state.showDescription ? 'caret-up' : 'caret-down'} size={24} />
                     </View>
@@ -953,16 +957,19 @@ class FilePage extends React.PureComponent {
                     <View style={filePageStyle.row}>
                       <View style={filePageStyle.amountRow}>
                         <TextInput
+                          editable={!this.state.sendTipStarted}
                           ref={ref => (this.tipAmountInput = ref)}
                           onChangeText={value => this.setState({ tipAmount: value })}
                           underlineColorAndroid={Colors.NextLbryGreen}
                           keyboardType={'numeric'}
                           placeholder={'0'}
                           value={this.state.tipAmount}
+                          selectTextOnFocus
                           style={[filePageStyle.input, filePageStyle.tipAmountInput]}
                         />
                         <Text style={[filePageStyle.text, filePageStyle.currency]}>LBC</Text>
                       </View>
+                      {this.state.sendTipStarted && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
                       <Link
                         style={[filePageStyle.link, filePageStyle.cancelTipLink]}
                         text={'Cancel'}
@@ -971,7 +978,7 @@ class FilePage extends React.PureComponent {
                       <Button
                         text={'Send a tip'}
                         style={[filePageStyle.button, filePageStyle.sendButton]}
-                        disabled={!canSendTip}
+                        disabled={!canSendTip || this.state.sendTipStarted}
                         onPress={this.handleSendTip}
                       />
                     </View>

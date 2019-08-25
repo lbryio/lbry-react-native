@@ -23,9 +23,9 @@ class TransactionHistoryPage extends React.PureComponent {
     const { fetchTransactions, pushDrawerStack, setPlayerVisible } = this.props;
     pushDrawerStack();
     setPlayerVisible();
-    NativeModules.Firebase.setCurrentScreen('Transaction History');
-
-    fetchTransactions();
+    NativeModules.Firebase.setCurrentScreen('Transaction History').then(result => {
+      fetchTransactions();
+    });
   };
 
   componentDidMount() {
