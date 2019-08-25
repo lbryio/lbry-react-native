@@ -45,14 +45,13 @@ class FirstRunScreen extends React.PureComponent {
     });
 
     if (NativeModules.FirstRun) {
-      NativeModules.Firebase.setCurrentScreen('First Run');
-
       NativeModules.FirstRun.isFirstRun().then(firstRun => {
         AsyncStorage.removeItem(Constants.KEY_FIRST_RUN_EMAIL);
         AsyncStorage.removeItem(Constants.KEY_EMAIL_VERIFY_PENDING);
         this.setState({ isFirstRun: firstRun });
 
         if (firstRun) {
+          NativeModules.Firebase.setCurrentScreen('First Run');
           this.setState({ currentPage: FirstRunScreen.pages[0] });
         } else {
           // Not the first run. Navigate to the splash screen right away

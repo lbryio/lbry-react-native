@@ -37,16 +37,16 @@ class SearchPage extends React.PureComponent {
     const { pushDrawerStack, setPlayerVisible, query, search } = this.props;
     pushDrawerStack();
     setPlayerVisible();
-    NativeModules.Firebase.setCurrentScreen('Search');
-
-    const searchQuery = query || this.getSearchQuery();
-    if (searchQuery && searchQuery.trim().length > 0) {
-      this.setState({
-        currentQuery: searchQuery,
-        currentUri: isURIValid(searchQuery) ? normalizeURI(searchQuery) : null,
-      });
-      search(searchQuery);
-    }
+    NativeModules.Firebase.setCurrentScreen('Search').then(result => {
+      const searchQuery = query || this.getSearchQuery();
+      if (searchQuery && searchQuery.trim().length > 0) {
+        this.setState({
+          currentQuery: searchQuery,
+          currentUri: isURIValid(searchQuery) ? normalizeURI(searchQuery) : null,
+        });
+        search(searchQuery);
+      }
+    });
   };
 
   componentDidMount() {

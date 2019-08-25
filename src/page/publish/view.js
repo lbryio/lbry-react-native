@@ -161,18 +161,18 @@ class PublishPage extends React.PureComponent {
     const { pushDrawerStack, setPlayerVisible } = this.props;
     pushDrawerStack();
     setPlayerVisible();
-    NativeModules.Firebase.setCurrentScreen('Publish');
-
-    NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
-    NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
-    this.setState(
-      {
-        loadingVideos: true,
-      },
-      () => {
-        NativeModules.Gallery.getVideos().then(videos => this.setState({ videos, loadingVideos: false }));
-      }
-    );
+    NativeModules.Firebase.setCurrentScreen('New publish').then(result => {
+      NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
+      NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
+      this.setState(
+        {
+          loadingVideos: true,
+        },
+        () => {
+          NativeModules.Gallery.getVideos().then(videos => this.setState({ videos, loadingVideos: false }));
+        }
+      );
+    });
   };
 
   getNewUri(name, channel) {
