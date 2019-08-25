@@ -178,7 +178,7 @@ export default class ChannelSelector extends React.PureComponent {
 
   render() {
     const channel = this.state.addingChannel ? 'new' : this.props.channel;
-    const { fetchingChannels, channels = [] } = this.props;
+    const { enabled, fetchingChannels, channels = [] } = this.props;
     const pickerItems = [Constants.ITEM_ANONYMOUS, Constants.ITEM_CREATE_A_CHANNEL].concat(channels.map(ch => ch.name));
 
     const {
@@ -195,6 +195,7 @@ export default class ChannelSelector extends React.PureComponent {
     return (
       <View style={channelSelectorStyle.container}>
         <Picker
+          enabled={enabled}
           selectedValue={this.state.currentSelectedValue}
           style={channelSelectorStyle.channelPicker}
           itemStyle={channelSelectorStyle.channelPickerItem}

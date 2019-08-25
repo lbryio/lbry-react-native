@@ -37,10 +37,10 @@ class PublishesPage extends React.PureComponent {
     const { checkPendingPublishes, fetchMyClaims, pushDrawerStack, setPlayerVisible } = this.props;
     pushDrawerStack();
     setPlayerVisible();
-    NativeModules.Firebase.setCurrentScreen('Publishes');
-
-    fetchMyClaims();
-    checkPendingPublishes();
+    NativeModules.Firebase.setCurrentScreen('Publishes').then(result => {
+      fetchMyClaims();
+      checkPendingPublishes();
+    });
   };
 
   addOrRemoveItem = (uri, claim) => {
