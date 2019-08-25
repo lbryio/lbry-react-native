@@ -3,6 +3,7 @@ import Colors from './colors';
 
 const walletStyle = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: Colors.PageBackground,
   },
   scrollContainer: {
@@ -286,6 +287,22 @@ const walletStyle = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   syncSwitch: {
+    marginLeft: 8,
+  },
+  loadingContainer: {
+    position: 'absolute',
+    flexDirection: 'row',
+    left: 0,
+    right: 0,
+    top: 60,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    color: '#aaaaaa',
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 16,
     marginLeft: 8,
   },
 });

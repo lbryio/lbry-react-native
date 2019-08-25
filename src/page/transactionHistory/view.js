@@ -1,5 +1,6 @@
 import React from 'react';
-import { NativeModules, View, ScrollView, Text } from 'react-native';
+import { ActivityIndicator, NativeModules, View, ScrollView, Text } from 'react-native';
+import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import TransactionList from 'component/transactionList';
 import UriBar from 'component/uriBar';
@@ -44,13 +45,16 @@ class TransactionHistoryPage extends React.PureComponent {
     const { fetchingTransactions, transactions, navigation } = this.props;
 
     return (
-      <View>
+      <View style={walletStyle.container}>
         <UriBar navigation={navigation} />
+        {fetchingTransactions && (
+          <View style={walletStyle.loadingContainer}>
+            <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
+            <Text style={walletStyle.loadingText}>Loading transactions...</Text>
+          </View>
+        )}
         <ScrollView style={walletStyle.transactionHistoryScroll}>
           <View style={walletStyle.historyList}>
-            {fetchingTransactions && !transactions.length && (
-              <Text style={walletStyle.infoText}>Loading transactions...</Text>
-            )}
             {!fetchingTransactions && transactions.length === 0 && (
               <Text style={walletStyle.infoText}>No transactions to list.</Text>
             )}
