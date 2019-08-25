@@ -17,6 +17,9 @@ const transactionListStyle = StyleSheet.create({
   topRow: {
     marginBottom: 4,
   },
+  leftCol: {
+    flex: 0.7,
+  },
   col: {
     alignSelf: 'stretch',
   },

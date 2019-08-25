@@ -19,11 +19,12 @@ class TransactionListItem extends React.PureComponent {
     return (
       <View style={transactionListStyle.listItem}>
         <View style={[transactionListStyle.row, transactionListStyle.topRow]}>
-          <View style={transactionListStyle.col}>
+          <View style={[transactionListStyle.col, transactionListStyle.leftCol]}>
             <Text style={transactionListStyle.text}>{this.capitalize(type)}</Text>
             {name && claimId && (
               <Link
                 style={transactionListStyle.link}
+                numberOfLines={1}
                 onPress={() => navigateToUri(navigation, buildURI({ claimName: name, claimId }))}
                 text={name}
               />
@@ -37,7 +38,7 @@ class TransactionListItem extends React.PureComponent {
           </View>
         </View>
         <View style={transactionListStyle.row}>
-          <View style={transactionListStyle.col}>
+          <View style={[transactionListStyle.col, transactionListStyle.leftCol]}>
             <Link
               style={transactionListStyle.smallLink}
               text={txid.substring(0, 8)}
