@@ -45,9 +45,12 @@ class TrendingPage extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const { pushDrawerStack, setPlayerVisible, navigation } = this.props;
+    const { pushDrawerStack, setPlayerVisible, navigation, sortByItem } = this.props;
     const { filterForTags } = navigation.state.params ? navigation.state.params : { filterForTags: false };
-    this.setState({ currentTrendingForItem: TRENDING_FOR_ITEMS[filterForTags ? 1 : 0] });
+    this.setState({
+      currentTrendingForItem: TRENDING_FOR_ITEMS[filterForTags ? 1 : 0],
+      orderBy: getOrderBy(sortByItem),
+    });
     pushDrawerStack(Constants.DRAWER_ROUTE_TRENDING, navigation.state.params);
     setPlayerVisible();
     NativeModules.Firebase.setCurrentScreen('All content');
@@ -110,7 +113,7 @@ class TrendingPage extends React.PureComponent {
               <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
             </TouchableOpacity>
 
-            {sortByTop && <Text style={discoverStyle.pickerLabel}>in the</Text>}
+            {sortByTop && <Text style={discoverStyle.pickerLabel}>from</Text>}
 
             {sortByTop && (
               <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
