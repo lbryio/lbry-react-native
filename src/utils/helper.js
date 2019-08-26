@@ -184,7 +184,7 @@ export function dispatchNavigateBack(dispatch, nav, drawerStack) {
 export function uriFromFileInfo(fileInfo) {
   const { name: claimName, claim_name: claimNameDownloaded, claim_id: claimId } = fileInfo;
   const uriParams = {};
-  uriParams.contentName = claimName || claimNameDownloaded;
+  uriParams.claimName = claimName || claimNameDownloaded;
   uriParams.claimId = claimId;
   return buildURI(uriParams);
 }
