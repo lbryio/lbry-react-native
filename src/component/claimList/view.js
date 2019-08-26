@@ -71,7 +71,7 @@ class ClaimList extends React.PureComponent {
   }
 
   buildClaimSearchOptions() {
-    const { orderBy = Constants.DEFAULT_ORDER_BY, channelIds, showNsfwContent, tags, time } = this.props;
+    const { orderBy, channelIds, showNsfwContent, tags, time } = this.props;
     const { currentPage, subscriptionsView } = this.state;
 
     const options = {
