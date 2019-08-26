@@ -42,7 +42,6 @@ class ClaimList extends React.PureComponent {
       tags: prevTags,
       channelIds: prevChannelIds,
       time: prevTime,
-      showNsfwContent,
     } = prevProps;
     const { claimSearchByQuery, orderBy, tags, channelIds, time } = this.props;
 
@@ -94,6 +93,8 @@ class ClaimList extends React.PureComponent {
     if (orderBy && orderBy[0] === Constants.ORDER_BY_EFFECTIVE_AMOUNT && Constants.TIME_ALL !== time) {
       options.release_time = this.getReleaseTimeOption(time);
     }
+
+    console.log(options);
 
     return options;
   }
