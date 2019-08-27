@@ -94,8 +94,6 @@ class ClaimList extends React.PureComponent {
       options.release_time = this.getReleaseTimeOption(time);
     }
 
-    console.log(options);
-
     return options;
   }
 
