@@ -3,6 +3,7 @@ import {
   selectBalance,
   selectMyChannelClaims,
   selectFetchingMyChannels,
+  doAbandonClaim,
   doFetchChannelListMine,
   doCreateChannel,
   doToast,
@@ -18,8 +19,9 @@ const select = state => ({
 });
 
 const perform = dispatch => ({
+  abandonClaim: (txid, nout) => dispatch(doAbandonClaim(txid, nout)),
   notify: data => dispatch(doToast(data)),
-  createChannel: (name, amount) => dispatch(doCreateChannel(name, amount)),
+  createChannel: (name, amount, optionalParams) => dispatch(doCreateChannel(name, amount, optionalParams)),
   fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_CHANNEL_CREATOR)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),

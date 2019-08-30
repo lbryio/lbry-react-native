@@ -2,6 +2,7 @@ import React from 'react';
 import { CLAIM_VALUES, isURIValid, regexInvalidURI } from 'lbry-redux';
 import {
   ActivityIndicator,
+  Alert,
   DeviceEventEmitter,
   FlatList,
   Image,
@@ -12,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { navigateToUri } from 'utils/helper';
 import Button from 'component/button';
 import ChannelIconItem from 'component/channelIconItem';
 import Colors from 'styles/colors';
@@ -43,6 +45,10 @@ export default class ChannelCreator extends React.PureComponent {
     coverImageUrl: null,
     avatarImagePickerOpen: false,
     coverImagePickerOpen: false,
+
+    editMode: false,
+    selectionMode: false,
+    selectedChannels: [],
   };
 
   didFocusListener;
@@ -79,9 +85,19 @@ export default class ChannelCreator extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const { channels, channelName, fetchChannelListMine, fetchingChannels } = this.props;
+    const {
+      channels,
+      channelName,
+      fetchChannelListMine,
+      fetchClaimListMine,
+      fetchingChannels,
+      pushDrawerStack,
+      setPlayerVisible,
+    } = this.props;
     NativeModules.Firebase.setCurrentScreen('Channels').then(result => {
-      if (!channels.length && !fetchingChannels) {
+      pushDrawerStack();
+      setPlayerVisible();
+      if (!fetchingChannels) {
         fetchChannelListMine();
       }
 
@@ -196,7 +212,7 @@ export default class ChannelCreator extends React.PureComponent {
 
   handleCreateChannelClick = () => {
     const { balance, createChannel, onChannelChange, notify } = this.props;
-    const { newChannelBid, newChannelName } = this.state;
+    const { newChannelBid, newChannelName, newChannelTitle } = this.state;
 
     if (newChannelName.trim().length === 0 || !isURIValid(newChannelName.substr(1), false)) {
       notify({ message: 'Your channel name contains invalid characters.' });
@@ -233,6 +249,7 @@ export default class ChannelCreator extends React.PureComponent {
       }
 
       // reset state and go back to the channel list
+      notify({ message: 'The channel was successfully created.' });
       this.showChannelList();
     };
 
@@ -243,7 +260,11 @@ export default class ChannelCreator extends React.PureComponent {
       });
     };
 
-    createChannel(channelName, newChannelBid).then(success, failure);
+    const optionalParams = {
+      title: newChannelTitle,
+    };
+
+    createChannel(channelName, newChannelBid, optionalParams).then(success, failure);
   };
 
   channelExists = name => {
@@ -295,6 +316,7 @@ export default class ChannelCreator extends React.PureComponent {
 
   resetChannelCreator = () => {
     this.setState({
+      editMode: false,
       displayName: null,
       channelNameUserEdited: false,
       newChannelTitle: '',
@@ -313,9 +335,98 @@ export default class ChannelCreator extends React.PureComponent {
     });
   };
 
+  onExitSelectionMode = () => {
+    this.setState({ selectionMode: false, selectedChannels: [] });
+  };
+
+  onEditActionPressed = () => {
+    const { navigation } = this.props;
+    const { selectedChannels } = this.state;
+
+    // only 1 item can be edited (and edit button should be visible only if there is a single selection)
+    const channel = selectedChannels[0];
+    this.onExitSelectionMode();
+
+    this.prepareEdit(channel);
+  };
+
+  prepareEdit = channel => {
+    this.setState({
+      currentPhase: Constants.PHASE_CREATE,
+      newChannelName: channel.name.substring(1),
+      newChannelTitle: channel.meta.title ? channel.meta.title : null,
+      newChannelBid: channel.amount,
+    });
+  };
+
+  onDeleteActionPressed = () => {
+    const { abandonClaim, fetchChannelListMine } = this.props;
+    const { selectedChannels } = this.state;
+
+    // show confirm alert
+    Alert.alert(
+      __('Delete channels'),
+      __('Are you sure you want to delete the selected channels?'),
+      [
+        { text: __('No') },
+        {
+          text: __('Yes'),
+          onPress: () => {
+            selectedChannels.forEach(channel => {
+              const { txid, nout } = channel;
+              abandonClaim(txid, nout);
+            });
+
+            // re-fetch the channel list
+            fetchChannelListMine();
+            this.onExitSelectionMode();
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
+  selectedChannelIndex = channel => {
+    const { selectedChannels } = this.state;
+    for (let i = 0; i < selectedChannels.length; i++) {
+      if (selectedChannels[i].claim_id === channel.claim_id) {
+        return i;
+      }
+    }
+
+    return -1;
+  };
+
+  addOrRemoveItem = channel => {
+    let selectedChannels = [...this.state.selectedChannels];
+    const index = this.selectedChannelIndex(channel);
+
+    if (index > -1) {
+      selectedChannels.splice(index, 1);
+    } else {
+      selectedChannels.push(channel);
+    }
+
+    this.setState({ selectionMode: selectedChannels.length > 0, selectedChannels });
+  };
+
+  handleChannelListItemPress = channel => {
+    const { navigation } = this.props;
+    const { selectionMode } = this.state;
+    if (selectionMode) {
+      this.addOrRemoveItem(channel);
+    } else {
+      navigateToUri(navigation, channel.permanent_url);
+    }
+  };
+
+  handleChannelListItemLongPress = channel => {
+    this.addOrRemoveItem(channel);
+  };
+
   render() {
-    const channel = this.state.addingChannel ? 'new' : this.props.channel;
-    const { enabled, fetchingChannels, channels = [], navigation } = this.props;
+    const { fetchingChannels, channels = [], navigation } = this.props;
 
     console.log(channels);
 
@@ -332,23 +443,43 @@ export default class ChannelCreator extends React.PureComponent {
       addingChannel,
       showCreateChannel,
       thumbnailUrl,
+      selectionMode,
+      selectedChannels,
     } = this.state;
 
     return (
       <View style={channelCreatorStyle.container}>
-        <UriBar navigation={navigation} />
+        <UriBar
+          allowEdit
+          navigation={navigation}
+          selectionMode={selectionMode}
+          selectedItemCount={selectedChannels.length}
+          onDeleteActionPressed={this.onDeleteActionPressed}
+          onEditActionPressed={this.onEditActionPressed}
+          onExitSelectionMode={this.onExitSelectionMode}
+        />
 
         {currentPhase === Constants.PHASE_LIST && (
           <FlatList
+            extraData={this.state}
+            ListHeaderComponent={
+              fetchingChannels ? (
+                <View style={channelCreatorStyle.listHeader}>
+                  <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
+                </View>
+              ) : null
+            }
             ListEmptyComponent={
-              <View style={channelCreatorStyle.listEmptyView}>
-                <Text style={channelCreatorStyle.listEmptyText}>
-                  You have not created a channel. Start now by creating a new channel!
-                </Text>
-              </View>
+              fetchingChannels ? null : (
+                <View style={channelCreatorStyle.listEmpty}>
+                  <Text style={channelCreatorStyle.listEmptyText}>
+                    You have not created a channel. Start now by creating a new channel!
+                  </Text>
+                </View>
+              )
             }
             ListFooterComponent={
-              <View style={channelCreatorStyle.listFooterView}>
+              <View style={channelCreatorStyle.listFooter}>
                 <Button
                   style={channelCreatorStyle.createChannelButton}
                   text={'Create a channel'}
@@ -361,16 +492,32 @@ export default class ChannelCreator extends React.PureComponent {
             initialNumToRender={10}
             maxToRenderPerBatch={20}
             removeClippedSubviews
-            renderItem={({ item }) => (
-              <View style={channelCreatorStyle.channelListItem}>
-                <View style={[channelCreatorStyle.channelListAvatar, autoStyle]}>
-                  <Text style={channelIconStyle.autothumbCharacter}>{item.name.substring(1, 2).toUpperCase()}</Text>
-                </View>
-                <View style={channelCreatorStyle.channelListDetails}>
-                  <Text style={channelCreatorStyle.channelListName}>{item.name}</Text>
-                </View>
-              </View>
-            )}
+            renderItem={({ item }) => {
+              const itemAutoStyle =
+                ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)];
+              return (
+                <TouchableOpacity
+                  style={channelCreatorStyle.channelListItem}
+                  onPress={() => this.handleChannelListItemPress(item)}
+                  onLongPress={() => this.handleChannelListItemLongPress(item)}
+                >
+                  <View style={[channelCreatorStyle.channelListAvatar, itemAutoStyle]}>
+                    <Text style={channelIconStyle.autothumbCharacter}>{item.name.substring(1, 2).toUpperCase()}</Text>
+                  </View>
+                  <View style={channelCreatorStyle.channelListDetails}>
+                    {item.value && item.value.title && (
+                      <Text style={channelCreatorStyle.channelListTitle}>{item.value.title}</Text>
+                    )}
+                    <Text style={channelCreatorStyle.channelListName}>{item.name}</Text>
+                  </View>
+                  {this.selectedChannelIndex(item) > -1 && (
+                    <View style={channelCreatorStyle.selectedOverlay}>
+                      <Icon name={'check-circle'} solid color={Colors.NextLbryGreen} size={32} />
+                    </View>
+                  )}
+                </TouchableOpacity>
+              );
+            }}
             data={channels}
             keyExtractor={(item, index) => item.claim_id}
           />

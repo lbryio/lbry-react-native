@@ -119,7 +119,7 @@ const channelCreatorStyle = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  listFooterView: {
+  listFooter: {
     marginTop: 24,
   },
   createChannelButton: {
@@ -139,9 +139,14 @@ const channelCreatorStyle = StyleSheet.create({
     marginBottom: 16,
     alignItems: 'center',
   },
-  channelListName: {
+  channelListTitle: {
     fontFamily: 'Inter-UI-Regular',
     fontSize: 18,
+    marginBottom: 4,
+  },
+  channelListName: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
   },
   channelListAvatar: {
     marginRight: 16,
@@ -151,6 +156,23 @@ const channelCreatorStyle = StyleSheet.create({
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  selectedOverlay: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: 80,
+    height: 80,
+    borderRadius: 160,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#000000aa',
+  },
+  listHeader: {
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 16,
   },
 });
 
