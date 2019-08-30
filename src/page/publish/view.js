@@ -27,7 +27,6 @@ import {
 } from 'lbry-redux';
 import { RNCamera } from 'react-native-camera';
 import { generateCombination } from 'gfycat-style-urls';
-import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import Button from 'component/button';
 import ChannelSelector from 'component/channelSelector';
@@ -512,18 +511,7 @@ class PublishPage extends React.PureComponent {
     });
   };
 
-  handleUploadPressed = () => {
-    DocumentPicker.pick({ type: [DocumentPicker.types.allFiles] })
-      .then(file => {
-        // console.log(file);
-      })
-      .catch(error => {
-        if (!DocumentPicker.isCancel(error)) {
-          // notify the user
-          // console.log(error);
-        }
-      });
-  };
+  handleUploadPressed = () => {};
 
   getRandomFileId = () => {
     // generate a random id for a photo or recorded video between 1 and 20 (for creating thumbnails)

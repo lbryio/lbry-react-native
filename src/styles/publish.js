@@ -156,6 +156,10 @@ const publishStyle = StyleSheet.create({
     fontSize: 16,
     marginLeft: 8,
   },
+  listEmptyText: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+  },
   titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

@@ -25,6 +25,9 @@ const Constants = {
   PHASE_DETAILS: 'details',
   PHASE_PUBLISH: 'publish',
 
+  PHASE_LIST: 'list',
+  PHASE_NEW: 'create',
+
   CONTENT_TAB: 'content',
   ABOUT_TAB: 'about',
 
@@ -77,6 +80,7 @@ const Constants = {
   DRAWER_ROUTE_SEARCH: 'Search',
   DRAWER_ROUTE_TRANSACTION_HISTORY: 'TransactionHistory',
   DRAWER_ROUTE_TAG: 'Tag',
+  DRAWER_ROUTE_CHANNEL_CREATOR: 'ChannelCreator',
 
   FULL_ROUTE_NAME_DISCOVER: 'DiscoverStack',
   FULL_ROUTE_NAME_WALLET: 'WalletStack',
@@ -146,4 +150,5 @@ export const DrawerRoutes = [
   Constants.DRAWER_ROUTE_ABOUT,
   Constants.DRAWER_ROUTE_SEARCH,
   Constants.DRAWER_ROUTE_TRANSACTION_HISTORY,
+  Constants.DRAWER_ROUTE_CHANNEL_CREATOR,
 ];

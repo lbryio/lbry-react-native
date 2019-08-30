@@ -13,7 +13,6 @@ export default class ChannelIconItem extends React.PureComponent {
     autothumbStyle.autothumbBlue,
     autothumbStyle.autothumbLightBlue,
     autothumbStyle.autothumbCyan,
-    autothumbStyle.autothumbTeal,
     autothumbStyle.autothumbGreen,
     autothumbStyle.autothumbYellow,
     autothumbStyle.autothumbOrange,

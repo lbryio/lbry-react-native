@@ -1,5 +1,6 @@
 import React from 'react';
 import AboutPage from 'page/about';
+import ChannelCreatorPage from 'page/channelCreator';
 import DiscoverPage from 'page/discover';
 import DownloadsPage from 'page/downloads';
 import DrawerContent from 'component/drawerContent';
@@ -157,6 +158,12 @@ const drawer = createDrawerNavigator(
       navigationOptions: {
         title: 'Wallet',
         drawerIcon: ({ tintColor }) => <Icon name="wallet" size={drawerIconSize} style={{ color: tintColor }} />,
+      },
+    },
+    ChannelCreator: {
+      screen: ChannelCreatorPage,
+      navigationOptions: {
+        drawerIcon: ({ tintColor }) => <Icon name="at" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
     Publish: {
