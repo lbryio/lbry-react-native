@@ -527,7 +527,7 @@ export default class ChannelCreator extends React.PureComponent {
       description: value ? value.description : null,
       email: value ? value.email : null,
       website: value ? value.website_url : null,
-      tags: value ? value.tags : [],
+      tags: value && value.tags ? value.tags : [],
       thumbnailUrl: value && value.thumbnail ? value.thumbnail.url : null,
       showOptionalFields: value && (value.description || value.email || value.website_url || value.tags),
     });
