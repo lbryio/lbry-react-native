@@ -19,6 +19,7 @@ import {
   isNameValid,
   buildURI,
   normalizeURI,
+  parseURI,
   regexInvalidURI,
   CLAIM_VALUES,
   LICENSES,
@@ -27,7 +28,6 @@ import {
 } from 'lbry-redux';
 import { RNCamera } from 'react-native-camera';
 import { generateCombination } from 'gfycat-style-urls';
-import DocumentPicker from 'react-native-document-picker';
 import RNFS from 'react-native-fs';
 import Button from 'component/button';
 import ChannelSelector from 'component/channelSelector';
@@ -124,6 +124,7 @@ class PublishPage extends React.PureComponent {
     tags: [],
     selectedChannel: null,
     uploadedThumbnailUri: null,
+    vanityUrlSet: false,
 
     // other
     publishStarted: false,
@@ -180,9 +181,16 @@ class PublishPage extends React.PureComponent {
 
       // Check if this is an edit action
       if (navigation.state.params) {
-        const { editMode, claimToEdit } = navigation.state.params;
+        const { editMode, claimToEdit, vanityUrl } = navigation.state.params;
         if (editMode) {
           this.prepareEdit(claimToEdit);
+        } else if (vanityUrl && vanityUrl.trim().length > 0) {
+          const { claimName } = parseURI(vanityUrl);
+          this.setState({
+            name: claimName,
+            hasEditedContentAddress: true,
+            vanityUrlSet: true,
+          });
         }
       }
     });
@@ -234,6 +242,7 @@ class PublishPage extends React.PureComponent {
         title,
         currentThumbnailUri: thumbnailUrl,
         uploadedThumbnailUri: thumbnailUrl,
+        vanityUrlSet: false,
       },
       () => {
         this.handleNameChange(name);
@@ -380,7 +389,7 @@ class PublishPage extends React.PureComponent {
       {
         currentMedia: media,
         title: null, // no title autogeneration (user will fill this in)
-        name: this.formatNameForTitle(name),
+        name: this.state.hasEditedContentAddress ? this.state.name : this.formatNameForTitle(name),
         currentPhase: Constants.PHASE_DETAILS,
       },
       () => this.handleNameChange(this.state.name)
@@ -426,6 +435,8 @@ class PublishPage extends React.PureComponent {
         tags: [],
         selectedChannel: null,
         uploadedThumbnailUri: null,
+
+        vanityUrlSet: false,
       },
       () => {
         // reset thumbnail
@@ -510,19 +521,6 @@ class PublishPage extends React.PureComponent {
       cameraType:
         cameraType === RNCamera.Constants.Type.back ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back,
     });
-  };
-
-  handleUploadPressed = () => {
-    DocumentPicker.pick({ type: [DocumentPicker.types.allFiles] })
-      .then(file => {
-        // console.log(file);
-      })
-      .catch(error => {
-        if (!DocumentPicker.isCancel(error)) {
-          // notify the user
-          // console.log(error);
-        }
-      });
   };
 
   getRandomFileId = () => {
