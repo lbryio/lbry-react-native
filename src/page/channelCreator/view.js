@@ -8,12 +8,13 @@ import {
   Image,
   NativeModules,
   Picker,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { navigateToUri } from 'utils/helper';
+import { navigateToUri, uploadImageAsset } from 'utils/helper';
 import Button from 'component/button';
 import ChannelIconItem from 'component/channelIconItem';
 import Colors from 'styles/colors';
@@ -21,6 +22,8 @@ import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
+import Tag from 'component/tag';
+import TagSearch from 'component/tagSearch';
 import UriBar from 'component/uriBar';
 import channelCreatorStyle from 'styles/channelCreator';
 import channelIconStyle from 'styles/channelIcon';
@@ -28,6 +31,8 @@ import channelIconStyle from 'styles/channelIcon';
 export default class ChannelCreator extends React.PureComponent {
   state = {
     autoStyle: null,
+    canSave: false,
+    claimId: null,
     currentSelectedValue: Constants.ITEM_ANONYMOUS,
     currentPhase: Constants.PHASE_LIST,
     displayName: null,
@@ -43,12 +48,27 @@ export default class ChannelCreator extends React.PureComponent {
     showCreateChannel: false,
     thumbnailUrl: null,
     coverImageUrl: null,
+
     avatarImagePickerOpen: false,
     coverImagePickerOpen: false,
+    uploadingImage: false,
 
+    autoStyles: [],
     editMode: false,
     selectionMode: false,
     selectedChannels: [],
+
+    currentChannelName: null, // if editing, the current channel name
+    description: null,
+    website: null,
+    email: null,
+    tags: [],
+
+    showOptionalFields: false,
+    titleFocused: false,
+    descriptionFocused: false,
+    websiteFocused: false,
+    emailFocused: false,
   };
 
   didFocusListener;
@@ -75,17 +95,38 @@ export default class ChannelCreator extends React.PureComponent {
     this.onComponentFocused();
   }
 
+  generateAutoStyles = size => {
+    const autoStyles = [];
+    for (let i = 0; i < size; i++) {
+      autoStyles.push(
+        ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)]
+      );
+    }
+    return autoStyles;
+  };
+
   componentWillReceiveProps(nextProps) {
-    const { currentRoute } = nextProps;
-    const { currentRoute: prevRoute } = this.props;
+    const { currentRoute, updatingChannel, updateChannelError } = nextProps;
+    const { currentRoute: prevRoute, notify } = this.props;
 
     if (Constants.DRAWER_ROUTE_CHANNEL_CREATOR === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
+    }
+
+    if (this.state.updateChannelStarted && !updatingChannel) {
+      if (updateChannelError && updateChannelError.length > 0) {
+        notify({ message: `The channel could not be updated: ${updateChannelError}`, error: true });
+      } else {
+        // successful channel update
+        notify({ message: 'The channel was successfully updated.' });
+        this.showChannelList();
+      }
     }
   }
 
   onComponentFocused = () => {
     const {
+      balance,
       channels,
       channelName,
       fetchChannelListMine,
@@ -100,14 +141,53 @@ export default class ChannelCreator extends React.PureComponent {
       if (!fetchingChannels) {
         fetchChannelListMine();
       }
+      if (balance > 0.1) {
+        this.setState({ canSave: true });
+      }
 
       DeviceEventEmitter.addListener('onDocumentPickerFilePicked', this.onFilePicked);
       DeviceEventEmitter.addListener('onDocumentPickerCanceled', this.onPickerCanceled);
     });
   };
 
+  handleModePressed = () => {
+    this.setState({ showOptionalFields: !this.state.showOptionalFields });
+  };
+
   onFilePicked = evt => {
-    console.log(evt);
+    const { notify } = this.props;
+
+    if (evt.path && evt.path.length > 0) {
+      // check which image we're trying to upload
+      // should only be one or the other, so just default to cover
+      const isCover = this.state.coverImagePickerOpen;
+      this.setState(
+        {
+          uploadingImage: true,
+          avatarImagePickerOpen: false,
+          coverImagePickerOpen: false,
+        },
+        () => {
+          uploadImageAsset(
+            `file://${evt.path}`,
+            ({ url }) => {
+              if (isCover) {
+                this.setState({ coverImageUrl: url, uploadingImage: false });
+              } else {
+                this.setState({ thumbnailUrl: url, uploadingImage: false });
+              }
+            },
+            error => {
+              notify({ message: `The image could not be uploaded: ${error}` });
+              this.setState({ uploadingImage: false });
+            }
+          );
+        }
+      );
+    } else {
+      // could not determine the file path
+      notify({ message: 'We could not use the selected image. Please try a different image.' });
+    }
   };
 
   onPickerCanceled = () => {
@@ -115,9 +195,11 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   componentDidUpdate() {
-    const { channelName } = this.props;
-    if (this.state.currentSelectedValue !== channelName) {
-      this.setState({ currentSelectedValue: channelName });
+    const { channels } = this.props;
+    if (channels && this.state.autoStyles.length !== channels.length) {
+      this.setState({
+        autoStyles: this.generateAutoStyles(channels.length),
+      });
     }
   }
 
@@ -154,9 +236,21 @@ export default class ChannelCreator extends React.PureComponent {
     }
   };
 
+  handleDescriptionChange = value => {
+    this.setState({ description: value });
+  };
+
+  handleWebsiteChange = value => {
+    this.setState({ website: value });
+  };
+
+  handleEmailChange = value => {
+    this.setState({ email: value });
+  };
+
   handleNewChannelTitleChange = value => {
     this.setState({ newChannelTitle: value });
-    if (value && !this.state.channelNameUserEdited) {
+    if (value && !this.state.editMode && !this.state.channelNameUserEdited) {
       // build the channel name based on the title
       const channelName = value
         .replace(new RegExp(regexInvalidURI.source, regexInvalidURI.flags + 'g'), '')
@@ -211,15 +305,33 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   handleCreateChannelClick = () => {
-    const { balance, createChannel, onChannelChange, notify } = this.props;
-    const { newChannelBid, newChannelName, newChannelTitle } = this.state;
+    const { balance, createChannel, onChannelChange, notify, updateChannel } = this.props;
+    const {
+      claimId,
+      coverImageUrl,
+      currentChannelName,
+      editMode,
+      newChannelBid,
+      newChannelName,
+      newChannelTitle,
+      description,
+      email,
+      tags,
+      thumbnailUrl,
+      website,
+    } = this.state;
 
     if (newChannelName.trim().length === 0 || !isURIValid(newChannelName.substr(1), false)) {
       notify({ message: 'Your channel name contains invalid characters.' });
       return;
     }
 
-    if (this.channelExists(newChannelName)) {
+    // shouldn't do this check in edit mode
+    if (
+      (editMode && currentChannelName !== newChannelName && this.channelExists(newChannelName)) ||
+      (!editMode && this.channelExists(newChannelName))
+    ) {
+      // TODO: boolean check improvement?
       notify({ message: 'You have already created a channel with the same name.' });
       return;
     }
@@ -232,7 +344,6 @@ export default class ChannelCreator extends React.PureComponent {
     const channelName = `@${newChannelName}`;
 
     this.setState({
-      creatingChannel: true,
       createChannelError: undefined,
     });
 
@@ -262,9 +373,33 @@ export default class ChannelCreator extends React.PureComponent {
 
     const optionalParams = {
       title: newChannelTitle,
+      description,
+      email,
+      tags: tags.map(tag => {
+        return { name: tag };
+      }),
+      website,
+      cover: coverImageUrl,
+      thumbnail: thumbnailUrl,
     };
 
-    createChannel(channelName, newChannelBid, optionalParams).then(success, failure);
+    if (this.state.editMode) {
+      // updateChannel
+      // TODO: Change updateChannel in lby-redux to match createChannel with success and failure callbacks?
+      const params = Object.assign(
+        {},
+        {
+          claim_id: claimId,
+          amount: newChannelBid,
+        },
+        optionalParams
+      );
+      this.setState({ updateChannelStarted: true }, () => updateChannel(params));
+    } else {
+      this.setState({ creatingChannel: true }, () =>
+        createChannel(channelName, newChannelBid, optionalParams).then(success, failure)
+      );
+    }
   };
 
   channelExists = name => {
@@ -282,6 +417,12 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   onCoverImagePress = () => {
+    const { notify } = this.props;
+    if (this.state.uploadingImage) {
+      notify({ message: 'There is an image upload in progress. Please wait for the upload to complete.' });
+      return;
+    }
+
     this.setState(
       {
         avatarImagePickerOpen: false,
@@ -292,6 +433,12 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   onAvatarImagePress = () => {
+    const { notify } = this.props;
+    if (this.state.uploadingImage) {
+      notify({ message: 'There is an image upload in progress. Please wait for the upload to complete.' });
+      return;
+    }
+
     this.setState(
       {
         avatarImagePickerOpen: true,
@@ -316,6 +463,8 @@ export default class ChannelCreator extends React.PureComponent {
 
   resetChannelCreator = () => {
     this.setState({
+      canSave: false,
+      claimId: null,
       editMode: false,
       displayName: null,
       channelNameUserEdited: false,
@@ -332,6 +481,19 @@ export default class ChannelCreator extends React.PureComponent {
       coverImageUrl: null,
       avatarImagePickerOpen: false,
       coverImagePickerOpen: false,
+
+      currentChannelName: null,
+      description: null,
+      email: null,
+      tags: [],
+      website: null,
+
+      showOptionalFields: false,
+      titleFocused: false,
+      descriptionFocused: false,
+      websiteFocused: false,
+      emailFocused: false,
+      uploadingImage: false,
     });
   };
 
@@ -351,11 +513,23 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   prepareEdit = channel => {
+    const { value } = channel;
+
     this.setState({
+      claimId: channel.claim_id,
       currentPhase: Constants.PHASE_CREATE,
+      editMode: true,
+      coverImageUrl: value && value.cover ? value.cover.url : null,
+      currentChannelName: channel.name.substring(1),
       newChannelName: channel.name.substring(1),
-      newChannelTitle: channel.meta.title ? channel.meta.title : null,
+      newChannelTitle: value ? value.title : null,
       newChannelBid: channel.amount,
+      description: value ? value.description : null,
+      email: value ? value.email : null,
+      website: value ? value.website_url : null,
+      tags: value ? value.tags : [],
+      thumbnailUrl: value && value.thumbnail ? value.thumbnail.url : null,
+      showOptionalFields: value && (value.description || value.email || value.website_url || value.tags),
     });
   };
 
@@ -385,6 +559,37 @@ export default class ChannelCreator extends React.PureComponent {
       ],
       { cancelable: true }
     );
+  };
+
+  handleAddTag = tag => {
+    if (!tag || !this.state.canSave || this.state.creatingChannel) {
+      return;
+    }
+
+    const { notify } = this.props;
+    const { tags } = this.state;
+    const index = tags.indexOf(tag.toLowerCase());
+    if (index === -1) {
+      const newTags = tags.slice();
+      newTags.push(tag);
+      this.setState({ tags: newTags });
+    } else {
+      notify({ message: __(`You already added the "${tag}" tag.`) });
+    }
+  };
+
+  handleRemoveTag = tag => {
+    if (!tag || !this.state.canSave || this.state.creatingChannel) {
+      return;
+    }
+
+    const newTags = this.state.tags.slice();
+    const index = newTags.indexOf(tag.toLowerCase());
+
+    if (index > -1) {
+      newTags.splice(index, 1);
+      this.setState({ tags: newTags });
+    }
   };
 
   selectedChannelIndex = channel => {
@@ -426,14 +631,15 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   render() {
-    const { fetchingChannels, channels = [], navigation } = this.props;
-
-    console.log(channels);
+    const { fetchingChannels, updatingChannel, channels = [], navigation } = this.props;
 
     const {
       autoStyle,
+      autoStyles,
       coverImageUrl,
       currentPhase,
+      canSave,
+      editMode,
       newChannelName,
       newChannelNameError,
       newChannelBid,
@@ -445,6 +651,7 @@ export default class ChannelCreator extends React.PureComponent {
       thumbnailUrl,
       selectionMode,
       selectedChannels,
+      uploadingImage,
     } = this.state;
 
     return (
@@ -492,9 +699,10 @@ export default class ChannelCreator extends React.PureComponent {
             initialNumToRender={10}
             maxToRenderPerBatch={20}
             removeClippedSubviews
-            renderItem={({ item }) => {
-              const itemAutoStyle =
-                ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)];
+            renderItem={({ item, index }) => {
+              const itemAutoStyle = autoStyles.length > index ? autoStyles[index] : autoStyle; /* fallback */
+              const value = item.value;
+              const itemThumbnailUrl = value && value.thumbnail ? value.thumbnail.url : null;
               return (
                 <TouchableOpacity
                   style={channelCreatorStyle.channelListItem}
@@ -502,10 +710,19 @@ export default class ChannelCreator extends React.PureComponent {
                   onLongPress={() => this.handleChannelListItemLongPress(item)}
                 >
                   <View style={[channelCreatorStyle.channelListAvatar, itemAutoStyle]}>
-                    <Text style={channelIconStyle.autothumbCharacter}>{item.name.substring(1, 2).toUpperCase()}</Text>
+                    {itemThumbnailUrl && (
+                      <Image
+                        style={channelCreatorStyle.avatarImage}
+                        resizeMode={'cover'}
+                        source={{ uri: itemThumbnailUrl }}
+                      />
+                    )}
+                    {!itemThumbnailUrl && (
+                      <Text style={channelIconStyle.autothumbCharacter}>{item.name.substring(1, 2).toUpperCase()}</Text>
+                    )}
                   </View>
                   <View style={channelCreatorStyle.channelListDetails}>
-                    {item.value && item.value.title && (
+                    {value && value.title && (
                       <Text style={channelCreatorStyle.channelListTitle}>{item.value.title}</Text>
                     )}
                     <Text style={channelCreatorStyle.channelListName}>{item.name}</Text>
@@ -524,7 +741,7 @@ export default class ChannelCreator extends React.PureComponent {
         )}
 
         {currentPhase === Constants.PHASE_CREATE && (
-          <View style={channelCreatorStyle.createChannelContainer}>
+          <ScrollView style={channelCreatorStyle.createChannelContainer}>
             <View style={channelCreatorStyle.imageSelectors}>
               <TouchableOpacity style={channelCreatorStyle.coverImageTouchArea} onPress={this.onCoverImagePress}>
                 <Image
@@ -536,6 +753,9 @@ export default class ChannelCreator extends React.PureComponent {
                       : require('../../assets/default_channel_cover.png')
                   }
                 />
+                <View style={channelCreatorStyle.infoOverlay}>
+                  <Text style={channelCreatorStyle.infoText}>Tap to change</Text>
+                </View>
               </TouchableOpacity>
 
               <View style={[channelCreatorStyle.avatarImageContainer, autoStyle]}>
@@ -556,19 +776,36 @@ export default class ChannelCreator extends React.PureComponent {
               </View>
             </View>
 
+            {this.state.uploadingImage && (
+              <View style={channelCreatorStyle.uploadProgress}>
+                <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
+                <Text style={channelCreatorStyle.uploadText}>Uploading image...</Text>
+              </View>
+            )}
+
             <View style={channelCreatorStyle.card}>
-              <TextInput
-                style={channelCreatorStyle.channelTitleInput}
-                value={this.state.newChannelTitle}
-                onChangeText={this.handleNewChannelTitleChange}
-                placeholder={'Title'}
-                underlineColorAndroid={Colors.NextLbryGreen}
-              />
+              <View style={channelCreatorStyle.textInputLayout}>
+                {(this.state.titleFocused ||
+                  (this.state.newChannelTitle != null && this.state.newChannelTitle.trim().length > 0)) && (
+                  <Text style={channelCreatorStyle.textInputTitle}>Title</Text>
+                )}
+                <TextInput
+                  editable={canSave && !creatingChannel && !updatingChannel}
+                  style={channelCreatorStyle.inputText}
+                  value={this.state.newChannelTitle}
+                  onChangeText={this.handleNewChannelTitleChange}
+                  placeholder={this.state.titleFocused ? '' : 'Title'}
+                  underlineColorAndroid={Colors.NextLbryGreen}
+                  onFocus={() => this.setState({ titleFocused: true })}
+                  onBlur={() => this.setState({ titleFocused: false })}
+                />
+              </View>
 
               <View style={channelCreatorStyle.channelInputContainer}>
                 <Text style={channelCreatorStyle.channelAt}>@</Text>
 
                 <TextInput
+                  editable={canSave && !creatingChannel && !updatingChannel}
                   style={channelCreatorStyle.channelNameInput}
                   value={this.state.newChannelName}
                   onChangeText={value => this.handleNewChannelNameChange(value, true)}
@@ -582,6 +819,7 @@ export default class ChannelCreator extends React.PureComponent {
               <View style={channelCreatorStyle.bidRow}>
                 <Text style={channelCreatorStyle.label}>Deposit</Text>
                 <TextInput
+                  editable={canSave && !creatingChannel && !updatingChannel}
                   style={channelCreatorStyle.bidAmountInput}
                   value={String(newChannelBid)}
                   onChangeText={this.handleNewChannelBidChange}
@@ -596,24 +834,112 @@ export default class ChannelCreator extends React.PureComponent {
               </Text>
             </View>
 
+            {this.state.showOptionalFields && (
+              <View style={channelCreatorStyle.card}>
+                <View style={channelCreatorStyle.textInputLayout}>
+                  {(this.state.descriptionFocused ||
+                    (this.state.description != null && this.state.description.trim().length > 0)) && (
+                    <Text style={channelCreatorStyle.textInputTitle}>Description</Text>
+                  )}
+                  <TextInput
+                    editable={canSave && !creatingChannel && !updatingChannel}
+                    style={channelCreatorStyle.inputText}
+                    value={this.state.description}
+                    onChangeText={this.handleDescriptionChange}
+                    placeholder={this.state.descriptionFocused ? '' : 'Description'}
+                    underlineColorAndroid={Colors.NextLbryGreen}
+                    onFocus={() => this.setState({ descriptionFocused: true })}
+                    onBlur={() => this.setState({ descriptionFocused: false })}
+                  />
+                </View>
+
+                <View style={channelCreatorStyle.textInputLayout}>
+                  {(this.state.websiteFocused ||
+                    (this.state.website != null && this.state.website.trim().length > 0)) && (
+                    <Text style={channelCreatorStyle.textInputTitle}>Website</Text>
+                  )}
+                  <TextInput
+                    editable={canSave && !creatingChannel && !updatingChannel}
+                    style={channelCreatorStyle.inputText}
+                    value={this.state.website}
+                    onChangeText={this.handleWebsiteChange}
+                    placeholder={this.state.websiteFocused ? '' : 'Website'}
+                    underlineColorAndroid={Colors.NextLbryGreen}
+                    onFocus={() => this.setState({ websiteFocused: true })}
+                    onBlur={() => this.setState({ websiteFocused: false })}
+                  />
+                </View>
+
+                <View style={channelCreatorStyle.textInputLayout}>
+                  {(this.state.emailFocused || (this.state.email != null && this.state.email.trim().length > 0)) && (
+                    <Text style={channelCreatorStyle.textInputTitle}>Email</Text>
+                  )}
+                  <TextInput
+                    editable={canSave && !creatingChannel && !updatingChannel}
+                    style={channelCreatorStyle.inputText}
+                    value={this.state.email}
+                    onChangeText={this.handleEmailChange}
+                    placeholder={this.state.emailFocused ? '' : 'Email'}
+                    underlineColorAndroid={Colors.NextLbryGreen}
+                    onFocus={() => this.setState({ emailFocused: true })}
+                    onBlur={() => this.setState({ emailFocused: false })}
+                  />
+                </View>
+              </View>
+            )}
+
+            {this.state.showOptionalFields && (
+              <View style={channelCreatorStyle.card}>
+                <Text style={channelCreatorStyle.cardTitle}>Tags</Text>
+                <View style={channelCreatorStyle.tagList}>
+                  {this.state.tags &&
+                    this.state.tags.map(tag => (
+                      <Tag
+                        key={tag}
+                        name={tag}
+                        type={'remove'}
+                        style={channelCreatorStyle.tag}
+                        onRemovePress={this.handleRemoveTag}
+                      />
+                    ))}
+                </View>
+                <TagSearch
+                  editable={canSave && !creatingChannel && !updatingChannel}
+                  handleAddTag={this.handleAddTag}
+                  selectedTags={this.state.tags}
+                  showNsfwTags
+                />
+              </View>
+            )}
+
+            <View style={channelCreatorStyle.toggleContainer}>
+              <Link
+                text={this.state.showOptionalFields ? 'Hide optional fields' : 'Show optional fields'}
+                onPress={this.handleModePressed}
+                style={channelCreatorStyle.modeLink}
+              />
+            </View>
+
             <View style={channelCreatorStyle.buttonContainer}>
-              {creatingChannel && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
-              {!creatingChannel && (
+              {(creatingChannel || updatingChannel) && (
+                <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
+              )}
+              {!creatingChannel && !updatingChannel && (
                 <View style={channelCreatorStyle.buttons}>
                   <Link style={channelCreatorStyle.cancelLink} text="Cancel" onPress={this.handleCreateCancel} />
                   <Button
                     style={channelCreatorStyle.createButton}
-                    disabled={!(newChannelName.trim().length > 0 && newChannelBid > 0)}
-                    text="Create"
+                    disabled={!canSave || uploadingImage || !newChannelName || newChannelName.trim().length === 0}
+                    text={editMode ? 'Update' : 'Create'}
                     onPress={this.handleCreateChannelClick}
                   />
                 </View>
               )}
             </View>
-          </View>
+          </ScrollView>
         )}
 
-        <FloatingWalletBalance navigation={navigation} />
+        {Constants.PHASE_CREATE !== this.state.currentPhase && <FloatingWalletBalance navigation={navigation} />}
       </View>
     );
   }

@@ -62,6 +62,7 @@ const channelCreatorStyle = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 24,
+    marginBottom: 16,
   },
   buttons: {
     marginLeft: 16,
@@ -173,6 +174,65 @@ const channelCreatorStyle = StyleSheet.create({
     alignItems: 'center',
     marginTop: 16,
     marginBottom: 16,
+  },
+  textInputLayout: {
+    marginBottom: 4,
+  },
+  textInputTitle: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 12,
+    marginBottom: -10,
+    marginLeft: 4,
+  },
+  inputText: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 16,
+  },
+  toggleContainer: {
+    marginTop: 24,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  modeLink: {
+    color: Colors.LbryGreen,
+    alignSelf: 'flex-end',
+    marginRight: 16,
+  },
+  cardTitle: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 20,
+    marginBottom: 8,
+  },
+  tag: {
+    marginRight: 4,
+    marginBottom: 4,
+  },
+  tagList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  infoOverlay: {
+    position: 'absolute',
+    padding: 4,
+    left: 4,
+    bottom: 4,
+    backgroundColor: '#00000077',
+  },
+  infoText: {
+    color: Colors.White,
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 12,
+  },
+  uploadProgress: {
+    flexDirection: 'row',
+    marginTop: 16,
+    marginLeft: 16,
+    marginRight: 16,
+  },
+  uploadText: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+    marginLeft: 8,
   },
 });
 

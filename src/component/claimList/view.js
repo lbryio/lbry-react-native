@@ -204,7 +204,11 @@ class ClaimList extends React.PureComponent {
 
     const options = this.buildClaimSearchOptions();
     const claimSearchKey = createNormalizedClaimSearchKey(options);
-    const uris = claimSearchByQuery[claimSearchKey];
+    let uris = claimSearchByQuery[claimSearchKey];
+
+    if (uris) {
+      uris = uris.filter(uri => uri && uri.length > 0);
+    }
 
     if (Constants.ORIENTATION_VERTICAL === orientation) {
       return (

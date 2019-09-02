@@ -67,11 +67,12 @@ export default class TagSearch extends React.PureComponent {
   };
 
   render() {
-    const { name, style, type, selectedTags = [], showNsfwTags } = this.props;
+    const { editable, name, style, type, selectedTags = [], showNsfwTags } = this.props;
 
     return (
       <View>
         <TextInput
+          editable={editable}
           style={tagStyle.searchInput}
           placeholder={'Search for more tags'}
           underlineColorAndroid={Colors.NextLbryGreen}

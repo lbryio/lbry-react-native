@@ -250,3 +250,42 @@ export function getOrderBy(item) {
 export function __(str) {
   return str;
 }
+
+export function uploadImageAsset(filePath, success, failure) {
+  const makeid = () => {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 24; i += 1) text += possible.charAt(Math.floor(Math.random() * 62));
+    return text;
+  };
+
+  const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
+  let fileExt = fileName.indexOf('.') > -1 ? fileName.substring(fileName.lastIndexOf('.') + 1) : 0;
+  if (!fileExt || fileExt.trim().length === 0) {
+    fileExt = 'jpg'; // default to jpg
+  }
+  const fileType = `image/${fileExt}`;
+
+  const data = new FormData();
+  const name = makeid();
+  data.append('name', name);
+  data.append('file', { uri: 'file://' + filePath, type: fileType, name: fileName });
+
+  return fetch('https://spee.ch/api/claim/publish', {
+    method: 'POST',
+    body: data,
+  })
+    .then(response => response.json())
+    .then(json => {
+      if (json.success) {
+        if (success) {
+          success({ url: `${json.data.url}.${fileExt}` });
+        }
+      }
+    })
+    .catch(err => {
+      if (failure) {
+        failure(err.message);
+      }
+    });
+}
