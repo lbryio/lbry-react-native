@@ -3,7 +3,7 @@ import { Lbry } from 'lbry-redux';
 import { ActivityIndicator, Linking, NativeModules, Platform, Text, View } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
 import { decode as atob } from 'base-64';
-import { navigateToUri } from 'utils/helper';
+import { navigateToUri, transformUrl } from 'utils/helper';
 import moment from 'moment';
 import AsyncStorage from '@react-native-community/async-storage';
 import Button from 'component/button';
@@ -81,7 +81,7 @@ class SplashScreen extends React.PureComponent {
           });
         }
       } else {
-        navigateToUri(navigation, launchUrl);
+        navigateToUri(navigation, transformUrl(launchUrl));
       }
     }
   };

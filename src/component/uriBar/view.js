@@ -2,7 +2,7 @@
 import React from 'react';
 import { SEARCH_TYPES, isNameValid, isURIValid, normalizeURI } from 'lbry-redux';
 import { FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { navigateToUri } from 'utils/helper';
+import { navigateToUri, transformUrl } from 'utils/helper';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import UriBarItem from './internal/uri-bar-item';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -109,12 +109,19 @@ class UriBar extends React.PureComponent {
   handleSubmitEditing = () => {
     const { navigation, onSearchSubmitted, updateSearchQuery } = this.props;
     if (this.state.inputText) {
-      let inputText = this.state.inputText;
-      if (inputText.startsWith('lbry://') && isURIValid(inputText)) {
+      let inputText = this.state.inputText,
+        inputTextIsUrl = false;
+      if (inputText.startsWith('lbry://')) {
+        const transformedUrl = transformUrl(inputText);
         // if it's a URI (lbry://...), open the file page
-        const uri = normalizeURI(inputText);
-        navigateToUri(navigation, uri);
-      } else {
+        if (transformedUrl && isURIValid(transformedUrl)) {
+          inputTextIsUrl = true;
+          navigateToUri(navigation, transformedUrl);
+        }
+      }
+
+      // couldn't parse the inputText as a URL for some reason, so do a search instead
+      if (!inputTextIsUrl) {
         updateSearchQuery(inputText);
         // Not a URI, default to a search request
         if (onSearchSubmitted) {
