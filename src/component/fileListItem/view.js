@@ -46,7 +46,7 @@ class FileListItem extends React.PureComponent {
     const { autoplay, claim, featuredResult, navigation, uri, shortUrl } = this.props;
 
     if (featuredResult && !claim) {
-      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISH, params: { vanityUrl: uri } });
+      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISH, params: { vanityUrl: uri.trim() } });
     } else {
       navigateToUri(navigation, shortUrl || uri, { autoplay });
     }
@@ -176,7 +176,7 @@ class FileListItem extends React.PureComponent {
 
             {featuredResult && !isResolving && !claim && (
               <View style={fileListStyle.titleContainer}>
-                <Text style={fileListStyle.featuredTitle}>Nothing here. Claim this address!</Text>
+                <Text style={fileListStyle.featuredTitle}>Nothing here. Publish something!</Text>
               </View>
             )}
 

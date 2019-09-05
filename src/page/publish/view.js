@@ -184,7 +184,7 @@ class PublishPage extends React.PureComponent {
         const { editMode, claimToEdit, vanityUrl } = navigation.state.params;
         if (editMode) {
           this.prepareEdit(claimToEdit);
-        } else if (vanityUrl && vanityUrl.trim().length > 0) {
+        } else if (vanityUrl) {
           const { claimName } = parseURI(vanityUrl);
           this.setState({
             name: claimName,
