@@ -29,7 +29,7 @@ import {
 } from 'lbryinc';
 import { doSetClientSetting } from 'redux/actions/settings';
 import { makeSelectClientSetting } from 'redux/selectors/settings';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Verification from './view';
 
 const select = state => ({
@@ -54,13 +54,13 @@ const select = state => ({
 
 const perform = dispatch => ({
   addUserEmail: email => dispatch(doUserEmailNew(email)),
-  addUserPhone: (phone, country_code) => dispatch(doUserPhoneNew(phone, country_code)),
+  addUserPhone: (phone, countryCode) => dispatch(doUserPhoneNew(phone, countryCode)),
   getSync: password => dispatch(doGetSync(password)),
   checkSync: () => dispatch(doCheckSync()),
   verifyPhone: verificationCode => dispatch(doUserPhoneVerify(verificationCode)),
   notify: data => dispatch(doToast(data)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
-  setDefaultAccount: () => dispatch(doSetDefaultAccount()),
+  setDefaultAccount: (success, failure) => dispatch(doSetDefaultAccount(success, failure)),
   setEmailToVerify: email => dispatch(doUserEmailToVerify(email)),
   syncApply: (hash, data, password) => dispatch(doSyncApply(hash, data, password)),
   resendVerificationEmail: email => dispatch(doUserResendVerificationEmail(email)),
