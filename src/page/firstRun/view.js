@@ -33,7 +33,7 @@ class FirstRunScreen extends React.PureComponent {
     isEmailVerified: false,
     skipAccountConfirmed: false,
     showBottomContainer: false,
-    walletPassword: null,
+    walletPassword: '',
     syncApplyStarted: false,
   };
 
@@ -253,7 +253,7 @@ class FirstRunScreen extends React.PureComponent {
   };
 
   onWalletPasswordChanged = password => {
-    this.setState({ walletPassword: password });
+    this.setState({ walletPassword: password !== null ? password : '' });
   };
 
   onWalletViewLayout = () => {
