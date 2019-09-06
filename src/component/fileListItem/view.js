@@ -42,6 +42,13 @@ class FileListItem extends React.PureComponent {
     }
   }
 
+  componentDidUpdate() {
+    const { claim, resolveUri, uri } = this.props;
+    if (!claim) {
+      resolveUri(uri);
+    }
+  }
+
   defaultOnPress = () => {
     const { autoplay, claim, featuredResult, navigation, uri, shortUrl } = this.props;
 

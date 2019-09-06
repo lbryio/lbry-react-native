@@ -13,7 +13,7 @@
         "@expo/vector-icons": "^8.1.0",
         "gfycat-style-urls": "^1.0.3",
         "lbry-redux": "lbryio/lbry-redux#362d764c4c0de23032b6871b4d54207dc548028c",
-        "lbryinc": "lbryio/lbryinc#4c761084990557d379c85e1c998fcae7e5db143a",
+        "lbryinc": "lbryio/lbryinc#35ca4fbc3dceee9a80fc59f41aba759b3d6f0d10",
         "lodash": ">=4.17.11",
         "merge": ">=1.2.1",
         "moment": "^2.22.1",
