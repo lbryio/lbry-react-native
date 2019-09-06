@@ -130,7 +130,7 @@ class SplashScreen extends React.PureComponent {
       if (user && user.id && user.has_verified_email) {
         // user already authenticated
         NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
-          if (walletPassword && walletPassword.trim().length > 0) {
+          if (walletPassword) {
             getSync(walletPassword);
           }
           this.navigateToMain();

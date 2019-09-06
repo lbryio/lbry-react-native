@@ -69,7 +69,11 @@ class SyncVerifyPage extends React.PureComponent {
         }
         setDefaultAccount();
         setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
-        navigation.goBack();
+
+        // unlock the wallet
+        Lbry.account_unlock({ password: this.state.password ? this.state.password : '' })
+          .then(() => navigation.goBack())
+          .catch(err => notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' }));
       }
     }
   }

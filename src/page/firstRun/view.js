@@ -91,7 +91,11 @@ class FirstRunScreen extends React.PureComponent {
         }
         setDefaultAccount();
         setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
-        this.closeFinalPage();
+
+        // unlock the wallet
+        Lbry.account_unlock({ password: this.state.walletPassword || '' })
+          .then(() => this.closeFinalPage())
+          .catch(err => notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' }));
       }
     }
 
