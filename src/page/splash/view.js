@@ -3,7 +3,7 @@ import { Lbry } from 'lbry-redux';
 import { ActivityIndicator, Linking, NativeModules, Platform, Text, View } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
 import { decode as atob } from 'base-64';
-import { navigateToUri } from 'utils/helper';
+import { navigateToUri, transformUrl } from 'utils/helper';
 import moment from 'moment';
 import AsyncStorage from '@react-native-community/async-storage';
 import Button from 'component/button';
@@ -81,7 +81,7 @@ class SplashScreen extends React.PureComponent {
           });
         }
       } else {
-        navigateToUri(navigation, launchUrl);
+        navigateToUri(navigation, transformUrl(launchUrl));
       }
     }
   };
@@ -130,7 +130,7 @@ class SplashScreen extends React.PureComponent {
       if (user && user.id && user.has_verified_email) {
         // user already authenticated
         NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
-          if (walletPassword && walletPassword.trim().length > 0) {
+          if (walletPassword) {
             getSync(walletPassword);
           }
           this.navigateToMain();
@@ -166,14 +166,14 @@ class SplashScreen extends React.PureComponent {
 
       // For now, automatically unlock the wallet if a password is set so that downloads work
       NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(password => {
-        if (password && password.trim().length > 0) {
+        if (password) {
           this.setState({
             message: 'Unlocking account',
             details: 'Decrypting wallet',
           });
 
           // unlock the wallet and then finish the splash screen
-          Lbry.account_unlock({ password })
+          Lbry.account_unlock({ password: password || '' })
             .then(() => {
               this.setState({
                 message: testingNetwork,

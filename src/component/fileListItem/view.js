@@ -13,6 +13,10 @@ import ProgressBar from 'component/progressBar';
 import fileListStyle from 'styles/fileList';
 
 class FileListItem extends React.PureComponent {
+  state = {
+    url: null,
+  };
+
   getStorageForFileInfo = fileInfo => {
     if (!fileInfo.completed) {
       const written = formatBytes(fileInfo.written_bytes);
@@ -39,6 +43,13 @@ class FileListItem extends React.PureComponent {
     const { claim, resolveUri, uri } = this.props;
     if (!claim) {
       resolveUri(uri);
+    }
+  }
+
+  componentDidUpdate() {
+    const { claim, resolveUri, uri } = this.props;
+    if (!claim && uri !== this.state.url) {
+      this.setState({ url: uri }, () => resolveUri(uri));
     }
   }
 

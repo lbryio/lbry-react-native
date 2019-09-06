@@ -33,7 +33,7 @@ class FirstRunScreen extends React.PureComponent {
     isEmailVerified: false,
     skipAccountConfirmed: false,
     showBottomContainer: false,
-    walletPassword: null,
+    walletPassword: '',
     syncApplyStarted: false,
   };
 
@@ -86,12 +86,25 @@ class FirstRunScreen extends React.PureComponent {
         this.setState({ showBottomContainer: true });
       } else {
         // password successfully verified
-        if (NativeModules.UtilityModule) {
-          NativeModules.UtilityModule.setSecureValue(Constants.KEY_FIRST_RUN_PASSWORD, this.state.walletPassword);
-        }
-        setDefaultAccount();
-        setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
-        this.closeFinalPage();
+        NativeModules.UtilityModule.setSecureValue(Constants.KEY_FIRST_RUN_PASSWORD, this.state.walletPassword);
+        setDefaultAccount(
+          () => {
+            setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
+
+            // unlock the wallet
+            Lbry.account_unlock({ password: this.state.walletPassword ? this.state.walletPassword : '' })
+              .then(() => this.closeFinalPage())
+              .catch(err =>
+                notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' })
+              );
+          },
+          err => {
+            notify({
+              message:
+                'The account restore operation could not be completed successfully. Please restart the app and try again.',
+            });
+          }
+        );
       }
     }
 
@@ -253,7 +266,7 @@ class FirstRunScreen extends React.PureComponent {
   };
 
   onWalletPasswordChanged = password => {
-    this.setState({ walletPassword: password });
+    this.setState({ walletPassword: password !== null ? password : '' });
   };
 
   onWalletViewLayout = () => {

@@ -5,7 +5,7 @@ import { BarPasswordStrengthDisplay } from 'react-native-password-strength-meter
 import Button from 'component/button';
 import Link from 'component/link';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import firstRunStyle from 'styles/firstRun';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import rewardStyle from 'styles/reward';
@@ -62,11 +62,29 @@ class SyncVerifyPage extends React.PureComponent {
       } else {
         // password successfully verified
         if (NativeModules.UtilityModule) {
-          NativeModules.UtilityModule.setSecureValue(Constants.KEY_FIRST_RUN_PASSWORD, this.state.password);
+          NativeModules.UtilityModule.setSecureValue(
+            Constants.KEY_FIRST_RUN_PASSWORD,
+            this.state.password ? this.state.password : ''
+          );
         }
-        setDefaultAccount();
-        setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
-        navigation.goBack();
+        setDefaultAccount(
+          () => {
+            setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
+
+            // unlock the wallet
+            Lbry.account_unlock({ password: this.state.password ? this.state.password : '' })
+              .then(() => navigation.goBack())
+              .catch(err =>
+                notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' })
+              );
+          },
+          err => {
+            notify({
+              message:
+                'The account restore operation could not be completed successfully. Please restart the app and try again.',
+            });
+          }
+        );
       }
     }
   }
