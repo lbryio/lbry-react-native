@@ -657,8 +657,7 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   render() {
-    const { fetchingChannels, updatingChannel, channels = [], navigation } = this.props;
-
+    const { abandoningClaimIds, fetchingChannels, updatingChannel, channels = [], navigation } = this.props;
     const {
       autoStyle,
       autoStyles,
@@ -679,6 +678,8 @@ export default class ChannelCreator extends React.PureComponent {
       selectedChannels,
       uploadingImage,
     } = this.state;
+
+    console.log(abandoningClaimIds);
 
     return (
       <View style={channelCreatorStyle.container}>
@@ -761,7 +762,7 @@ export default class ChannelCreator extends React.PureComponent {
                 </TouchableOpacity>
               );
             }}
-            data={channels}
+            data={channels.filter(channel => !abandoningClaimIds.includes(channel.claim_id))}
             keyExtractor={(item, index) => item.claim_id}
           />
         )}

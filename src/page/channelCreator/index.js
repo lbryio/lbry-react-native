@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import {
+  selectAbandoningIds,
   selectBalance,
   selectMyChannelClaims,
   selectFetchingMyChannels,
@@ -16,6 +17,7 @@ import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import ChannelCreator from './view';
 
 const select = state => ({
+  abandoningClaimIds: selectAbandoningIds(state),
   channels: selectMyChannelClaims(state),
   fetchingChannels: selectFetchingMyChannels(state),
   balance: selectBalance(state),
