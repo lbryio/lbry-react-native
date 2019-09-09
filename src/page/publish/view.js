@@ -19,6 +19,7 @@ import {
   isNameValid,
   buildURI,
   normalizeURI,
+  parseURI,
   regexInvalidURI,
   CLAIM_VALUES,
   LICENSES,
@@ -123,6 +124,7 @@ class PublishPage extends React.PureComponent {
     tags: [],
     selectedChannel: null,
     uploadedThumbnailUri: null,
+    vanityUrlSet: false,
 
     // other
     publishStarted: false,
@@ -179,9 +181,16 @@ class PublishPage extends React.PureComponent {
 
       // Check if this is an edit action
       if (navigation.state.params) {
-        const { editMode, claimToEdit } = navigation.state.params;
+        const { editMode, claimToEdit, vanityUrl } = navigation.state.params;
         if (editMode) {
           this.prepareEdit(claimToEdit);
+        } else if (vanityUrl) {
+          const { claimName } = parseURI(vanityUrl);
+          this.setState({
+            name: claimName,
+            hasEditedContentAddress: true,
+            vanityUrlSet: true,
+          });
         }
       }
     });
@@ -233,6 +242,7 @@ class PublishPage extends React.PureComponent {
         title,
         currentThumbnailUri: thumbnailUrl,
         uploadedThumbnailUri: thumbnailUrl,
+        vanityUrlSet: false,
       },
       () => {
         this.handleNameChange(name);
@@ -379,7 +389,7 @@ class PublishPage extends React.PureComponent {
       {
         currentMedia: media,
         title: null, // no title autogeneration (user will fill this in)
-        name: this.formatNameForTitle(name),
+        name: this.state.hasEditedContentAddress ? this.state.name : this.formatNameForTitle(name),
         currentPhase: Constants.PHASE_DETAILS,
       },
       () => this.handleNameChange(this.state.name)
@@ -425,6 +435,8 @@ class PublishPage extends React.PureComponent {
         tags: [],
         selectedChannel: null,
         uploadedThumbnailUri: null,
+
+        vanityUrlSet: false,
       },
       () => {
         // reset thumbnail

@@ -3,6 +3,7 @@ import { normalizeURI, parseURI } from 'lbry-redux';
 import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native';
 import { navigateToUri, formatBytes } from 'utils/helper';
 import Colors from 'styles/colors';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import DateTime from 'component/dateTime';
 import FileItemMedia from 'component/fileItemMedia';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -12,6 +13,10 @@ import ProgressBar from 'component/progressBar';
 import fileListStyle from 'styles/fileList';
 
 class FileListItem extends React.PureComponent {
+  state = {
+    url: null,
+  };
+
   getStorageForFileInfo = fileInfo => {
     if (!fileInfo.completed) {
       const written = formatBytes(fileInfo.written_bytes);
@@ -41,9 +46,21 @@ class FileListItem extends React.PureComponent {
     }
   }
 
+  componentDidUpdate() {
+    const { claim, resolveUri, uri } = this.props;
+    if (!claim && uri !== this.state.url) {
+      this.setState({ url: uri }, () => resolveUri(uri));
+    }
+  }
+
   defaultOnPress = () => {
-    const { autoplay, navigation, uri, shortUrl } = this.props;
-    navigateToUri(navigation, shortUrl || uri, { autoplay });
+    const { autoplay, claim, featuredResult, navigation, uri, shortUrl } = this.props;
+
+    if (featuredResult && !claim) {
+      navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISH, params: { vanityUrl: uri.trim() } });
+    } else {
+      navigateToUri(navigation, shortUrl || uri, { autoplay });
+    }
   };
 
   onPressHandler = () => {
@@ -111,7 +128,7 @@ class FileListItem extends React.PureComponent {
       // shouldHide = 'channel' === claim.value_type;
     }
 
-    if (shouldHide || (!isResolvingUri && !claim) || (featuredResult && !isResolvingUri && !claim && !title && !name)) {
+    if (shouldHide || (!isResolvingUri && !claim && !featuredResult)) {
       return null;
     }
 
@@ -130,7 +147,7 @@ class FileListItem extends React.PureComponent {
             style={fileListStyle.thumbnail}
             duration={duration}
             resizeMode="cover"
-            title={title || name}
+            title={title || name || normalizeURI(uri).substring(7)}
             thumbnail={thumbnail}
           />
           {selected && (
@@ -167,6 +184,13 @@ class FileListItem extends React.PureComponent {
                 {isRewardContent && <Icon style={fileListStyle.rewardIcon} name="award" size={12} />}
               </View>
             )}
+
+            {featuredResult && !isResolving && !claim && (
+              <View style={fileListStyle.titleContainer}>
+                <Text style={fileListStyle.featuredTitle}>Nothing here. Publish something!</Text>
+              </View>
+            )}
+
             {channel && !hideChannel && (
               <Link
                 style={fileListStyle.publisher}

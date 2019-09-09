@@ -1,5 +1,5 @@
 import { NavigationActions, StackActions } from 'react-navigation';
-import { buildURI, isURIValid } from 'lbry-redux';
+import { buildURI, isURIValid, normalizeURI } from 'lbry-redux';
 import { doPopDrawerStack, doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import Constants, { DrawerRoutes } from 'constants'; // eslint-disable-line node/no-deprecated-api
 
@@ -244,6 +244,12 @@ export function getOrderBy(item) {
   }
 
   return orderBy;
+}
+
+// replace occurrences of ':' with '#' in a url (entered in the URI bar)
+export function transformUrl(url) {
+  const start = 'lbry://'.length;
+  return normalizeURI(url.substring(start).replace(/:/g, '#'));
 }
 
 // i18n placeholder until we find a good react-native i18n module

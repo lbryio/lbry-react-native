@@ -41,7 +41,7 @@ import {
 } from 'lbryinc';
 import { makeSelectClientSetting } from 'redux/selectors/settings';
 import { decode as atob } from 'base-64';
-import { dispatchNavigateBack, dispatchNavigateToUri } from 'utils/helper';
+import { dispatchNavigateBack, dispatchNavigateToUri, transformUrl } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -420,7 +420,7 @@ class AppWithNavigationState extends React.Component {
           );
         }
       } else {
-        dispatchNavigateToUri(dispatch, nav, evt.url);
+        dispatchNavigateToUri(dispatch, nav, transformUrl(evt.url));
       }
     }
   };

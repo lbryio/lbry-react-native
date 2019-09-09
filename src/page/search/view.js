@@ -101,13 +101,7 @@ class SearchPage extends React.PureComponent {
     const { currentUri } = this.state;
 
     return (
-      <FileListItem
-        uri={currentUri}
-        featuredResult
-        style={searchStyle.featuredResultItem}
-        navigation={navigation}
-        onPress={() => navigateToUri(navigation, this.state.currentUri)}
-      />
+      <FileListItem uri={currentUri} featuredResult style={searchStyle.featuredResultItem} navigation={navigation} />
     );
   };
 
