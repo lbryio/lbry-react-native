@@ -165,6 +165,9 @@ const channelPageStyle = StyleSheet.create({
   claimListContent: {
     paddingTop: 16,
   },
+  actionButton: {
+    backgroundColor: Colors.White,
+  },
 });
 
 export default channelPageStyle;

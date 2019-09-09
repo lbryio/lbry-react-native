@@ -159,10 +159,22 @@ class ChannelPage extends React.PureComponent {
     );
   };
 
+  onEditPressed = () => {
+    const { claim, navigation } = this.props;
+    if (claim) {
+      const { permanent_url: permanentUrl } = claim;
+      navigation.navigate({
+        routeName: Constants.DRAWER_ROUTE_CHANNEL_CREATOR,
+        params: { editChannelUrl: permanentUrl },
+      });
+    }
+  };
+
   render() {
-    const { claim, navigation, uri, drawerStack, popDrawerStack, sortByItem, timeItem } = this.props;
+    const { channels, claim, navigation, uri, drawerStack, popDrawerStack, sortByItem, timeItem } = this.props;
     const { name, permanent_url: permanentUrl } = claim;
     const { autoStyle, showSortPicker, showTimePicker } = this.state;
+    const ownedChannel = channels ? channels.map(channel => channel.permanent_url).includes(permanentUrl) : false;
 
     let thumbnailUrl,
       coverUrl,
@@ -218,12 +230,23 @@ class ChannelPage extends React.PureComponent {
             </View>
 
             <View style={channelPageStyle.subscribeButtonContainer}>
-              <SubscribeButton style={channelPageStyle.subscribeButton} uri={fullUri} name={name} />
-              <SubscribeNotificationButton
-                style={[channelPageStyle.subscribeButton, channelPageStyle.bellButton]}
-                uri={fullUri}
-                name={name}
-              />
+              {ownedChannel && (
+                <Button
+                  style={channelPageStyle.actionButton}
+                  theme={'light'}
+                  icon={'edit'}
+                  text={'Edit'}
+                  onPress={this.onEditPressed}
+                />
+              )}
+              {!ownedChannel && <SubscribeButton style={channelPageStyle.subscribeButton} uri={fullUri} name={name} />}
+              {!ownedChannel && (
+                <SubscribeNotificationButton
+                  style={[channelPageStyle.subscribeButton, channelPageStyle.bellButton]}
+                  uri={fullUri}
+                  name={name}
+                />
+              )}
             </View>
           </View>
 

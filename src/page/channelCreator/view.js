@@ -42,12 +42,13 @@ export default class ChannelCreator extends React.PureComponent {
     newChannelBid: 0.1,
     addingChannel: false,
     creatingChannel: false,
+    editChannelUrl: null,
     newChannelNameError: '',
     newChannelBidError: '',
     createChannelError: undefined,
     showCreateChannel: false,
-    thumbnailUrl: null,
-    coverImageUrl: null,
+    thumbnailUrl: '',
+    coverImageUrl: '',
 
     avatarImagePickerOpen: false,
     coverImagePickerOpen: false,
@@ -132,9 +133,11 @@ export default class ChannelCreator extends React.PureComponent {
       fetchChannelListMine,
       fetchClaimListMine,
       fetchingChannels,
+      navigation,
       pushDrawerStack,
       setPlayerVisible,
     } = this.props;
+
     NativeModules.Firebase.setCurrentScreen('Channels').then(result => {
       pushDrawerStack();
       setPlayerVisible();
@@ -147,6 +150,11 @@ export default class ChannelCreator extends React.PureComponent {
 
       DeviceEventEmitter.addListener('onDocumentPickerFilePicked', this.onFilePicked);
       DeviceEventEmitter.addListener('onDocumentPickerCanceled', this.onPickerCanceled);
+
+      if (navigation.state.params) {
+        const { editChannelUrl } = navigation.state.params;
+        this.setState({ editChannelUrl });
+      }
     });
   };
 
@@ -161,15 +169,18 @@ export default class ChannelCreator extends React.PureComponent {
       // check which image we're trying to upload
       // should only be one or the other, so just default to cover
       const isCover = this.state.coverImagePickerOpen;
+      const fileUrl = `file://${evt.path}`;
       this.setState(
         {
           uploadingImage: true,
           avatarImagePickerOpen: false,
           coverImagePickerOpen: false,
+          coverImageUrl: isCover ? fileUrl : '', // set the path to local url first, before uploading
+          thumbnailUrl: isCover ? '' : fileUrl, // same as above
         },
         () => {
           uploadImageAsset(
-            `file://${evt.path}`,
+            fileUrl,
             ({ url }) => {
               if (isCover) {
                 this.setState({ coverImageUrl: url, uploadingImage: false });
@@ -195,11 +206,26 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   componentDidUpdate() {
-    const { channels } = this.props;
-    if (channels && this.state.autoStyles.length !== channels.length) {
-      this.setState({
-        autoStyles: this.generateAutoStyles(channels.length),
-      });
+    const { channels = [] } = this.props;
+    const { editChannelUrl } = this.state;
+    if (channels.length > 0) {
+      if (this.state.autoStyles.length !== channels.length) {
+        this.setState({
+          autoStyles: this.generateAutoStyles(channels.length),
+        });
+      }
+
+      if (editChannelUrl) {
+        this.setState({ editChannelUrl: null }, () => {
+          let channelToEdit = null;
+          for (let i = 0; i < channels.length; i++) {
+            if (editChannelUrl === channels[i].permanent_url) {
+              this.prepareEdit(channels[i]);
+              return;
+            }
+          }
+        });
+      }
     }
   }
 
@@ -748,40 +774,44 @@ export default class ChannelCreator extends React.PureComponent {
                   style={channelCreatorStyle.coverImage}
                   resizeMode={'cover'}
                   source={
-                    coverImageUrl && coverImageUrl.trim().length > 0
+                    coverImageUrl !== null && coverImageUrl.trim().length > 0
                       ? { uri: coverImageUrl }
                       : require('../../assets/default_channel_cover.png')
                   }
                 />
-                <View style={channelCreatorStyle.infoOverlay}>
-                  <Text style={channelCreatorStyle.infoText}>Tap to change</Text>
+                <View style={channelCreatorStyle.editOverlay}>
+                  <Icon name={'edit'} style={channelCreatorStyle.editIcon} />
                 </View>
+
+                {this.state.uploadingImage && (
+                  <View style={channelCreatorStyle.uploadProgress}>
+                    <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
+                    <Text style={channelCreatorStyle.uploadText}>Uploading image...</Text>
+                  </View>
+                )}
               </TouchableOpacity>
 
               <View style={[channelCreatorStyle.avatarImageContainer, autoStyle]}>
                 <TouchableOpacity style={channelCreatorStyle.avatarTouchArea} onPress={this.onAvatarImagePress}>
-                  {thumbnailUrl && (
+                  {thumbnailUrl !== null && thumbnailUrl.trim().length > 0 && (
                     <Image
                       style={channelCreatorStyle.avatarImage}
                       resizeMode={'cover'}
                       source={{ uri: thumbnailUrl }}
                     />
                   )}
-                  {(!thumbnailUrl || thumbnailUrl.trim().length === 0) && newChannelName.length > 1 && (
+                  {thumbnailUrl !== null && thumbnailUrl.trim().length === 0 && newChannelName.length > 1 && (
                     <Text style={channelIconStyle.autothumbCharacter}>
                       {newChannelName.substring(0, 1).toUpperCase()}
                     </Text>
                   )}
+
+                  <View style={channelCreatorStyle.thumbnailEditOverlay}>
+                    <Icon name={'edit'} style={channelCreatorStyle.editIcon} />
+                  </View>
                 </TouchableOpacity>
               </View>
             </View>
-
-            {this.state.uploadingImage && (
-              <View style={channelCreatorStyle.uploadProgress}>
-                <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
-                <Text style={channelCreatorStyle.uploadText}>Uploading image...</Text>
-              </View>
-            )}
 
             <View style={channelCreatorStyle.card}>
               <View style={channelCreatorStyle.textInputLayout}>
@@ -801,17 +831,24 @@ export default class ChannelCreator extends React.PureComponent {
                 />
               </View>
 
-              <View style={channelCreatorStyle.channelInputContainer}>
-                <Text style={channelCreatorStyle.channelAt}>@</Text>
-
-                <TextInput
-                  editable={canSave && !creatingChannel && !updatingChannel}
-                  style={channelCreatorStyle.channelNameInput}
-                  value={this.state.newChannelName}
-                  onChangeText={value => this.handleNewChannelNameChange(value, true)}
-                  placeholder={'Channel name'}
-                  underlineColorAndroid={Colors.NextLbryGreen}
-                />
+              <View style={channelCreatorStyle.channelInputLayout}>
+                {(this.state.channelNameFocused ||
+                  (this.state.newChannelName != null && this.state.newChannelName.trim().length > 0)) && (
+                  <Text style={channelCreatorStyle.textInputTitle}>Channel name</Text>
+                )}
+                <View>
+                  <Text style={channelCreatorStyle.channelAt}>@</Text>
+                  <TextInput
+                    editable={canSave && !creatingChannel && !updatingChannel}
+                    style={channelCreatorStyle.channelNameInput}
+                    value={this.state.newChannelName}
+                    onChangeText={value => this.handleNewChannelNameChange(value, true)}
+                    placeholder={this.state.channelNameFocused ? '' : 'Channel name'}
+                    underlineColorAndroid={Colors.NextLbryGreen}
+                    onFocus={() => this.setState({ channelNameFocused: true })}
+                    onBlur={() => this.setState({ channelNameFocused: false })}
+                  />
+                </View>
               </View>
               {newChannelNameError.length > 0 && (
                 <Text style={channelCreatorStyle.inlineError}>{newChannelNameError}</Text>
@@ -844,6 +881,7 @@ export default class ChannelCreator extends React.PureComponent {
                   <TextInput
                     editable={canSave && !creatingChannel && !updatingChannel}
                     style={channelCreatorStyle.inputText}
+                    multiline
                     value={this.state.description}
                     onChangeText={this.handleDescriptionChange}
                     placeholder={this.state.descriptionFocused ? '' : 'Description'}

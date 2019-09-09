@@ -100,7 +100,7 @@ class FilePage extends React.PureComponent {
     DeviceEventEmitter.addListener('onDownloadUpdated', this.handleDownloadUpdated);
     DeviceEventEmitter.addListener('onDownloadCompleted', this.handleDownloadCompleted);
 
-    const { fileInfo, isResolvingUri, resolveUri, navigation } = this.props;
+    const { fetchChannelListMine, fileInfo, isResolvingUri, resolveUri, navigation } = this.props;
     const { uri, uriVars } = navigation.state.params;
     this.setState({ uri, uriVars });
 
@@ -108,6 +108,7 @@ class FilePage extends React.PureComponent {
 
     this.fetchFileInfo(this.props);
     this.fetchCostInfo(this.props);
+    fetchChannelListMine();
 
     if (NativeModules.Firebase) {
       NativeModules.Firebase.track('open_file_page', { uri: uri });
@@ -567,6 +568,7 @@ class FilePage extends React.PureComponent {
     const {
       balance,
       claim,
+      channels,
       channelUri,
       costInfo,
       fileInfo,
@@ -585,6 +587,9 @@ class FilePage extends React.PureComponent {
     } = this.props;
     const { uri, autoplay } = navigation.state.params;
 
+    console.log(channels);
+    const myChannelUris = channels ? channels.map(channel => channel.permanent_url) : [];
+    const ownedClaim = myClaimUris.includes(uri) || myChannelUris.includes(uri);
     let innerContent = null;
     if ((isResolvingUri && !claim) || !claim) {
       return (
@@ -597,7 +602,12 @@ class FilePage extends React.PureComponent {
           )}
           {claim === null && !isResolvingUri && (
             <View style={filePageStyle.container}>
-              <Text style={filePageStyle.emptyClaimText}>There's nothing at this location.</Text>
+              {ownedClaim && (
+                <Text style={filePageStyle.emptyClaimText}>
+                  It looks like you just claimed this address! Your content will appear in a few minutes.
+                </Text>
+              )}
+              {!ownedClaim && <Text style={filePageStyle.emptyClaimText}>There's nothing at this location.</Text>}
             </View>
           )}
           <UriBar value={uri} navigation={navigation} />

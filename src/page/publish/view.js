@@ -826,6 +826,7 @@ class PublishPage extends React.PureComponent {
               )}
               <TextInput
                 editable={this.state.canPublish && !this.state.publishStarted}
+                multiline
                 placeholder={this.state.descriptionFocused ? '' : 'Description'}
                 style={publishStyle.inputText}
                 value={this.state.description}
