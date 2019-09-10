@@ -86,7 +86,7 @@ const publishStyle = StyleSheet.create({
     marginTop: 8,
   },
   photo: {
-    height: 240,
+    height: 120,
     justifyContent: 'center',
     alignItems: 'center',
   },

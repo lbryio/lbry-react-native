@@ -79,6 +79,7 @@ class PublishPage extends React.PureComponent {
   state = {
     canPublish: false,
     canUseCamera: false,
+    documentPickerOpen: false,
     editMode: false,
     titleFocused: false,
     descriptionFocused: false,
@@ -137,6 +138,8 @@ class PublishPage extends React.PureComponent {
     // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
     DeviceEventEmitter.addListener('onGalleryThumbnailChecked', this.handleGalleryThumbnailChecked);
     DeviceEventEmitter.addListener('onAllGalleryThumbnailsChecked', this.handleAllGalleryThumbnailsChecked);
+    DeviceEventEmitter.addListener('onDocumentPickerFilePicked', this.onFilePicked);
+    DeviceEventEmitter.addListener('onDocumentPickerCanceled', this.onPickerCanceled);
   }
 
   componentWillUnmount() {
@@ -145,6 +148,8 @@ class PublishPage extends React.PureComponent {
     }
     DeviceEventEmitter.removeListener('onGalleryThumbnailChecked', this.handleGalleryThumbnailChecked);
     DeviceEventEmitter.removeListener('onAllGalleryThumbnailsChecked', this.handleAllGalleryThumbnailsChecked);
+    DeviceEventEmitter.removeListener('onDocumentPickerFilePicked', this.onFilePicked);
+    DeviceEventEmitter.removeListener('onDocumentPickerCanceled', this.onPickerCanceled);
   }
 
   handleGalleryThumbnailChecked = evt => {
@@ -406,6 +411,7 @@ class PublishPage extends React.PureComponent {
     this.setState(
       {
         publishStarted: false,
+        documentPickerOpen: false,
         editMode: false,
 
         currentMedia: null,
@@ -455,6 +461,36 @@ class PublishPage extends React.PureComponent {
     if (!this.state.showCameraOverlay) {
       this.setState({ canUseCamera: true, showCameraOverlay: true, videoRecordingMode: false });
     }
+  };
+
+  handleUploadPressed = () => {
+    if (this.state.documentPickerOpen) {
+      return;
+    }
+
+    this.setState(
+      {
+        documentPickerOpen: true,
+      },
+      () => {
+        NativeModules.UtilityModule.openDocumentPicker('*/*');
+      }
+    );
+  };
+
+  onFilePicked = evt => {
+    this.setState({ documentPickerOpen: false }, () => {
+      const currentMedia = {
+        id: -1,
+        filePath: `file://${evt.path}`,
+        duration: 0,
+      };
+      this.setCurrentMedia(currentMedia);
+    });
+  };
+
+  onPickerCanceled = () => {
+    this.setState({ documentPickerOpen: false });
   };
 
   handleCloseCameraPressed = () => {
@@ -725,12 +761,10 @@ class PublishPage extends React.PureComponent {
                   <Icon name="camera" size={48} color={Colors.White} />
                   <Text style={publishStyle.actionText}>Take a photo</Text>
                 </TouchableOpacity>
-                {false && (
-                  <TouchableOpacity style={publishStyle.upload} onPress={this.handleUploadPressed}>
-                    <Icon name="file-upload" size={48} color={Colors.White} />
-                    <Text style={publishStyle.actionText}>Upload a file</Text>
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity style={publishStyle.upload} onPress={this.handleUploadPressed}>
+                  <Icon name="file-upload" size={48} color={Colors.White} />
+                  <Text style={publishStyle.actionText}>Upload a file</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
