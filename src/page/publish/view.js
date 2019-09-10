@@ -120,6 +120,7 @@ class PublishPage extends React.PureComponent {
     otherLicenseDescription: '',
     name: null,
     price: 0,
+    currency: 'LBC',
     uri: null,
     tags: [],
     selectedChannel: null,
@@ -236,6 +237,7 @@ class PublishPage extends React.PureComponent {
         licenseUrl,
         otherLicenseDescription,
         name,
+        currency: fee && fee.currency ? fee.currency : 'LBC',
         price: fee && fee.amount ? fee.amount : 0,
         priceSet: fee && fee.amount > 0,
         tags: tags && tags.length > 0 ? tags : [],
@@ -291,6 +293,7 @@ class PublishPage extends React.PureComponent {
       bid,
       channelName,
       currentMedia,
+      currency,
       description,
       language,
       license,
@@ -334,7 +337,7 @@ class PublishPage extends React.PureComponent {
       otherLicenseDescription,
       name: name || undefined,
       contentIsFree: !priceSet,
-      fee: { currency: 'LBC', amount: price },
+      fee: { currency, amount: price },
       uri: uri || undefined,
       channel: CLAIM_VALUES.CHANNEL_ANONYMOUS === channelName ? null : channelName,
       isStillEditing: false,
@@ -653,6 +656,10 @@ class PublishPage extends React.PureComponent {
     }
   };
 
+  handleCurrencyValueChange = currency => {
+    this.setState({ currency });
+  };
+
   handleDescriptionChange = description => {
     this.setState({ description });
   };
@@ -886,7 +893,16 @@ class PublishPage extends React.PureComponent {
                   value={String(this.state.price)}
                   onChangeText={this.handlePriceChange}
                 />
-                <Text style={publishStyle.currency}>LBC</Text>
+                <Picker
+                  style={publishStyle.currencyPicker}
+                  enabled={this.state.canPublish && !this.state.publishStarted}
+                  selectedValue={this.state.currency}
+                  itemStyle={publishStyle.pickerItem}
+                  onValueChange={this.handleCurrencyValueChange}
+                >
+                  <Picker.Item label={'LBC'} value={'LBC'} />
+                  <Picker.Item label={'USD'} value={'USD'} />
+                </Picker>
               </View>
             )}
           </View>

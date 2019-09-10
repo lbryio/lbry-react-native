@@ -362,6 +362,9 @@ const publishStyle = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  currencyPicker: {
+    width: 100,
+  },
   fullCentered: {
     position: 'absolute',
     left: 0,
