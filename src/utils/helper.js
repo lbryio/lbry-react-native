@@ -299,8 +299,8 @@ export function uploadImageAsset(filePath, success, failure) {
   };
 
   const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
-  let fileExt = fileName.indexOf('.') > -1 ? fileName.substring(fileName.lastIndexOf('.') + 1) : 0;
-  if (!fileExt || fileExt.trim().length === 0) {
+  let fileExt = fileName.indexOf('.') > -1 ? fileName.substring(fileName.lastIndexOf('.') + 1).trim() : 0;
+  if (!fileExt) {
     fileExt = 'jpg'; // default to jpg
   }
   const fileType = `image/${fileExt}`;

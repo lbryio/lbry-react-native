@@ -738,8 +738,6 @@ export default class ChannelCreator extends React.PureComponent {
       uploadingImage,
     } = this.state;
 
-    console.log(abandoningClaimIds);
-
     return (
       <View style={channelCreatorStyle.container}>
         <UriBar

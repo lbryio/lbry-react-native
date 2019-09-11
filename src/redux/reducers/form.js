@@ -22,10 +22,6 @@ reducers[Constants.ACTION_UPDATE_CHANNEL_FORM_STATE] = (state, action) => {
   const channelFormValues = Object.assign({}, state.channelFormValues);
   const newChannelFormValues = Object.assign(channelFormValues, data);
 
-  console.log(channelFormValues);
-  console.log('***newvalues***');
-  console.log(newChannelFormValues);
-
   return {
     ...state,
     channelFormValues: newChannelFormValues,
