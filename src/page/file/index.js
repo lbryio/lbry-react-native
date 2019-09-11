@@ -25,6 +25,7 @@ import {
   selectPurchaseUriErrorMessage,
 } from 'lbry-redux';
 import {
+  doClaimEligiblePurchaseRewards,
   doFetchCostInfoForUri,
   makeSelectCostInfoForUri,
   selectRewardContentClaimIds,
@@ -69,6 +70,7 @@ const select = (state, props) => {
 };
 
 const perform = dispatch => ({
+  claimEligibleRewards: () => dispatch(doClaimEligiblePurchaseRewards()),
   deleteFile: (fileInfo, deleteFromDevice, abandonClaim) => {
     dispatch(doDeleteFile(fileInfo, deleteFromDevice, abandonClaim));
   },

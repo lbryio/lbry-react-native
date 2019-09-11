@@ -477,6 +477,7 @@ class FilePage extends React.PureComponent {
       return;
     }
 
+    const { claimEligibleRewards } = this.props;
     const { nout, claim_id: claimId, txid } = claim;
     const outpoint = `${txid}:${nout}`;
     const params = {
@@ -488,7 +489,9 @@ class FilePage extends React.PureComponent {
       params.time_to_start = timeToStart;
     }
 
-    Lbryio.call('file', 'view', params).catch(() => {});
+    Lbryio.call('file', 'view', params)
+      .then(() => claimEligibleRewards())
+      .catch(() => {});
     this.setState({ fileViewLogged: true });
   };
 
