@@ -27,6 +27,7 @@ import TagSearch from 'component/tagSearch';
 import UriBar from 'component/uriBar';
 import channelCreatorStyle from 'styles/channelCreator';
 import channelIconStyle from 'styles/channelIcon';
+import seedrandom from 'seedrandom';
 
 export default class ChannelCreator extends React.PureComponent {
   state = {
@@ -97,11 +98,13 @@ export default class ChannelCreator extends React.PureComponent {
   }
 
   generateAutoStyles = size => {
+    const { channels = [] } = this.props;
     const autoStyles = [];
-    for (let i = 0; i < size; i++) {
-      autoStyles.push(
-        ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)]
-      );
+    for (let i = 0; i < size && i < channels.length; i++) {
+      // seed generator using the claim_id
+      const rng = seedrandom(channels[i].permanent_url); // is this efficient?
+      const index = Math.floor(rng.quick() * ChannelIconItem.AUTO_THUMB_STYLES.length);
+      autoStyles.push(ChannelIconItem.AUTO_THUMB_STYLES[index]);
     }
     return autoStyles;
   };
@@ -170,13 +173,19 @@ export default class ChannelCreator extends React.PureComponent {
       // should only be one or the other, so just default to cover
       const isCover = this.state.coverImagePickerOpen;
       const fileUrl = `file://${evt.path}`;
+
+      // set the path to local url first, before uploading
+      if (isCover) {
+        this.setState({ coverImageUrl: fileUrl });
+      } else {
+        this.setState({ thumbnailUrl: fileUrl });
+      }
+
       this.setState(
         {
           uploadingImage: true,
           avatarImagePickerOpen: false,
           coverImagePickerOpen: false,
-          coverImageUrl: isCover ? fileUrl : '', // set the path to local url first, before uploading
-          thumbnailUrl: isCover ? '' : fileUrl, // same as above
         },
         () => {
           uploadImageAsset(
@@ -835,7 +844,7 @@ export default class ChannelCreator extends React.PureComponent {
               <View style={channelCreatorStyle.channelInputLayout}>
                 {(this.state.channelNameFocused ||
                   (this.state.newChannelName != null && this.state.newChannelName.trim().length > 0)) && (
-                  <Text style={channelCreatorStyle.textInputTitle}>Channel name</Text>
+                  <Text style={channelCreatorStyle.textInputTitle}>Channel</Text>
                 )}
                 <View>
                   <Text style={channelCreatorStyle.channelAt}>@</Text>
@@ -844,7 +853,7 @@ export default class ChannelCreator extends React.PureComponent {
                     style={channelCreatorStyle.channelNameInput}
                     value={this.state.newChannelName}
                     onChangeText={value => this.handleNewChannelNameChange(value, true)}
-                    placeholder={this.state.channelNameFocused ? '' : 'Channel name'}
+                    placeholder={this.state.channelNameFocused ? '' : 'Channel'}
                     underlineColorAndroid={Colors.NextLbryGreen}
                     onFocus={() => this.setState({ channelNameFocused: true })}
                     onBlur={() => this.setState({ channelNameFocused: false })}

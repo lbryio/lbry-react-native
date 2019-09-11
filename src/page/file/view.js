@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry, normalizeURI } from 'lbry-redux';
+import { Lbry, normalizeURI, parseURI } from 'lbry-redux';
 import { Lbryio } from 'lbryinc';
 import {
   ActivityIndicator,
@@ -587,9 +587,11 @@ class FilePage extends React.PureComponent {
     } = this.props;
     const { uri, autoplay } = navigation.state.params;
 
-    console.log(channels);
     const myChannelUris = channels ? channels.map(channel => channel.permanent_url) : [];
     const ownedClaim = myClaimUris.includes(uri) || myChannelUris.includes(uri);
+    const { claimName } = parseURI(uri);
+    const isChannel = claimName && claimName[0] === '@';
+
     let innerContent = null;
     if ((isResolvingUri && !claim) || !claim) {
       return (
@@ -604,7 +606,9 @@ class FilePage extends React.PureComponent {
             <View style={filePageStyle.container}>
               {ownedClaim && (
                 <Text style={filePageStyle.emptyClaimText}>
-                  It looks like you just claimed this address! Your content will appear in a few minutes.
+                  {isChannel
+                    ? 'It looks like you just created this channel. It will appear in a few minutes.'
+                    : 'It looks you just published this content. It will appear in a few minutes.'}
                 </Text>
               )}
               {!ownedClaim && <Text style={filePageStyle.emptyClaimText}>There's nothing at this location.</Text>}
@@ -616,7 +620,7 @@ class FilePage extends React.PureComponent {
     }
 
     if (claim) {
-      if (claim && claim.name.length && claim.name[0] === '@') {
+      if (isChannel) {
         return <ChannelPage uri={uri} navigation={navigation} />;
       }
 
