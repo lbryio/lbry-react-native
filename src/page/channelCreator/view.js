@@ -110,8 +110,8 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   componentWillReceiveProps(nextProps) {
-    const { currentRoute, updatingChannel, updateChannelError } = nextProps;
-    const { currentRoute: prevRoute, notify } = this.props;
+    const { currentRoute, drawerStack, updatingChannel, updateChannelError } = nextProps;
+    const { currentRoute: prevRoute, drawerStack: prevDrawerStack, notify } = this.props;
 
     if (Constants.DRAWER_ROUTE_CHANNEL_CREATOR === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
@@ -125,6 +125,15 @@ export default class ChannelCreator extends React.PureComponent {
         notify({ message: 'The channel was successfully updated.' });
         this.showChannelList();
       }
+    }
+
+    if (
+      this.state.currentPhase === Constants.PHASE_CREATE &&
+      prevDrawerStack[prevDrawerStack.length - 1].route === Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM &&
+      drawerStack[drawerStack.length - 1].route === Constants.DRAWER_ROUTE_CHANNEL_CREATOR
+    ) {
+      // navigated back from the form
+      this.setState({ currentPhase: Constants.PHASE_LIST });
     }
   }
 
@@ -142,7 +151,7 @@ export default class ChannelCreator extends React.PureComponent {
     } = this.props;
 
     NativeModules.Firebase.setCurrentScreen('Channels').then(result => {
-      pushDrawerStack();
+      pushDrawerStack(Constants.DRAWER_ROUTE_CHANNEL_CREATOR, navigation.state.params ? navigation.state.params : null);
       setPlayerVisible();
       if (!fetchingChannels) {
         fetchChannelListMine();
@@ -155,8 +164,13 @@ export default class ChannelCreator extends React.PureComponent {
       DeviceEventEmitter.addListener('onDocumentPickerCanceled', this.onPickerCanceled);
 
       if (navigation.state.params) {
-        const { editChannelUrl } = navigation.state.params;
-        this.setState({ editChannelUrl });
+        const { editChannelUrl, displayForm } = navigation.state.params;
+        if (editChannelUrl) {
+          this.setState({ editChannelUrl, currentPhase: Constants.PHASE_CREATE });
+        } else if (displayForm) {
+          this.loadPendingFormState();
+          this.setState({ currentPhase: Constants.PHASE_CREATE });
+        }
       }
     });
   };
@@ -166,7 +180,7 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   onFilePicked = evt => {
-    const { notify } = this.props;
+    const { notify, updateChannelFormState } = this.props;
 
     if (evt.path && evt.path.length > 0) {
       // check which image we're trying to upload
@@ -192,8 +206,10 @@ export default class ChannelCreator extends React.PureComponent {
             fileUrl,
             ({ url }) => {
               if (isCover) {
+                updateChannelFormState({ coverImageUrl: url });
                 this.setState({ coverImageUrl: url, uploadingImage: false });
               } else {
+                updateChannelFormState({ thumbnailUrl: url });
                 this.setState({ thumbnailUrl: url, uploadingImage: false });
               }
             },
@@ -239,6 +255,8 @@ export default class ChannelCreator extends React.PureComponent {
   }
 
   handleCreateCancel = () => {
+    const { clearChannelFormState } = this.props;
+    clearChannelFormState(); // explicitly clear state on cancel?
     this.setState({ showCreateChannel: false, newChannelName: '', newChannelBid: 0.1 });
   };
 
@@ -272,18 +290,26 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   handleDescriptionChange = value => {
+    const { updateChannelFormState } = this.props;
+    updateChannelFormState({ description: value });
     this.setState({ description: value });
   };
 
   handleWebsiteChange = value => {
+    const { updateChannelFormState } = this.props;
+    updateChannelFormState({ website: value });
     this.setState({ website: value });
   };
 
   handleEmailChange = value => {
+    const { updateChannelFormState } = this.props;
+    updateChannelFormState({ email: value });
     this.setState({ email: value });
   };
 
   handleNewChannelTitleChange = value => {
+    const { updateChannelFormState } = this.props;
+    updateChannelFormState({ newChannelTitle: value });
     this.setState({ newChannelTitle: value });
     if (value && !this.state.editMode && !this.state.channelNameUserEdited) {
       // build the channel name based on the title
@@ -295,7 +321,7 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   handleNewChannelNameChange = (value, userInput) => {
-    const { notify } = this.props;
+    const { notify, updateChannelFormState } = this.props;
 
     let newChannelName = value,
       newChannelNameError = '';
@@ -314,6 +340,7 @@ export default class ChannelCreator extends React.PureComponent {
       this.setState({ channelNameUserEdited: true });
     }
 
+    updateChannelFormState({ newChannelName });
     this.setState({
       newChannelName,
       newChannelNameError,
@@ -321,7 +348,7 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   handleNewChannelBidChange = newChannelBid => {
-    const { balance, notify } = this.props;
+    const { balance, notify, updateChannelFormState } = this.props;
     let newChannelBidError;
     if (newChannelBid <= 0) {
       newChannelBidError = __('Please enter a deposit above 0');
@@ -332,7 +359,7 @@ export default class ChannelCreator extends React.PureComponent {
     }
 
     notify({ message: newChannelBidError });
-
+    updateChannelFormState({ newChannelBid });
     this.setState({
       newChannelBid,
       newChannelBidError,
@@ -340,7 +367,7 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   handleCreateChannelClick = () => {
-    const { balance, createChannel, onChannelChange, notify, updateChannel } = this.props;
+    const { balance, clearChannelFormState, createChannel, onChannelChange, notify, updateChannel } = this.props;
     const {
       claimId,
       coverImageUrl,
@@ -358,6 +385,11 @@ export default class ChannelCreator extends React.PureComponent {
 
     if (newChannelName.trim().length === 0 || !isURIValid(newChannelName.substr(1), false)) {
       notify({ message: 'Your channel name contains invalid characters.' });
+      return;
+    }
+
+    if (email.trim().length > 0 && (email.indexOf('@') === -1 || email.indexOf('.') === -1)) {
+      notify({ message: 'Please provide a valid email address.' });
       return;
     }
 
@@ -395,6 +427,7 @@ export default class ChannelCreator extends React.PureComponent {
       }
 
       // reset state and go back to the channel list
+      clearChannelFormState();
       notify({ message: 'The channel was successfully created.' });
       this.showChannelList();
     };
@@ -484,6 +517,9 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   handleNewChannelPress = () => {
+    const { pushDrawerStack } = this.props;
+    pushDrawerStack(Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM);
+    this.loadPendingFormState();
     this.setState({ currentPhase: Constants.PHASE_CREATE });
   };
 
@@ -492,6 +528,8 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   showChannelList = () => {
+    const { popDrawerStack } = this.props;
+    popDrawerStack();
     this.resetChannelCreator();
     this.setState({ currentPhase: Constants.PHASE_LIST });
   };
@@ -547,9 +585,18 @@ export default class ChannelCreator extends React.PureComponent {
     this.prepareEdit(channel);
   };
 
+  loadPendingFormState = () => {
+    const { channelFormState } = this.props;
+    const showOptionalFields =
+      channelFormState.description || channelFormState.website || channelFormState.email || channelFormState.tags;
+    this.setState({ ...channelFormState, showOptionalFields });
+  };
+
   prepareEdit = channel => {
+    const { pushDrawerStack } = this.props;
     const { value } = channel;
 
+    pushDrawerStack(Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM);
     this.setState({
       claimId: channel.claim_id,
       currentPhase: Constants.PHASE_CREATE,
@@ -601,12 +648,13 @@ export default class ChannelCreator extends React.PureComponent {
       return;
     }
 
-    const { notify } = this.props;
+    const { notify, updateChannelFormState } = this.props;
     const { tags } = this.state;
     const index = tags.indexOf(tag.toLowerCase());
     if (index === -1) {
       const newTags = tags.slice();
       newTags.push(tag);
+      updateChannelFormState({ tags: newTags });
       this.setState({ tags: newTags });
     } else {
       notify({ message: __(`You already added the "${tag}" tag.`) });
@@ -618,11 +666,13 @@ export default class ChannelCreator extends React.PureComponent {
       return;
     }
 
+    const { updateChannelFormState } = this.props;
     const newTags = this.state.tags.slice();
     const index = newTags.indexOf(tag.toLowerCase());
 
     if (index > -1) {
       newTags.splice(index, 1);
+      updateChannelFormState({ tags: newTags });
       this.setState({ tags: newTags });
     }
   };

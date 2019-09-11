@@ -37,12 +37,14 @@ import FilesystemStorage from 'redux-persist-filesystem-storage';
 import createCompressor from 'redux-persist-transform-compress';
 import createFilter from 'redux-persist-transform-filter';
 import moment from 'moment';
+import formReducer from 'redux/reducers/form';
 import drawerReducer from 'redux/reducers/drawer';
 import settingsReducer from 'redux/reducers/settings';
 import thunk from 'redux-thunk';
 
 const globalExceptionHandler = (error, isFatal) => {
   if (error && NativeModules.Firebase) {
+    console.log(error);
     NativeModules.Firebase.logException(isFatal, error.message ? error.message : 'No message', JSON.stringify(error));
   }
 };
@@ -109,6 +111,7 @@ const reducers = persistCombineReducers(persistOptions, {
   file: fileReducer,
   fileInfo: fileInfoReducer,
   filtered: filteredReducer,
+  form: formReducer,
   homepage: homepageReducer,
   nav: navigatorReducer,
   notifications: notificationsReducer,
