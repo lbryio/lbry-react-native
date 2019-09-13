@@ -13,6 +13,7 @@ type Props = {
     id: string,
     reward_title: string,
     reward_amount: number,
+    reward_range?: string,
     transaction_id: string,
     created_at: string,
     reward_description: string,
@@ -53,6 +54,20 @@ class RewardCard extends React.PureComponent<Props> {
     this.setState({ claimStarted: true }, () => {
       claimReward(reward);
     });
+  };
+
+  getDisplayAmount = () => {
+    const { reward } = this.props;
+    if (reward) {
+      if (reward.reward_range && reward.reward_range.includes('-')) {
+        return reward.reward_range.split('-')[0] + '+'; // ex: 5+
+      } else if (reward.reward_amount > 0) {
+        return reward.reward_amount;
+      }
+    }
+
+    // unknown amount which normally shouldn't happen
+    return '?';
   };
 
   render() {
@@ -101,7 +116,7 @@ class RewardCard extends React.PureComponent<Props> {
           )}
         </View>
         <View style={rewardStyle.rightCol}>
-          <Text style={rewardStyle.rewardAmount}>{reward.reward_amount}</Text>
+          <Text style={rewardStyle.rewardAmount}>{this.getDisplayAmount()}</Text>
           <Text style={rewardStyle.rewardCurrency}>LBC</Text>
         </View>
       </TouchableOpacity>
