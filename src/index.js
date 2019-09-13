@@ -136,29 +136,35 @@ const store = createStore(
 );
 window.store = store;
 
-const persistor = persistStore(store, persistOptions, err => {
+/* const persistor = persistStore(store, persistOptions, err => {
   if (err) {
     console.log('Unable to load saved SETTINGS');
   }
 });
-window.persistor = persistor;
+window.persistor = persistor; */
 
-/*
 const persistFilter = {
-  'auth': ['authToken'],
-  'claims': ['byId', 'claimsByUri'],
-  'content': ['positions'],
-  'subscriptions': ['enabledChannelNotifications', 'subscriptions'],
-  'settings': ['clientSettings'],
-  'tags': ['followedTags'],
-  'wallet': ['receiveAddress']
+  auth: ['authToken'],
+  claims: ['byId', 'claimsByUri'],
+  content: ['positions'],
+  subscriptions: ['enabledChannelNotifications', 'subscriptions'],
+  settings: ['clientSettings'],
+  tags: ['followedTags'],
+  wallet: ['receiveAddress'],
 };
 
 store.subscribe(() => {
-  const state = (({ auth, claims, content, subscriptions, settings, tags, wallet }) =>
-    ({ auth, claims, content, subscriptions, settings, tags, wallet }))(store.getState());
+  const state = (({ auth, claims, content, subscriptions, settings, tags, wallet }) => ({
+    auth,
+    claims,
+    content,
+    subscriptions,
+    settings,
+    tags,
+    wallet,
+  }))(store.getState());
   NativeModules.StatePersistor.update(state, persistFilter);
-}); */
+});
 
 // TODO: Find i18n module that is compatible with react-native
 global.__ = str => str;
