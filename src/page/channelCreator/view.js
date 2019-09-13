@@ -110,8 +110,8 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   componentWillReceiveProps(nextProps) {
-    const { currentRoute, drawerStack, updatingChannel, updateChannelError } = nextProps;
     const { currentRoute: prevRoute, drawerStack: prevDrawerStack, notify } = this.props;
+    const { currentRoute, drawerStack, updatingChannel, updateChannelError } = nextProps;
 
     if (Constants.DRAWER_ROUTE_CHANNEL_CREATOR === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
@@ -169,7 +169,9 @@ export default class ChannelCreator extends React.PureComponent {
           this.setState({ editChannelUrl, currentPhase: Constants.PHASE_CREATE });
         } else if (displayForm) {
           this.loadPendingFormState();
-          this.setState({ currentPhase: Constants.PHASE_CREATE });
+          this.setState({ currentPhase: Constants.PHASE_CREATE }, () =>
+            pushDrawerStack(Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM)
+          );
         }
       }
     });

@@ -167,12 +167,19 @@ class PublishPage extends React.PureComponent {
     this.setState({ allThumbnailsChecked: true });
   };
 
+  loadPendingFormState = () => {
+    const { publishFormState } = this.props;
+    const advancedMode = publishFormState.license;
+    this.setState({ ...publishFormState, advancedMode });
+  };
+
   onComponentFocused = () => {
     const { balance, pushDrawerStack, setPlayerVisible, navigation } = this.props;
-    pushDrawerStack();
-    setPlayerVisible();
-
     NativeModules.Firebase.setCurrentScreen('Publish').then(result => {
+      console.log(navigation.state.params);
+      pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH, navigation.state.params ? navigation.state.params : null);
+      setPlayerVisible();
+
       NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
       NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
       this.setState(
@@ -187,7 +194,7 @@ class PublishPage extends React.PureComponent {
 
       // Check if this is an edit action
       if (navigation.state.params) {
-        const { editMode, claimToEdit, vanityUrl } = navigation.state.params;
+        const { displayForm, editMode, claimToEdit, vanityUrl } = navigation.state.params;
         if (editMode) {
           this.prepareEdit(claimToEdit);
         } else if (vanityUrl) {
@@ -197,15 +204,22 @@ class PublishPage extends React.PureComponent {
             hasEditedContentAddress: true,
             vanityUrlSet: true,
           });
+        } else if (displayForm) {
+          this.loadPendingFormState();
+          this.setState({ currentPhase: Constants.PHASE_DETAILS }, () =>
+            pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH_FORM)
+          );
         }
       }
     });
   };
 
   prepareEdit = claim => {
-    let channelName;
+    const { pushDrawerStack } = this.props;
     const { amount, name, signing_channel: signingChannel, value } = claim;
     const { description, fee, languages, license, license_url: licenseUrl, tags, thumbnail, title } = value;
+
+    let channelName;
     if (signingChannel) {
       channelName = signingChannel.name;
     }
@@ -256,6 +270,7 @@ class PublishPage extends React.PureComponent {
         if (channelName) {
           this.handleChannelChange(channelName);
         }
+        pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH_FORM);
       }
     );
   };
@@ -374,8 +389,8 @@ class PublishPage extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { currentRoute, publishFormValues } = nextProps;
-    const { currentRoute: prevRoute, notify } = this.props;
+    const { currentRoute: prevRoute, drawerStack: prevDrawerStack, notify, updatePublishFormState } = this.props;
+    const { currentRoute, drawerStack, publishFormValues } = nextProps;
 
     if (Constants.DRAWER_ROUTE_PUBLISH === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
@@ -383,24 +398,42 @@ class PublishPage extends React.PureComponent {
 
     if (publishFormValues) {
       if (publishFormValues.thumbnail && !this.state.uploadedThumbnailUri) {
-        this.setState({
-          currentThumbnailUri: publishFormValues.thumbnail,
-          uploadedThumbnailUri: publishFormValues.thumbnail,
-        });
+        const { thumbnail } = publishFormValues;
+        updatePublishFormState({ currentThumbnailUri: thumbnail, uploadedThumbnailUri: thumbnail });
+        this.setState({ currentThumbnailUri: thumbnail, uploadedThumbnailUri: thumbnail });
       }
+    }
+
+    if (
+      this.state.currentPhase === Constants.PHASE_DETAILS &&
+      prevDrawerStack[prevDrawerStack.length - 1].route === Constants.DRAWER_ROUTE_PUBLISH_FORM &&
+      drawerStack[drawerStack.length - 1].route === Constants.DRAWER_ROUTE_PUBLISH
+    ) {
+      // navigated back from the form
+      this.showSelector();
     }
   }
 
   setCurrentMedia(media) {
+    const { pushDrawerStack, updatePublishFormState } = this.props;
     const name = generateCombination(2, ' ', true);
+    const newName = this.state.hasEditedContentAddress ? this.state.name : this.formatNameForTitle(name);
+    updatePublishFormState({ currentMedia: media, name: newName });
     this.setState(
       {
         currentMedia: media,
         title: null, // no title autogeneration (user will fill this in)
-        name: this.state.hasEditedContentAddress ? this.state.name : this.formatNameForTitle(name),
+        name: newName,
         currentPhase: Constants.PHASE_DETAILS,
       },
-      () => this.handleNameChange(this.state.name)
+      () => {
+        this.handleNameChange(this.state.name);
+        pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH_FORM);
+        if (!this.state.editMode) {
+          // overwrite media with previous?
+          this.loadPendingFormState();
+        }
+      }
     );
   }
 
@@ -505,6 +538,8 @@ class PublishPage extends React.PureComponent {
   };
 
   handleCameraActionPressed = () => {
+    const { pushDrawerStack } = this.props;
+
     // check if it's video or photo mode
     if (this.state.videoRecordingMode) {
       if (this.state.recordingVideo) {
@@ -522,14 +557,17 @@ class PublishPage extends React.PureComponent {
             duration: 0,
           };
           this.setCurrentMedia(currentMedia);
-          this.setState({
-            currentThumbnailUri: null,
-            updatingThumbnailUri: false,
-            currentPhase: Constants.PHASE_DETAILS,
-            showCameraOverlay: false,
-            videoRecordingMode: false,
-            recordingVideo: false,
-          });
+          this.setState(
+            {
+              currentThumbnailUri: null,
+              updatingThumbnailUri: false,
+              currentPhase: Constants.PHASE_DETAILS,
+              showCameraOverlay: false,
+              videoRecordingMode: false,
+              recordingVideo: false,
+            },
+            () => pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH_FORM)
+          );
         });
       }
     } else {
@@ -543,13 +581,16 @@ class PublishPage extends React.PureComponent {
           duration: 0,
         };
         this.setCurrentMedia(currentMedia);
-        this.setState({
-          currentPhase: Constants.PHASE_DETAILS,
-          currentThumbnailUri: null,
-          updatingThumbnailUri: false,
-          showCameraOverlay: false,
-          videoRecordingMode: false,
-        });
+        this.setState(
+          {
+            currentPhase: Constants.PHASE_DETAILS,
+            currentThumbnailUri: null,
+            updatingThumbnailUri: false,
+            showCameraOverlay: false,
+            videoRecordingMode: false,
+          },
+          () => pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH)
+        );
       });
     }
   };
@@ -575,15 +616,20 @@ class PublishPage extends React.PureComponent {
   };
 
   handleBidChange = bid => {
+    const { updatePublishFormState } = this.props;
+    updatePublishFormState({ bid });
     this.setState({ bid });
   };
 
   handlePriceChange = price => {
+    const { updatePublishFormState } = this.props;
+    updatePublishFormState({ price });
     this.setState({ price });
   };
 
   handleNameChange = (name, userInput) => {
-    const { notify } = this.props;
+    const { notify, updatePublishFormState } = this.props;
+    updatePublishFormState({ name });
     this.setState({ name });
     if (userInput) {
       this.setState({ hasEditedContentAddress: true });
@@ -599,8 +645,10 @@ class PublishPage extends React.PureComponent {
   };
 
   handleChannelChange = channel => {
+    const { updatePublishFormState } = this.props;
     const { name } = this.state;
     const uri = this.getNewUri(name, channel);
+    updatePublishFormState({ uri, channelName: channel, selectedChannel: channel });
     this.setState({ uri, channelName: channel, selectedChannel: channel });
   };
 
@@ -609,12 +657,13 @@ class PublishPage extends React.PureComponent {
       return;
     }
 
-    const { notify } = this.props;
+    const { notify, updatePublishFormState } = this.props;
     const { tags } = this.state;
     const index = tags.indexOf(tag.toLowerCase());
     if (index === -1) {
       const newTags = tags.slice();
       newTags.push(tag);
+      updatePublishFormState({ tags: newTags });
       this.setState({ tags: newTags });
     } else {
       notify({ message: __(`You already added the "${tag}" tag.`) });
@@ -626,11 +675,13 @@ class PublishPage extends React.PureComponent {
       return;
     }
 
+    const { updatePublishFormState } = this.props;
     const newTags = this.state.tags.slice();
     const index = newTags.indexOf(tag.toLowerCase());
 
     if (index > -1) {
       newTags.splice(index, 1);
+      updatePublishFormState({ tags: newTags });
       this.setState({ tags: newTags });
     }
   };
@@ -678,6 +729,8 @@ class PublishPage extends React.PureComponent {
   };
 
   handleTitleChange = title => {
+    const { updatePublishFormState } = this.props;
+    updatePublishFormState({ title });
     this.setState({ title });
 
     if (!this.state.editMode && !this.state.hasEditedContentAddress) {
@@ -695,38 +748,46 @@ class PublishPage extends React.PureComponent {
   };
 
   handleCurrencyValueChange = currency => {
+    const { updatePublishFormState } = this.props;
+    updatePublishFormState({ currency });
     this.setState({ currency });
   };
 
   handleDescriptionChange = description => {
+    const { updatePublishFormState } = this.props;
+    updatePublishFormState({ description });
     this.setState({ description });
   };
 
   handleLanguageValueChange = language => {
+    const { updatePublishFormState } = this.props;
+    updatePublishFormState({ language });
     this.setState({ language });
   };
 
   handleLicenseValueChange = license => {
+    const { updatePublishFormState } = this.props;
+
     const otherLicenseDescription = [LICENSES.COPYRIGHT, LICENSES.OTHER].includes(license)
       ? this.state.otherLicenseDescription
       : '';
-
-    this.setState({
-      otherLicenseDescription,
-      license,
-      licenseUrl: LICENSES.CC_LICENSES.reduce((value, item) => {
-        if (typeof value === 'object') {
-          value = '';
-        }
-        if (license === item.value) {
-          value = item.url;
-        }
-        return value;
-      }),
+    const licenseUrl = LICENSES.CC_LICENSES.reduce((value, item) => {
+      if (typeof value === 'object') {
+        value = '';
+      }
+      if (license === item.value) {
+        value = item.url;
+      }
+      return value;
     });
+
+    updatePublishFormState({ otherLicenseDescription, license, licenseUrl });
+    this.setState({ otherLicenseDescription, license, licenseUrl });
   };
 
   handleChangeLicenseDescription = otherLicenseDescription => {
+    const { updatePublishFormState } = this.props;
+    updatePublishFormState({ otherLicenseDescription });
     this.setState({ otherLicenseDescription });
   };
 
@@ -831,16 +892,16 @@ class PublishPage extends React.PureComponent {
                 resizeMode={FastImage.resizeMode.contain}
                 source={{ uri: currentThumbnailUri }}
               />
+
+              {this.state.uploadThumbnailStarted && !this.state.uploadedThumbnailUri && (
+                <View style={publishStyle.thumbnailUploadContainer}>
+                  <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
+                  <Text style={publishStyle.thumbnailUploadText}>Uploading thumbnail...</Text>
+                </View>
+              )}
             </View>
           )}
           {!this.state.canPublish && <PublishRewardsDriver navigation={navigation} />}
-
-          {this.state.uploadThumbnailStarted && !this.state.uploadedThumbnailUri && (
-            <View style={publishStyle.thumbnailUploadContainer}>
-              <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
-              <Text style={publishStyle.thumbnailUploadText}>Uploading thumbnail...</Text>
-            </View>
-          )}
 
           <View style={publishStyle.card}>
             <View style={publishStyle.textInputLayout}>
