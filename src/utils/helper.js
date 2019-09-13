@@ -324,7 +324,7 @@ export function uploadImageAsset(filePath, success, failure) {
     })
     .catch(err => {
       if (failure) {
-        failure(err.message);
+        failure(err.message ? err.message : 'The image failed to upload.');
       }
     });
 }
