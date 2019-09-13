@@ -16,7 +16,19 @@ reducers[Constants.ACTION_PUSH_DRAWER_STACK] = (state, action) => {
   const { routeName, params } = action.data;
   const newStack = state.stack.slice();
 
-  if (routeName !== newStack[newStack.length - 1].route) {
+  const lastRoute = newStack[newStack.length - 1].route;
+  let canPushStack = routeName !== lastRoute;
+  if (
+    lastRoute === Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM &&
+    routeName === Constants.DRAWER_ROUTE_CHANNEL_CREATOR
+  ) {
+    canPushStack = false;
+  }
+  if (lastRoute === Constants.DRAWER_ROUTE_PUBLISH_FORM && routeName === Constants.DRAWER_ROUTE_PUBLISH) {
+    canPushStack = false;
+  }
+
+  if (canPushStack) {
     newStack.push({ route: routeName, params });
   }
 

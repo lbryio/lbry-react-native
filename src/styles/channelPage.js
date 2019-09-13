@@ -31,6 +31,7 @@ const channelPageStyle = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 24,
   },
   infoText: {
     fontFamily: 'Inter-UI-Regular',
@@ -164,6 +165,9 @@ const channelPageStyle = StyleSheet.create({
   },
   claimListContent: {
     paddingTop: 16,
+  },
+  actionButton: {
+    backgroundColor: Colors.White,
   },
 });
 

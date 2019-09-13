@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import {
   doFetchFileInfo,
+  doFetchChannelListMine,
   doFetchClaimListMine,
   doFileGet,
   doPurchaseUri,
@@ -19,6 +20,7 @@ import {
   makeSelectThumbnailForUri,
   makeSelectTitleForUri,
   selectBalance,
+  selectMyChannelClaims,
   selectMyClaimUrisWithoutChannels,
   selectPurchasedUris,
   selectFailedPurchaseUris,
@@ -47,6 +49,7 @@ const select = (state, props) => {
   return {
     balance: selectBalance(state),
     blackListedOutpoints: selectBlackListedOutpoints(state),
+    channels: selectMyChannelClaims(state),
     claim: makeSelectClaimForUri(selectProps.uri)(state),
     drawerStack: selectDrawerStack(state),
     isResolvingUri: makeSelectIsUriResolving(selectProps.uri)(state),
@@ -77,6 +80,7 @@ const perform = dispatch => ({
   fetchFileInfo: uri => dispatch(doFetchFileInfo(uri)),
   fetchCostInfo: uri => dispatch(doFetchCostInfoForUri(uri)),
   fetchMyClaims: () => dispatch(doFetchClaimListMine()),
+  fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
   fileGet: (uri, saveFile) => dispatch(doFileGet(uri, saveFile)),
   notify: data => dispatch(doToast(data)),
   popDrawerStack: () => dispatch(doPopDrawerStack()),

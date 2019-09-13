@@ -1,7 +1,7 @@
 import { NavigationActions, StackActions } from 'react-navigation';
 import { buildURI, isURIValid, normalizeURI } from 'lbry-redux';
 import { doPopDrawerStack, doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
-import Constants, { DrawerRoutes } from 'constants'; // eslint-disable-line node/no-deprecated-api
+import Constants, { DrawerRoutes, InnerDrawerRoutes } from 'constants'; // eslint-disable-line node/no-deprecated-api
 
 const tagNameLength = 10;
 
@@ -156,10 +156,26 @@ export function navigateBack(navigation, drawerStack, popDrawerStack) {
   const target = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];
   const { route, params } = target;
   navigation.goBack(navigation.state.key);
-  if (DrawerRoutes.indexOf(route) === -1 && isURIValid(route)) {
+  if (!DrawerRoutes.includes(route) && !InnerDrawerRoutes.includes(route) && isURIValid(route)) {
     navigateToUri(navigation, route, null, true);
   } else {
-    navigation.navigate({ routeName: route, params });
+    let targetRoute = route;
+    let targetParams = params;
+    if (InnerDrawerRoutes.includes(route)) {
+      if (Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM === route) {
+        targetRoute = Constants.DRAWER_ROUTE_CHANNEL_CREATOR;
+      } else if (Constants.DRAWER_ROUTE_PUBLISH_FORM === route) {
+        targetRoute = Constants.DRAWER_ROUTE_PUBLISH_FORM;
+      }
+
+      if (targetParams) {
+        targetParams.displayForm = true;
+      } else {
+        targetParams = { displayForm: true };
+      }
+    }
+
+    navigation.navigate({ routeName: targetRoute, targetParams });
   }
 }
 
@@ -169,14 +185,31 @@ export function dispatchNavigateBack(dispatch, nav, drawerStack) {
   const target = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];
   const { route } = target;
   dispatch(NavigationActions.back());
-  if (DrawerRoutes.indexOf(route) === -1 && isURIValid(route)) {
+  if (!DrawerRoutes.includes(route) && !InnerDrawerRoutes.includes(route) && isURIValid(route)) {
     dispatchNavigateToUri(dispatch, nav, route, true);
   } else {
     const newTarget = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];
+    let targetRoute = newTarget.route;
+    let targetParams = newTarget.params;
+    if (InnerDrawerRoutes.includes(targetRoute)) {
+      if (Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM === route) {
+        targetRoute = Constants.DRAWER_ROUTE_CHANNEL_CREATOR;
+      } else if (Constants.DRAWER_ROUTE_PUBLISH_FORM === route) {
+        targetRoute = Constants.DRAWER_ROUTE_PUBLISH_FORM;
+      }
+
+      if (targetParams) {
+        targetParams.displayForm = true;
+      } else {
+        targetParams = { displayForm: true };
+      }
+    }
+
     const navigateAction = NavigationActions.navigate({
-      routeName: newTarget.route,
-      params: newTarget.params,
+      routeName: targetRoute,
+      params: targetParams,
     });
+
     dispatch(navigateAction);
   }
 }
@@ -255,4 +288,43 @@ export function transformUrl(url) {
 // i18n placeholder until we find a good react-native i18n module
 export function __(str) {
   return str;
+}
+
+export function uploadImageAsset(filePath, success, failure) {
+  const makeid = () => {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 24; i += 1) text += possible.charAt(Math.floor(Math.random() * 62));
+    return text;
+  };
+
+  const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
+  let fileExt = fileName.indexOf('.') > -1 ? fileName.substring(fileName.lastIndexOf('.') + 1).trim() : 0;
+  if (!fileExt) {
+    fileExt = 'jpg'; // default to jpg
+  }
+  const fileType = `image/${fileExt}`;
+
+  const data = new FormData();
+  const name = makeid();
+  data.append('name', name);
+  data.append('file', { uri: 'file://' + filePath, type: fileType, name: fileName });
+
+  return fetch('https://spee.ch/api/claim/publish', {
+    method: 'POST',
+    body: data,
+  })
+    .then(response => response.json())
+    .then(json => {
+      if (json.success) {
+        if (success) {
+          success({ url: `${json.data.url}.${fileExt}` });
+        }
+      }
+    })
+    .catch(err => {
+      if (failure) {
+        failure(err.message ? err.message : 'The image failed to upload.');
+      }
+    });
 }

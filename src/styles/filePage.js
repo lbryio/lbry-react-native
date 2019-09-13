@@ -41,8 +41,8 @@ const filePageStyle = StyleSheet.create({
     fontFamily: 'Inter-UI-Regular',
     textAlign: 'center',
     fontSize: 20,
-    marginLeft: 16,
-    marginRight: 16,
+    marginLeft: 24,
+    marginRight: 24,
   },
   scrollContainer: {
     flex: 1,

@@ -562,6 +562,8 @@ class PublishPage extends React.PureComponent {
     });
   };
 
+  handleUploadPressed = () => {};
+
   getRandomFileId = () => {
     // generate a random id for a photo or recorded video between 1 and 20 (for creating thumbnails)
     const id = Math.floor(Math.random() * (20 - 2)) + 1;
@@ -865,6 +867,7 @@ class PublishPage extends React.PureComponent {
               )}
               <TextInput
                 editable={this.state.canPublish && !this.state.publishStarted}
+                multiline
                 placeholder={this.state.descriptionFocused ? '' : 'Description'}
                 style={publishStyle.inputText}
                 value={this.state.description}

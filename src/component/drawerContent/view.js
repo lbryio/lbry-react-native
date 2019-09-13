@@ -12,6 +12,7 @@ const groupedMenuItems = {
     { icon: 'globe-americas', label: 'All content', route: Constants.DRAWER_ROUTE_TRENDING },
   ],
   'Your content': [
+    { icon: 'at', label: 'Channels', route: Constants.DRAWER_ROUTE_CHANNEL_CREATOR },
     { icon: 'download', label: 'Library', route: Constants.DRAWER_ROUTE_MY_LBRY },
     { icon: 'cloud-upload-alt', label: 'Publishes', route: Constants.DRAWER_ROUTE_PUBLISHES },
     { icon: 'upload', label: 'New publish', route: Constants.DRAWER_ROUTE_PUBLISH },

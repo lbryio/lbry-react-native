@@ -37,6 +37,7 @@ import FilesystemStorage from 'redux-persist-filesystem-storage';
 import createCompressor from 'redux-persist-transform-compress';
 import createFilter from 'redux-persist-transform-filter';
 import moment from 'moment';
+import formReducer from 'redux/reducers/form';
 import drawerReducer from 'redux/reducers/drawer';
 import settingsReducer from 'redux/reducers/settings';
 import thunk from 'redux-thunk';
@@ -109,6 +110,7 @@ const reducers = persistCombineReducers(persistOptions, {
   file: fileReducer,
   fileInfo: fileInfoReducer,
   filtered: filteredReducer,
+  form: formReducer,
   homepage: homepageReducer,
   nav: navigatorReducer,
   notifications: notificationsReducer,

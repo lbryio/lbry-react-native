@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry, normalizeURI } from 'lbry-redux';
+import { Lbry, normalizeURI, parseURI } from 'lbry-redux';
 import { Lbryio } from 'lbryinc';
 import {
   ActivityIndicator,
@@ -100,7 +100,7 @@ class FilePage extends React.PureComponent {
     DeviceEventEmitter.addListener('onDownloadUpdated', this.handleDownloadUpdated);
     DeviceEventEmitter.addListener('onDownloadCompleted', this.handleDownloadCompleted);
 
-    const { fileInfo, isResolvingUri, resolveUri, navigation } = this.props;
+    const { fetchChannelListMine, fileInfo, isResolvingUri, resolveUri, navigation } = this.props;
     const { uri, uriVars } = navigation.state.params;
     this.setState({ uri, uriVars });
 
@@ -108,6 +108,7 @@ class FilePage extends React.PureComponent {
 
     this.fetchFileInfo(this.props);
     this.fetchCostInfo(this.props);
+    fetchChannelListMine();
 
     if (NativeModules.Firebase) {
       NativeModules.Firebase.track('open_file_page', { uri: uri });
@@ -570,6 +571,7 @@ class FilePage extends React.PureComponent {
     const {
       balance,
       claim,
+      channels,
       channelUri,
       costInfo,
       fileInfo,
@@ -588,6 +590,10 @@ class FilePage extends React.PureComponent {
     } = this.props;
     const { uri, autoplay } = navigation.state.params;
 
+    const myChannelUris = channels ? channels.map(channel => channel.permanent_url) : [];
+    const ownedClaim = myClaimUris.includes(uri) || myChannelUris.includes(uri);
+    const { isChannel } = parseURI(uri);
+
     let innerContent = null;
     if ((isResolvingUri && !claim) || !claim) {
       return (
@@ -600,7 +606,14 @@ class FilePage extends React.PureComponent {
           )}
           {claim === null && !isResolvingUri && (
             <View style={filePageStyle.container}>
-              <Text style={filePageStyle.emptyClaimText}>There's nothing at this location.</Text>
+              {ownedClaim && (
+                <Text style={filePageStyle.emptyClaimText}>
+                  {isChannel
+                    ? 'It looks like you just created this channel. It will appear in a few minutes.'
+                    : 'It looks you just published this content. It will appear in a few minutes.'}
+                </Text>
+              )}
+              {!ownedClaim && <Text style={filePageStyle.emptyClaimText}>There's nothing at this location.</Text>}
             </View>
           )}
           <UriBar value={uri} navigation={navigation} />
@@ -609,7 +622,7 @@ class FilePage extends React.PureComponent {
     }
 
     if (claim) {
-      if (claim && claim.name.length && claim.name[0] === '@') {
+      if (isChannel) {
         return <ChannelPage uri={uri} navigation={navigation} />;
       }
 

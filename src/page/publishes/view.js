@@ -33,6 +33,15 @@ class PublishesPage extends React.PureComponent {
     this.onComponentFocused();
   }
 
+  componentWillReceiveProps(nextProps) {
+    const { currentRoute } = nextProps;
+    const { currentRoute: prevRoute } = this.props;
+
+    if (Constants.DRAWER_ROUTE_PUBLISHES === currentRoute && currentRoute !== prevRoute) {
+      this.onComponentFocused();
+    }
+  }
+
   onComponentFocused = () => {
     const { checkPendingPublishes, fetchMyClaims, pushDrawerStack, setPlayerVisible } = this.props;
     pushDrawerStack();

@@ -2,6 +2,7 @@
 import React from 'react';
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   Image,
   NativeModules,
@@ -159,10 +160,46 @@ class ChannelPage extends React.PureComponent {
     );
   };
 
+  onEditPressed = () => {
+    const { claim, navigation } = this.props;
+    if (claim) {
+      const { permanent_url: permanentUrl } = claim;
+      navigation.navigate({
+        routeName: Constants.DRAWER_ROUTE_CHANNEL_CREATOR,
+        params: { editChannelUrl: permanentUrl },
+      });
+    }
+  };
+
+  onDeletePressed = () => {
+    const { abandonClaim, claim, navigation } = this.props;
+    if (claim) {
+      const { txid, nout } = claim;
+
+      // show confirm alert
+      Alert.alert(
+        __('Delete channel'),
+        __('Are you sure you want to delete this channel?'),
+        [
+          { text: __('No') },
+          {
+            text: __('Yes'),
+            onPress: () => {
+              abandonClaim(txid, nout);
+              navigation.navigate({ routeName: Constants.DRAWER_ROUTE_CHANNEL_CREATOR });
+            },
+          },
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
   render() {
-    const { claim, navigation, uri, drawerStack, popDrawerStack, sortByItem, timeItem } = this.props;
+    const { channels, claim, navigation, uri, drawerStack, popDrawerStack, sortByItem, timeItem } = this.props;
     const { name, permanent_url: permanentUrl } = claim;
     const { autoStyle, showSortPicker, showTimePicker } = this.state;
+    const ownedChannel = channels ? channels.map(channel => channel.permanent_url).includes(permanentUrl) : false;
 
     let thumbnailUrl,
       coverUrl,
@@ -218,12 +255,32 @@ class ChannelPage extends React.PureComponent {
             </View>
 
             <View style={channelPageStyle.subscribeButtonContainer}>
-              <SubscribeButton style={channelPageStyle.subscribeButton} uri={fullUri} name={name} />
-              <SubscribeNotificationButton
-                style={[channelPageStyle.subscribeButton, channelPageStyle.bellButton]}
-                uri={fullUri}
-                name={name}
-              />
+              {ownedChannel && (
+                <Button
+                  style={channelPageStyle.actionButton}
+                  theme={'light'}
+                  icon={'edit'}
+                  text={'Edit'}
+                  onPress={this.onEditPressed}
+                />
+              )}
+              {ownedChannel && (
+                <Button
+                  style={channelPageStyle.deleteButton}
+                  theme={'light'}
+                  icon={'trash-alt'}
+                  text={'Delete'}
+                  onPress={this.onDeletePressed}
+                />
+              )}
+              {!ownedChannel && <SubscribeButton style={channelPageStyle.subscribeButton} uri={fullUri} name={name} />}
+              {!ownedChannel && (
+                <SubscribeNotificationButton
+                  style={[channelPageStyle.subscribeButton, channelPageStyle.bellButton]}
+                  uri={fullUri}
+                  name={name}
+                />
+              )}
             </View>
           </View>
 

@@ -4,6 +4,9 @@ const autothumbStyle = StyleSheet.create({
   autothumbPurple: {
     backgroundColor: '#9c27b0',
   },
+  autothumbDeepPurple: {
+    backgroundColor: '#5e35b1',
+  },
   autothumbRed: {
     backgroundColor: '#e53935',
   },
@@ -33,6 +36,21 @@ const autothumbStyle = StyleSheet.create({
   },
   autothumbOrange: {
     backgroundColor: '#ffa726',
+  },
+  autothumbAmber: {
+    backgroundColor: '#ffb300',
+  },
+  autothumbLime: {
+    backgroundColor: '#c0ca33',
+  },
+  autothumbLightGreen: {
+    backgroundColor: '#7cb342',
+  },
+  autothumbDeepOrange: {
+    backgroundColor: '#f4511e',
+  },
+  autothumbBrown: {
+    backgroundColor: '#6d4c41',
   },
 });
 
