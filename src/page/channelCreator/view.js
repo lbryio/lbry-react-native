@@ -388,7 +388,7 @@ export default class ChannelCreator extends React.PureComponent {
       return;
     }
 
-    if (email.trim().length > 0 && (email.indexOf('@') === -1 || email.indexOf('.') === -1)) {
+    if (email && email.trim().length > 0 && (email.indexOf('@') === -1 || email.indexOf('.') === -1)) {
       notify({ message: 'Please provide a valid email address.' });
       return;
     }

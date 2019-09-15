@@ -1035,17 +1035,10 @@ class PublishPage extends React.PureComponent {
             />
           </View>
 
-          <View style={publishStyle.warning}>
-            <Text style={publishStyle.warningText}>
-              Please ensure that you have filled everything correctly as you cannot edit published content in this
-              release. This feature will be available in a future release.
-            </Text>
-          </View>
-
           <View style={publishStyle.actionButtons}>
             {(this.state.publishStarted || publishFormValues.publishing) && (
               <View style={publishStyle.progress}>
-                <ActivityIndicator size={'small'} color={Colors.LbryGreen} />
+                <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
               </View>
             )}
 
