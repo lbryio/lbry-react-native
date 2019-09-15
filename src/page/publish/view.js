@@ -1038,7 +1038,7 @@ class PublishPage extends React.PureComponent {
           <View style={publishStyle.actionButtons}>
             {(this.state.publishStarted || publishFormValues.publishing) && (
               <View style={publishStyle.progress}>
-                <ActivityIndicator size={'small'} color={Colors.LbryGreen} />
+                <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
               </View>
             )}
 
