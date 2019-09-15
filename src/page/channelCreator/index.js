@@ -15,7 +15,7 @@ import {
 import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doUpdateChannelFormState, doClearChannelFormState } from 'redux/actions/form';
 import { selectDrawerStack } from 'redux/selectors/drawer';
-import { selectChannelFormState } from 'redux/selectors/form';
+import { selectChannelFormState, selectHasChannelFormState } from 'redux/selectors/form';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import ChannelCreator from './view';
 
@@ -26,6 +26,7 @@ const select = state => ({
   drawerStack: selectDrawerStack(state),
   fetchingChannels: selectFetchingMyChannels(state),
   balance: selectBalance(state),
+  hasFormState: selectHasChannelFormState(state),
   updatingChannel: selectUpdatingChannel(state),
   updateChannelError: selectUpdateChannelError(state),
 });

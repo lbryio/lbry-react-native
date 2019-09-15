@@ -84,6 +84,7 @@ class PublishPage extends React.PureComponent {
     titleFocused: false,
     descriptionFocused: false,
     loadingVideos: false,
+    vanityUrl: null,
 
     // gallery videos
     videos: null,
@@ -102,7 +103,7 @@ class PublishPage extends React.PureComponent {
     currentMedia: null,
     currentThumbnailUri: null,
     updatingThumbnailUri: false,
-    currentPhase: Constants.PHASE_SELECTOR,
+    currentPhase: null,
 
     // publish
     advancedMode: false,
@@ -169,14 +170,13 @@ class PublishPage extends React.PureComponent {
 
   loadPendingFormState = () => {
     const { publishFormState } = this.props;
-    const advancedMode = publishFormState.license;
+    const advancedMode = publishFormState.license !== null;
     this.setState({ ...publishFormState, advancedMode });
   };
 
   onComponentFocused = () => {
-    const { balance, pushDrawerStack, setPlayerVisible, navigation } = this.props;
+    const { balance, hasFormState, pushDrawerStack, setPlayerVisible, navigation } = this.props;
     NativeModules.Firebase.setCurrentScreen('Publish').then(result => {
-      console.log(navigation.state.params);
       pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH, navigation.state.params ? navigation.state.params : null);
       setPlayerVisible();
 
@@ -193,23 +193,34 @@ class PublishPage extends React.PureComponent {
       );
 
       // Check if this is an edit action
+      let isEditMode = false,
+        vanityUrlSet = false;
       if (navigation.state.params) {
         const { displayForm, editMode, claimToEdit, vanityUrl } = navigation.state.params;
         if (editMode) {
           this.prepareEdit(claimToEdit);
+          isEditMode = true;
         } else if (vanityUrl) {
           const { claimName } = parseURI(vanityUrl);
+          vanityUrlSet = true;
           this.setState({
             name: claimName,
             hasEditedContentAddress: true,
-            vanityUrlSet: true,
+            vanityUrlSet,
+            vanityUrl: claimName,
           });
-        } else if (displayForm) {
-          this.loadPendingFormState();
-          this.setState({ currentPhase: Constants.PHASE_DETAILS }, () =>
-            pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH_FORM)
-          );
         }
+      }
+
+      if (!isEditMode && hasFormState) {
+        this.loadPendingFormState();
+        if (vanityUrlSet) {
+          // replace name with the specified vanity URL if there was one in the pending state
+          this.setState({ name: this.state.vanityUrl });
+        }
+        this.setState({ currentPhase: Constants.PHASE_DETAILS });
+      } else {
+        this.setState({ currentPhase: Constants.PHASE_SELECTOR });
       }
     });
   };
@@ -429,10 +440,6 @@ class PublishPage extends React.PureComponent {
       () => {
         this.handleNameChange(this.state.name);
         pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH_FORM);
-        if (!this.state.editMode) {
-          // overwrite media with previous?
-          this.loadPendingFormState();
-        }
       }
     );
   }
@@ -449,6 +456,7 @@ class PublishPage extends React.PureComponent {
         publishStarted: false,
         documentPickerOpen: false,
         editMode: false,
+        vanityUrl: null,
 
         currentMedia: null,
         currentThumbnailUri: null,

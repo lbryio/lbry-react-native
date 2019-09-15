@@ -11,13 +11,14 @@ import {
 import { selectDrawerStack } from 'redux/selectors/drawer';
 import { doUpdatePublishFormState, doClearPublishFormState } from 'redux/actions/form';
 import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
-import { selectPublishFormState } from 'redux/selectors/form';
+import { selectPublishFormState, selectHasPublishFormState } from 'redux/selectors/form';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PublishPage from './view';
 
 const select = state => ({
   balance: selectBalance(state),
   drawerStack: selectDrawerStack(state),
+  hasFormState: selectHasPublishFormState(state),
   publishFormState: selectPublishFormState(state),
   publishFormValues: selectPublishFormValues(state),
 });

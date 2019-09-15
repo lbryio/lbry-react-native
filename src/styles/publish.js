@@ -433,6 +433,16 @@ const publishStyle = StyleSheet.create({
     fontSize: 14,
     color: Colors.DescriptionGrey,
   },
+  publishesFooter: {
+    marginTop: 16,
+    marginLeft: 16,
+    marginRight: 16,
+  },
+  publishesFooterButton: {
+    alignSelf: 'flex-start',
+    backgroundColor: Colors.LbryGreen,
+    marginTop: 16,
+  },
 });
 
 export default publishStyle;

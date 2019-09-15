@@ -35,7 +35,7 @@ export default class ChannelCreator extends React.PureComponent {
     canSave: false,
     claimId: null,
     currentSelectedValue: Constants.ITEM_ANONYMOUS,
-    currentPhase: Constants.PHASE_LIST,
+    currentPhase: null,
     displayName: null,
     channelNameUserEdited: false,
     newChannelTitle: '',
@@ -148,6 +148,7 @@ export default class ChannelCreator extends React.PureComponent {
       navigation,
       pushDrawerStack,
       setPlayerVisible,
+      hasFormState,
     } = this.props;
 
     NativeModules.Firebase.setCurrentScreen('Channels').then(result => {
@@ -163,16 +164,20 @@ export default class ChannelCreator extends React.PureComponent {
       DeviceEventEmitter.addListener('onDocumentPickerFilePicked', this.onFilePicked);
       DeviceEventEmitter.addListener('onDocumentPickerCanceled', this.onPickerCanceled);
 
+      let isEditMode = false;
       if (navigation.state.params) {
         const { editChannelUrl, displayForm } = navigation.state.params;
         if (editChannelUrl) {
+          isEditMode = true;
           this.setState({ editChannelUrl, currentPhase: Constants.PHASE_CREATE });
-        } else if (displayForm) {
-          this.loadPendingFormState();
-          this.setState({ currentPhase: Constants.PHASE_CREATE }, () =>
-            pushDrawerStack(Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM)
-          );
         }
+      }
+
+      if (!isEditMode && hasFormState) {
+        this.loadPendingFormState();
+        this.setState({ currentPhase: Constants.PHASE_CREATE });
+      } else {
+        this.setState({ currentPhase: Constants.PHASE_LIST });
       }
     });
   };
@@ -521,7 +526,6 @@ export default class ChannelCreator extends React.PureComponent {
   handleNewChannelPress = () => {
     const { pushDrawerStack } = this.props;
     pushDrawerStack(Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM);
-    this.loadPendingFormState();
     this.setState({ currentPhase: Constants.PHASE_CREATE });
   };
 
