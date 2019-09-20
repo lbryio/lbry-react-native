@@ -129,11 +129,9 @@ const channelCreatorStyle = StyleSheet.create({
   },
   scrollContainer: {
     marginTop: 60,
-    marginLeft: 16,
-    marginRight: 16,
   },
   scrollPadding: {
-    paddingTop: 16,
+    padding: 16,
   },
   channelListItem: {
     flexDirection: 'row',

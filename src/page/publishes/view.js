@@ -157,6 +157,15 @@ class PublishesPage extends React.PureComponent {
             initialNumToRender={8}
             maxToRenderPerBatch={24}
             removeClippedSubviews
+            ListFooterComponent={
+              <View style={publishStyle.publishesFooter}>
+                <Button
+                  style={publishStyle.publishesFooterButton}
+                  text={__('Publish something new')}
+                  onPress={() => navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISH })}
+                />
+              </View>
+            }
             renderItem={({ item }) => (
               <FileListItem
                 key={item}
