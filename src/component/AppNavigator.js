@@ -18,8 +18,9 @@ import SubscriptionsPage from 'page/subscriptions';
 import TransactionHistoryPage from 'page/transactionHistory';
 import VerificationScreen from 'page/verification';
 import WalletPage from 'page/wallet';
-import { createStackNavigator, NavigationActions } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
+import { createStackNavigator } from 'react-navigation-stack';
 import {
   createReduxContainer,
   createReactNavigationReduxMiddleware,
@@ -210,6 +211,7 @@ const drawer = createDrawerNavigator(
   },
   {
     drawerWidth: 300,
+    drawerBackgroundColor: 'transparent',
     headerMode: 'none',
     backBehavior: 'none',
     unmountInactiveRoutes: true,
