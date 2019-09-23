@@ -830,7 +830,7 @@ class PublishPage extends React.PureComponent {
                 <TouchableOpacity
                   style={[
                     publishStyle.photo,
-                    canUseCamera ? publishStyle.transparentBackground : publishStyle.acftionBackground,
+                    canUseCamera ? publishStyle.transparentBackground : publishStyle.actionBackground,
                   ]}
                   onPress={this.handleTakePhotoPressed}
                 >
