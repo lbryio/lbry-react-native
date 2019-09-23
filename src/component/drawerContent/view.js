@@ -37,48 +37,61 @@ class DrawerContent extends React.PureComponent {
     const activeItemKey = state.routes[state.index] ? state.routes[state.index].key : null;
 
     return (
-      <ScrollView contentContainerStyle={discoverStyle.menuScrollContent}>
-        <SafeAreaView style={discoverStyle.drawerContentContainer} forceInset={{ top: 'always', horizontal: 'never' }}>
-          {groupNames.map(groupName => {
-            const menuItems = groupedMenuItems[groupName];
+      <View style={discoverStyle.drawerContentArea}>
+        <ScrollView contentContainerStyle={discoverStyle.menuScrollContent}>
+          <SafeAreaView
+            style={discoverStyle.drawerContentContainer}
+            forceInset={{ top: 'always', horizontal: 'never' }}
+          >
+            {groupNames.map(groupName => {
+              const menuItems = groupedMenuItems[groupName];
 
-            return (
-              <View key={groupName} style={discoverStyle.menuGroup}>
-                {groupNames[3] !== groupName && (
-                  <Text key={`${groupName}-title`} style={discoverStyle.menuGroupName}>
-                    {groupName}
-                  </Text>
-                )}
-                {menuItems.map(item => {
-                  const focused =
-                    activeItemKey === item.route ||
-                    (activeItemKey === Constants.FULL_ROUTE_NAME_DISCOVER &&
-                      item.route === Constants.DRAWER_ROUTE_DISCOVER) ||
-                    (activeItemKey === Constants.FULL_ROUTE_NAME_WALLET &&
-                      item.route === Constants.DRAWER_ROUTE_WALLET);
-                  return (
-                    <TouchableOpacity
-                      accessible
-                      accessibilityLabel={item.label}
-                      style={[discoverStyle.menuItemTouchArea, focused ? discoverStyle.menuItemTouchAreaFocused : null]}
-                      key={item.label}
-                      onPress={() => navigation.navigate({ routeName: item.route })}
-                      delayPressIn={0}
-                    >
-                      <View style={discoverStyle.menuItemIcon}>
-                        <Icon name={item.icon} size={16} solid={item.solid} color={focused ? activeTintColor : null} />
-                      </View>
-                      <Text style={[discoverStyle.menuItem, focused ? discoverStyle.menuItemFocused : null]}>
-                        {item.label}
-                      </Text>
-                    </TouchableOpacity>
-                  );
-                })}
-              </View>
-            );
-          })}
-        </SafeAreaView>
-      </ScrollView>
+              return (
+                <View key={groupName} style={discoverStyle.menuGroup}>
+                  {groupNames[3] !== groupName && (
+                    <Text key={`${groupName}-title`} style={discoverStyle.menuGroupName}>
+                      {groupName}
+                    </Text>
+                  )}
+                  {menuItems.map(item => {
+                    const focused =
+                      activeItemKey === item.route ||
+                      (activeItemKey === Constants.FULL_ROUTE_NAME_DISCOVER &&
+                        item.route === Constants.DRAWER_ROUTE_DISCOVER) ||
+                      (activeItemKey === Constants.FULL_ROUTE_NAME_WALLET &&
+                        item.route === Constants.DRAWER_ROUTE_WALLET);
+                    return (
+                      <TouchableOpacity
+                        accessible
+                        accessibilityLabel={item.label}
+                        style={[
+                          discoverStyle.menuItemTouchArea,
+                          focused ? discoverStyle.menuItemTouchAreaFocused : null,
+                        ]}
+                        key={item.label}
+                        onPress={() => navigation.navigate({ routeName: item.route })}
+                        delayPressIn={0}
+                      >
+                        <View style={discoverStyle.menuItemIcon}>
+                          <Icon
+                            name={item.icon}
+                            size={16}
+                            solid={item.solid}
+                            color={focused ? activeTintColor : null}
+                          />
+                        </View>
+                        <Text style={[discoverStyle.menuItem, focused ? discoverStyle.menuItemFocused : null]}>
+                          {item.label}
+                        </Text>
+                      </TouchableOpacity>
+                    );
+                  })}
+                </View>
+              );
+            })}
+          </SafeAreaView>
+        </ScrollView>
+      </View>
     );
   }
 }
