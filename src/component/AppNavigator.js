@@ -29,8 +29,9 @@ import {
 import { connect } from 'react-redux';
 import { AppState, BackHandler, Linking, NativeModules, TextInput, ToastAndroid } from 'react-native';
 import { selectDrawerStack } from 'redux/selectors/drawer';
-import { SETTINGS, doDismissToast, doToast, selectToast } from 'lbry-redux';
+import { SETTINGS, doDismissToast, doPopulateSharedUserState, doToast, selectToast } from 'lbry-redux';
 import {
+  Lbryio,
   doGetSync,
   doUserCheckEmailVerified,
   doUserEmailVerify,
@@ -305,6 +306,13 @@ class AppWithNavigationState extends React.Component {
     });
   };
 
+  getUserSettings = () => {
+    const { dispatch } = this.props;
+    Lbryio.call('user_settings', 'get').then(settings => {
+      dispatch(doPopulateSharedUserState(settings));
+    });
+  };
+
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
     BackHandler.removeEventListener('hardwareBackPress');
@@ -321,12 +329,16 @@ class AppWithNavigationState extends React.Component {
       NativeModules.Firebase.track('email_verified', { email: user.primary_email });
       ToastAndroid.show('Your email address was successfully verified.', ToastAndroid.LONG);
 
+      // get user settings after email verification
+      this.getUserSettings();
+
       // upon successful email verification, do wallet sync (if password has been set)
-      NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
+      // don't need to do this anymore...
+      /* NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
         if (walletPassword && walletPassword.trim().length > 0) {
           dispatch(doGetSync(walletPassword));
         }
-      });
+      }); */
     }
   }
 
