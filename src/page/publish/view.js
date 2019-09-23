@@ -411,7 +411,11 @@ class PublishPage extends React.PureComponent {
       if (publishFormValues.thumbnail && !this.state.uploadedThumbnailUri) {
         const { thumbnail } = publishFormValues;
         updatePublishFormState({ currentThumbnailUri: thumbnail, uploadedThumbnailUri: thumbnail });
-        this.setState({ currentThumbnailUri: thumbnail, uploadedThumbnailUri: thumbnail });
+        this.setState({
+          currentThumbnailUri: thumbnail,
+          uploadedThumbnailUri: thumbnail,
+          uploadThumbnailStarted: false,
+        });
       }
     }
 
@@ -1117,7 +1121,7 @@ class PublishPage extends React.PureComponent {
               <View style={publishStyle.rightActionButtons}>
                 <Button
                   style={publishStyle.publishButton}
-                  disabled={!this.state.canPublish || !this.state.uploadedThumbnailUri}
+                  disabled={!this.state.canPublish || this.state.uploadThumbnailStarted}
                   text={this.state.editMode ? 'Save changes' : 'Publish'}
                   onPress={this.handlePublishPressed}
                 />
