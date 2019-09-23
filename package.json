@@ -34,7 +34,7 @@
         "react-native-vector-icons": "^6.6.0",
         "react-native-video": "lbryio/react-native-video#exoplayer-lbry-android",
         "react-navigation": "^3.11.0",
-        "react-navigation-drawer": "^2.0.0",
+        "react-navigation-drawer": "^2.2.2",
         "react-navigation-redux-helpers": "^3.0.2",
         "react-redux": "^5.0.3",
         "redux": "^4.0.4",
