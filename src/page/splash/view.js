@@ -113,15 +113,9 @@ class SplashScreen extends React.PureComponent {
 
   getUserSettings = () => {
     const { populateSharedUserState } = this.props;
-    Lbryio.call('user_settings', 'get')
-      .then(settings => {
-        console.log('***populate with settings***');
-        console.log(settings);
-        populateSharedUserState(settings);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    Lbryio.call('user_settings', 'get').then(settings => {
+      populateSharedUserState(settings);
+    });
   };
 
   finishSplashScreen = () => {
