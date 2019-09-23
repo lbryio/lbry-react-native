@@ -22,6 +22,10 @@ const discoverStyle = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.PageBackground,
   },
+  drawerContentArea: {
+    flex: 1,
+    backgroundColor: Colors.White,
+  },
   drawerContentContainer: {
     flex: 1,
   },
