@@ -611,8 +611,6 @@ class PublishPage extends React.PureComponent {
     });
   };
 
-  handleUploadPressed = () => {};
-
   getRandomFileId = () => {
     // generate a random id for a photo or recorded video between 1 and 20 (for creating thumbnails)
     const id = Math.floor(Math.random() * (20 - 2)) + 1;
@@ -832,7 +830,7 @@ class PublishPage extends React.PureComponent {
                 <TouchableOpacity
                   style={[
                     publishStyle.photo,
-                    canUseCamera ? publishStyle.transparentBackground : publishStyle.actionBackground,
+                    canUseCamera ? publishStyle.transparentBackground : publishStyle.acftionBackground,
                   ]}
                   onPress={this.handleTakePhotoPressed}
                 >

@@ -154,7 +154,7 @@ store.subscribe(() => {
   const tags = state.tags.followedTags;
 
   const newPayload = {
-    version: '0',
+    version: '0.1',
     shared: {
       subscriptions,
       tags,
@@ -163,7 +163,9 @@ store.subscribe(() => {
 
   if (!isEqual(newPayload, currentPayload)) {
     currentPayload = newPayload;
-    Lbryio.call('user_settings', 'set', { settings: JSON.stringify(newPayload) });
+    if (Lbryio.authToken) {
+      Lbryio.call('user_settings', 'set', { settings: JSON.stringify(newPayload) });
+    }
   }
 });
 
