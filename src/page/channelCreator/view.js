@@ -240,7 +240,7 @@ export default class ChannelCreator extends React.PureComponent {
   componentDidUpdate() {
     const { channels = [] } = this.props;
     const { editChannelUrl } = this.state;
-    if (channels.length > 0) {
+    if (channels && channels.length > 0) {
       if (this.state.autoStyles.length !== channels.length) {
         this.setState({
           autoStyles: this.generateAutoStyles(channels.length),
@@ -825,7 +825,7 @@ export default class ChannelCreator extends React.PureComponent {
                 </TouchableOpacity>
               );
             }}
-            data={channels.filter(channel => !abandoningClaimIds.includes(channel.claim_id))}
+            data={channels ? channels.filter(channel => !abandoningClaimIds.includes(channel.claim_id)) : []}
             keyExtractor={(item, index) => item.claim_id}
           />
         )}

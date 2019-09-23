@@ -1,5 +1,8 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 import Colors from './colors';
+
+const screenDimension = Dimensions.get('window');
+const screenWidth = screenDimension.width;
 
 const publishStyle = StyleSheet.create({
   container: {
@@ -442,6 +445,21 @@ const publishStyle = StyleSheet.create({
     alignSelf: 'flex-start',
     backgroundColor: Colors.LbryGreen,
     marginTop: 16,
+  },
+  thumbnailEditOverlay: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 24,
+    position: 'absolute',
+    padding: 8,
+    left: screenWidth / 2 - 32 / 2,
+    bottom: 8,
+    backgroundColor: '#00000077',
+  },
+  editIcon: {
+    color: Colors.White,
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 12,
   },
 });
 
