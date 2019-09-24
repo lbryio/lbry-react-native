@@ -199,6 +199,9 @@ class PublishPage extends React.PureComponent {
         vanityUrlSet = false;
       if (navigation.state.params) {
         const { displayForm, editMode, claimToEdit, vanityUrl } = navigation.state.params;
+        console.log('editMode=' + editMode);
+        console.log('***claimToEdit***');
+        console.log(claimToEdit);
         if (editMode) {
           this.prepareEdit(claimToEdit);
           isEditMode = true;
@@ -220,10 +223,8 @@ class PublishPage extends React.PureComponent {
           // replace name with the specified vanity URL if there was one in the pending state
           this.setState({ name: this.state.vanityUrl });
         }
-        this.setState({ currentPhase: Constants.PHASE_DETAILS });
-      } else {
-        this.setState({ currentPhase: Constants.PHASE_SELECTOR });
       }
+      this.setState({ currentPhase: isEditMode || hasFormState ? Constants.PHASE_DETAILS : Constants.PHASE_SELECTOR });
     });
   };
 
@@ -384,10 +385,11 @@ class PublishPage extends React.PureComponent {
   };
 
   handlePublishSuccess = data => {
-    const { navigation, notify } = this.props;
+    const { clearPublishFormState, navigation, notify } = this.props;
     notify({
       message: `Your content was successfully published to ${this.state.uri}. It will be available in a few mintues.`,
     });
+    clearPublishFormState();
     navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISHES, params: { publishSuccess: true } });
   };
 
@@ -426,6 +428,7 @@ class PublishPage extends React.PureComponent {
     updatePublishFormState({ currentMedia: media, name: newName });
     this.setState(
       {
+        publishStarted: false,
         currentMedia: media,
         title: null, // no title autogeneration (user will fill this in)
         name: newName,
@@ -443,7 +446,7 @@ class PublishPage extends React.PureComponent {
   };
 
   showSelector() {
-    const { updatePublishForm } = this.props;
+    const { clearPublishFormState, updatePublishForm } = this.props;
 
     this.setState(
       {
@@ -485,6 +488,7 @@ class PublishPage extends React.PureComponent {
         vanityUrlSet: false,
       },
       () => {
+        clearPublishFormState();
         // reset thumbnail
         updatePublishForm({ thumbnail: null });
       }
@@ -605,6 +609,7 @@ class PublishPage extends React.PureComponent {
             {
               currentThumbnailUri: null,
               updatingThumbnailUri: false,
+              publishStarted: false,
               currentPhase: Constants.PHASE_DETAILS,
               showCameraOverlay: false,
               videoRecordingMode: false,
@@ -629,6 +634,7 @@ class PublishPage extends React.PureComponent {
           {
             currentPhase: Constants.PHASE_DETAILS,
             currentThumbnailUri: null,
+            publishStarted: false,
             updatingThumbnailUri: false,
             showCameraOverlay: false,
             videoRecordingMode: false,
@@ -823,7 +829,7 @@ class PublishPage extends React.PureComponent {
       : '';
     const licenseUrl = LICENSES.CC_LICENSES.reduce((value, item) => {
       if (typeof value === 'object') {
-        value = '';
+        value = license === value.value ? item.url : '';
       }
       if (license === item.value) {
         value = item.url;

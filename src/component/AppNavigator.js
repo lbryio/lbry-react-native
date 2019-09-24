@@ -331,14 +331,6 @@ class AppWithNavigationState extends React.Component {
 
       // get user settings after email verification
       this.getUserSettings();
-
-      // upon successful email verification, do wallet sync (if password has been set)
-      // don't need to do this anymore...
-      /* NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
-        if (walletPassword && walletPassword.trim().length > 0) {
-          dispatch(doGetSync(walletPassword));
-        }
-      }); */
     }
   }
 

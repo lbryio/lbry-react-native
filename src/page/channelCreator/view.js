@@ -534,10 +534,12 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   showChannelList = () => {
-    const { popDrawerStack } = this.props;
-    popDrawerStack();
-    this.resetChannelCreator();
+    const { drawerStack, popDrawerStack } = this.props;
+    if (drawerStack[drawerStack.length - 1].route === Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM) {
+      popDrawerStack();
+    }
     this.setState({ currentPhase: Constants.PHASE_LIST });
+    this.resetChannelCreator();
   };
 
   resetChannelCreator = () => {
@@ -606,6 +608,7 @@ export default class ChannelCreator extends React.PureComponent {
     this.setState({
       claimId: channel.claim_id,
       currentPhase: Constants.PHASE_CREATE,
+      displayName: value && value.title ? value.title : channel.name.substring(1),
       editMode: true,
       coverImageUrl: value && value.cover ? value.cover.url : null,
       currentChannelName: channel.name.substring(1),
@@ -864,7 +867,7 @@ export default class ChannelCreator extends React.PureComponent {
                       source={{ uri: thumbnailUrl }}
                     />
                   )}
-                  {thumbnailUrl !== null && thumbnailUrl.trim().length === 0 && newChannelName.length > 1 && (
+                  {(thumbnailUrl === null || thumbnailUrl.trim().length === 0) && newChannelName.length > 1 && (
                     <Text style={channelIconStyle.autothumbCharacter}>
                       {newChannelName.substring(0, 1).toUpperCase()}
                     </Text>
