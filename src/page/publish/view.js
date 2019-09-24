@@ -410,18 +410,6 @@ class PublishPage extends React.PureComponent {
       this.onComponentFocused();
     }
 
-    if (publishFormValues) {
-      if (publishFormValues.thumbnail && !this.state.uploadedThumbnailUri) {
-        const { thumbnail } = publishFormValues;
-        updatePublishFormState({ currentThumbnailUri: thumbnail, uploadedThumbnailUri: thumbnail });
-        this.setState({
-          currentThumbnailUri: thumbnail,
-          uploadedThumbnailUri: thumbnail,
-          uploadThumbnailStarted: false,
-        });
-      }
-    }
-
     if (
       this.state.currentPhase === Constants.PHASE_DETAILS &&
       prevDrawerStack[prevDrawerStack.length - 1].route === Constants.DRAWER_ROUTE_PUBLISH_FORM &&
