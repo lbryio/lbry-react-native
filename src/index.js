@@ -46,7 +46,6 @@ import isEqual from 'utils/deep-equal';
 
 const globalExceptionHandler = (error, isFatal) => {
   if (error && NativeModules.Firebase) {
-    console.log(error);
     NativeModules.Firebase.logException(isFatal, error.message ? error.message : 'No message', JSON.stringify(error));
   }
 };
