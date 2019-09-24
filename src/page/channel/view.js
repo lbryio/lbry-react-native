@@ -19,6 +19,7 @@ import ClaimList from 'component/claimList';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Button from 'component/button';
+import EmptyStateView from 'component/emptyStateView';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
 import ModalPicker from 'component/modalPicker';
@@ -130,9 +131,7 @@ class ChannelPage extends React.PureComponent {
     return (
       <View style={channelPageStyle.aboutTab}>
         {!websiteUrl && !email && !description && (
-          <View style={channelPageStyle.busyContainer}>
-            <Text style={channelPageStyle.infoText}>Nothing here yet. Please check back later.</Text>
-          </View>
+          <EmptyStateView message={"There's nothing here yet.\nPlease check back later."} />
         )}
 
         {(websiteUrl || email || description) && (
