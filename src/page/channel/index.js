@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { makeSelectClaimForUri, selectMyChannelClaims } from 'lbry-redux';
+import { doAbandonClaim, doFetchChannelListMine, makeSelectClaimForUri, selectMyChannelClaims } from 'lbry-redux';
 import { doPopDrawerStack } from 'redux/actions/drawer';
 import { doSetSortByItem, doSetTimeItem } from 'redux/actions/settings';
 import { selectDrawerStack } from 'redux/selectors/drawer';
@@ -15,6 +15,8 @@ const select = (state, props) => ({
 });
 
 const perform = dispatch => ({
+  abandonClaim: (txid, nout) => dispatch(doAbandonClaim(txid, nout)),
+  fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
   popDrawerStack: () => dispatch(doPopDrawerStack()),
   setSortByItem: item => dispatch(doSetSortByItem(item)),
   setTimeItem: item => dispatch(doSetTimeItem(item)),

@@ -2,6 +2,7 @@ import React from 'react';
 import { ActivityIndicator, NativeModules, View, ScrollView, Text } from 'react-native';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
+import EmptyStateView from 'component/emptyStateView';
 import TransactionList from 'component/transactionList';
 import UriBar from 'component/uriBar';
 import walletStyle from 'styles/wallet';
@@ -53,11 +54,9 @@ class TransactionHistoryPage extends React.PureComponent {
             <Text style={walletStyle.loadingText}>Loading transactions...</Text>
           </View>
         )}
+        {!fetchingTransactions && transactions.length === 0 && <EmptyStateView message={'No transactions to list.'} />}
         <ScrollView style={walletStyle.transactionHistoryScroll}>
           <View style={walletStyle.historyList}>
-            {!fetchingTransactions && transactions.length === 0 && (
-              <Text style={walletStyle.infoText}>No transactions to list.</Text>
-            )}
             {!fetchingTransactions && transactions && transactions.length > 0 && (
               <TransactionList navigation={navigation} transactions={transactions} />
             )}

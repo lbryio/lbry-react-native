@@ -1,5 +1,6 @@
 import React from 'react';
 import { Lbry } from 'lbry-redux';
+import { Lbryio } from 'lbryinc';
 import { ActivityIndicator, Linking, NativeModules, Platform, Text, View } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
 import { decode as atob } from 'base-64';
@@ -14,6 +15,8 @@ import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import splashStyle from 'styles/splash';
 
 const BLOCK_HEIGHT_INTERVAL = 1000 * 60 * 2.5; // every 2.5 minutes
+
+const SETTINGS_GET_INTERVAL = 1000 * 60 * 5; // every 5 minutes
 
 const testingNetwork = 'Testing network';
 const waitingForResolution = 'Waiting for name resolution';
@@ -108,6 +111,13 @@ class SplashScreen extends React.PureComponent {
     }
   }
 
+  getUserSettings = () => {
+    const { populateSharedUserState } = this.props;
+    Lbryio.call('user_settings', 'get').then(settings => {
+      populateSharedUserState(settings);
+    });
+  };
+
   finishSplashScreen = () => {
     const {
       authenticate,
@@ -126,6 +136,10 @@ class SplashScreen extends React.PureComponent {
       blacklistedOutpointsSubscribe();
       filteredOutpointsSubscribe();
       checkSubscriptionsInit();
+
+      // get user settings interval
+      this.getUserSettings();
+      setInterval(() => this.getUserSettings(), SETTINGS_GET_INTERVAL);
 
       if (user && user.id && user.has_verified_email) {
         // user already authenticated

@@ -43,7 +43,7 @@ import Tag from 'component/tag';
 import TagSearch from 'component/tagSearch';
 import UriBar from 'component/uriBar';
 import publishStyle from 'styles/publish';
-import { __, navigateToUri } from 'utils/helper';
+import { __, navigateToUri, uploadImageAsset } from 'utils/helper';
 
 const languages = {
   en: 'English',
@@ -128,6 +128,8 @@ class PublishPage extends React.PureComponent {
     selectedChannel: null,
     uploadedThumbnailUri: null,
     vanityUrlSet: false,
+
+    thumbnailImagePickerOpen: false,
 
     // other
     publishStarted: false,
@@ -218,10 +220,8 @@ class PublishPage extends React.PureComponent {
           // replace name with the specified vanity URL if there was one in the pending state
           this.setState({ name: this.state.vanityUrl });
         }
-        this.setState({ currentPhase: Constants.PHASE_DETAILS });
-      } else {
-        this.setState({ currentPhase: Constants.PHASE_SELECTOR });
       }
+      this.setState({ currentPhase: isEditMode || hasFormState ? Constants.PHASE_DETAILS : Constants.PHASE_SELECTOR });
     });
   };
 
@@ -256,6 +256,7 @@ class PublishPage extends React.PureComponent {
     this.setState(
       {
         editMode: true,
+        publishStarted: false,
         currentPhase: Constants.PHASE_DETAILS,
 
         hasEditedContentAddress: true,
@@ -382,10 +383,12 @@ class PublishPage extends React.PureComponent {
   };
 
   handlePublishSuccess = data => {
-    const { navigation, notify } = this.props;
+    const { clearPublishFormState, navigation, notify } = this.props;
     notify({
       message: `Your content was successfully published to ${this.state.uri}. It will be available in a few mintues.`,
     });
+    clearPublishFormState();
+    this.setState({ publishStarted: false });
     navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISHES, params: { publishSuccess: true } });
   };
 
@@ -407,14 +410,6 @@ class PublishPage extends React.PureComponent {
       this.onComponentFocused();
     }
 
-    if (publishFormValues) {
-      if (publishFormValues.thumbnail && !this.state.uploadedThumbnailUri) {
-        const { thumbnail } = publishFormValues;
-        updatePublishFormState({ currentThumbnailUri: thumbnail, uploadedThumbnailUri: thumbnail });
-        this.setState({ currentThumbnailUri: thumbnail, uploadedThumbnailUri: thumbnail });
-      }
-    }
-
     if (
       this.state.currentPhase === Constants.PHASE_DETAILS &&
       prevDrawerStack[prevDrawerStack.length - 1].route === Constants.DRAWER_ROUTE_PUBLISH_FORM &&
@@ -432,6 +427,7 @@ class PublishPage extends React.PureComponent {
     updatePublishFormState({ currentMedia: media, name: newName });
     this.setState(
       {
+        publishStarted: false,
         currentMedia: media,
         title: null, // no title autogeneration (user will fill this in)
         name: newName,
@@ -449,7 +445,7 @@ class PublishPage extends React.PureComponent {
   };
 
   showSelector() {
-    const { updatePublishForm } = this.props;
+    const { clearPublishFormState, updatePublishForm } = this.props;
 
     this.setState(
       {
@@ -486,9 +482,12 @@ class PublishPage extends React.PureComponent {
         selectedChannel: null,
         uploadedThumbnailUri: null,
 
+        thumbnailImagePickerOpen: false,
+
         vanityUrlSet: false,
       },
       () => {
+        clearPublishFormState();
         // reset thumbnail
         updatePublishForm({ thumbnail: null });
       }
@@ -522,19 +521,59 @@ class PublishPage extends React.PureComponent {
     );
   };
 
-  onFilePicked = evt => {
-    this.setState({ documentPickerOpen: false }, () => {
-      const currentMedia = {
-        id: -1,
-        filePath: `file://${evt.path}`,
-        duration: 0,
-      };
-      this.setCurrentMedia(currentMedia);
+  handleThumbnailUploadSuccess = ({ url }) => {
+    const { updatePublishFormState } = this.props;
+
+    this.setState({
+      uploadThumbnailStarted: false,
+      currentThumbnailUri: url,
+      uploadedThumbnailUri: url,
     });
+    updatePublishFormState({ currentThumbnailUri: url, uploadedThumbnailUri: url });
+  };
+
+  handleThumbnailUploadFailure = err => {
+    const { notify } = this.props;
+    this.setState({ uploadThumbnailStarted: false });
+    notify({ message: 'The thumbnail could not be uploaded. Please try again.' });
+  };
+
+  onFilePicked = evt => {
+    const { notify } = this.props;
+    if (evt.path && evt.path.length > 0) {
+      const fileUrl = `file://${evt.path}`;
+
+      if (this.state.documentPickerOpen) {
+        this.setState({ documentPickerOpen: false, thumbnailImagePickerOpen: false }, () => {
+          const currentMedia = {
+            id: -1,
+            filePath: fileUrl,
+            duration: 0,
+          };
+          this.setCurrentMedia(currentMedia);
+        });
+      } else if (this.state.thumbnailImagePickerOpen) {
+        this.setState(
+          {
+            documentPickerOpen: false,
+            thumbnailImagePickerOpen: false,
+            uploadThumbnailStarted: true,
+            currentThumbnailUri: fileUrl,
+          },
+          () => {
+            // upload a new thumbnail
+            uploadImageAsset(fileUrl, this.handleThumbnailUploadSuccess, this.handleThumbnailUploadFailure);
+          }
+        );
+      }
+    } else {
+      // could not determine the file path
+      notify({ message: 'The path could not be determined. Please try a different file.' });
+    }
   };
 
   onPickerCanceled = () => {
-    this.setState({ documentPickerOpen: false });
+    this.setState({ documentPickerOpen: false, thumbnailImagePickerOpen: false });
   };
 
   handleCloseCameraPressed = () => {
@@ -569,6 +608,7 @@ class PublishPage extends React.PureComponent {
             {
               currentThumbnailUri: null,
               updatingThumbnailUri: false,
+              publishStarted: false,
               currentPhase: Constants.PHASE_DETAILS,
               showCameraOverlay: false,
               videoRecordingMode: false,
@@ -593,6 +633,7 @@ class PublishPage extends React.PureComponent {
           {
             currentPhase: Constants.PHASE_DETAILS,
             currentThumbnailUri: null,
+            publishStarted: false,
             updatingThumbnailUri: false,
             showCameraOverlay: false,
             videoRecordingMode: false,
@@ -610,8 +651,6 @@ class PublishPage extends React.PureComponent {
         cameraType === RNCamera.Constants.Type.back ? RNCamera.Constants.Type.front : RNCamera.Constants.Type.back,
     });
   };
-
-  handleUploadPressed = () => {};
 
   getRandomFileId = () => {
     // generate a random id for a photo or recorded video between 1 and 20 (for creating thumbnails)
@@ -699,7 +738,7 @@ class PublishPage extends React.PureComponent {
       return;
     }
 
-    const { notify, uploadThumbnail } = this.props;
+    const { notify } = this.props;
     const { thumbnailPath } = this.state;
 
     this.setState({ updatingThumbnailUri: true });
@@ -714,7 +753,13 @@ class PublishPage extends React.PureComponent {
 
         // upload the thumbnail
         if (!this.state.uploadedThumbnailUri) {
-          this.setState({ uploadThumbnailStarted: true }, () => uploadThumbnail(this.getFilePathFromUri(uri), RNFS));
+          this.setState({ uploadThumbnailStarted: true }, () =>
+            uploadImageAsset(
+              this.getFilePathFromUri(uri),
+              this.handleThumbnailUploadSuccess,
+              this.handleThumbnailUploadFailure
+            )
+          );
         }
       } else if (mediaType === 'image' || mediaType === 'video') {
         const create =
@@ -725,7 +770,9 @@ class PublishPage extends React.PureComponent {
           .then(path => {
             this.setState({ currentThumbnailUri: `file://${path}`, updatingThumbnailUri: false });
             if (!this.state.uploadedThumbnailUri) {
-              this.setState({ uploadThumbnailStarted: true }, () => uploadThumbnail(path, RNFS));
+              this.setState({ uploadThumbnailStarted: true }, () =>
+                uploadImageAsset(path, this.handleThumbnailUploadSuccess, this.handleThumbnailUploadFailure)
+              );
             }
           })
           .catch(err => {
@@ -781,7 +828,7 @@ class PublishPage extends React.PureComponent {
       : '';
     const licenseUrl = LICENSES.CC_LICENSES.reduce((value, item) => {
       if (typeof value === 'object') {
-        value = '';
+        value = license === value.value ? item.url : '';
       }
       if (license === item.value) {
         value = item.url;
@@ -797,6 +844,25 @@ class PublishPage extends React.PureComponent {
     const { updatePublishFormState } = this.props;
     updatePublishFormState({ otherLicenseDescription });
     this.setState({ otherLicenseDescription });
+  };
+
+  handleThumbnailPressed = () => {
+    const { notify } = this.props;
+    if (this.state.thumbnailImagePickerOpen || this.state.uploadThumbnailStarted) {
+      if (this.state.uploadThumbnailStarted) {
+        notify({ message: 'A thumbnail is already being uploaded. Please wait for the upload to finish.' });
+      }
+      return;
+    }
+
+    this.setState(
+      {
+        thumbnailImagePickerOpen: true,
+      },
+      () => {
+        NativeModules.UtilityModule.openDocumentPicker('image/*');
+      }
+    );
   };
 
   render() {
@@ -893,22 +959,24 @@ class PublishPage extends React.PureComponent {
       }
       content = (
         <ScrollView style={publishStyle.publishDetails}>
-          {currentThumbnailUri && currentThumbnailUri.trim().length > 0 && (
-            <View style={publishStyle.mainThumbnailContainer}>
-              <FastImage
-                style={publishStyle.mainThumbnail}
-                resizeMode={FastImage.resizeMode.contain}
-                source={{ uri: currentThumbnailUri }}
-              />
+          <TouchableOpacity style={publishStyle.mainThumbnailContainer} onPress={this.handleThumbnailPressed}>
+            <FastImage
+              style={publishStyle.mainThumbnail}
+              resizeMode={FastImage.resizeMode.contain}
+              source={{ uri: currentThumbnailUri }}
+            />
 
-              {this.state.uploadThumbnailStarted && !this.state.uploadedThumbnailUri && (
-                <View style={publishStyle.thumbnailUploadContainer}>
-                  <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
-                  <Text style={publishStyle.thumbnailUploadText}>Uploading thumbnail...</Text>
-                </View>
-              )}
+            <View style={publishStyle.thumbnailEditOverlay}>
+              <Icon name={'edit'} style={publishStyle.editIcon} />
             </View>
-          )}
+
+            {this.state.uploadThumbnailStarted && (
+              <View style={publishStyle.thumbnailUploadContainer}>
+                <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
+                <Text style={publishStyle.thumbnailUploadText}>Uploading thumbnail...</Text>
+              </View>
+            )}
+          </TouchableOpacity>
           {!this.state.canPublish && <PublishRewardsDriver navigation={navigation} />}
 
           <View style={publishStyle.card}>
@@ -1105,21 +1173,21 @@ class PublishPage extends React.PureComponent {
           </View>
 
           <View style={publishStyle.actionButtons}>
-            {(this.state.publishStarted || publishFormValues.publishing) && (
+            {this.state.publishStarted && (
               <View style={publishStyle.progress}>
                 <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
               </View>
             )}
 
-            {!publishFormValues.publishing && !this.state.publishStarted && (
+            {!this.state.publishStarted && (
               <Link style={publishStyle.cancelLink} text="Cancel" onPress={() => this.showSelector()} />
             )}
 
-            {!publishFormValues.publishing && !this.state.publishStarted && (
+            {!this.state.publishStarted && (
               <View style={publishStyle.rightActionButtons}>
                 <Button
                   style={publishStyle.publishButton}
-                  disabled={!this.state.canPublish || !this.state.uploadedThumbnailUri}
+                  disabled={!this.state.canPublish || this.state.uploadThumbnailStarted}
                   text={this.state.editMode ? 'Save changes' : 'Publish'}
                   onPress={this.handlePublishPressed}
                 />

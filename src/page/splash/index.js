@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { doBalanceSubscribe, doUpdateBlockHeight, doToast } from 'lbry-redux';
+import { doBalanceSubscribe, doUpdateBlockHeight, doPopulateSharedUserState, doToast } from 'lbry-redux';
 import {
   doAuthenticate,
   doBlackListedOutpointsSubscribe,
@@ -34,6 +34,7 @@ const perform = dispatch => ({
   notify: data => dispatch(doToast(data)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
   setEmailToVerify: email => dispatch(doUserEmailToVerify(email)),
+  populateSharedUserState: settings => dispatch(doPopulateSharedUserState(settings)),
   updateBlockHeight: () => dispatch(doUpdateBlockHeight()),
   verifyUserEmail: (token, recaptcha) => dispatch(doUserEmailVerify(token, recaptcha)),
   verifyUserEmailFailure: error => dispatch(doUserEmailVerifyFailure(error)),
