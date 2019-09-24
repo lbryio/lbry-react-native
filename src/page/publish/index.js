@@ -4,7 +4,6 @@ import {
   doResolveUri,
   doToast,
   doUpdatePublishForm,
-  doUploadThumbnail,
   selectBalance,
   selectPublishFormValues,
 } from 'lbry-redux';
@@ -28,7 +27,6 @@ const perform = dispatch => ({
   clearPublishFormState: () => dispatch(doClearPublishFormState()),
   updatePublishForm: value => dispatch(doUpdatePublishForm(value)),
   updatePublishFormState: data => dispatch(doUpdatePublishFormState(data)),
-  uploadThumbnail: (filePath, fsAdapter) => dispatch(doUploadThumbnail(filePath, null, fsAdapter)),
   publish: (success, fail) => dispatch(doPublish(success, fail)),
   resolveUri: uri => dispatch(doResolveUri(uri)),
   pushDrawerStack: (routeName, params) => dispatch(doPushDrawerStack(routeName, params)),

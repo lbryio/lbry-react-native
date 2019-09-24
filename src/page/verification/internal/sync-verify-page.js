@@ -43,7 +43,7 @@ class SyncVerifyPage extends React.PureComponent {
           navigation.goBack();
         });
       } else {
-        syncApply(syncHash, syncData, this.state.password);
+        syncApply(syncHash, syncData, this.state.password ? this.state.password : '');
       }
     });
   };

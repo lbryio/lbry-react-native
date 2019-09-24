@@ -15,6 +15,7 @@ import { __, navigateToUri, uriFromFileInfo } from 'utils/helper';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PageHeader from 'component/pageHeader';
+import EmptyStateView from 'component/emptyStateView';
 import FileListItem from 'component/fileListItem';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import StorageStatsCard from 'component/storageStatsCard';
@@ -154,6 +155,10 @@ class DownloadsPage extends React.PureComponent {
           onDeleteActionPressed={this.onDeleteActionPressed}
         />
 
+        {!fetching && !hasDownloads && (
+          <EmptyStateView message={'You do not have any\ndownloaded content on this device.'} />
+        )}
+
         <View style={downloadsStyle.subContainer}>
           {hasDownloads && <StorageStatsCard fileInfos={this.getFilteredFileInfos()} />}
           {fetching && (
@@ -161,11 +166,7 @@ class DownloadsPage extends React.PureComponent {
               <ActivityIndicator size="large" color={Colors.NextLbryGreen} style={downloadsStyle.loading} />
             </View>
           )}
-          {!fetching && !hasDownloads && (
-            <View style={downloadsStyle.busyContainer}>
-              <Text style={downloadsStyle.noDownloadsText}>You do not have any downloaded content on this device.</Text>
-            </View>
-          )}
+
           {!fetching && hasDownloads && (
             <FlatList
               extraData={this.state}

@@ -59,7 +59,8 @@ class RewardCard extends React.PureComponent<Props> {
   getDisplayAmount = () => {
     const { reward } = this.props;
     if (reward) {
-      if (reward.reward_range && reward.reward_range.includes('-')) {
+      const claimed = !!reward.transaction_id;
+      if (!claimed && reward.reward_range && reward.reward_range.includes('-')) {
         return reward.reward_range.split('-')[0] + '+'; // ex: 5+
       } else if (reward.reward_amount > 0) {
         return reward.reward_amount;
