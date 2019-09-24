@@ -199,9 +199,6 @@ class PublishPage extends React.PureComponent {
         vanityUrlSet = false;
       if (navigation.state.params) {
         const { displayForm, editMode, claimToEdit, vanityUrl } = navigation.state.params;
-        console.log('editMode=' + editMode);
-        console.log('***claimToEdit***');
-        console.log(claimToEdit);
         if (editMode) {
           this.prepareEdit(claimToEdit);
           isEditMode = true;
@@ -259,6 +256,7 @@ class PublishPage extends React.PureComponent {
     this.setState(
       {
         editMode: true,
+        publishStarted: false,
         currentPhase: Constants.PHASE_DETAILS,
 
         hasEditedContentAddress: true,
@@ -390,6 +388,7 @@ class PublishPage extends React.PureComponent {
       message: `Your content was successfully published to ${this.state.uri}. It will be available in a few mintues.`,
     });
     clearPublishFormState();
+    this.setState({ publishStarted: false });
     navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISHES, params: { publishSuccess: true } });
   };
 
@@ -1174,17 +1173,17 @@ class PublishPage extends React.PureComponent {
           </View>
 
           <View style={publishStyle.actionButtons}>
-            {(this.state.publishStarted || publishFormValues.publishing) && (
+            {this.state.publishStarted && (
               <View style={publishStyle.progress}>
                 <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
               </View>
             )}
 
-            {!publishFormValues.publishing && !this.state.publishStarted && (
+            {!this.state.publishStarted && (
               <Link style={publishStyle.cancelLink} text="Cancel" onPress={() => this.showSelector()} />
             )}
 
-            {!publishFormValues.publishing && !this.state.publishStarted && (
+            {!this.state.publishStarted && (
               <View style={publishStyle.rightActionButtons}>
                 <Button
                   style={publishStyle.publishButton}

@@ -3,6 +3,7 @@ import { ActivityIndicator, Alert, FlatList, NativeModules, Text, TouchableOpaci
 import Button from 'component/button';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
+import EmptyStateView from 'component/emptyStateView';
 import FileListItem from 'component/fileListItem';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import UriBar from 'component/uriBar';
@@ -137,16 +138,11 @@ class PublishesPage extends React.PureComponent {
         )}
 
         {!fetching && (!uris || uris.length === 0) && (
-          <View style={publishStyle.noPublishes}>
-            <Text style={publishStyle.noPublishText}>
-              {__('It looks like you have not published anything to LBRY yet.')}
-            </Text>
-            <Button
-              style={publishStyle.publishNowButton}
-              text={__('Publish something new')}
-              onPress={() => navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISH })}
-            />
-          </View>
+          <EmptyStateView
+            message={__('It looks like you have not\npublished any content to LBRY yet.')}
+            buttonText={__('Publish something new')}
+            onButtonPress={() => navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISH })}
+          />
         )}
 
         {uris && uris.length > 0 && (

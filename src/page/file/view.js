@@ -22,6 +22,7 @@ import { navigateBack, navigateToUri } from 'utils/helper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Button from 'component/button';
+import EmptyStateView from 'component/emptyStateView';
 import Tag from 'component/tag';
 import ChannelPage from 'page/channel';
 import Colors from 'styles/colors';
@@ -100,7 +101,7 @@ class FilePage extends React.PureComponent {
     DeviceEventEmitter.addListener('onDownloadUpdated', this.handleDownloadUpdated);
     DeviceEventEmitter.addListener('onDownloadCompleted', this.handleDownloadCompleted);
 
-    const { fetchChannelListMine, fileInfo, isResolvingUri, resolveUri, navigation } = this.props;
+    const { fetchMyClaims, fileInfo, isResolvingUri, resolveUri, navigation } = this.props;
     const { uri, uriVars } = navigation.state.params;
     this.setState({ uri, uriVars });
 
@@ -108,7 +109,7 @@ class FilePage extends React.PureComponent {
 
     this.fetchFileInfo(this.props);
     this.fetchCostInfo(this.props);
-    fetchChannelListMine();
+    fetchMyClaims();
 
     if (NativeModules.Firebase) {
       NativeModules.Firebase.track('open_file_page', { uri: uri });
@@ -590,14 +591,15 @@ class FilePage extends React.PureComponent {
     } = this.props;
     const { uri, autoplay } = navigation.state.params;
 
+    const { isChannel } = parseURI(uri);
     const myChannelUris = channels ? channels.map(channel => channel.permanent_url) : [];
     const ownedClaim = myClaimUris.includes(uri) || myChannelUris.includes(uri);
-    const { isChannel } = parseURI(uri);
 
     let innerContent = null;
     if ((isResolvingUri && !claim) || !claim) {
       return (
         <View style={filePageStyle.container}>
+          <UriBar value={uri} navigation={navigation} />
           {isResolvingUri && (
             <View style={filePageStyle.busyContainer}>
               <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
@@ -607,16 +609,29 @@ class FilePage extends React.PureComponent {
           {claim === null && !isResolvingUri && (
             <View style={filePageStyle.container}>
               {ownedClaim && (
-                <Text style={filePageStyle.emptyClaimText}>
-                  {isChannel
-                    ? 'It looks like you just created this channel. It will appear in a few minutes.'
-                    : 'It looks you just published this content. It will appear in a few minutes.'}
-                </Text>
+                <EmptyStateView
+                  message={
+                    isChannel
+                      ? 'It looks like you just created this channel. It will appear in a few minutes.'
+                      : 'It looks you just published this content. It will appear in a few minutes.'
+                  }
+                />
               )}
-              {!ownedClaim && <Text style={filePageStyle.emptyClaimText}>There's nothing at this location.</Text>}
+              {!ownedClaim && (
+                <EmptyStateView
+                  message={"There's nothing at this location."}
+                  buttonText={'Publish something here'}
+                  onButtonPress={() =>
+                    navigation.navigate({
+                      routeName: Constants.DRAWER_ROUTE_PUBLISH,
+                      params: { vanityUrl: uri.trim() },
+                    })
+                  }
+                />
+              )}
             </View>
           )}
-          <UriBar value={uri} navigation={navigation} />
+          <FloatingWalletBalance navigation={navigation} />
         </View>
       );
     }

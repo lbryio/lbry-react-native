@@ -47,7 +47,9 @@ class ChannelPage extends React.PureComponent {
   }
 
   componentDidMount() {
+    const { fetchChannelListMine } = this.props;
     NativeModules.Firebase.setCurrentScreen('Channel');
+    fetchChannelListMine();
   }
 
   handleSortByItemSelected = item => {
@@ -266,7 +268,7 @@ class ChannelPage extends React.PureComponent {
               )}
               {ownedChannel && (
                 <Button
-                  style={channelPageStyle.deleteButton}
+                  style={[channelPageStyle.actionButton, channelPageStyle.deleteButton]}
                   theme={'light'}
                   icon={'trash-alt'}
                   text={'Delete'}

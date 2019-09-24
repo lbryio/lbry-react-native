@@ -169,6 +169,9 @@ const channelPageStyle = StyleSheet.create({
   actionButton: {
     backgroundColor: Colors.White,
   },
+  deleteButton: {
+    marginLeft: 8,
+  },
 });
 
 export default channelPageStyle;

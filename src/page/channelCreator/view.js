@@ -19,6 +19,7 @@ import Button from 'component/button';
 import ChannelIconItem from 'component/channelIconItem';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
+import EmptyStateView from 'component/emptyStateView';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
@@ -175,10 +176,8 @@ export default class ChannelCreator extends React.PureComponent {
 
       if (!isEditMode && hasFormState) {
         this.loadPendingFormState();
-        this.setState({ currentPhase: Constants.PHASE_CREATE });
-      } else {
-        this.setState({ currentPhase: Constants.PHASE_LIST });
       }
+      this.setState({ currentPhase: isEditMode || hasFormState ? Constants.PHASE_CREATE : Constants.PHASE_LIST });
     });
   };
 
@@ -747,6 +746,8 @@ export default class ChannelCreator extends React.PureComponent {
       uploadingImage,
     } = this.state;
 
+    const hasChannels = channels && channels.length > 0;
+
     return (
       <View style={channelCreatorStyle.container}>
         <UriBar
@@ -759,33 +760,33 @@ export default class ChannelCreator extends React.PureComponent {
           onExitSelectionMode={this.onExitSelectionMode}
         />
 
+        {fetchingChannels && (
+          <View style={channelCreatorStyle.loading}>
+            <ActivityIndicator size={'large'} color={Colors.NextLbryGreen} />
+          </View>
+        )}
+
+        {currentPhase === Constants.PHASE_LIST && !fetchingChannels && !hasChannels && (
+          <EmptyStateView
+            message={'You have not created a channel.\nStart now by creating a new channel!'}
+            buttonText={'Create a channel'}
+            onButtonPress={this.handleNewChannelPress}
+          />
+        )}
+
         {currentPhase === Constants.PHASE_LIST && (
           <FlatList
             extraData={this.state}
-            ListHeaderComponent={
-              fetchingChannels ? (
-                <View style={channelCreatorStyle.listHeader}>
-                  <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
-                </View>
-              ) : null
-            }
-            ListEmptyComponent={
-              fetchingChannels ? null : (
-                <View style={channelCreatorStyle.listEmpty}>
-                  <Text style={channelCreatorStyle.listEmptyText}>
-                    You have not created a channel. Start now by creating a new channel!
-                  </Text>
+            ListFooterComponent={
+              !channels || channels.length === 0 ? null : (
+                <View style={channelCreatorStyle.listFooter}>
+                  <Button
+                    style={channelCreatorStyle.createChannelButton}
+                    text={'Create a channel'}
+                    onPress={this.handleNewChannelPress}
+                  />
                 </View>
               )
-            }
-            ListFooterComponent={
-              <View style={channelCreatorStyle.listFooter}>
-                <Button
-                  style={channelCreatorStyle.createChannelButton}
-                  text={'Create a channel'}
-                  onPress={this.handleNewChannelPress}
-                />
-              </View>
             }
             style={channelCreatorStyle.scrollContainer}
             contentContainerStyle={channelCreatorStyle.scrollPadding}

@@ -437,7 +437,7 @@ const publishStyle = StyleSheet.create({
     color: Colors.DescriptionGrey,
   },
   publishesFooter: {
-    marginTop: 16,
+    marginTop: 2,
     marginLeft: 16,
     marginRight: 16,
   },
