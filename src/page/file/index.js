@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import {
+  doAbandonClaim,
   doFetchFileInfo,
   doFetchChannelListMine,
   doFetchClaimListMine,
@@ -73,6 +74,7 @@ const select = (state, props) => {
 };
 
 const perform = dispatch => ({
+  abandonClaim: (txid, nout) => dispatch(doAbandonClaim(txid, nout)),
   claimEligibleRewards: () => dispatch(doClaimEligiblePurchaseRewards()),
   deleteFile: (fileInfo, deleteFromDevice, abandonClaim) => {
     dispatch(doDeleteFile(fileInfo, deleteFromDevice, abandonClaim));

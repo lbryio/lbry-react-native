@@ -240,7 +240,7 @@ class FilePage extends React.PureComponent {
   };
 
   onDeletePressed = () => {
-    const { claim, deleteFile, deletePurchasedUri, fileInfo, navigation } = this.props;
+    const { abandonClaim, claim, deleteFile, deletePurchasedUri, myClaimUris, fileInfo, navigation } = this.props;
 
     Alert.alert(
       'Delete file',
@@ -262,6 +262,16 @@ class FilePage extends React.PureComponent {
               mediaLoaded: false,
               stopDownloadConfirmed: false,
             });
+
+            if (claim) {
+              const fullUri = normalizeURI(`${claim.name}#${claim.claim_id}`);
+              const ownedClaim = myClaimUris.includes(fullUri);
+              if (ownedClaim) {
+                const { txid, nout } = claim;
+                abandonClaim(txid, nout);
+                navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISHES });
+              }
+            }
           },
         },
       ],
@@ -874,11 +884,11 @@ class FilePage extends React.PureComponent {
                         />
                       )}
 
-                      {completed && (
+                      {(completed || canEdit) && (
                         <Button
                           style={filePageStyle.actionButton}
                           theme={'light'}
-                          icon={'trash'}
+                          icon={'trash-alt'}
                           text={'Delete'}
                           onPress={this.onDeletePressed}
                         />
