@@ -4,17 +4,17 @@ import Colors from 'styles/colors';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import publishStyle from 'styles/publish';
 
-class PublishRewardsDriver extends React.PureComponent<Props> {
+class ChannelRewardsDriver extends React.PureComponent<Props> {
   render() {
     const { navigation } = this.props;
 
     return (
       <TouchableOpacity style={publishStyle.rewardDriverCard} onPress={() => navigation.navigate('Rewards')}>
         <Icon name="award" size={16} style={publishStyle.rewardIcon} />
-        <Text style={publishStyle.rewardDriverText}>Earn some credits to be able to publish your content.</Text>
+        <Text style={publishStyle.rewardDriverText}>Earn some credits to be able to create your channel.</Text>
       </TouchableOpacity>
     );
   }
 }
 
-export default PublishRewardsDriver;
+export default ChannelRewardsDriver;

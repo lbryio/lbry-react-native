@@ -104,11 +104,12 @@ const channelCreatorStyle = StyleSheet.create({
   avatarImageContainer: {
     position: 'absolute',
     left: screenWidth / 2 - 80 / 2,
-    bottom: -16,
+    bottom: -8,
     width: 80,
     height: 80,
     borderRadius: 160,
     overflow: 'hidden',
+    zIndex: 50,
   },
   avatarTouchArea: {
     width: 80,

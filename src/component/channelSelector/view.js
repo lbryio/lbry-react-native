@@ -167,12 +167,14 @@ export default class ChannelSelector extends React.PureComponent {
 
   channelExists = name => {
     const { channels = [] } = this.props;
-    for (let channel of channels) {
-      if (
-        name.toLowerCase() === channel.name.toLowerCase() ||
-        `@${name}`.toLowerCase() === channel.name.toLowerCase()
-      ) {
-        return true;
+    if (channels) {
+      for (let channel of channels) {
+        if (
+          name.toLowerCase() === channel.name.toLowerCase() ||
+          `@${name}`.toLowerCase() === channel.name.toLowerCase()
+        ) {
+          return true;
+        }
       }
     }
 

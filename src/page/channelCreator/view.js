@@ -17,6 +17,7 @@ import {
 import { navigateToUri, uploadImageAsset } from 'utils/helper';
 import Button from 'component/button';
 import ChannelIconItem from 'component/channelIconItem';
+import ChannelRewardsDriver from 'component/channelRewardsDriver';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import EmptyStateView from 'component/emptyStateView';
@@ -455,8 +456,8 @@ export default class ChannelCreator extends React.PureComponent {
         return { name: tag };
       }),
       website,
-      cover: coverImageUrl,
-      thumbnail: thumbnailUrl,
+      coverUrl: coverImageUrl,
+      thumbnailUrl: thumbnailUrl,
     };
 
     if (this.state.editMode) {
@@ -728,7 +729,7 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   render() {
-    const { abandoningClaimIds, fetchingChannels, updatingChannel, channels = [], navigation } = this.props;
+    const { abandoningClaimIds, balance, fetchingChannels, updatingChannel, channels = [], navigation } = this.props;
     const {
       autoStyle,
       autoStyles,
@@ -884,6 +885,7 @@ export default class ChannelCreator extends React.PureComponent {
                 </TouchableOpacity>
               </View>
             </View>
+            {balance < 0.1 && <ChannelRewardsDriver navigation={navigation} />}
 
             <View style={channelCreatorStyle.card}>
               <View style={channelCreatorStyle.textInputLayout}>
