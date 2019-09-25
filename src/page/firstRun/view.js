@@ -86,7 +86,10 @@ class FirstRunScreen extends React.PureComponent {
         this.setState({ showBottomContainer: true });
       } else {
         // password successfully verified
-        NativeModules.UtilityModule.setSecureValue(Constants.KEY_FIRST_RUN_PASSWORD, this.state.walletPassword);
+        NativeModules.UtilityModule.setSecureValue(
+          Constants.KEY_FIRST_RUN_PASSWORD,
+          this.state.walletPassword ? this.state.walletPassword : ''
+        );
         setDefaultAccount(
           () => {
             setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);

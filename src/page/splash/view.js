@@ -98,7 +98,7 @@ class SplashScreen extends React.PureComponent {
         // user is authenticated, navigate to the main view
         if (user.has_verified_email) {
           NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
-            if (walletPassword && walletPassword.trim().length > 0) {
+            if (walletPassword) {
               getSync(walletPassword);
             }
             this.navigateToMain();
@@ -164,7 +164,10 @@ class SplashScreen extends React.PureComponent {
 
   _updateStatusCallback(status) {
     const { fetchSubscriptions, getSync, setClientSetting } = this.props;
+    const blockchainHeaders = status.blockchain_headers;
     const startupStatus = status.startup_status;
+    const walletStatus = status.wallet;
+
     // At the minimum, wallet should be started and blocks_behind equal to 0 before calling resolve
     const hasStarted = startupStatus.stream_manager && startupStatus.wallet && status.wallet.blocks_behind <= 0;
     if (hasStarted) {
@@ -180,7 +183,7 @@ class SplashScreen extends React.PureComponent {
 
       // For now, automatically unlock the wallet if a password is set so that downloads work
       NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(password => {
-        if (password) {
+        if (walletStatus.is_locked) {
           this.setState({
             message: 'Unlocking account',
             details: 'Decrypting wallet',
@@ -207,9 +210,6 @@ class SplashScreen extends React.PureComponent {
 
       return;
     }
-
-    const blockchainHeaders = status.blockchain_headers;
-    const walletStatus = status.wallet;
 
     if (blockchainHeaders) {
       this.setState({
