@@ -1,5 +1,5 @@
 import React from 'react';
-import { CLAIM_VALUES, isURIValid, regexInvalidURI } from 'lbry-redux';
+import { CLAIM_VALUES, isNameValid, regexInvalidURI } from 'lbry-redux';
 import {
   ActivityIndicator,
   Alert,
@@ -336,7 +336,7 @@ export default class ChannelCreator extends React.PureComponent {
       newChannelName = newChannelName.slice(1);
     }
 
-    if (newChannelName.trim().length > 0 && !isURIValid(newChannelName)) {
+    if (newChannelName.trim().length > 0 && !isNameValid(newChannelName)) {
       newChannelNameError = 'Your channel name contains invalid characters.';
     } else if (this.channelExists(newChannelName)) {
       newChannelNameError = 'You have already created a channel with the same name.';
@@ -389,7 +389,7 @@ export default class ChannelCreator extends React.PureComponent {
       website,
     } = this.state;
 
-    if (newChannelName.trim().length === 0 || !isURIValid(newChannelName.substr(1), false)) {
+    if (newChannelName.trim().length === 0 || !isNameValid(newChannelName.substr(1), false)) {
       notify({ message: 'Your channel name contains invalid characters.' });
       return;
     }

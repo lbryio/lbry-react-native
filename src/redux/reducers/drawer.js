@@ -32,6 +32,8 @@ reducers[Constants.ACTION_PUSH_DRAWER_STACK] = (state, action) => {
     newStack.push({ route: routeName, params });
   }
 
+  console.log(newStack);
+
   return {
     ...state,
     stack: newStack,

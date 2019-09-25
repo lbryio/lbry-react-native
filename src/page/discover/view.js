@@ -38,8 +38,6 @@ class DiscoverPage extends React.PureComponent {
   };
 
   componentDidMount() {
-    NativeModules.Firebase.setCurrentScreen('Your tags');
-
     // Track the total time taken if this is the first launch
     AsyncStorage.getItem('firstLaunchTime').then(startTime => {
       if (startTime !== null && !isNaN(parseInt(startTime, 10))) {
@@ -72,7 +70,28 @@ class DiscoverPage extends React.PureComponent {
 
     this.handleSortByItemSelected(sortByItem);
     this.showRatingReminder();
+
+    this.onComponentFocused();
   }
+
+  componentWillReceiveProps(nextProps) {
+    const { currentRoute: prevRoute, followedTags: prevFollowedTags } = this.props;
+    const { currentRoute, followedTags } = nextProps;
+
+    if (Constants.DRAWER_ROUTE_DISCOVER === currentRoute && currentRoute !== prevRoute) {
+      this.onComponentFocused();
+    }
+
+    if (!_.isEqual(followedTags, prevFollowedTags)) {
+      this.buildTagCollection(followedTags);
+    }
+  }
+
+  onComponentFocused = () => {
+    const { pushDrawerStack } = this.props;
+    pushDrawerStack();
+    NativeModules.Firebase.setCurrentScreen('Your tags');
+  };
 
   handleSortByItemSelected = item => {
     const { setSortByItem } = this.props;
@@ -103,14 +122,6 @@ class DiscoverPage extends React.PureComponent {
 
     return null;
   };
-
-  componentWillReceiveProps(nextProps) {
-    const { followedTags: prevFollowedTags } = this.props;
-    const { followedTags } = nextProps;
-    if (!_.isEqual(followedTags, prevFollowedTags)) {
-      this.buildTagCollection(followedTags);
-    }
-  }
 
   componentDidUpdate(prevProps, prevState) {
     const { unreadSubscriptions, enabledChannelNotifications } = this.props;

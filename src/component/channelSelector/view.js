@@ -1,5 +1,5 @@
 import React from 'react';
-import { CLAIM_VALUES, isURIValid } from 'lbry-redux';
+import { CLAIM_VALUES, isNameValid } from 'lbry-redux';
 import { ActivityIndicator, Picker, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Button from 'component/button';
 import Colors from 'styles/colors';
@@ -85,7 +85,7 @@ export default class ChannelSelector extends React.PureComponent {
       newChannelName = newChannelName.slice(1);
     }
 
-    if (newChannelName.trim().length > 0 && !isURIValid(newChannelName)) {
+    if (newChannelName.trim().length > 0 && !isNameValid(newChannelName)) {
       newChannelNameError = 'Your channel name contains invalid characters.';
     } else if (this.channelExists(newChannelName)) {
       newChannelNameError = 'You have already created a channel with the same name.';
@@ -120,7 +120,7 @@ export default class ChannelSelector extends React.PureComponent {
     const { balance, createChannel, onChannelChange, notify } = this.props;
     const { newChannelBid, newChannelName } = this.state;
 
-    if (newChannelName.trim().length === 0 || !isURIValid(newChannelName.substr(1), false)) {
+    if (newChannelName.trim().length === 0 || !isNameValid(newChannelName.substr(1), false)) {
       notify({ message: 'Your channel name contains invalid characters.' });
       return;
     }
