@@ -89,7 +89,7 @@ class DiscoverPage extends React.PureComponent {
 
   onComponentFocused = () => {
     const { pushDrawerStack } = this.props;
-    pushDrawerStack();
+    // pushDrawerStack();
     NativeModules.Firebase.setCurrentScreen('Your tags');
   };
 
