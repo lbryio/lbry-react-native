@@ -101,11 +101,13 @@ export default class ChannelCreator extends React.PureComponent {
   generateAutoStyles = size => {
     const { channels = [] } = this.props;
     const autoStyles = [];
-    for (let i = 0; i < size && i < channels.length; i++) {
-      // seed generator using the claim_id
-      const rng = seedrandom(channels[i].permanent_url); // is this efficient?
-      const index = Math.floor(rng.quick() * ChannelIconItem.AUTO_THUMB_STYLES.length);
-      autoStyles.push(ChannelIconItem.AUTO_THUMB_STYLES[index]);
+    if (channels) {
+      for (let i = 0; i < size && i < channels.length; i++) {
+        // seed generator using the claim_id
+        const rng = seedrandom(channels[i].permanent_url); // is this efficient?
+        const index = Math.floor(rng.quick() * ChannelIconItem.AUTO_THUMB_STYLES.length);
+        autoStyles.push(ChannelIconItem.AUTO_THUMB_STYLES[index]);
+      }
     }
     return autoStyles;
   };
@@ -478,12 +480,14 @@ export default class ChannelCreator extends React.PureComponent {
 
   channelExists = name => {
     const { channels = [] } = this.props;
-    for (let channel of channels) {
-      if (
-        name.toLowerCase() === channel.name.toLowerCase() ||
-        `@${name}`.toLowerCase() === channel.name.toLowerCase()
-      ) {
-        return true;
+    if (channels) {
+      for (let channel of channels) {
+        if (
+          name.toLowerCase() === channel.name.toLowerCase() ||
+          `@${name}`.toLowerCase() === channel.name.toLowerCase()
+        ) {
+          return true;
+        }
       }
     }
 
@@ -868,7 +872,7 @@ export default class ChannelCreator extends React.PureComponent {
                       source={{ uri: thumbnailUrl }}
                     />
                   )}
-                  {(thumbnailUrl === null || thumbnailUrl.trim().length === 0) && newChannelName.length > 1 && (
+                  {(thumbnailUrl === null || thumbnailUrl.trim().length === 0) && newChannelName.length > 0 && (
                     <Text style={channelIconStyle.autothumbCharacter}>
                       {newChannelName.substring(0, 1).toUpperCase()}
                     </Text>
