@@ -161,7 +161,7 @@ export default class ChannelCreator extends React.PureComponent {
       if (!fetchingChannels) {
         fetchChannelListMine();
       }
-      if (balance > 0.1) {
+      if (balance >= 0.1) {
         this.setState({ canSave: true });
       }
 
@@ -528,9 +528,9 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   handleNewChannelPress = () => {
-    const { pushDrawerStack } = this.props;
+    const { balance, pushDrawerStack } = this.props;
     pushDrawerStack(Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM);
-    this.setState({ currentPhase: Constants.PHASE_CREATE });
+    this.setState({ canSave: balance >= 0.1, currentPhase: Constants.PHASE_CREATE });
   };
 
   handleCreateCancel = () => {
@@ -605,11 +605,12 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   prepareEdit = channel => {
-    const { pushDrawerStack } = this.props;
+    const { balance, pushDrawerStack } = this.props;
     const { value } = channel;
 
     pushDrawerStack(Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM);
     this.setState({
+      canSave: balance >= 0.1,
       claimId: channel.claim_id,
       currentPhase: Constants.PHASE_CREATE,
       displayName: value && value.title ? value.title : channel.name.substring(1),
