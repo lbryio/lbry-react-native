@@ -436,6 +436,11 @@ const publishStyle = StyleSheet.create({
     fontSize: 14,
     color: Colors.DescriptionGrey,
   },
+  helpText: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 12,
+    color: Colors.DescriptionGrey,
+  },
   publishesFooter: {
     marginTop: 2,
     marginLeft: 16,

@@ -562,8 +562,8 @@ export default class ChannelCreator extends React.PureComponent {
       newChannelBidError: '',
       createChannelError: undefined,
       showCreateChannel: false,
-      thumbnailUrl: null,
-      coverImageUrl: null,
+      thumbnailUrl: '',
+      coverImageUrl: '',
       avatarImagePickerOpen: false,
       coverImagePickerOpen: false,
 
@@ -914,7 +914,7 @@ export default class ChannelCreator extends React.PureComponent {
                 <View>
                   <Text style={channelCreatorStyle.channelAt}>@</Text>
                   <TextInput
-                    editable={canSave && !creatingChannel && !updatingChannel}
+                    editable={canSave && !editMode && !creatingChannel && !updatingChannel}
                     style={channelCreatorStyle.channelNameInput}
                     value={this.state.newChannelName}
                     onChangeText={value => this.handleNewChannelNameChange(value, true)}
@@ -924,10 +924,15 @@ export default class ChannelCreator extends React.PureComponent {
                     onBlur={() => this.setState({ channelNameFocused: false })}
                   />
                 </View>
+                s
               </View>
               {newChannelNameError.length > 0 && (
                 <Text style={channelCreatorStyle.inlineError}>{newChannelNameError}</Text>
               )}
+              {editMode && (
+                <Text style={channelCreatorStyle.helpText}>The channel name cannot be changed while editing.</Text>
+              )}
+
               <View style={channelCreatorStyle.bidRow}>
                 <Text style={channelCreatorStyle.label}>Deposit</Text>
                 <TextInput

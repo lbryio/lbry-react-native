@@ -45,6 +45,7 @@ const channelCreatorStyle = StyleSheet.create({
   helpText: {
     fontFamily: 'Inter-UI-Regular',
     fontSize: 12,
+    color: Colors.DescriptionGrey,
   },
   channelTitleInput: {
     marginBottom: 4,

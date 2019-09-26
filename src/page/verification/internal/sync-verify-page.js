@@ -68,26 +68,36 @@ class SyncVerifyPage extends React.PureComponent {
           );
         }
         setDefaultAccount(
-          () => {
-            setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
-
-            // unlock the wallet
-            Lbry.account_unlock({ password: this.state.password ? this.state.password : '' })
-              .then(() => navigation.goBack())
-              .catch(err =>
-                notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' })
-              );
-          },
+          () => this.finishSync(true),
           err => {
-            notify({
-              message:
-                'The account restore operation could not be completed successfully. Please restart the app and try again.',
-            });
+            // fail silently and still finish
+            this.finishSync();
           }
         );
       }
     }
   }
+
+  finishSync = (notifyUnlockFailed = false) => {
+    const { navigation, notify, setClientSetting } = this.props;
+
+    setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
+
+    // unlock the wallet (if locked)
+    Lbry.status().then(status => {
+      if (status.wallet.is_locked) {
+        Lbry.account_unlock({ password: this.state.password ? this.state.password : '' })
+          .then(() => navigation.goBack())
+          .catch(err => {
+            if (notifyUnlockFailed) {
+              notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' });
+            }
+          });
+      } else {
+        navigation.goBack();
+      }
+    });
+  };
 
   handleChangeText = text => {
     // save the value to the state email

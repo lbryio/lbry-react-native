@@ -80,9 +80,8 @@ class FirstRunScreen extends React.PureComponent {
     }
 
     if (this.state.syncApplyStarted && !syncApplyIsPending) {
-      this.setState({ syncApplyStarted: false });
       if (syncApplyErrorMessage && syncApplyErrorMessage.trim().length > 0) {
-        notify({ message: syncApplyErrorMessage, isError: true });
+        notify({ message: syncApplyErrorMessage, syncApplyStarted: false, isError: true });
         this.setState({ showBottomContainer: true });
       } else {
         // password successfully verified
@@ -236,6 +235,7 @@ class FirstRunScreen extends React.PureComponent {
 
   closeFinalPage() {
     // Final page. Let the app know that first run experience is completed.
+    this.setState({ syncApplyStarted: false });
     if (NativeModules.FirstRun) {
       NativeModules.FirstRun.firstRunCompleted();
     }
