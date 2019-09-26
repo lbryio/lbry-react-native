@@ -924,7 +924,6 @@ export default class ChannelCreator extends React.PureComponent {
                     onBlur={() => this.setState({ channelNameFocused: false })}
                   />
                 </View>
-                s
               </View>
               {newChannelNameError.length > 0 && (
                 <Text style={channelCreatorStyle.inlineError}>{newChannelNameError}</Text>
