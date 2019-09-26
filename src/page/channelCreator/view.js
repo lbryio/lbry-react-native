@@ -615,7 +615,7 @@ export default class ChannelCreator extends React.PureComponent {
       currentPhase: Constants.PHASE_CREATE,
       displayName: value && value.title ? value.title : channel.name.substring(1),
       editMode: true,
-      coverImageUrl: value && value.cover ? value.cover.url : null,
+      coverImageUrl: value && value.cover ? value.cover.url : '',
       currentChannelName: channel.name.substring(1),
       newChannelName: channel.name.substring(1),
       newChannelTitle: value ? value.title : null,
@@ -624,7 +624,7 @@ export default class ChannelCreator extends React.PureComponent {
       email: value ? value.email : null,
       website: value ? value.website_url : null,
       tags: value && value.tags ? value.tags : [],
-      thumbnailUrl: value && value.thumbnail ? value.thumbnail.url : null,
+      thumbnailUrl: value && value.thumbnail ? value.thumbnail.url : '',
       showOptionalFields: value && (value.description || value.email || value.website_url || value.tags),
     });
   };
