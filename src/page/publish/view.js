@@ -378,8 +378,6 @@ class PublishPage extends React.PureComponent {
       }),
     };
 
-    console.log(publishParams);
-
     updatePublishForm(publishParams);
     this.setState({ publishStarted: true }, () => publish(this.handlePublishSuccess, this.handlePublishFailure));
   };
@@ -395,7 +393,6 @@ class PublishPage extends React.PureComponent {
   };
 
   handlePublishFailure = error => {
-    console.log(error);
     const { notify } = this.props;
     notify({ message: __('Your content could not be published at this time. Please try again.') });
     this.setState({ publishStarted: false });
