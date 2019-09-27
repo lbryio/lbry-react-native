@@ -38,7 +38,7 @@ class SuggestedSubscriptions extends React.PureComponent {
     const suggestedUris = suggested ? suggested.map(suggested => suggested.uri) : [];
     return [
       {
-        title: __('Tags you follow'),
+        title: __('Suggested channels'),
         data: claimSearchUris ? claimSearchUris.filter(uri => !suggestedUris.includes(uri)) : [],
       },
       {
