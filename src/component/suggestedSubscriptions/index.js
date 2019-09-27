@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import { doClaimSearch, selectFetchingClaimSearch, selectClaimSearchByQuery, selectFollowedTags } from 'lbry-redux';
 import { selectSuggestedChannels, selectIsFetchingSuggested } from 'lbryinc';
+import { selectShowNsfw } from 'redux/selectors/settings';
 import SuggestedSubscriptions from './view';
 
 const select = state => ({
@@ -8,6 +9,7 @@ const select = state => ({
   suggested: selectSuggestedChannels(state),
   loading: selectIsFetchingSuggested(state) || selectFetchingClaimSearch(state),
   claimSearchByQuery: selectClaimSearchByQuery(state),
+  showNsfwContent: selectShowNsfw(state),
 });
 
 const perform = dispatch => ({
