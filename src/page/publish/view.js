@@ -870,6 +870,7 @@ class PublishPage extends React.PureComponent {
     const {
       allThumbnailsChecked,
       canUseCamera,
+      showCameraOverlay,
       currentPhase,
       checkedThumbnails,
       loadingVideos,
@@ -882,7 +883,9 @@ class PublishPage extends React.PureComponent {
       content = (
         <View style={publishStyle.gallerySelector}>
           <View style={publishStyle.actionsView}>
-            {canUseCamera && <RNCamera style={publishStyle.cameraPreview} type={RNCamera.Constants.Type.back} />}
+            {canUseCamera && !showCameraOverlay && (
+              <RNCamera captureAudio={false} style={publishStyle.cameraPreview} type={RNCamera.Constants.Type.back} />
+            )}
             <View style={publishStyle.actionsSubView}>
               <TouchableOpacity
                 style={[
@@ -1236,34 +1239,36 @@ class PublishPage extends React.PureComponent {
         {false && Constants.PHASE_SELECTOR !== this.state.currentPhase && (
           <FloatingWalletBalance navigation={navigation} />
         )}
-        {this.state.canUseCamera && this.state.showCameraOverlay && (
+        {this.state.showCameraOverlay && (
           <View style={publishStyle.cameraOverlay}>
-            <RNCamera
-              captureAudio={this.state.videoRecordingMode}
-              style={publishStyle.fullCamera}
-              ref={ref => {
-                this.camera = ref;
-              }}
-              type={this.state.cameraType}
-              flashMode={RNCamera.Constants.FlashMode.off}
-              androidCameraPermissionOptions={{
-                title: 'Camera',
-                message: 'Please grant access to make use of your camera',
-                buttonPositive: 'OK',
-                buttonNegative: 'Cancel',
-              }}
-              androidRecordAudioPermissionOptions={{
-                title: 'Audio',
-                message: 'Please grant access to record audio',
-                buttonPositive: 'OK',
-                buttonNegative: 'Cancel',
-              }}
-              notAuthorizedView={
-                <View style={publishStyle.fullCentered}>
-                  <Text style={publishStyle.cameraInfo}>Camera not authorized</Text>
-                </View>
-              }
-            />
+            {this.state.canUseCamera && (
+              <RNCamera
+                captureAudio={this.state.videoRecordingMode}
+                style={publishStyle.fullCamera}
+                ref={ref => {
+                  this.camera = ref;
+                }}
+                type={this.state.cameraType}
+                flashMode={RNCamera.Constants.FlashMode.off}
+                androidCameraPermissionOptions={{
+                  title: 'Camera',
+                  message: 'Please grant access to make use of your camera',
+                  buttonPositive: 'OK',
+                  buttonNegative: 'Cancel',
+                }}
+                androidRecordAudioPermissionOptions={{
+                  title: 'Audio',
+                  message: 'Please grant access to record audio',
+                  buttonPositive: 'OK',
+                  buttonNegative: 'Cancel',
+                }}
+                notAuthorizedView={
+                  <View style={publishStyle.fullCentered}>
+                    <Text style={publishStyle.cameraInfo}>Camera not authorized</Text>
+                  </View>
+                }
+              />
+            )}
             <View
               style={[
                 publishStyle.cameraControls,
