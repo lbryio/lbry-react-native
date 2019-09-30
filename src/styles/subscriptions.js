@@ -13,7 +13,7 @@ const subscriptionsStyle = StyleSheet.create({
   suggestedSubsContainer: {
     flex: 1,
   },
-  suggestedScrollPadding: {
+  suggestedScrollContent: {
     paddingTop: 8,
   },
   button: {
@@ -159,6 +159,7 @@ const subscriptionsStyle = StyleSheet.create({
   pickerRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginLeft: 16,
     marginRight: 16,
     marginTop: 8,
@@ -244,6 +245,24 @@ const subscriptionsStyle = StyleSheet.create({
   tag: {
     marginRight: 4,
     marginBottom: 4,
+  },
+  leftPickerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  suggestedLink: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+  },
+  modalContainer: {
+    height: '80%',
+    backgroundColor: Colors.PageBackground,
+  },
+  modalScrollContainer: {
+    marginBottom: 50,
+  },
+  modalSuggestedScrollContent: {
+    paddingTop: 16,
   },
 });
 

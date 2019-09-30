@@ -25,6 +25,7 @@ import FileItem from 'component/fileItem';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
 import ModalPicker from 'component/modalPicker';
+import ModalSuggestedSubscriptions from 'component/modalSuggestedSubscriptions';
 import SubscribedChannelList from 'component/subscribedChannelList';
 import SuggestedSubscriptions from 'component/suggestedSubscriptions';
 import UriBar from 'component/uriBar';
@@ -34,6 +35,7 @@ class SubscriptionsPage extends React.PureComponent {
     showingSuggestedSubs: false,
     showSortPicker: false,
     showTimePicker: false,
+    showModalSuggestedSubs: false,
     orderBy: ['release_time'],
     filteredChannels: [],
     currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[1], // should always default to sorting subscriptions by new
@@ -122,7 +124,7 @@ class SubscriptionsPage extends React.PureComponent {
       unreadSubscriptions,
       navigation,
     } = this.props;
-    const { currentSortByItem, filteredChannels, showSortPicker, showTimePicker } = this.state;
+    const { currentSortByItem, filteredChannels, showModalSuggestedSubs, showSortPicker, showTimePicker } = this.state;
 
     const numberOfSubscriptions = subscribedChannels ? subscribedChannels.length : 0;
     const hasSubscriptions = numberOfSubscriptions > 0;
@@ -151,23 +153,31 @@ class SubscriptionsPage extends React.PureComponent {
         </View>
         {!this.state.showingSuggestedSubs && hasSubscriptions && (
           <View style={subscriptionsStyle.pickerRow}>
-            <TouchableOpacity
-              style={subscriptionsStyle.tagSortBy}
-              onPress={() => this.setState({ showSortPicker: true })}
-            >
-              <Text style={subscriptionsStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
-              <Icon style={subscriptionsStyle.tagSortIcon} name={'sort-down'} size={14} />
-            </TouchableOpacity>
-
-            {Constants.SORT_BY_TOP === currentSortByItem.name && (
+            <View style={subscriptionsStyle.leftPickerRow}>
               <TouchableOpacity
                 style={subscriptionsStyle.tagSortBy}
-                onPress={() => this.setState({ showTimePicker: true })}
+                onPress={() => this.setState({ showSortPicker: true })}
               >
-                <Text style={subscriptionsStyle.tagSortText}>{timeItem.label}</Text>
+                <Text style={subscriptionsStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
                 <Icon style={subscriptionsStyle.tagSortIcon} name={'sort-down'} size={14} />
               </TouchableOpacity>
-            )}
+
+              {Constants.SORT_BY_TOP === currentSortByItem.name && (
+                <TouchableOpacity
+                  style={subscriptionsStyle.tagSortBy}
+                  onPress={() => this.setState({ showTimePicker: true })}
+                >
+                  <Text style={subscriptionsStyle.tagSortText}>{timeItem.label}</Text>
+                  <Icon style={subscriptionsStyle.tagSortIcon} name={'sort-down'} size={14} />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <Link
+              style={subscriptionsStyle.suggestedLink}
+              text={'Suggested'}
+              onPress={() => this.setState({ showModalSuggestedSubs: true })}
+            />
           </View>
         )}
         {!this.state.showingSuggestedSubs && hasSubscriptions && !loading && (
@@ -223,7 +233,9 @@ class SubscriptionsPage extends React.PureComponent {
           </View>
         )}
 
-        {!showSortPicker && !showTimePicker && <FloatingWalletBalance navigation={navigation} />}
+        {!showSortPicker && !showTimePicker && !showModalSuggestedSubs && (
+          <FloatingWalletBalance navigation={navigation} />
+        )}
         {showSortPicker && (
           <ModalPicker
             title={__('Sort content by')}
@@ -240,6 +252,13 @@ class SubscriptionsPage extends React.PureComponent {
             onItemSelected={this.handleTimeItemSelected}
             selectedItem={timeItem}
             items={Constants.CLAIM_SEARCH_TIME_ITEMS}
+          />
+        )}
+        {showModalSuggestedSubs && (
+          <ModalSuggestedSubscriptions
+            navigation={navigation}
+            onOverlayPress={() => this.setState({ showModalSuggestedSubs: false })}
+            onDonePress={() => this.setState({ showModalSuggestedSubs: false })}
           />
         )}
       </View>

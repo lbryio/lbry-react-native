@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, FlatList, SectionList, Text, View } from 'react-native';
+import { ActivityIndicator, SectionList, Text, View } from 'react-native';
 import { MATURE_TAGS, createNormalizedClaimSearchKey, normalizeURI } from 'lbry-redux';
 import { __, navigateToUri } from 'utils/helper';
 import SubscribeButton from 'component/subscribeButton';
@@ -49,7 +49,7 @@ class SuggestedSubscriptions extends React.PureComponent {
   };
 
   render() {
-    const { suggested, loading, navigation } = this.props;
+    const { suggested, inModal, loading, navigation } = this.props;
 
     if (loading) {
       return (
@@ -61,8 +61,10 @@ class SuggestedSubscriptions extends React.PureComponent {
 
     return (
       <SectionList
-        style={subscriptionsStyle.scrollContainer}
-        contentContainerStyle={subscriptionsStyle.suggestedScrollPadding}
+        style={inModal ? subscriptionsStyle.modalScrollContainer : subscriptionsStyle.scrollContainer}
+        contentContainerStyle={
+          inModal ? subscriptionsStyle.modalSuggestedScrollContent : subscriptionsStyle.suggestedScrollContent
+        }
         renderItem={({ item, index, section }) => (
           <SuggestedSubscriptionItem key={item} uri={normalizeURI(item)} navigation={navigation} />
         )}
