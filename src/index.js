@@ -13,6 +13,7 @@ import {
   searchReducer,
   tagsReducer,
   walletReducer,
+  sharedStateSubscriber,
 } from 'lbry-redux';
 import {
   Lbryio,
@@ -83,7 +84,7 @@ const compressor = createCompressor();
 const authFilter = createFilter('auth', ['authToken']);
 const contentFilter = createFilter('content', ['positions']);
 const saveClaimsFilter = createFilter('claims', ['claimsByUri']);
-const subscriptionsFilter = createFilter('subscriptions', ['enabledChannelNotifications', 'subscriptions']);
+const subscriptionsFilter = createFilter('subscriptions', ['enabledChannelNotifications', 'subscriptions', 'latest']);
 const settingsFilter = createFilter('settings', ['clientSettings']);
 const tagsFilter = createFilter('tags', ['followedTags']);
 const walletFilter = createFilter('wallet', ['receiveAddress']);
@@ -147,25 +148,24 @@ const persistor = persistStore(store, persistOptions, err => {
 });
 window.persistor = persistor;
 
-let currentPayload;
-store.subscribe(() => {
-  const state = store.getState();
-  const subscriptions = state.subscriptions.subscriptions.map(({ uri }) => uri);
-  const tags = state.tags.followedTags;
-
-  const newPayload = {
-    version: '0.1',
-    shared: {
-      subscriptions,
-      tags,
+const sharedStateCache = {};
+const sharedStateFilters = {
+  tags: { source: 'tags', property: 'followedTags' },
+  subscriptions: {
+    source: 'subscriptions',
+    property: 'subscriptions',
+    transform: function(value) {
+      return value.map(({ uri }) => uri);
     },
-  };
+  },
+};
 
-  if (!isEqual(newPayload, currentPayload)) {
-    currentPayload = newPayload;
-    if (Lbryio.authToken) {
-      Lbryio.call('user_settings', 'set', { settings: JSON.stringify(newPayload) });
-    }
+store.subscribe(() => {
+  try {
+    const state = store.getState();
+    sharedStateSubscriber(state, sharedStateFilters, sharedStateCache);
+  } catch (e) {
+    // handle gracefully?
   }
 });
 
