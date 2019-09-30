@@ -6,6 +6,7 @@ import {
   Alert,
   DeviceEventEmitter,
   Dimensions,
+  Linking,
   NativeModules,
   ScrollView,
   StatusBar,
@@ -968,6 +969,12 @@ class FilePage extends React.PureComponent {
                         onPress={this.onSaveFilePressed}
                       />
                     )}
+                    <Button
+                      style={[filePageStyle.actionButton, filePageStyle.reportButton]}
+                      theme={'light'}
+                      icon={'flag'}
+                      onPress={() => Linking.openURL(`https://lbry.com/dmca?claim_id=${claim.claim_id}`)}
+                    />
                     <Button
                       style={[filePageStyle.actionButton, filePageStyle.tipButton]}
                       theme={'light'}
