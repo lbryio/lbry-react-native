@@ -61,11 +61,10 @@ class DiscoverPage extends React.PureComponent {
       }
     });
 
-    const { sortByItem, fetchRewardedContent, fetchSubscriptions, fileList, followedTags } = this.props;
+    const { sortByItem, fetchRewardedContent, fileList, followedTags } = this.props;
 
     this.buildTagCollection(followedTags);
     fetchRewardedContent();
-    fetchSubscriptions();
     fileList();
 
     this.handleSortByItemSelected(sortByItem);
@@ -88,9 +87,11 @@ class DiscoverPage extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const { pushDrawerStack } = this.props;
+    const { fetchSubscriptions, pushDrawerStack } = this.props;
     // pushDrawerStack();
-    NativeModules.Firebase.setCurrentScreen('Your tags');
+    NativeModules.Firebase.setCurrentScreen('Your tags').then(result => {
+      fetchSubscriptions();
+    });
   };
 
   handleSortByItemSelected = item => {
@@ -127,44 +128,41 @@ class DiscoverPage extends React.PureComponent {
     const { unreadSubscriptions, enabledChannelNotifications } = this.props;
 
     const utility = NativeModules.UtilityModule;
-    if (utility) {
-      const hasUnread =
-        prevProps.unreadSubscriptions &&
-        prevProps.unreadSubscriptions.length !== unreadSubscriptions.length &&
-        unreadSubscriptions.length > 0;
+    const hasUnread =
+      prevProps.unreadSubscriptions &&
+      prevProps.unreadSubscriptions.length !== unreadSubscriptions.length &&
+      unreadSubscriptions.length > 0;
 
-      if (hasUnread) {
-        unreadSubscriptions.map(({ channel, uris }) => {
-          const { claimName: channelName } = parseURI(channel);
+    if (hasUnread) {
+      unreadSubscriptions.map(({ channel, uris }) => {
+        const { claimName: channelName } = parseURI(channel);
 
-          // check if notifications are enabled for the channel
-          if (enabledChannelNotifications.indexOf(channelName) > -1) {
-            uris.forEach(uri => {
-              Lbry.resolve({ urls: uri }).then(result => {
-                const sub = result[uri].claim;
-                if (sub && sub.value && sub.value.stream) {
-                  let isPlayable = false;
-                  const source = sub.value.stream.source;
-                  const metadata = sub.value.stream.metadata;
-                  if (source) {
-                    isPlayable =
-                      source.contentType && ['audio', 'video'].indexOf(source.contentType.substring(0, 5)) > -1;
-                  }
-                  if (metadata) {
-                    utility.showNotificationForContent(
-                      uri,
-                      metadata.title,
-                      channelName,
-                      metadata.thumbnail,
-                      isPlayable
-                    );
-                  }
+        // check if notifications are enabled for the channel
+        if (enabledChannelNotifications.indexOf(channelName) > -1) {
+          uris.forEach(uri => {
+            Lbry.resolve({ urls: uri }).then(result => {
+              const sub = result[uri];
+
+              if (sub && sub.value) {
+                let isPlayable = false;
+                const { source, title, thumbnail } = sub.value;
+                if (source) {
+                  isPlayable = source.media_type && ['audio', 'video'].indexOf(source.media_type.substring(0, 5)) > -1;
                 }
-              });
+                if (title) {
+                  utility.showNotificationForContent(
+                    uri,
+                    title,
+                    channelName,
+                    thumbnail ? thumbnail.url : null,
+                    isPlayable
+                  );
+                }
+              }
             });
-          }
-        });
-      }
+          });
+        }
+      });
     }
   }
 
