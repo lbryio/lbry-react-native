@@ -1251,16 +1251,16 @@ class PublishPage extends React.PureComponent {
                 type={this.state.cameraType}
                 flashMode={RNCamera.Constants.FlashMode.off}
                 androidCameraPermissionOptions={{
-                  title: 'Camera',
-                  message: 'Please grant access to make use of your camera',
-                  buttonPositive: 'OK',
-                  buttonNegative: 'Cancel',
+                  title: __('Camera'),
+                  message: __('Please grant access to make use of your camera'),
+                  buttonPositive: __('OK'),
+                  buttonNegative: __('Cancel'),
                 }}
                 androidRecordAudioPermissionOptions={{
-                  title: 'Audio',
-                  message: 'Please grant access to record audio',
-                  buttonPositive: 'OK',
-                  buttonNegative: 'Cancel',
+                  title: __('Audio'),
+                  message: __('Please grant access to record audio'),
+                  buttonPositive: __('OK'),
+                  buttonNegative: __('Cancel'),
                 }}
                 notAuthorizedView={
                   <View style={publishStyle.fullCentered}>
