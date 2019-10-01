@@ -322,6 +322,9 @@ const filePageStyle = StyleSheet.create({
   saveFileButton: {
     marginRight: 8,
   },
+  reportButton: {
+    marginRight: 8,
+  },
   tagContainer: {
     marginLeft: 12,
     marginRight: 12,
