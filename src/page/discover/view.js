@@ -138,17 +138,15 @@ class DiscoverPage extends React.PureComponent {
         const { claimName: channelName } = parseURI(channel);
 
         // check if notifications are enabled for the channel
-        if (enabledChannelNotifications.indexOf(channelName) > -1) {
+        if (enabledChannelNotifications.includes(channelName)) {
           uris.forEach(uri => {
             Lbry.resolve({ urls: uri }).then(result => {
               const sub = result[uri];
 
               if (sub && sub.value) {
-                let isPlayable = false;
                 const { source, title, thumbnail } = sub.value;
-                if (source) {
-                  isPlayable = source.media_type && ['audio', 'video'].indexOf(source.media_type.substring(0, 5)) > -1;
-                }
+                const isPlayable =
+                  source && source.media_type && ['audio', 'video'].includes(source.media_type.substring(0, 5));
                 if (title) {
                   utility.showNotificationForContent(
                     uri,
