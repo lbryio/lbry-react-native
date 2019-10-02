@@ -29,7 +29,7 @@ import {
 import { connect } from 'react-redux';
 import { AppState, BackHandler, Linking, NativeModules, TextInput, ToastAndroid } from 'react-native';
 import { selectDrawerStack } from 'redux/selectors/drawer';
-import { SETTINGS, doDismissToast, doPopulateSharedUserState, doToast, selectToast } from 'lbry-redux';
+import { SETTINGS, doDismissToast, doPopulateSharedUserState, doPreferenceGet, doToast, selectToast } from 'lbry-redux';
 import {
   Lbryio,
   doGetSync,
@@ -308,8 +308,8 @@ class AppWithNavigationState extends React.Component {
 
   getUserSettings = () => {
     const { dispatch } = this.props;
-    Lbryio.call('user_settings', 'get').then(settings => {
-      dispatch(doPopulateSharedUserState(settings));
+    doPreferenceGet('shared', null, null, preference => {
+      dispatch(doPopulateSharedUserState(preference));
     });
   };
 

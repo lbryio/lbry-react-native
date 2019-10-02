@@ -148,7 +148,11 @@ const persistor = persistStore(store, persistOptions, err => {
 });
 window.persistor = persistor;
 
-const sharedStateCache = {};
+/**
+ * source: the reducer name
+ * property: the property in the reducer-specific state
+ * transform: optional method to modify the value to be stored
+ */
 const sharedStateFilters = {
   tags: { source: 'tags', property: 'followedTags' },
   subscriptions: {
@@ -163,7 +167,7 @@ const sharedStateFilters = {
 store.subscribe(() => {
   try {
     const state = store.getState();
-    sharedStateSubscriber(state, sharedStateFilters, sharedStateCache);
+    sharedStateSubscriber(state, sharedStateFilters, '0.1');
   } catch (e) {
     // handle gracefully?
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry } from 'lbry-redux';
+import { Lbry, doPreferenceGet } from 'lbry-redux';
 import { Lbryio } from 'lbryinc';
 import { ActivityIndicator, Linking, NativeModules, Platform, Text, View } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
@@ -113,8 +113,9 @@ class SplashScreen extends React.PureComponent {
 
   getUserSettings = () => {
     const { populateSharedUserState } = this.props;
-    Lbryio.call('user_settings', 'get').then(settings => {
-      populateSharedUserState(settings);
+
+    doPreferenceGet('shared', null, null, preference => {
+      populateSharedUserState(preference);
     });
   };
 
