@@ -46,7 +46,7 @@ class SkipAccountPage extends React.PureComponent {
           </View>
           <Text style={firstRunStyle.rowParagraph}>
             I understand that by uninstalling LBRY I will lose any balances or published content with no recovery
-            option.
+            option if it is not backed up manually (see wallet page)
           </Text>
         </View>
       </View>
