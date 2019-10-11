@@ -517,7 +517,7 @@ class FilePage extends React.PureComponent {
     const { claim, notify } = this.props;
     if (claim) {
       const { canonical_url: canonicalUrl, short_url: shortUrl, permanent_url: permanentUrl } = claim;
-      const url = 'https://beta.lbry.tv/' + this.formatLbryUrlForWeb(canonicalUrl || (shortUrl || permanentUrl));
+      const url = 'https://beta.lbry.tv' + this.formatLbryUrlForWeb(canonicalUrl || (shortUrl || permanentUrl));
       NativeModules.UtilityModule.shareUrl(url);
     }
   };
