@@ -1,6 +1,6 @@
 import React from 'react';
-import { ActivityIndicator, FlatList, SectionList, Text, View } from 'react-native';
-import { createNormalizedClaimSearchKey, normalizeURI } from 'lbry-redux';
+import { ActivityIndicator, SectionList, Text, View } from 'react-native';
+import { MATURE_TAGS, createNormalizedClaimSearchKey, normalizeURI } from 'lbry-redux';
 import { __, navigateToUri } from 'utils/helper';
 import SubscribeButton from 'component/subscribeButton';
 import SuggestedSubscriptionItem from 'component/suggestedSubscriptionItem';
@@ -16,13 +16,16 @@ class SuggestedSubscriptions extends React.PureComponent {
   };
 
   componentDidMount() {
-    const { claimSearch, followedTags } = this.props;
+    const { claimSearch, followedTags, showNsfwContent } = this.props;
     const options = {
       any_tags: _.shuffle(followedTags.map(tag => tag.name)).slice(0, 3),
       page: 1,
       no_totals: true,
       claim_type: 'channel',
     };
+    if (!showNsfwContent) {
+      options.not_tags = MATURE_TAGS;
+    }
     this.setState({ options });
     claimSearch(options);
   }
@@ -35,7 +38,7 @@ class SuggestedSubscriptions extends React.PureComponent {
     const suggestedUris = suggested ? suggested.map(suggested => suggested.uri) : [];
     return [
       {
-        title: __('Tags you follow'),
+        title: __('Suggested channels'),
         data: claimSearchUris ? claimSearchUris.filter(uri => !suggestedUris.includes(uri)) : [],
       },
       {
@@ -46,7 +49,7 @@ class SuggestedSubscriptions extends React.PureComponent {
   };
 
   render() {
-    const { suggested, loading, navigation } = this.props;
+    const { suggested, inModal, loading, navigation } = this.props;
 
     if (loading) {
       return (
@@ -58,8 +61,10 @@ class SuggestedSubscriptions extends React.PureComponent {
 
     return (
       <SectionList
-        style={subscriptionsStyle.scrollContainer}
-        contentContainerStyle={subscriptionsStyle.suggestedScrollPadding}
+        style={inModal ? subscriptionsStyle.modalScrollContainer : subscriptionsStyle.scrollContainer}
+        contentContainerStyle={
+          inModal ? subscriptionsStyle.modalSuggestedScrollContent : subscriptionsStyle.suggestedScrollContent
+        }
         renderItem={({ item, index, section }) => (
           <SuggestedSubscriptionItem key={item} uri={normalizeURI(item)} navigation={navigation} />
         )}

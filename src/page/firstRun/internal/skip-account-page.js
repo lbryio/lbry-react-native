@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firstRunStyle from 'styles/firstRun';
 
@@ -45,8 +45,8 @@ class SkipAccountPage extends React.PureComponent {
             />
           </View>
           <Text style={firstRunStyle.rowParagraph}>
-            I understand that by uninstalling LBRY I will lose any balances or published content with no recovery
-            option.
+            I understand that by uninstalling LBRY I will lose any balances or published content with no recovery option
+            if it is not backed up manually (see wallet page)
           </Text>
         </View>
       </View>
