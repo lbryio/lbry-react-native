@@ -999,7 +999,6 @@ class FilePage extends React.PureComponent {
                         onPress={this.onSaveFilePressed}
                       />
                     )}
-
                     <Button
                       style={[filePageStyle.actionButton, filePageStyle.tipButton]}
                       theme={'light'}
