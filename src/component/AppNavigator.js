@@ -39,6 +39,7 @@ import {
   selectEmailToVerify,
   selectEmailVerifyIsPending,
   selectEmailVerifyErrorMessage,
+  selectHashChanged,
   selectUser,
 } from 'lbryinc';
 import { makeSelectClientSetting } from 'redux/selectors/settings';
@@ -52,6 +53,8 @@ import NavigationButton from 'component/navigationButton';
 import discoverStyle from 'styles/discover';
 import searchStyle from 'styles/search';
 import SearchRightHeaderIcon from 'component/searchRightHeaderIcon';
+
+const SYNC_GET_INTERVAL = 1000 * 60 * 5; // every 5 minutes
 
 const menuNavigationButton = navigation => (
   <NavigationButton
@@ -272,6 +275,7 @@ class AppWithNavigationState extends React.Component {
     this.state = {
       emailVerifyDone: false,
       verifyPending: false,
+      syncHashChanged: false,
     };
   }
 
@@ -292,8 +296,17 @@ class AppWithNavigationState extends React.Component {
   }
 
   componentDidMount() {
+    const { dispatch } = this.props;
     this.emailVerifyCheckInterval = setInterval(() => this.checkEmailVerification(), 5000);
     Linking.addEventListener('url', this._handleUrl);
+
+    // call /sync/get with interval
+    setInterval(() => {
+      this.setState({ syncHashChanged: false }); // reset local state
+      NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
+        dispatch(doGetSync(walletPassword));
+      });
+    }, SYNC_GET_INTERVAL);
   }
 
   checkEmailVerification = () => {
@@ -320,7 +333,7 @@ class AppWithNavigationState extends React.Component {
   }
 
   componentDidUpdate() {
-    const { dispatch, user } = this.props;
+    const { dispatch, user, hashChanged } = this.props;
     if (this.state.verifyPending && this.emailVerifyCheckInterval > 0 && user && user.has_verified_email) {
       clearInterval(this.emailVerifyCheckInterval);
       AsyncStorage.setItem(Constants.KEY_EMAIL_VERIFY_PENDING, 'false');
@@ -330,6 +343,11 @@ class AppWithNavigationState extends React.Component {
       ToastAndroid.show('Your email address was successfully verified.', ToastAndroid.LONG);
 
       // get user settings after email verification
+      this.getUserSettings();
+    }
+
+    if (hashChanged && !this.state.syncHashChanged) {
+      this.setState({ syncHashChanged: true });
       this.getUserSettings();
     }
   }
@@ -438,6 +456,7 @@ class AppWithNavigationState extends React.Component {
 
 const mapStateToProps = state => ({
   backgroundPlayEnabled: makeSelectClientSetting(SETTINGS.BACKGROUND_PLAY_ENABLED)(state),
+  hashChanged: selectHashChanged(state),
   keepDaemonRunning: makeSelectClientSetting(SETTINGS.KEEP_DAEMON_RUNNING)(state),
   nav: state.nav,
   toast: selectToast(state),

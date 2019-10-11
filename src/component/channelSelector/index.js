@@ -7,6 +7,7 @@ import {
   doCreateChannel,
   doToast,
 } from 'lbry-redux';
+import { doGetSync } from 'lbryinc';
 import ChannelSelector from './view';
 
 const select = state => ({
@@ -19,6 +20,7 @@ const perform = dispatch => ({
   notify: data => dispatch(doToast(data)),
   createChannel: (name, amount) => dispatch(doCreateChannel(name, amount)),
   fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
+  getSync: password => dispatch(doGetSync(password)),
 });
 
 export default connect(

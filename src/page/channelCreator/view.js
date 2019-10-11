@@ -376,7 +376,15 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   handleCreateChannelClick = () => {
-    const { balance, clearChannelFormState, createChannel, onChannelChange, notify, updateChannel } = this.props;
+    const {
+      balance,
+      clearChannelFormState,
+      createChannel,
+      onChannelChange,
+      getSync,
+      notify,
+      updateChannel,
+    } = this.props;
     const {
       claimId,
       coverImageUrl,
@@ -439,6 +447,9 @@ export default class ChannelCreator extends React.PureComponent {
       clearChannelFormState();
       notify({ message: 'The channel was successfully created.' });
       this.showChannelList();
+
+      // sync wallet
+      NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(password => getSync(password));
     };
 
     const failure = () => {

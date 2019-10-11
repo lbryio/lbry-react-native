@@ -47,9 +47,7 @@ class WalletPage extends React.PureComponent {
     const { deviceWalletSynced, getSync, user } = this.props;
     if (deviceWalletSynced && user && user.has_verified_email) {
       NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
-        if (walletPassword) {
-          getSync(walletPassword);
-        }
+        getSync(walletPassword);
       });
     }
   };

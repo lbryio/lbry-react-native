@@ -12,6 +12,7 @@ import {
   doUpdateChannel,
   doToast,
 } from 'lbry-redux';
+import { doGetSync } from 'lbryinc';
 import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doUpdateChannelFormState, doClearChannelFormState } from 'redux/actions/form';
 import { selectDrawerStack } from 'redux/selectors/drawer';
@@ -37,6 +38,7 @@ const perform = dispatch => ({
   clearChannelFormState: () => dispatch(doClearChannelFormState()),
   createChannel: (name, amount, optionalParams) => dispatch(doCreateChannel(name, amount, optionalParams)),
   fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
+  getSync: password => dispatch(doGetSync(password)),
   updateChannel: params => dispatch(doUpdateChannel(params)),
   updateChannelFormState: data => dispatch(doUpdateChannelFormState(data)),
   pushDrawerStack: (routeName, params) => dispatch(doPushDrawerStack(routeName, params)),

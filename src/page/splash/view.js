@@ -16,8 +16,6 @@ import splashStyle from 'styles/splash';
 
 const BLOCK_HEIGHT_INTERVAL = 1000 * 60 * 2.5; // every 2.5 minutes
 
-const SETTINGS_GET_INTERVAL = 1000 * 60 * 5; // every 5 minutes
-
 const testingNetwork = 'Testing network';
 const waitingForResolution = 'Waiting for name resolution';
 
@@ -98,9 +96,7 @@ class SplashScreen extends React.PureComponent {
         // user is authenticated, navigate to the main view
         if (user.has_verified_email) {
           NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
-            if (walletPassword) {
-              getSync(walletPassword);
-            }
+            getSync(walletPassword);
             this.navigateToMain();
           });
           return;
@@ -140,14 +136,11 @@ class SplashScreen extends React.PureComponent {
 
       // get user settings interval
       this.getUserSettings();
-      setInterval(() => this.getUserSettings(), SETTINGS_GET_INTERVAL);
 
       if (user && user.id && user.has_verified_email) {
         // user already authenticated
         NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
-          if (walletPassword) {
-            getSync(walletPassword);
-          }
+          getSync(walletPassword);
           this.navigateToMain();
         });
       } else {
