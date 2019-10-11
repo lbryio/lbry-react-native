@@ -137,24 +137,28 @@ class SplashScreen extends React.PureComponent {
       filteredOutpointsSubscribe();
       checkSubscriptionsInit();
 
-      // get user settings interval
-      this.getUserSettings();
-      setInterval(() => this.getUserSettings(), SETTINGS_GET_INTERVAL);
+      NativeModules.Firebase.getMessagingToken().then(fcmToken => {
+        console.log('fcmtoken=' + fcmToken);
 
-      if (user && user.id && user.has_verified_email) {
-        // user already authenticated
-        NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
-          if (walletPassword) {
-            getSync(walletPassword);
-          }
-          this.navigateToMain();
-        });
-      } else {
-        NativeModules.VersionInfo.getAppVersion().then(appVersion => {
-          this.setState({ shouldAuthenticate: true });
-          authenticate(appVersion, Platform.OS);
-        });
-      }
+        // get user settings interval
+        this.getUserSettings();
+        setInterval(() => this.getUserSettings(), SETTINGS_GET_INTERVAL);
+
+        if (user && user.id && user.has_verified_email) {
+          // user already authenticated
+          NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
+            if (walletPassword) {
+              getSync(walletPassword);
+            }
+            this.navigateToMain();
+          });
+        } else {
+          NativeModules.VersionInfo.getAppVersion().then(appVersion => {
+            this.setState({ shouldAuthenticate: true });
+            authenticate(appVersion, Platform.OS);
+          });
+        }
+      });
     });
   };
 
