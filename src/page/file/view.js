@@ -973,7 +973,7 @@ class FilePage extends React.PureComponent {
                       style={[filePageStyle.actionButton, filePageStyle.reportButton]}
                       theme={'light'}
                       icon={'flag'}
-                      onPress={() => Linking.openURL(`https://lbry.com/dmca?claim_id=${claim.claim_id}`)}
+                      onPress={() => Linking.openURL(`https://lbry.com/dmca/${claim.claim_id}`)}
                     />
                     <Button
                       style={[filePageStyle.actionButton, filePageStyle.tipButton]}
