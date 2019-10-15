@@ -77,7 +77,7 @@ class PublishPage extends React.PureComponent {
   camera = null;
 
   state = {
-    canPublish: false,
+    canPublish: true,
     canUseCamera: false,
     documentPickerOpen: false,
     editMode: false,
@@ -186,7 +186,6 @@ class PublishPage extends React.PureComponent {
       NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
       this.setState(
         {
-          canPublish: balance >= 0.1,
           loadingVideos: true,
         },
         () => {
@@ -319,7 +318,7 @@ class PublishPage extends React.PureComponent {
   };
 
   handlePublishPressed = () => {
-    const { notify, publish, updatePublishForm } = this.props;
+    const { balance, notify, publish, updatePublishForm } = this.props;
     const {
       editMode,
       bid,
@@ -339,6 +338,14 @@ class PublishPage extends React.PureComponent {
       uploadedThumbnailUri: thumbnail,
       uri,
     } = this.state;
+
+    if (balance < 0.1) {
+      notify({
+        message:
+          "You don't have enough credits to publish this content. Press the blue bar at the top to earn some credits from rewards!",
+      });
+      return;
+    }
 
     if (!title || title.trim().length === 0) {
       notify({ message: 'Please provide a title' });
@@ -980,7 +987,7 @@ class PublishPage extends React.PureComponent {
               </View>
             )}
           </TouchableOpacity>
-          {!this.state.canPublish && <PublishRewardsDriver navigation={navigation} />}
+          {balance < 0.1 && <PublishRewardsDriver navigation={navigation} />}
 
           <View style={publishStyle.card}>
             <View style={publishStyle.textInputLayout}>
@@ -1190,7 +1197,7 @@ class PublishPage extends React.PureComponent {
               <View style={publishStyle.rightActionButtons}>
                 <Button
                   style={publishStyle.publishButton}
-                  disabled={!this.state.canPublish || this.state.uploadThumbnailStarted}
+                  disabled={this.state.uploadThumbnailStarted}
                   text={this.state.editMode ? 'Save changes' : 'Publish'}
                   onPress={this.handlePublishPressed}
                 />
