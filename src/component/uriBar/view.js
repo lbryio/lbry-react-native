@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import { SEARCH_TYPES, isNameValid, isURIValid, normalizeURI } from 'lbry-redux';
-import { FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Dimensions, FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { navigateToUri, transformUrl } from 'utils/helper';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import UriBarItem from './internal/uri-bar-item';
@@ -14,6 +14,8 @@ class UriBar extends React.PureComponent {
 
   textInput = null;
 
+  keyboardDidShowListener = null;
+
   keyboardDidHideListener = null;
 
   state = {
@@ -21,17 +23,19 @@ class UriBar extends React.PureComponent {
     currentValue: null,
     inputText: null,
     focused: false,
-
-    // TODO: Add a setting to enable / disable direct search?
-    directSearch: true,
+    keyboardHeight: 0,
   };
 
   componentDidMount() {
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
     this.setSelection();
   }
 
   componentWillUnmount() {
+    if (this.keyboardDidShowListener) {
+      this.keyboardDidShowListener.remove();
+    }
     if (this.keyboardDidHideListener) {
       this.keyboardDidHideListener.remove();
     }
@@ -49,25 +53,28 @@ class UriBar extends React.PureComponent {
   handleChangeText = text => {
     const newValue = text || '';
     clearTimeout(this.state.changeTextTimeout);
-    const { updateSearchQuery, onSearchSubmitted, navigation } = this.props;
+    const { updateSearchQuery, onSearchSubmitted, showUriBarSuggestions, navigation } = this.props;
 
-    let timeout = setTimeout(() => {
-      if (text.trim().length === 0) {
-        // don't do anything if the text is empty
-        return;
-      }
+    updateSearchQuery(text);
 
-      updateSearchQuery(text);
-
-      if (!text.startsWith('lbry://')) {
-        // not a URI input, so this is a search, perform a direct search
-        if (onSearchSubmitted) {
-          onSearchSubmitted(text);
-        } else {
-          navigation.navigate({ routeName: 'Search', key: 'searchPage', params: { searchQuery: text } });
+    let timeout = -1;
+    if (!showUriBarSuggestions) {
+      timeout = setTimeout(() => {
+        if (text.trim().length === 0) {
+          // don't do anything if the text is empty
+          return;
         }
-      }
-    }, UriBar.INPUT_TIMEOUT);
+
+        if (!text.startsWith('lbry://')) {
+          // not a URI input, so this is a search, perform a direct search
+          if (onSearchSubmitted) {
+            onSearchSubmitted(text);
+          } else {
+            navigation.navigate({ routeName: 'Search', key: 'searchPage', params: { searchQuery: text } });
+          }
+        }
+      }, UriBar.INPUT_TIMEOUT);
+    }
     this.setState({ inputText: newValue, currentValue: newValue, changeTextTimeout: timeout });
   };
 
@@ -86,18 +93,34 @@ class UriBar extends React.PureComponent {
         return;
       }
 
-      navigation.navigate({ routeName: 'Search', key: 'searchPage', params: { searchQuery: value } });
+      navigation.navigate({
+        routeName: Constants.DRAWER_ROUTE_SEARCH,
+        key: 'searchPage',
+        params: { searchQuery: value },
+      });
+    } else if (SEARCH_TYPES.TAG === type) {
+      navigation.navigate({
+        routeName: Constants.DRAWER_ROUTE_TAG,
+        key: 'tagPage',
+        params: {
+          tag: value.toLowerCase(),
+        },
+      });
     } else {
       const uri = normalizeURI(value);
       navigateToUri(navigation, uri);
     }
   };
 
+  _keyboardDidShow = evt => {
+    this.setState({ keyboardHeight: evt.endCoordinates.height });
+  };
+
   _keyboardDidHide = () => {
     if (this.textInput) {
       this.textInput.blur();
     }
-    this.setState({ focused: false });
+    this.setState({ focused: false, keyboardHeight: 0 });
   };
 
   setSelection() {
@@ -152,16 +175,18 @@ class UriBar extends React.PureComponent {
       selectedItemCount,
       selectionMode,
       suggestions,
+      showUriBarSuggestions,
       value,
     } = this.props;
     if (this.state.currentValue === null) {
       this.setState({ currentValue: value });
     }
 
-    let style = [uriBarStyle.overlay, belowOverlay ? null : uriBarStyle.overlayElevated];
-
-    // TODO: Add optional setting to enable URI / search bar suggestions
-    /* if (this.state.focused) { style.push(uriBarStyle.inFocus); } */
+    let style = [
+      uriBarStyle.overlay,
+      belowOverlay ? null : uriBarStyle.overlayElevated,
+      this.state.focused && showUriBarSuggestions ? uriBarStyle.inFocus : null,
+    ];
 
     // TODO: selectionModeActions should be dynamically created / specified
     return (
@@ -248,20 +273,21 @@ class UriBar extends React.PureComponent {
               onSubmitEditing={this.handleSubmitEditing}
             />
           )}
-          {this.state.focused && !this.state.directSearch && (
-            <View style={uriBarStyle.suggestions}>
-              <FlatList
-                style={uriBarStyle.suggestionList}
-                data={suggestions}
-                keyboardShouldPersistTaps={'handled'}
-                keyExtractor={(item, value) => item.value}
-                renderItem={({ item }) => (
-                  <UriBarItem item={item} navigation={navigation} onPress={() => this.handleItemPress(item)} />
-                )}
-              />
-            </View>
-          )}
         </View>
+        {this.state.focused && showUriBarSuggestions && (
+          <FlatList
+            style={[
+              uriBarStyle.suggestions,
+              { height: Dimensions.get('window').height - this.state.keyboardHeight - 60 },
+            ]}
+            data={suggestions}
+            keyboardShouldPersistTaps={'handled'}
+            keyExtractor={(item, value) => `${item.value}-${item.type}`}
+            renderItem={({ item }) => (
+              <UriBarItem item={item} navigation={navigation} onPress={() => this.handleItemPress(item)} />
+            )}
+          />
+        )}
       </View>
     );
   }

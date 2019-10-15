@@ -20,6 +20,10 @@ class UriBarItem extends React.PureComponent {
         icon = <Icon name="search" size={18} />;
         break;
 
+      case SEARCH_TYPES.TAG:
+        icon = <Icon name="hashtag" size={18} />;
+        break;
+
       case SEARCH_TYPES.FILE:
       default:
         icon = <Icon name="file" size={18} />;
@@ -37,6 +41,7 @@ class UriBarItem extends React.PureComponent {
             {type === SEARCH_TYPES.SEARCH && `Search for '${value}'`}
             {type === SEARCH_TYPES.CHANNEL && `View the @${shorthand} channel`}
             {type === SEARCH_TYPES.FILE && `View content at ${value}`}
+            {type === SEARCH_TYPES.TAG && `Explore the '${value}' tag`}
           </Text>
         </View>
       </TouchableOpacity>
