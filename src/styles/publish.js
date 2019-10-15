@@ -297,7 +297,7 @@ const publishStyle = StyleSheet.create({
   },
   rewardDriverCard: {
     alignItems: 'center',
-    backgroundColor: Colors.BrighterLbryGreen,
+    backgroundColor: Colors.RewardDriverBlue,
     flexDirection: 'row',
     paddingLeft: 16,
     paddingRight: 16,

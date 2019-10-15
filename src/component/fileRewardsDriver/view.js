@@ -9,7 +9,7 @@ class FileRewardsDriver extends React.PureComponent<Props> {
 
     return (
       <TouchableOpacity style={filePageStyle.rewardDriverCard} onPress={() => navigation.navigate('Rewards')}>
-        <Icon name="award" size={16} style={filePageStyle.rewardIcon} />
+        <Icon name="award" size={16} style={filePageStyle.rewardDriverIcon} />
         <Text style={filePageStyle.rewardDriverText}>Earn some credits to access this content.</Text>
       </TouchableOpacity>
     );

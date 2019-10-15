@@ -348,12 +348,16 @@ const filePageStyle = StyleSheet.create({
   },
   rewardDriverCard: {
     alignItems: 'center',
-    backgroundColor: Colors.BrighterLbryGreen,
+    backgroundColor: Colors.RewardDriverBlue,
     flexDirection: 'row',
     paddingLeft: 16,
     paddingRight: 16,
     paddingTop: 12,
     paddingBottom: 12,
+  },
+  rewardDriverIcon: {
+    color: Colors.White,
+    marginRight: 8,
   },
   rewardDriverText: {
     fontFamily: 'Inter-UI-Regular',
