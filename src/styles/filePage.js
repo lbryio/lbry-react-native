@@ -377,6 +377,24 @@ const filePageStyle = StyleSheet.create({
   backButtonIcon: {
     color: Colors.White,
   },
+  largeButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  largeButtonIcon: {
+    color: Colors.DescriptionGrey,
+  },
+  largeButtonText: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+    marginTop: 4,
+  },
+  largeButtonsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    margin: 16,
+  },
 });
 
 export default filePageStyle;

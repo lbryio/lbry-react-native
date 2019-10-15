@@ -508,6 +508,20 @@ class FilePage extends React.PureComponent {
     this.setState({ fileViewLogged: true });
   };
 
+  // TODO: Move this to lbry-redux
+  formatLbryUrlForWeb = url => {
+    return url.replace('lbry://', '/').replace(/#/g, ':');
+  };
+
+  handleSharePress = () => {
+    const { claim, notify } = this.props;
+    if (claim) {
+      const { canonical_url: canonicalUrl, short_url: shortUrl, permanent_url: permanentUrl } = claim;
+      const url = 'https://lbry.tv' + this.formatLbryUrlForWeb(canonicalUrl || shortUrl || permanentUrl);
+      NativeModules.UtilityModule.shareUrl(url);
+    }
+  };
+
   handleSendTip = () => {
     const { claim, balance, navigation, notify, sendTip } = this.props;
     const { uri } = navigation.state.params;
@@ -933,6 +947,22 @@ class FilePage extends React.PureComponent {
                     </View>
                   </View>
                 </TouchableWithoutFeedback>
+
+                <View style={filePageStyle.largeButtonsRow}>
+                  <TouchableOpacity style={filePageStyle.largeButton} onPress={this.handleSharePress}>
+                    <Icon name={'share-alt'} size={24} style={filePageStyle.largeButtonIcon} />
+                    <Text style={filePageStyle.largeButtonText}>Share</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={filePageStyle.largeButton}
+                    onPress={() => Linking.openURL(`https://lbry.com/dmca/${claim.claim_id}`)}
+                  >
+                    <Icon name={'flag'} size={24} style={filePageStyle.largeButtonIcon} />
+                    <Text style={filePageStyle.largeButtonText}>Report</Text>
+                  </TouchableOpacity>
+                </View>
+
                 <View style={filePageStyle.channelRow}>
                   <View style={filePageStyle.publishInfo}>
                     {channelName && (
@@ -969,12 +999,6 @@ class FilePage extends React.PureComponent {
                         onPress={this.onSaveFilePressed}
                       />
                     )}
-                    <Button
-                      style={[filePageStyle.actionButton, filePageStyle.reportButton]}
-                      theme={'light'}
-                      icon={'flag'}
-                      onPress={() => Linking.openURL(`https://lbry.com/dmca/${claim.claim_id}`)}
-                    />
                     <Button
                       style={[filePageStyle.actionButton, filePageStyle.tipButton]}
                       theme={'light'}
