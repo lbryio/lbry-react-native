@@ -32,6 +32,8 @@ import channelIconStyle from 'styles/channelIcon';
 import seedrandom from 'seedrandom';
 
 export default class ChannelCreator extends React.PureComponent {
+  scrollView = null;
+
   state = {
     autoStyle: null,
     canSave: true,
@@ -389,11 +391,13 @@ export default class ChannelCreator extends React.PureComponent {
       website,
     } = this.state;
 
-    if (balance < 0.1) {
+    if (balance < Constants.MINIMUM_TRANSACTION_BALANCE) {
       notify({
-        message:
-          "You don't have enough credits to create a channel. Press the blue bar to earn some credits from rewards!",
+        message: 'Creating a channel requires credits. Press the blue bar to get some for free.',
       });
+      if (this.scrollView) {
+        this.scrollView.scrollTo({ x: 0, y: 0, animated: true });
+      }
       return;
     }
 
@@ -846,7 +850,7 @@ export default class ChannelCreator extends React.PureComponent {
         )}
 
         {currentPhase === Constants.PHASE_CREATE && (
-          <ScrollView style={channelCreatorStyle.createChannelContainer}>
+          <ScrollView ref={ref => (this.scrollView = ref)} style={channelCreatorStyle.createChannelContainer}>
             <View style={channelCreatorStyle.imageSelectors}>
               <TouchableOpacity style={channelCreatorStyle.coverImageTouchArea} onPress={this.onCoverImagePress}>
                 <Image
@@ -891,7 +895,7 @@ export default class ChannelCreator extends React.PureComponent {
                 </TouchableOpacity>
               </View>
             </View>
-            {balance < 0.1 && <ChannelRewardsDriver navigation={navigation} />}
+            {balance < Constants.MINIMUM_TRANSACTION_BALANCE && <ChannelRewardsDriver navigation={navigation} />}
 
             <View style={channelCreatorStyle.card}>
               <View style={channelCreatorStyle.textInputLayout}>

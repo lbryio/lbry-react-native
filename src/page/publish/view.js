@@ -76,6 +76,8 @@ const languages = {
 class PublishPage extends React.PureComponent {
   camera = null;
 
+  scrollView = null;
+
   state = {
     canPublish: true,
     canUseCamera: false,
@@ -339,11 +341,13 @@ class PublishPage extends React.PureComponent {
       uri,
     } = this.state;
 
-    if (balance < 0.1) {
+    if (balance < Constants.MINIMUM_TRANSACTION_BALANCE) {
       notify({
-        message:
-          "You don't have enough credits to publish this content. Press the blue bar at the top to earn some credits from rewards!",
+        message: 'Publishing content requires credits. Press the blue bar to get some for free.',
       });
+      if (this.scrollView) {
+        this.scrollView.scrollTo({ x: 0, y: 0, animated: true });
+      }
       return;
     }
 
@@ -968,7 +972,7 @@ class PublishPage extends React.PureComponent {
         this.updateThumbnailUriForMedia(currentMedia);
       }
       content = (
-        <ScrollView style={publishStyle.publishDetails}>
+        <ScrollView ref={ref => (this.scrollView = ref)} style={publishStyle.publishDetails}>
           <TouchableOpacity style={publishStyle.mainThumbnailContainer} onPress={this.handleThumbnailPressed}>
             <FastImage
               style={publishStyle.mainThumbnail}
@@ -987,7 +991,7 @@ class PublishPage extends React.PureComponent {
               </View>
             )}
           </TouchableOpacity>
-          {balance < 0.1 && <PublishRewardsDriver navigation={navigation} />}
+          {balance < Constants.MINIMUM_TRANSACTION_BALANCE && <PublishRewardsDriver navigation={navigation} />}
 
           <View style={publishStyle.card}>
             <View style={publishStyle.textInputLayout}>
