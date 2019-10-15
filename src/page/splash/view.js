@@ -178,31 +178,33 @@ class SplashScreen extends React.PureComponent {
         isRunning: true,
       });
 
-      // For now, automatically unlock the wallet if a password is set so that downloads work
-      NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password => {
-        if (walletStatus.is_locked) {
-          this.setState({
-            message: 'Unlocking account',
-            details: 'Decrypting wallet',
-          });
+      Lbry.wallet_status().then(secureWalletStatus => {
+        // For now, automatically unlock the wallet if a password is set so that downloads work
+        NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password => {
+          if (secureWalletStatus.is_locked) {
+            this.setState({
+              message: 'Unlocking account',
+              details: 'Decrypting wallet',
+            });
 
-          // unlock the wallet and then finish the splash screen
-          Lbry.account_unlock({ password: password || '' })
-            .then(() => {
-              this.setState({
-                message: testingNetwork,
-                details: waitingForResolution,
-              });
-              this.finishSplashScreen();
-            })
-            .catch(() => this.handleAccountUnlockFailed());
-        } else {
-          this.setState({
-            message: testingNetwork,
-            details: waitingForResolution,
-          });
-          this.finishSplashScreen();
-        }
+            // unlock the wallet and then finish the splash screen
+            Lbry.wallet_unlock({ password: password || '' })
+              .then(() => {
+                this.setState({
+                  message: testingNetwork,
+                  details: waitingForResolution,
+                });
+                this.finishSplashScreen();
+              })
+              .catch(() => this.handleAccountUnlockFailed());
+          } else {
+            this.setState({
+              message: testingNetwork,
+              details: waitingForResolution,
+            });
+            this.finishSplashScreen();
+          }
+        });
       });
 
       return;

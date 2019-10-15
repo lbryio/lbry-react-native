@@ -37,7 +37,7 @@ class SyncVerifyPage extends React.PureComponent {
       if (!hasSyncedWallet) {
         // fresh account with no sync
         const newPassword = this.state.password ? this.state.password : '';
-        Lbry.account_encrypt({ new_password: newPassword }).then(() => {
+        Lbry.wallet_encrypt({ new_password: newPassword }).then(() => {
           getSync(newPassword);
           setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
           navigation.goBack();
@@ -79,9 +79,9 @@ class SyncVerifyPage extends React.PureComponent {
     setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
 
     // unlock the wallet (if locked)
-    Lbry.status().then(status => {
-      if (status.wallet.is_locked) {
-        Lbry.account_unlock({ password: this.state.password ? this.state.password : '' })
+    Lbry.wallet_status().then(status => {
+      if (status.is_locked) {
+        Lbry.wallet_unlock({ password: this.state.password ? this.state.password : '' })
           .then(() => navigation.goBack())
           .catch(err => {
             if (notifyUnlockFailed) {

@@ -91,10 +91,10 @@ class FirstRunScreen extends React.PureComponent {
         );
 
         setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
-        Lbry.status().then(status => {
+        Lbry.wallet_status().then(status => {
           // unlock the wallet
-          if (status.wallet.is_locked) {
-            Lbry.account_unlock({ password: this.state.walletPassword ? this.state.walletPassword : '' })
+          if (status.is_locked) {
+            Lbry.wallet_unlock({ password: this.state.walletPassword ? this.state.walletPassword : '' })
               .then(() => this.closeFinalPage())
               .catch(err =>
                 notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' })
@@ -296,7 +296,7 @@ class FirstRunScreen extends React.PureComponent {
     if (NativeModules.UtilityModule) {
       const newPassword = this.state.walletPassword ? this.state.walletPassword : '';
       NativeModules.UtilityModule.setSecureValue(Constants.KEY_WALLET_PASSWORD, newPassword);
-      Lbry.account_encrypt({ new_password: newPassword }).then(() => {
+      Lbry.wallet_encrypt({ new_password: newPassword }).then(() => {
         // fresh account, new password set
         getSync(newPassword);
         setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
