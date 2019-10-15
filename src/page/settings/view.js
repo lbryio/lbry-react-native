@@ -81,7 +81,7 @@ class SettingsPage extends React.PureComponent {
 
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>Show NSFW content</Text>
+              <Text style={settingsStyle.label}>Show mature content</Text>
             </View>
             <View style={settingsStyle.switchContainer}>
               <Switch value={showNsfw} onValueChange={value => setClientSetting(SETTINGS.SHOW_NSFW, value)} />
