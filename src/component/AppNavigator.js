@@ -303,7 +303,7 @@ class AppWithNavigationState extends React.Component {
     // call /sync/get with interval
     setInterval(() => {
       this.setState({ syncHashChanged: false }); // reset local state
-      NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
+      NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
         dispatch(doGetSync(walletPassword));
       });
     }, SYNC_GET_INTERVAL);
@@ -321,9 +321,15 @@ class AppWithNavigationState extends React.Component {
 
   getUserSettings = () => {
     const { dispatch } = this.props;
-    doPreferenceGet('shared', null, null, preference => {
-      dispatch(doPopulateSharedUserState(preference));
-    });
+    doPreferenceGet(
+      'shared',
+      preference => {
+        dispatch(doPopulateSharedUserState(preference));
+      },
+      error => {
+        /* failed */
+      }
+    );
   };
 
   componentWillUnmount() {

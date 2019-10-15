@@ -50,7 +50,7 @@ class SyncVerifyPage extends React.PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { getSyncIsPending, syncApplyIsPending, syncApplyErrorMessage } = nextProps;
-    const { getSync, hasSyncedWallet, navigation, notify, setClientSetting, setDefaultAccount } = this.props;
+    const { getSync, hasSyncedWallet, navigation, notify, setClientSetting } = this.props;
     if (this.state.checkSyncStarted && !getSyncIsPending) {
       this.setState({ syncChecked: true });
     }
@@ -63,17 +63,12 @@ class SyncVerifyPage extends React.PureComponent {
         // password successfully verified
         if (NativeModules.UtilityModule) {
           NativeModules.UtilityModule.setSecureValue(
-            Constants.KEY_FIRST_RUN_PASSWORD,
+            Constants.KEY_WALLET_PASSWORD,
             this.state.password ? this.state.password : ''
           );
         }
-        setDefaultAccount(
-          () => this.finishSync(true),
-          err => {
-            // fail silently and still finish
-            this.finishSync();
-          }
-        );
+
+        this.finishSync(true);
       }
     }
   }

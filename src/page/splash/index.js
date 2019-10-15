@@ -23,7 +23,7 @@ const select = state => ({
 });
 
 const perform = dispatch => ({
-  authenticate: (appVersion, os) => dispatch(doAuthenticate(appVersion, os)),
+  authenticate: (appVersion, os, firebaseToken) => dispatch(doAuthenticate(appVersion, os, firebaseToken)),
   balanceSubscribe: () => dispatch(doBalanceSubscribe()),
   blacklistedOutpointsSubscribe: () => dispatch(doBlackListedOutpointsSubscribe()),
   filteredOutpointsSubscribe: () => dispatch(doFilteredOutpointsSubscribe()),

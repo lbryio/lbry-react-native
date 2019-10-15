@@ -155,7 +155,7 @@ export default class ChannelSelector extends React.PureComponent {
       }
 
       // sync wallet
-      NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(password => getSync(password));
+      NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password => getSync(password));
     };
 
     const failure = () => {

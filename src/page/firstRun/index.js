@@ -4,7 +4,6 @@ import {
   doAuthenticate,
   doCheckSync,
   doGetSync,
-  doSetDefaultAccount,
   doSyncApply,
   doUserEmailNew,
   doUserResendVerificationEmail,
@@ -41,12 +40,11 @@ const select = state => ({
 
 const perform = dispatch => ({
   addUserEmail: email => dispatch(doUserEmailNew(email)),
-  authenticate: (appVersion, os) => dispatch(doAuthenticate(appVersion, os)),
+  authenticate: (appVersion, os, firebaseToken) => dispatch(doAuthenticate(appVersion, os, firebaseToken)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
   syncApply: (hash, data, password) => dispatch(doSyncApply(hash, data, password)),
   getSync: password => dispatch(doGetSync(password)),
   checkSync: () => dispatch(doCheckSync()),
-  setDefaultAccount: (success, failure) => dispatch(doSetDefaultAccount(success, failure)),
   notify: data => dispatch(doToast(data)),
   resendVerificationEmail: email => dispatch(doUserResendVerificationEmail(email)),
 });

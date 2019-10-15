@@ -90,7 +90,7 @@ class SplashScreen extends React.PureComponent {
       this.setState({ shouldAuthenticate: false }, () => {
         // user is authenticated, navigate to the main view
         if (user.has_verified_email) {
-          NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
+          NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
             getSync(walletPassword);
             this.navigateToMain();
           });
@@ -105,9 +105,15 @@ class SplashScreen extends React.PureComponent {
   getUserSettings = () => {
     const { populateSharedUserState } = this.props;
 
-    doPreferenceGet('shared', null, null, preference => {
-      populateSharedUserState(preference);
-    });
+    doPreferenceGet(
+      'shared',
+      preference => {
+        populateSharedUserState(preference);
+      },
+      error => {
+        /* failed */
+      }
+    );
   };
 
   finishSplashScreen = () => {
@@ -134,14 +140,16 @@ class SplashScreen extends React.PureComponent {
 
       if (user && user.id && user.has_verified_email) {
         // user already authenticated
-        NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
+        NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
           getSync(walletPassword);
           this.navigateToMain();
         });
       } else {
         NativeModules.VersionInfo.getAppVersion().then(appVersion => {
-          this.setState({ shouldAuthenticate: true });
-          authenticate(appVersion, Platform.OS);
+          NativeModules.Firebase.getMessagingToken().then(firebaseToken => {
+            this.setState({ shouldAuthenticate: true });
+            authenticate(appVersion, Platform.OS, firebaseToken);
+          });
         });
       }
     });
@@ -171,7 +179,7 @@ class SplashScreen extends React.PureComponent {
       });
 
       // For now, automatically unlock the wallet if a password is set so that downloads work
-      NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(password => {
+      NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password => {
         if (walletStatus.is_locked) {
           this.setState({
             message: 'Unlocking account',

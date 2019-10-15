@@ -101,7 +101,6 @@ class VerificationScreen extends React.PureComponent {
       notify,
       addUserPhone,
       getSyncIsPending,
-      setDefaultAccount,
       hasSyncedWallet,
       setSyncIsPending,
       syncApplyIsPending,
@@ -162,7 +161,6 @@ class VerificationScreen extends React.PureComponent {
             notify={notify}
             setEmailVerificationPhase={this.setEmailVerificationPhase}
             setClientSetting={setClientSetting}
-            setDefaultAccount={setDefaultAccount}
             setSyncIsPending={setSyncIsPending}
             syncApplyIsPending={syncApplyIsPending}
             syncApplyErrorMessage={syncApplyErrorMessage}
