@@ -38,12 +38,6 @@ class SplashScreen extends React.PureComponent {
     subscriptionsFetched: false,
   };
 
-  componentWillMount() {
-    if (NativeModules.DaemonServiceControl) {
-      NativeModules.DaemonServiceControl.startService();
-    }
-  }
-
   updateStatus() {
     Lbry.status().then(status => {
       this._updateStatusCallback(status);
@@ -58,7 +52,7 @@ class SplashScreen extends React.PureComponent {
     });
     navigation.dispatch(resetAction);
 
-    const launchUrl = navigation.state.params.launchUrl || this.state.launchUrl;
+    const launchUrl = navigation.state.params ? navigation.state.params.launchUrl : this.state.launchUrl;
     if (launchUrl) {
       if (launchUrl.startsWith('lbry://?verify=')) {
         let verification = {};
@@ -89,9 +83,10 @@ class SplashScreen extends React.PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { emailToVerify, getSync, setEmailToVerify, verifyUserEmail, verifyUserEmailFailure } = this.props;
+    const { daemonReady, shouldAuthenticate } = this.state;
     const { user } = nextProps;
 
-    if (this.state.daemonReady && this.state.shouldAuthenticate && user && user.id) {
+    if (daemonReady && shouldAuthenticate && user && user.id) {
       this.setState({ shouldAuthenticate: false }, () => {
         // user is authenticated, navigate to the main view
         if (user.has_verified_email) {
@@ -243,10 +238,7 @@ class SplashScreen extends React.PureComponent {
   }
 
   componentDidMount() {
-    if (NativeModules.Firebase) {
-      NativeModules.Firebase.track('app_launch', null);
-    }
-
+    NativeModules.Firebase.track('app_launch', null);
     NativeModules.Firebase.setCurrentScreen('Splash');
 
     this.props.fetchRewardedContent();

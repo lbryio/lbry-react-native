@@ -81,8 +81,8 @@ class FirstRunScreen extends React.PureComponent {
 
     if (this.state.syncApplyStarted && !syncApplyIsPending) {
       if (syncApplyErrorMessage && syncApplyErrorMessage.trim().length > 0) {
-        notify({ message: syncApplyErrorMessage, syncApplyStarted: false, isError: true });
-        this.setState({ showBottomContainer: true });
+        notify({ message: syncApplyErrorMessage, isError: true });
+        this.setState({ showBottomContainer: true, syncApplyStarted: false });
       } else {
         // password successfully verified
         NativeModules.UtilityModule.setSecureValue(
@@ -132,9 +132,9 @@ class FirstRunScreen extends React.PureComponent {
     const { navigation } = this.props;
     const resetAction = StackActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'Splash', params: { launchUri: this.state.launchUri } })],
+      actions: [NavigationActions.navigate({ routeName: 'Splash', params: { launchUri: this.state.launchUrl } })],
     });
-    navigation.dispatch(resetAction);
+    setTimeout(() => navigation.dispatch(resetAction), 1000);
   }
 
   handleLeftButtonPressed = () => {
@@ -367,6 +367,7 @@ class FirstRunScreen extends React.PureComponent {
             hasSyncedWallet={hasSyncedWallet}
             getSyncIsPending={getSyncIsPending}
             syncApplyIsPending={syncApplyIsPending}
+            syncApplyStarted={this.state.syncApplyStarted}
             onWalletViewLayout={this.onWalletViewLayout}
             onPasswordChanged={this.onWalletPasswordChanged}
           />
