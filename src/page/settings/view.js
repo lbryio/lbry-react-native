@@ -51,6 +51,7 @@ class SettingsPage extends React.PureComponent {
       navigation,
       popDrawerStack,
       showNsfw,
+      showUriBarSuggestions,
       setClientSetting,
     } = this.props;
 
@@ -62,6 +63,7 @@ class SettingsPage extends React.PureComponent {
       <View style={settingsStyle.container}>
         <PageHeader title={'Settings'} onBackPressed={() => navigateBack(navigation, drawerStack, popDrawerStack)} />
         <ScrollView style={settingsStyle.scrollContainer}>
+          <Text style={settingsStyle.sectionTitle}>Content</Text>
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
               <Text style={settingsStyle.label}>Enable background media playback</Text>
@@ -79,13 +81,29 @@ class SettingsPage extends React.PureComponent {
 
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>Show NSFW content</Text>
+              <Text style={settingsStyle.label}>Show mature content</Text>
             </View>
             <View style={settingsStyle.switchContainer}>
               <Switch value={showNsfw} onValueChange={value => setClientSetting(SETTINGS.SHOW_NSFW, value)} />
             </View>
           </View>
 
+          <View style={settingsStyle.sectionDivider} />
+          <Text style={settingsStyle.sectionTitle}>Search</Text>
+          <View style={settingsStyle.row}>
+            <View style={settingsStyle.switchText}>
+              <Text style={settingsStyle.label}>Show URL suggestions</Text>
+            </View>
+            <View style={settingsStyle.switchContainer}>
+              <Switch
+                value={showUriBarSuggestions}
+                onValueChange={value => setClientSetting(SETTINGS.SHOW_URI_BAR_SUGGESTIONS, value)}
+              />
+            </View>
+          </View>
+
+          <View style={settingsStyle.sectionDivider} />
+          <Text style={settingsStyle.sectionTitle}>Other</Text>
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
               <Text style={settingsStyle.label}>Keep the daemon background service running after closing the app</Text>

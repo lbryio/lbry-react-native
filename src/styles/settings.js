@@ -39,6 +39,14 @@ const settingsStyle = StyleSheet.create({
     fontFamily: 'Inter-UI-Regular',
     lineHeight: 18,
   },
+  sectionTitle: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 20,
+    marginBottom: 4,
+  },
+  sectionDivider: {
+    marginTop: 24,
+  },
 });
 
 export default settingsStyle;
