@@ -19,6 +19,7 @@ const Colors = {
   VeryLightGrey: '#f1f1f1',
   White: '#ffffff',
   UriDescBlue: '#3971db',
+  RewardDriverBlue: '#2196f3',
 
   StatsAudio: '#f6a637',
   StatsImage: '#ff4a7d',

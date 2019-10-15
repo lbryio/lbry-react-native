@@ -198,7 +198,7 @@ const walletStyle = StyleSheet.create({
   },
   rewardDriverCard: {
     alignItems: 'center',
-    backgroundColor: Colors.BrighterLbryGreen,
+    backgroundColor: Colors.RewardDriverBlue,
     flexDirection: 'row',
     padding: 16,
     marginLeft: 16,

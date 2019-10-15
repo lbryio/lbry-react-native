@@ -138,6 +138,8 @@ const Constants = {
   MORE_PLACEHOLDER: '_more',
 
   TRUE_STRING: 'true',
+
+  MINIMUM_TRANSACTION_BALANCE: 0.1,
 };
 
 export default Constants;
