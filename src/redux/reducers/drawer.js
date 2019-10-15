@@ -54,7 +54,7 @@ reducers[Constants.ACTION_POP_DRAWER_STACK] = (state, action) => {
 reducers[Constants.ACTION_REACT_NAVGIATION_RESET] = (state, action) => {
   return {
     ...state,
-    // currentRoute: Constants.DRAWER_ROUTE_DISCOVER, // default to Discover upon reset
+    currentRoute: Constants.DRAWER_ROUTE_DISCOVER, // default to Discover upon reset
   };
 };
 
