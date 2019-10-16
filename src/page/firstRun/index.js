@@ -43,7 +43,7 @@ const perform = dispatch => ({
   authenticate: (appVersion, os, firebaseToken) => dispatch(doAuthenticate(appVersion, os, firebaseToken)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
   syncApply: (hash, data, password) => dispatch(doSyncApply(hash, data, password)),
-  getSync: password => dispatch(doGetSync(password)),
+  getSync: (password, callback) => dispatch(doGetSync(password, callback)),
   checkSync: () => dispatch(doCheckSync()),
   notify: data => dispatch(doToast(data)),
   resendVerificationEmail: email => dispatch(doUserResendVerificationEmail(email)),

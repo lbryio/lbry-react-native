@@ -5,7 +5,7 @@ import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
 import { selectBalance } from 'lbry-redux';
 import { doCheckSync, doGetSync, selectUser, selectHasSyncedWallet } from 'lbryinc';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import WalletPage from './view';
 
 const select = state => ({
@@ -21,7 +21,7 @@ const select = state => ({
 
 const perform = dispatch => ({
   checkSync: () => dispatch(doCheckSync()),
-  getSync: password => dispatch(doGetSync(password)),
+  getSync: (password, callback) => dispatch(doGetSync(password, callback)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_WALLET)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),

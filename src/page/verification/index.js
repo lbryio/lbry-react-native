@@ -54,7 +54,7 @@ const select = state => ({
 const perform = dispatch => ({
   addUserEmail: email => dispatch(doUserEmailNew(email)),
   addUserPhone: (phone, countryCode) => dispatch(doUserPhoneNew(phone, countryCode)),
-  getSync: password => dispatch(doGetSync(password)),
+  getSync: (password, callback) => dispatch(doGetSync(password, callback)),
   checkSync: () => dispatch(doCheckSync()),
   verifyPhone: verificationCode => dispatch(doUserPhoneVerify(verificationCode)),
   notify: data => dispatch(doToast(data)),

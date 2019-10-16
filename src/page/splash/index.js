@@ -30,7 +30,7 @@ const perform = dispatch => ({
   checkSubscriptionsInit: () => dispatch(doCheckSubscriptionsInit()),
   fetchRewardedContent: () => dispatch(doFetchRewardedContent()),
   fetchSubscriptions: callback => dispatch(doFetchMySubscriptions(callback)),
-  getSync: password => dispatch(doGetSync(password)),
+  getSync: (password, callback) => dispatch(doGetSync(password, callback)),
   notify: data => dispatch(doToast(data)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
   setEmailToVerify: email => dispatch(doUserEmailToVerify(email)),

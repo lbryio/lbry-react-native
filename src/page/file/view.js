@@ -517,7 +517,7 @@ class FilePage extends React.PureComponent {
     const { claim, notify } = this.props;
     if (claim) {
       const { canonical_url: canonicalUrl, short_url: shortUrl, permanent_url: permanentUrl } = claim;
-      const url = 'https://lbry.tv' + this.formatLbryUrlForWeb(canonicalUrl || shortUrl || permanentUrl);
+      const url = 'https://open.lbry.com' + this.formatLbryUrlForWeb(canonicalUrl || shortUrl || permanentUrl);
       NativeModules.UtilityModule.shareUrl(url);
     }
   };
@@ -950,15 +950,23 @@ class FilePage extends React.PureComponent {
 
                 <View style={filePageStyle.largeButtonsRow}>
                   <TouchableOpacity style={filePageStyle.largeButton} onPress={this.handleSharePress}>
-                    <Icon name={'share-alt'} size={24} style={filePageStyle.largeButtonIcon} />
+                    <Icon name={'share-alt'} size={20} style={filePageStyle.largeButtonIcon} />
                     <Text style={filePageStyle.largeButtonText}>Share</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={filePageStyle.largeButton}
+                    onPress={() => this.setState({ showTipView: true })}
+                  >
+                    <Icon name={'gift'} size={20} style={filePageStyle.largeButtonIcon} />
+                    <Text style={filePageStyle.largeButtonText}>Tip</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
                     style={filePageStyle.largeButton}
                     onPress={() => Linking.openURL(`https://lbry.com/dmca/${claim.claim_id}`)}
                   >
-                    <Icon name={'flag'} size={24} style={filePageStyle.largeButtonIcon} />
+                    <Icon name={'flag'} size={20} style={filePageStyle.largeButtonIcon} />
                     <Text style={filePageStyle.largeButtonText}>Report</Text>
                   </TouchableOpacity>
                 </View>
@@ -999,12 +1007,6 @@ class FilePage extends React.PureComponent {
                         onPress={this.onSaveFilePressed}
                       />
                     )}
-                    <Button
-                      style={[filePageStyle.actionButton, filePageStyle.tipButton]}
-                      theme={'light'}
-                      icon={'gift'}
-                      onPress={() => this.setState({ showTipView: true })}
-                    />
                     {channelName && (
                       <SubscribeButton
                         style={filePageStyle.actionButton}

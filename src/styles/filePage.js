@@ -384,6 +384,7 @@ const filePageStyle = StyleSheet.create({
   largeButton: {
     alignItems: 'center',
     justifyContent: 'center',
+    marginRight: 48,
   },
   largeButtonIcon: {
     color: Colors.DescriptionGrey,
@@ -396,8 +397,10 @@ const filePageStyle = StyleSheet.create({
   largeButtonsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    margin: 16,
+    marginLeft: 20,
+    marginRight: 20,
+    marginTop: 12,
+    marginBottom: 12,
   },
 });
 

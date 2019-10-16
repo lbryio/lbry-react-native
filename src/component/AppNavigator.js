@@ -272,6 +272,7 @@ class AppWithNavigationState extends React.Component {
   constructor() {
     super();
     this.emailVerifyCheckInterval = null;
+    this.syncGetInterval = null;
     this.state = {
       emailVerifyDone: false,
       verifyPending: false,
@@ -301,10 +302,10 @@ class AppWithNavigationState extends React.Component {
     Linking.addEventListener('url', this._handleUrl);
 
     // call /sync/get with interval
-    setInterval(() => {
+    this.syncGetInterval = setInterval(() => {
       this.setState({ syncHashChanged: false }); // reset local state
       NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
-        dispatch(doGetSync(walletPassword));
+        dispatch(doGetSync(walletPassword, () => this.getUserSettings()));
       });
     }, SYNC_GET_INTERVAL);
   }
@@ -336,6 +337,12 @@ class AppWithNavigationState extends React.Component {
     AppState.removeEventListener('change', this._handleAppStateChange);
     BackHandler.removeEventListener('hardwareBackPress');
     Linking.removeEventListener('url', this._handleUrl);
+    if (this.emailVerifyCheckInterval > -1) {
+      clearInterval(this.emailVerifyCheckInterval);
+    }
+    if (this.syncGetInterval > -1) {
+      clearInterval(this.syncGetInterval);
+    }
   }
 
   componentDidUpdate() {

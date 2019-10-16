@@ -38,7 +38,7 @@ const perform = dispatch => ({
   clearChannelFormState: () => dispatch(doClearChannelFormState()),
   createChannel: (name, amount, optionalParams) => dispatch(doCreateChannel(name, amount, optionalParams)),
   fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
-  getSync: password => dispatch(doGetSync(password)),
+  getSync: (password, callback) => dispatch(doGetSync(password, callback)),
   updateChannel: params => dispatch(doUpdateChannel(params)),
   updateChannelFormState: data => dispatch(doUpdateChannelFormState(data)),
   pushDrawerStack: (routeName, params) => dispatch(doPushDrawerStack(routeName, params)),

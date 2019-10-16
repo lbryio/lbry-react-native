@@ -5,6 +5,7 @@ import { AppRegistry, Text, View, NativeModules } from 'react-native';
 import {
   Lbry,
   buildSharedStateMiddleware,
+  blockedReducer,
   claimsReducer,
   contentReducer,
   fileReducer,
@@ -52,6 +53,7 @@ import thunk from 'redux-thunk';
 
 const globalExceptionHandler = (error, isFatal) => {
   if (error && NativeModules.Firebase) {
+    console.log(error);
     NativeModules.Firebase.logException(isFatal, error.message ? error.message : 'No message', JSON.stringify(error));
   }
 };
@@ -87,6 +89,7 @@ function enableBatching(reducer) {
 
 const compressor = createCompressor();
 const authFilter = createFilter('auth', ['authToken']);
+const blockedFilter = createFilter('blocked', ['blockedChannels']);
 const contentFilter = createFilter('content', ['positions']);
 const saveClaimsFilter = createFilter('claims', ['claimsByUri']);
 const subscriptionsFilter = createFilter('subscriptions', ['enabledChannelNotifications', 'subscriptions', 'latest']);
@@ -95,10 +98,18 @@ const tagsFilter = createFilter('tags', ['followedTags']);
 const walletFilter = createFilter('wallet', ['receiveAddress']);
 
 const v4PersistOptions = {
-  whitelist: ['auth', 'claims', 'content', 'subscriptions', 'settings', 'tags', 'wallet'],
+  whitelist: ['auth', 'blocked', 'claims', 'content', 'subscriptions', 'settings', 'tags', 'wallet'],
   // Order is important. Needs to be compressed last or other transforms can't
   // read the data
-  transforms: [authFilter, saveClaimsFilter, subscriptionsFilter, settingsFilter, walletFilter, compressor],
+  transforms: [
+    authFilter,
+    blockedFilter,
+    saveClaimsFilter,
+    subscriptionsFilter,
+    settingsFilter,
+    walletFilter,
+    compressor,
+  ],
   debounce: 10000,
   storage: FilesystemStorage,
 };
@@ -111,6 +122,7 @@ const persistOptions = Object.assign({}, v4PersistOptions, {
 const reducers = persistCombineReducers(persistOptions, {
   auth: authReducer,
   blacklist: blacklistReducer,
+  blocked: blockedReducer,
   claims: claimsReducer,
   content: contentReducer,
   costInfo: costInfoReducer,
@@ -141,6 +153,7 @@ const reducers = persistCombineReducers(persistOptions, {
 const sharedStateActions = [
   LBRYINC_ACTIONS.CHANNEL_SUBSCRIBE,
   LBRYINC_ACTIONS.CHANNEL_UNSUBSCRIBE,
+  LBRY_REDUX_ACTIONS.CREATE_CHANNEL_COMPLETED,
   LBRY_REDUX_ACTIONS.TOGGLE_TAG_FOLLOW,
   LBRY_REDUX_ACTIONS.TOGGLE_BLOCK_CHANNEL,
 ];
@@ -153,6 +166,7 @@ const sharedStateFilters = {
       return value.map(({ uri }) => uri);
     },
   },
+  blocked: { source: 'blocked', property: 'blockedChannels' },
 };
 
 const sharedStateCallback = ({ dispatch, getState }) => {

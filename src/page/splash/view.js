@@ -91,8 +91,10 @@ class SplashScreen extends React.PureComponent {
         // user is authenticated, navigate to the main view
         if (user.has_verified_email) {
           NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
-            getSync(walletPassword);
-            this.navigateToMain();
+            getSync(walletPassword, () => {
+              this.getUserSettings();
+              this.navigateToMain();
+            });
           });
           return;
         }
@@ -108,10 +110,13 @@ class SplashScreen extends React.PureComponent {
     doPreferenceGet(
       'shared',
       preference => {
+        console.log('***');
+        console.log(preference);
         populateSharedUserState(preference);
       },
       error => {
         /* failed */
+        console.log(error);
       }
     );
   };
@@ -135,14 +140,13 @@ class SplashScreen extends React.PureComponent {
       filteredOutpointsSubscribe();
       checkSubscriptionsInit();
 
-      // get user settings interval
-      this.getUserSettings();
-
       if (user && user.id && user.has_verified_email) {
         // user already authenticated
         NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
-          getSync(walletPassword);
-          this.navigateToMain();
+          getSync(walletPassword, err => {
+            this.getUserSettings();
+            this.navigateToMain();
+          });
         });
       } else {
         NativeModules.VersionInfo.getAppVersion().then(appVersion => {
