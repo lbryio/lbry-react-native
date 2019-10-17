@@ -1,6 +1,7 @@
 import React from 'react';
 import { CLAIM_VALUES, isNameValid } from 'lbry-redux';
 import { ActivityIndicator, NativeModules, Picker, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { logPublish } from 'utils/helper';
 import Button from 'component/button';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -142,13 +143,14 @@ export default class ChannelSelector extends React.PureComponent {
       createChannelError: undefined,
     });
 
-    const success = () => {
+    const success = channelClaim => {
       this.setState({
         creatingChannel: false,
         addingChannel: false,
         currentSelectedValue: channelName,
         showCreateChannel: false,
       });
+      logPublish(channelClaim);
 
       if (onChannelChange) {
         onChannelChange(channelName);
