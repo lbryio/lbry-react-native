@@ -448,7 +448,6 @@ export default class ChannelCreator extends React.PureComponent {
         showCreateChannel: false,
       });
 
-      logPublish(channelClaim);
       if (onChannelChange) {
         onChannelChange(channelName);
       }
@@ -458,8 +457,7 @@ export default class ChannelCreator extends React.PureComponent {
       notify({ message: 'The channel was successfully created.' });
       this.showChannelList();
 
-      // sync wallet
-      NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password => getSync(password));
+      logPublish(channelClaim);
     };
 
     const failure = () => {
