@@ -91,10 +91,8 @@ class SplashScreen extends React.PureComponent {
         // user is authenticated, navigate to the main view
         if (user.has_verified_email) {
           NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
-            getSync(walletPassword, () => {
-              this.getUserSettings();
-              this.navigateToMain();
-            });
+            getSync(walletPassword, () => this.getUserSettings());
+            this.navigateToMain();
           });
           return;
         }
@@ -130,30 +128,30 @@ class SplashScreen extends React.PureComponent {
       user,
     } = this.props;
 
-    Lbry.resolve({ urls: 'lbry://one' }).then(() => {
-      // Leave the splash screen
-      balanceSubscribe();
-      blacklistedOutpointsSubscribe();
-      filteredOutpointsSubscribe();
-      checkSubscriptionsInit();
+    Lbry.resolve({ urls: 'lbry://one' })
+      .then(() => {
+        // Leave the splash screen
+        balanceSubscribe();
+        blacklistedOutpointsSubscribe();
+        filteredOutpointsSubscribe();
+        checkSubscriptionsInit();
 
-      if (user && user.id && user.has_verified_email) {
-        // user already authenticated
-        NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
-          getSync(walletPassword, err => {
-            this.getUserSettings();
+        if (user && user.id && user.has_verified_email) {
+          // user already authenticated
+          NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
+            getSync(walletPassword, () => this.getUserSettings());
             this.navigateToMain();
           });
-        });
-      } else {
-        NativeModules.VersionInfo.getAppVersion().then(appVersion => {
-          NativeModules.Firebase.getMessagingToken().then(firebaseToken => {
-            this.setState({ shouldAuthenticate: true });
-            authenticate(appVersion, Platform.OS, firebaseToken);
+        } else {
+          NativeModules.VersionInfo.getAppVersion().then(appVersion => {
+            NativeModules.Firebase.getMessagingToken().then(firebaseToken => {
+              this.setState({ shouldAuthenticate: true });
+              authenticate(appVersion, Platform.OS, firebaseToken);
+            });
           });
-        });
-      }
-    });
+        }
+      })
+      .catch(err => console.log(err));
   };
 
   handleAccountUnlockFailed() {
