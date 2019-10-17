@@ -4,6 +4,8 @@ import { Provider, connect } from 'react-redux';
 import { AppRegistry, Text, View, NativeModules } from 'react-native';
 import {
   Lbry,
+  buildSharedStateMiddleware,
+  blockedReducer,
   claimsReducer,
   contentReducer,
   fileReducer,
@@ -13,19 +15,24 @@ import {
   searchReducer,
   tagsReducer,
   walletReducer,
+  ACTIONS as LBRY_REDUX_ACTIONS,
 } from 'lbry-redux';
 import {
   Lbryio,
   authReducer,
   blacklistReducer,
   costInfoReducer,
+  doGetSync,
   filteredReducer,
   homepageReducer,
   rewardsReducer,
+  selectUserVerifiedEmail,
   subscriptionsReducer,
   syncReducer,
   userReducer,
+  LBRYINC_ACTIONS,
 } from 'lbryinc';
+import { makeSelectClientSetting } from 'redux/selectors/settings';
 import { createStore, applyMiddleware, compose } from 'redux';
 import AppWithNavigationState, {
   AppNavigator,
@@ -33,6 +40,7 @@ import AppWithNavigationState, {
   reactNavigationMiddleware,
 } from 'component/AppNavigator';
 import { REHYDRATE, PURGE, persistCombineReducers, persistStore } from 'redux-persist';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4';
 import FilesystemStorage from 'redux-persist-filesystem-storage';
 import createCompressor from 'redux-persist-transform-compress';
@@ -42,7 +50,6 @@ import formReducer from 'redux/reducers/form';
 import drawerReducer from 'redux/reducers/drawer';
 import settingsReducer from 'redux/reducers/settings';
 import thunk from 'redux-thunk';
-import isEqual from 'utils/deep-equal';
 
 const globalExceptionHandler = (error, isFatal) => {
   if (error && NativeModules.Firebase) {
@@ -81,6 +88,7 @@ function enableBatching(reducer) {
 
 const compressor = createCompressor();
 const authFilter = createFilter('auth', ['authToken']);
+const blockedFilter = createFilter('blocked', ['blockedChannels']);
 const contentFilter = createFilter('content', ['positions']);
 const saveClaimsFilter = createFilter('claims', ['claimsByUri']);
 const subscriptionsFilter = createFilter('subscriptions', ['enabledChannelNotifications', 'subscriptions', 'latest']);
@@ -89,10 +97,18 @@ const tagsFilter = createFilter('tags', ['followedTags']);
 const walletFilter = createFilter('wallet', ['receiveAddress']);
 
 const v4PersistOptions = {
-  whitelist: ['auth', 'claims', 'content', 'subscriptions', 'settings', 'tags', 'wallet'],
+  whitelist: ['auth', 'blocked', 'claims', 'content', 'subscriptions', 'settings', 'tags', 'wallet'],
   // Order is important. Needs to be compressed last or other transforms can't
   // read the data
-  transforms: [authFilter, saveClaimsFilter, subscriptionsFilter, settingsFilter, walletFilter, compressor],
+  transforms: [
+    authFilter,
+    blockedFilter,
+    saveClaimsFilter,
+    subscriptionsFilter,
+    settingsFilter,
+    walletFilter,
+    compressor,
+  ],
   debounce: 10000,
   storage: FilesystemStorage,
 };
@@ -105,6 +121,7 @@ const persistOptions = Object.assign({}, v4PersistOptions, {
 const reducers = persistCombineReducers(persistOptions, {
   auth: authReducer,
   blacklist: blacklistReducer,
+  blocked: blockedReducer,
   claims: claimsReducer,
   content: contentReducer,
   costInfo: costInfoReducer,
@@ -127,8 +144,45 @@ const reducers = persistCombineReducers(persistOptions, {
   wallet: walletReducer,
 });
 
+/**
+ * source: the reducer name
+ * property: the property in the reducer-specific state
+ * transform: optional method to modify the value to be stored
+ */
+const sharedStateActions = [
+  LBRYINC_ACTIONS.CHANNEL_SUBSCRIBE,
+  LBRYINC_ACTIONS.CHANNEL_UNSUBSCRIBE,
+  LBRY_REDUX_ACTIONS.CREATE_CHANNEL_COMPLETED,
+  LBRY_REDUX_ACTIONS.TOGGLE_TAG_FOLLOW,
+  LBRY_REDUX_ACTIONS.TOGGLE_BLOCK_CHANNEL,
+];
+const sharedStateFilters = {
+  tags: { source: 'tags', property: 'followedTags' },
+  subscriptions: {
+    source: 'subscriptions',
+    property: 'subscriptions',
+    transform: function(value) {
+      return value.map(({ uri }) => uri);
+    },
+  },
+  blocked: { source: 'blocked', property: 'blockedChannels' },
+};
+
+const sharedStateCallback = ({ dispatch, getState }) => {
+  const state = getState();
+  const syncEnabled = makeSelectClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED)(state);
+  const emailVerified = selectUserVerifiedEmail(state);
+  if (syncEnabled && emailVerified) {
+    NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password =>
+      dispatch(doGetSync(password))
+    );
+  }
+};
+
+const sharedStateMiddleware = buildSharedStateMiddleware(sharedStateActions, sharedStateFilters, sharedStateCallback);
+
 const bulkThunk = createBulkThunkMiddleware();
-const middleware = [thunk, bulkThunk, reactNavigationMiddleware];
+const middleware = [sharedStateMiddleware, thunk, bulkThunk, reactNavigationMiddleware];
 
 // eslint-disable-next-line no-underscore-dangle
 const composeEnhancers = compose;
@@ -146,28 +200,6 @@ const persistor = persistStore(store, persistOptions, err => {
   }
 });
 window.persistor = persistor;
-
-let currentPayload;
-store.subscribe(() => {
-  const state = store.getState();
-  const subscriptions = state.subscriptions.subscriptions.map(({ uri }) => uri);
-  const tags = state.tags.followedTags;
-
-  const newPayload = {
-    version: '0.1',
-    shared: {
-      subscriptions,
-      tags,
-    },
-  };
-
-  if (!isEqual(newPayload, currentPayload)) {
-    currentPayload = newPayload;
-    if (Lbryio.authToken) {
-      Lbryio.call('user_settings', 'set', { settings: JSON.stringify(newPayload) });
-    }
-  }
-});
 
 // TODO: Find i18n module that is compatible with react-native
 global.__ = str => str;

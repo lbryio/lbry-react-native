@@ -36,7 +36,7 @@ const uriBarStyle = StyleSheet.create({
   },
   overlay: {
     position: 'absolute',
-    backgroundColor: 'transparent',
+    backgroundColor: 'red',
     top: 0,
     width: '100%',
     zIndex: 200,
@@ -54,9 +54,10 @@ const uriBarStyle = StyleSheet.create({
   item: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
-    paddingTop: 8,
-    paddingBottom: 8,
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
   },
   itemContent: {
     marginLeft: 12,

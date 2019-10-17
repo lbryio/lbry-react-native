@@ -14,7 +14,7 @@ import {
 import { BarPasswordStrengthDisplay } from 'react-native-password-strength-meter';
 import AsyncStorage from '@react-native-community/async-storage';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import firstRunStyle from 'styles/firstRun';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -62,7 +62,14 @@ class WalletPage extends React.PureComponent {
   };
 
   render() {
-    const { onPasswordChanged, onWalletViewLayout, getSyncIsPending, hasSyncedWallet, syncApplyIsPending } = this.props;
+    const {
+      onPasswordChanged,
+      onWalletViewLayout,
+      getSyncIsPending,
+      hasSyncedWallet,
+      syncApplyIsPending,
+      syncApplyStarted,
+    } = this.props;
 
     let content;
     if (!this.state.walletReady || !this.state.hasCheckedSync || getSyncIsPending) {
@@ -72,11 +79,11 @@ class WalletPage extends React.PureComponent {
           <Text style={firstRunStyle.paragraph}>Retrieving your account information...</Text>
         </View>
       );
-    } else if (syncApplyIsPending) {
+    } else if (syncApplyStarted || syncApplyIsPending) {
       content = (
         <View style={firstRunStyle.centered}>
           <ActivityIndicator size="large" color={Colors.White} style={firstRunStyle.waiting} />
-          <Text style={firstRunStyle.paragraph}>Validating password...</Text>
+          <Text style={firstRunStyle.paragraph}>{syncApplyIsPending ? 'Validating password' : 'Synchronizing'}...</Text>
         </View>
       );
     } else {

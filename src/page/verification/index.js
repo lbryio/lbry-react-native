@@ -3,7 +3,6 @@ import { doToast } from 'lbry-redux';
 import {
   doCheckSync,
   doGetSync,
-  doSetDefaultAccount,
   doSyncApply,
   doUserEmailNew,
   doUserEmailToVerify,
@@ -55,12 +54,11 @@ const select = state => ({
 const perform = dispatch => ({
   addUserEmail: email => dispatch(doUserEmailNew(email)),
   addUserPhone: (phone, countryCode) => dispatch(doUserPhoneNew(phone, countryCode)),
-  getSync: password => dispatch(doGetSync(password)),
+  getSync: (password, callback) => dispatch(doGetSync(password, callback)),
   checkSync: () => dispatch(doCheckSync()),
   verifyPhone: verificationCode => dispatch(doUserPhoneVerify(verificationCode)),
   notify: data => dispatch(doToast(data)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
-  setDefaultAccount: (success, failure) => dispatch(doSetDefaultAccount(success, failure)),
   setEmailToVerify: email => dispatch(doUserEmailToVerify(email)),
   syncApply: (hash, data, password) => dispatch(doSyncApply(hash, data, password)),
   resendVerificationEmail: email => dispatch(doUserResendVerificationEmail(email)),

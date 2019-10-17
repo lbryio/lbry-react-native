@@ -66,7 +66,7 @@ class FirstRunScreen extends React.PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { emailNewErrorMessage, emailNewPending, syncApplyErrorMessage, syncApplyIsPending, user } = nextProps;
-    const { notify, isApplyingSync, setClientSetting, setDefaultAccount } = this.props;
+    const { notify, isApplyingSync, setClientSetting } = this.props;
 
     if (this.state.emailSubmitted && !emailNewPending) {
       this.setState({ emailSubmitted: false });
@@ -81,32 +81,33 @@ class FirstRunScreen extends React.PureComponent {
 
     if (this.state.syncApplyStarted && !syncApplyIsPending) {
       if (syncApplyErrorMessage && syncApplyErrorMessage.trim().length > 0) {
-        notify({ message: syncApplyErrorMessage, syncApplyStarted: false, isError: true });
-        this.setState({ showBottomContainer: true });
+        notify({ message: syncApplyErrorMessage, isError: true });
+        this.setState({ showBottomContainer: true, syncApplyStarted: false });
       } else {
         // password successfully verified
         NativeModules.UtilityModule.setSecureValue(
-          Constants.KEY_FIRST_RUN_PASSWORD,
+          Constants.KEY_WALLET_PASSWORD,
           this.state.walletPassword ? this.state.walletPassword : ''
         );
-        setDefaultAccount(
-          () => {
-            setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
 
-            // unlock the wallet
-            Lbry.account_unlock({ password: this.state.walletPassword ? this.state.walletPassword : '' })
-              .then(() => this.closeFinalPage())
-              .catch(err =>
-                notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' })
-              );
-          },
-          err => {
-            notify({
-              message:
-                'The account restore operation could not be completed successfully. Please restart the app and try again.',
-            });
+        setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
+        Lbry.wallet_status().then(status => {
+          // unlock the wallet
+          if (status.is_locked) {
+            Lbry.wallet_unlock({ password: this.state.walletPassword ? this.state.walletPassword : '' }).then(
+              unlocked => {
+                if (unlocked) {
+                  this.closeFinalPage();
+                } else {
+                  notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' });
+                }
+              }
+            );
+          } else {
+            // wallet not locked. close final page
+            this.closeFinalPage();
           }
-        );
+        });
       }
     }
 
@@ -132,9 +133,9 @@ class FirstRunScreen extends React.PureComponent {
     const { navigation } = this.props;
     const resetAction = StackActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'Splash', params: { launchUri: this.state.launchUri } })],
+      actions: [NavigationActions.navigate({ routeName: 'Splash', params: { launchUri: this.state.launchUrl } })],
     });
-    navigation.dispatch(resetAction);
+    setTimeout(() => navigation.dispatch(resetAction), 1000);
   }
 
   handleLeftButtonPressed = () => {
@@ -298,8 +299,8 @@ class FirstRunScreen extends React.PureComponent {
     const { getSync, setClientSetting } = this.props;
     if (NativeModules.UtilityModule) {
       const newPassword = this.state.walletPassword ? this.state.walletPassword : '';
-      NativeModules.UtilityModule.setSecureValue(Constants.KEY_FIRST_RUN_PASSWORD, newPassword);
-      Lbry.account_encrypt({ new_password: newPassword }).then(() => {
+      NativeModules.UtilityModule.setSecureValue(Constants.KEY_WALLET_PASSWORD, newPassword);
+      Lbry.wallet_encrypt({ new_password: newPassword }).then(() => {
         // fresh account, new password set
         getSync(newPassword);
         setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
@@ -367,6 +368,7 @@ class FirstRunScreen extends React.PureComponent {
             hasSyncedWallet={hasSyncedWallet}
             getSyncIsPending={getSyncIsPending}
             syncApplyIsPending={syncApplyIsPending}
+            syncApplyStarted={this.state.syncApplyStarted}
             onWalletViewLayout={this.onWalletViewLayout}
             onPasswordChanged={this.onWalletPasswordChanged}
           />

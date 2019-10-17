@@ -4,7 +4,7 @@ import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/a
 import { doSetClientSetting } from 'redux/actions/settings';
 import { selectCurrentRoute, selectDrawerStack } from 'redux/selectors/drawer';
 import { makeSelectClientSetting } from 'redux/selectors/settings';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import SettingsPage from './view';
 
 const select = state => ({
@@ -13,6 +13,7 @@ const select = state => ({
   drawerStack: selectDrawerStack(state),
   keepDaemonRunning: makeSelectClientSetting(SETTINGS.KEEP_DAEMON_RUNNING)(state),
   showNsfw: makeSelectClientSetting(SETTINGS.SHOW_NSFW)(state),
+  showUriBarSuggestions: makeSelectClientSetting(SETTINGS.SHOW_URI_BAR_SUGGESTIONS)(state),
 });
 
 const perform = dispatch => ({

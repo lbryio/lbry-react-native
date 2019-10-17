@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry } from 'lbry-redux';
+import { Lbry, doPreferenceGet } from 'lbry-redux';
 import { Lbryio } from 'lbryinc';
 import { ActivityIndicator, Linking, NativeModules, Platform, Text, View } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
@@ -15,8 +15,6 @@ import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import splashStyle from 'styles/splash';
 
 const BLOCK_HEIGHT_INTERVAL = 1000 * 60 * 2.5; // every 2.5 minutes
-
-const SETTINGS_GET_INTERVAL = 1000 * 60 * 5; // every 5 minutes
 
 const testingNetwork = 'Testing network';
 const waitingForResolution = 'Waiting for name resolution';
@@ -40,12 +38,6 @@ class SplashScreen extends React.PureComponent {
     subscriptionsFetched: false,
   };
 
-  componentWillMount() {
-    if (NativeModules.DaemonServiceControl) {
-      NativeModules.DaemonServiceControl.startService();
-    }
-  }
-
   updateStatus() {
     Lbry.status().then(status => {
       this._updateStatusCallback(status);
@@ -60,7 +52,7 @@ class SplashScreen extends React.PureComponent {
     });
     navigation.dispatch(resetAction);
 
-    const launchUrl = navigation.state.params.launchUrl || this.state.launchUrl;
+    const launchUrl = navigation.state.params ? navigation.state.params.launchUrl : this.state.launchUrl;
     if (launchUrl) {
       if (launchUrl.startsWith('lbry://?verify=')) {
         let verification = {};
@@ -91,17 +83,18 @@ class SplashScreen extends React.PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { emailToVerify, getSync, setEmailToVerify, verifyUserEmail, verifyUserEmailFailure } = this.props;
+    const { daemonReady, shouldAuthenticate } = this.state;
     const { user } = nextProps;
 
-    if (this.state.daemonReady && this.state.shouldAuthenticate && user && user.id) {
+    if (daemonReady && shouldAuthenticate && user && user.id) {
       this.setState({ shouldAuthenticate: false }, () => {
         // user is authenticated, navigate to the main view
         if (user.has_verified_email) {
-          NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
-            if (walletPassword) {
-              getSync(walletPassword);
-            }
-            this.navigateToMain();
+          NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
+            getSync(walletPassword, () => {
+              this.getUserSettings();
+              this.navigateToMain();
+            });
           });
           return;
         }
@@ -113,9 +106,16 @@ class SplashScreen extends React.PureComponent {
 
   getUserSettings = () => {
     const { populateSharedUserState } = this.props;
-    Lbryio.call('user_settings', 'get').then(settings => {
-      populateSharedUserState(settings);
-    });
+
+    doPreferenceGet(
+      'shared',
+      preference => {
+        populateSharedUserState(preference);
+      },
+      error => {
+        /* failed */
+      }
+    );
   };
 
   finishSplashScreen = () => {
@@ -137,22 +137,20 @@ class SplashScreen extends React.PureComponent {
       filteredOutpointsSubscribe();
       checkSubscriptionsInit();
 
-      // get user settings interval
-      this.getUserSettings();
-      setInterval(() => this.getUserSettings(), SETTINGS_GET_INTERVAL);
-
       if (user && user.id && user.has_verified_email) {
         // user already authenticated
-        NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(walletPassword => {
-          if (walletPassword) {
-            getSync(walletPassword);
-          }
-          this.navigateToMain();
+        NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
+          getSync(walletPassword, err => {
+            this.getUserSettings();
+            this.navigateToMain();
+          });
         });
       } else {
         NativeModules.VersionInfo.getAppVersion().then(appVersion => {
-          this.setState({ shouldAuthenticate: true });
-          authenticate(appVersion, Platform.OS);
+          NativeModules.Firebase.getMessagingToken().then(firebaseToken => {
+            this.setState({ shouldAuthenticate: true });
+            authenticate(appVersion, Platform.OS, firebaseToken);
+          });
         });
       }
     });
@@ -181,31 +179,35 @@ class SplashScreen extends React.PureComponent {
         isRunning: true,
       });
 
-      // For now, automatically unlock the wallet if a password is set so that downloads work
-      NativeModules.UtilityModule.getSecureValue(Constants.KEY_FIRST_RUN_PASSWORD).then(password => {
-        if (walletStatus.is_locked) {
-          this.setState({
-            message: 'Unlocking account',
-            details: 'Decrypting wallet',
-          });
+      Lbry.wallet_status().then(secureWalletStatus => {
+        // For now, automatically unlock the wallet if a password is set so that downloads work
+        NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password => {
+          if (secureWalletStatus.is_locked) {
+            this.setState({
+              message: 'Unlocking account',
+              details: 'Decrypting wallet',
+            });
 
-          // unlock the wallet and then finish the splash screen
-          Lbry.account_unlock({ password: password || '' })
-            .then(() => {
-              this.setState({
-                message: testingNetwork,
-                details: waitingForResolution,
-              });
-              this.finishSplashScreen();
-            })
-            .catch(() => this.handleAccountUnlockFailed());
-        } else {
-          this.setState({
-            message: testingNetwork,
-            details: waitingForResolution,
-          });
-          this.finishSplashScreen();
-        }
+            // unlock the wallet and then finish the splash screen
+            Lbry.wallet_unlock({ password: password || '' }).then(unlocked => {
+              if (unlocked) {
+                this.setState({
+                  message: testingNetwork,
+                  details: waitingForResolution,
+                });
+                this.finishSplashScreen();
+              } else {
+                this.handleAccountUnlockFailed();
+              }
+            });
+          } else {
+            this.setState({
+              message: testingNetwork,
+              details: waitingForResolution,
+            });
+            this.finishSplashScreen();
+          }
+        });
       });
 
       return;
@@ -249,10 +251,7 @@ class SplashScreen extends React.PureComponent {
   }
 
   componentDidMount() {
-    if (NativeModules.Firebase) {
-      NativeModules.Firebase.track('app_launch', null);
-    }
-
+    NativeModules.Firebase.track('app_launch', null);
     NativeModules.Firebase.setCurrentScreen('Splash');
 
     this.props.fetchRewardedContent();

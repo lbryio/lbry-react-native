@@ -43,7 +43,7 @@ import Tag from 'component/tag';
 import TagSearch from 'component/tagSearch';
 import UriBar from 'component/uriBar';
 import publishStyle from 'styles/publish';
-import { __, navigateToUri, uploadImageAsset } from 'utils/helper';
+import { __, navigateToUri, logPublish, uploadImageAsset } from 'utils/helper';
 
 const languages = {
   en: 'English',
@@ -371,7 +371,7 @@ class PublishPage extends React.PureComponent {
       filePath: currentMedia ? currentMedia.filePath : null,
       bid: bid || 0.1,
       title: title || '',
-      thumbnail,
+      thumbnail: thumbnail || '',
       description: description || '',
       language,
       license,
@@ -395,6 +395,11 @@ class PublishPage extends React.PureComponent {
 
   handlePublishSuccess = data => {
     const { clearPublishFormState, navigation, notify } = this.props;
+    const pendingClaim = data.outputs[0];
+    logPublish(pendingClaim);
+
+    // TODO: fake temp claim for claim_list_mine
+
     notify({
       message: `Your content was successfully published to ${this.state.uri}. It will be available in a few mintues.`,
     });
@@ -404,6 +409,7 @@ class PublishPage extends React.PureComponent {
   };
 
   handlePublishFailure = error => {
+    console.log(error);
     const { notify } = this.props;
     notify({ message: __('Your content could not be published at this time. Please try again.') });
     this.setState({ publishStarted: false });

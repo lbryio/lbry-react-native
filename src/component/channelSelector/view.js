@@ -1,6 +1,7 @@
 import React from 'react';
 import { CLAIM_VALUES, isNameValid } from 'lbry-redux';
-import { ActivityIndicator, Picker, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, NativeModules, Picker, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { logPublish } from 'utils/helper';
 import Button from 'component/button';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -117,7 +118,7 @@ export default class ChannelSelector extends React.PureComponent {
   };
 
   handleCreateChannelClick = () => {
-    const { balance, createChannel, onChannelChange, notify } = this.props;
+    const { balance, createChannel, getSync, onChannelChange, notify } = this.props;
     const { newChannelBid, newChannelName } = this.state;
 
     if (newChannelName.trim().length === 0 || !isNameValid(newChannelName.substr(1), false)) {
@@ -142,17 +143,21 @@ export default class ChannelSelector extends React.PureComponent {
       createChannelError: undefined,
     });
 
-    const success = () => {
+    const success = channelClaim => {
       this.setState({
         creatingChannel: false,
         addingChannel: false,
         currentSelectedValue: channelName,
         showCreateChannel: false,
       });
+      logPublish(channelClaim);
 
       if (onChannelChange) {
         onChannelChange(channelName);
       }
+
+      // sync wallet
+      NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password => getSync(password));
     };
 
     const failure = () => {

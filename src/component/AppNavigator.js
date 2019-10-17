@@ -29,7 +29,7 @@ import {
 import { connect } from 'react-redux';
 import { AppState, BackHandler, Linking, NativeModules, TextInput, ToastAndroid } from 'react-native';
 import { selectDrawerStack } from 'redux/selectors/drawer';
-import { SETTINGS, doDismissToast, doPopulateSharedUserState, doToast, selectToast } from 'lbry-redux';
+import { SETTINGS, doDismissToast, doPopulateSharedUserState, doPreferenceGet, doToast, selectToast } from 'lbry-redux';
 import {
   Lbryio,
   doGetSync,
@@ -39,6 +39,7 @@ import {
   selectEmailToVerify,
   selectEmailVerifyIsPending,
   selectEmailVerifyErrorMessage,
+  selectHashChanged,
   selectUser,
 } from 'lbryinc';
 import { makeSelectClientSetting } from 'redux/selectors/settings';
@@ -52,6 +53,8 @@ import NavigationButton from 'component/navigationButton';
 import discoverStyle from 'styles/discover';
 import searchStyle from 'styles/search';
 import SearchRightHeaderIcon from 'component/searchRightHeaderIcon';
+
+const SYNC_GET_INTERVAL = 1000 * 60 * 5; // every 5 minutes
 
 const menuNavigationButton = navigation => (
   <NavigationButton
@@ -269,9 +272,11 @@ class AppWithNavigationState extends React.Component {
   constructor() {
     super();
     this.emailVerifyCheckInterval = null;
+    this.syncGetInterval = null;
     this.state = {
       emailVerifyDone: false,
       verifyPending: false,
+      syncHashChanged: false,
     };
   }
 
@@ -292,8 +297,17 @@ class AppWithNavigationState extends React.Component {
   }
 
   componentDidMount() {
+    const { dispatch } = this.props;
     this.emailVerifyCheckInterval = setInterval(() => this.checkEmailVerification(), 5000);
     Linking.addEventListener('url', this._handleUrl);
+
+    // call /sync/get with interval
+    this.syncGetInterval = setInterval(() => {
+      this.setState({ syncHashChanged: false }); // reset local state
+      NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
+        dispatch(doGetSync(walletPassword, () => this.getUserSettings()));
+      });
+    }, SYNC_GET_INTERVAL);
   }
 
   checkEmailVerification = () => {
@@ -308,19 +322,31 @@ class AppWithNavigationState extends React.Component {
 
   getUserSettings = () => {
     const { dispatch } = this.props;
-    Lbryio.call('user_settings', 'get').then(settings => {
-      dispatch(doPopulateSharedUserState(settings));
-    });
+    doPreferenceGet(
+      'shared',
+      preference => {
+        dispatch(doPopulateSharedUserState(preference));
+      },
+      error => {
+        /* failed */
+      }
+    );
   };
 
   componentWillUnmount() {
     AppState.removeEventListener('change', this._handleAppStateChange);
     BackHandler.removeEventListener('hardwareBackPress');
     Linking.removeEventListener('url', this._handleUrl);
+    if (this.emailVerifyCheckInterval > -1) {
+      clearInterval(this.emailVerifyCheckInterval);
+    }
+    if (this.syncGetInterval > -1) {
+      clearInterval(this.syncGetInterval);
+    }
   }
 
   componentDidUpdate() {
-    const { dispatch, user } = this.props;
+    const { dispatch, user, hashChanged } = this.props;
     if (this.state.verifyPending && this.emailVerifyCheckInterval > 0 && user && user.has_verified_email) {
       clearInterval(this.emailVerifyCheckInterval);
       AsyncStorage.setItem(Constants.KEY_EMAIL_VERIFY_PENDING, 'false');
@@ -330,6 +356,11 @@ class AppWithNavigationState extends React.Component {
       ToastAndroid.show('Your email address was successfully verified.', ToastAndroid.LONG);
 
       // get user settings after email verification
+      this.getUserSettings();
+    }
+
+    if (hashChanged && !this.state.syncHashChanged) {
+      this.setState({ syncHashChanged: true });
       this.getUserSettings();
     }
   }
@@ -438,6 +469,7 @@ class AppWithNavigationState extends React.Component {
 
 const mapStateToProps = state => ({
   backgroundPlayEnabled: makeSelectClientSetting(SETTINGS.BACKGROUND_PLAY_ENABLED)(state),
+  hashChanged: selectHashChanged(state),
   keepDaemonRunning: makeSelectClientSetting(SETTINGS.KEEP_DAEMON_RUNNING)(state),
   nav: state.nav,
   toast: selectToast(state),

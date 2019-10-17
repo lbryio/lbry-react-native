@@ -3,7 +3,7 @@ import { Lbry } from 'lbry-redux';
 import { ActivityIndicator, NativeModules, Platform, Text, View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import firstRunStyle from 'styles/firstRun';
 
 class WelcomePage extends React.PureComponent {
@@ -25,7 +25,7 @@ class WelcomePage extends React.PureComponent {
       } else {
         // first_user_auth because it's the first time
         AsyncStorage.getItem(Constants.KEY_FIRST_USER_AUTH).then(firstUserAuth => {
-          if ('true' !== firstUserAuth) {
+          if (firstUserAuth !== 'true') {
             // first_user_auth
             NativeModules.Firebase.track('first_user_auth', null);
             AsyncStorage.setItem(Constants.KEY_FIRST_USER_AUTH, 'true');
@@ -47,25 +47,27 @@ class WelcomePage extends React.PureComponent {
     const { authenticate } = this.props;
     this.setState({ authenticationStarted: true, authenticationFailed: false });
     NativeModules.VersionInfo.getAppVersion().then(appVersion => {
-      Lbry.status()
-        .then(info => {
-          this.setState({ sdkStarted: true });
+      NativeModules.Firebase.getMessagingToken().then(firebaseToken => {
+        Lbry.status()
+          .then(info => {
+            this.setState({ sdkStarted: true });
 
-          authenticate(appVersion, Platform.OS);
-        })
-        .catch(error => {
-          if (this.state.statusTries >= WelcomePage.MAX_STATUS_TRIES) {
-            this.setState({ authenticationFailed: true });
+            authenticate(appVersion, Platform.OS, firebaseToken);
+          })
+          .catch(error => {
+            if (this.state.statusTries >= WelcomePage.MAX_STATUS_TRIES) {
+              this.setState({ authenticationFailed: true });
 
-            // sdk_start_failed
-            NativeModules.Firebase.track('sdk_start_failed', null);
-          } else {
-            setTimeout(() => {
-              this.startAuthenticating();
-              this.setState({ statusTries: this.state.statusTries + 1 });
-            }, 1000); // Retry every second for a maximum of MAX_STATUS_TRIES tries (60 seconds)
-          }
-        });
+              // sdk_start_failed
+              NativeModules.Firebase.track('sdk_start_failed', null);
+            } else {
+              setTimeout(() => {
+                this.startAuthenticating();
+                this.setState({ statusTries: this.state.statusTries + 1 });
+              }, 1000); // Retry every second for a maximum of MAX_STATUS_TRIES tries (60 seconds)
+            }
+          });
+      });
     });
   };
 

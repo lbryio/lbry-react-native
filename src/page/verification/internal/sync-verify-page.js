@@ -37,7 +37,7 @@ class SyncVerifyPage extends React.PureComponent {
       if (!hasSyncedWallet) {
         // fresh account with no sync
         const newPassword = this.state.password ? this.state.password : '';
-        Lbry.account_encrypt({ new_password: newPassword }).then(() => {
+        Lbry.wallet_encrypt({ new_password: newPassword }).then(() => {
           getSync(newPassword);
           setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
           navigation.goBack();
@@ -50,7 +50,7 @@ class SyncVerifyPage extends React.PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { getSyncIsPending, syncApplyIsPending, syncApplyErrorMessage } = nextProps;
-    const { getSync, hasSyncedWallet, navigation, notify, setClientSetting, setDefaultAccount } = this.props;
+    const { getSync, hasSyncedWallet, navigation, notify, setClientSetting } = this.props;
     if (this.state.checkSyncStarted && !getSyncIsPending) {
       this.setState({ syncChecked: true });
     }
@@ -63,17 +63,12 @@ class SyncVerifyPage extends React.PureComponent {
         // password successfully verified
         if (NativeModules.UtilityModule) {
           NativeModules.UtilityModule.setSecureValue(
-            Constants.KEY_FIRST_RUN_PASSWORD,
+            Constants.KEY_WALLET_PASSWORD,
             this.state.password ? this.state.password : ''
           );
         }
-        setDefaultAccount(
-          () => this.finishSync(true),
-          err => {
-            // fail silently and still finish
-            this.finishSync();
-          }
-        );
+
+        this.finishSync(true);
       }
     }
   }
@@ -84,15 +79,17 @@ class SyncVerifyPage extends React.PureComponent {
     setClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED, true);
 
     // unlock the wallet (if locked)
-    Lbry.status().then(status => {
-      if (status.wallet.is_locked) {
-        Lbry.account_unlock({ password: this.state.password ? this.state.password : '' })
-          .then(() => navigation.goBack())
-          .catch(err => {
+    Lbry.wallet_status().then(status => {
+      if (status.is_locked) {
+        Lbry.wallet_unlock({ password: this.state.password ? this.state.password : '' }).then(unlocked => {
+          if (unlocked) {
+            navigation.goBack();
+          } else {
             if (notifyUnlockFailed) {
               notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' });
             }
-          });
+          }
+        });
       } else {
         navigation.goBack();
       }

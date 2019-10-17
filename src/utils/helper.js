@@ -1,5 +1,6 @@
 import { NavigationActions, StackActions } from 'react-navigation';
 import { buildURI, isURIValid, normalizeURI } from 'lbry-redux';
+import { Lbryio } from 'lbryinc';
 import { doPopDrawerStack, doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import Constants, { DrawerRoutes, InnerDrawerRoutes } from 'constants'; // eslint-disable-line node/no-deprecated-api
 
@@ -288,6 +289,23 @@ export function transformUrl(url) {
 // i18n placeholder until we find a good react-native i18n module
 export function __(str) {
   return str;
+}
+
+export function logPublish(claimResult) {
+  // eslint-disable-next-line no-undef
+  if (!__DEV__) {
+    const { permanent_url: uri, claim_id: claimId, txid, nout, signing_channel: signingChannel } = claimResult;
+    let channelClaimId;
+    if (signingChannel) {
+      channelClaimId = signingChannel.claim_id;
+    }
+    const outpoint = `${txid}:${nout}`;
+    const params = { uri, claim_id: claimId, outpoint };
+    if (channelClaimId) {
+      params['channel_claim_id'] = channelClaimId;
+    }
+    Lbryio.call('event', 'publish', params);
+  }
 }
 
 export function uploadImageAsset(filePath, success, failure) {

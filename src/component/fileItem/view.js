@@ -40,10 +40,12 @@ class FileItem extends React.PureComponent {
 
   render() {
     const {
+      blackListedOutpoints,
       claim,
       title,
       thumbnail,
       fileInfo,
+      filteredOutpoints,
       metadata,
       isResolvingUri,
       rewardedContentClaimIds,
@@ -58,7 +60,17 @@ class FileItem extends React.PureComponent {
     } = this.props;
 
     if (claim && claim.value_type === 'channel') {
-      // don't display channels in the lists on the Explore page
+      // don't display channels in the lists on the Your tags page
+      return null;
+    }
+
+    let shouldHide = false;
+    if (blackListedOutpoints || filteredOutpoints) {
+      const outpointsToHide = blackListedOutpoints.concat(filteredOutpoints);
+      shouldHide = outpointsToHide.some(outpoint => outpoint.txid === claim.txid && outpoint.nout === claim.nout);
+    }
+    if (shouldHide) {
+      // don't display blacklisted or filtered outpoints on the Your tags page
       return null;
     }
 

@@ -14,7 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { navigateToUri, uploadImageAsset } from 'utils/helper';
+import { navigateToUri, logPublish, uploadImageAsset } from 'utils/helper';
 import Button from 'component/button';
 import ChannelIconItem from 'component/channelIconItem';
 import ChannelRewardsDriver from 'component/channelRewardsDriver';
@@ -375,7 +375,15 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   handleCreateChannelClick = () => {
-    const { balance, clearChannelFormState, createChannel, onChannelChange, notify, updateChannel } = this.props;
+    const {
+      balance,
+      clearChannelFormState,
+      createChannel,
+      onChannelChange,
+      getSync,
+      notify,
+      updateChannel,
+    } = this.props;
     const {
       claimId,
       coverImageUrl,
@@ -432,7 +440,7 @@ export default class ChannelCreator extends React.PureComponent {
       createChannelError: undefined,
     });
 
-    const success = () => {
+    const success = channelClaim => {
       this.setState({
         creatingChannel: false,
         addingChannel: false,
@@ -448,6 +456,8 @@ export default class ChannelCreator extends React.PureComponent {
       clearChannelFormState();
       notify({ message: 'The channel was successfully created.' });
       this.showChannelList();
+
+      logPublish(channelClaim);
     };
 
     const failure = () => {

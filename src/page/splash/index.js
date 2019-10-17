@@ -23,14 +23,14 @@ const select = state => ({
 });
 
 const perform = dispatch => ({
-  authenticate: (appVersion, os) => dispatch(doAuthenticate(appVersion, os)),
+  authenticate: (appVersion, os, firebaseToken) => dispatch(doAuthenticate(appVersion, os, firebaseToken)),
   balanceSubscribe: () => dispatch(doBalanceSubscribe()),
   blacklistedOutpointsSubscribe: () => dispatch(doBlackListedOutpointsSubscribe()),
   filteredOutpointsSubscribe: () => dispatch(doFilteredOutpointsSubscribe()),
   checkSubscriptionsInit: () => dispatch(doCheckSubscriptionsInit()),
   fetchRewardedContent: () => dispatch(doFetchRewardedContent()),
   fetchSubscriptions: callback => dispatch(doFetchMySubscriptions(callback)),
-  getSync: password => dispatch(doGetSync(password)),
+  getSync: (password, callback) => dispatch(doGetSync(password, callback)),
   notify: data => dispatch(doToast(data)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
   setEmailToVerify: email => dispatch(doUserEmailToVerify(email)),

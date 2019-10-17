@@ -34,7 +34,7 @@ class FloatingWalletBalance extends React.PureComponent<Props> {
           <Icon name="coins" size={12} style={floatingButtonStyle.balanceIcon} />
           {isNaN(balance) && <ActivityIndicator size="small" color={Colors.White} />}
           {(!isNaN(balance) || balance === 0) && (
-            <Text style={floatingButtonStyle.text}>{formatCredits(parseFloat(balance), 0, true)}</Text>
+            <Text style={floatingButtonStyle.text}>{formatCredits(parseFloat(balance), 1, true)}</Text>
           )}
         </TouchableOpacity>
       </View>
