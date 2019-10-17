@@ -10,13 +10,15 @@ import {
   makeSelectClaimIsNsfw,
   makeSelectShortUrlForUri,
 } from 'lbry-redux';
-import { selectRewardContentClaimIds } from 'lbryinc';
+import { selectBlackListedOutpoints, selectFilteredOutpoints, selectRewardContentClaimIds } from 'lbryinc';
 import { selectShowNsfw } from 'redux/selectors/settings';
 import FileItem from './view';
 
 const select = (state, props) => ({
+  blackListedOutpoints: selectBlackListedOutpoints(state),
   claim: makeSelectClaimForUri(props.uri)(state),
   fileInfo: makeSelectFileInfoForUri(props.uri)(state),
+  filteredOutpoints: selectFilteredOutpoints(state),
   metadata: makeSelectMetadataForUri(props.uri)(state),
   rewardedContentClaimIds: selectRewardContentClaimIds(state),
   isResolvingUri: makeSelectIsUriResolving(props.uri)(state),

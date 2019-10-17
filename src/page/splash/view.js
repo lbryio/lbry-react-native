@@ -110,13 +110,10 @@ class SplashScreen extends React.PureComponent {
     doPreferenceGet(
       'shared',
       preference => {
-        console.log('***');
-        console.log(preference);
         populateSharedUserState(preference);
       },
       error => {
         /* failed */
-        console.log(error);
       }
     );
   };
@@ -192,15 +189,17 @@ class SplashScreen extends React.PureComponent {
             });
 
             // unlock the wallet and then finish the splash screen
-            Lbry.wallet_unlock({ password: password || '' })
-              .then(() => {
+            Lbry.wallet_unlock({ password: password || '' }).then(unlocked => {
+              if (unlocked) {
                 this.setState({
                   message: testingNetwork,
                   details: waitingForResolution,
                 });
                 this.finishSplashScreen();
-              })
-              .catch(() => this.handleAccountUnlockFailed());
+              } else {
+                this.handleAccountUnlockFailed();
+              }
+            });
           } else {
             this.setState({
               message: testingNetwork,

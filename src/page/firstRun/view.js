@@ -94,11 +94,15 @@ class FirstRunScreen extends React.PureComponent {
         Lbry.wallet_status().then(status => {
           // unlock the wallet
           if (status.is_locked) {
-            Lbry.wallet_unlock({ password: this.state.walletPassword ? this.state.walletPassword : '' })
-              .then(() => this.closeFinalPage())
-              .catch(err =>
-                notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' })
-              );
+            Lbry.wallet_unlock({ password: this.state.walletPassword ? this.state.walletPassword : '' }).then(
+              unlocked => {
+                if (unlocked) {
+                  this.closeFinalPage();
+                } else {
+                  notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' });
+                }
+              }
+            );
           } else {
             // wallet not locked. close final page
             this.closeFinalPage();

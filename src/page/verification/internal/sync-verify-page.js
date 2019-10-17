@@ -81,13 +81,15 @@ class SyncVerifyPage extends React.PureComponent {
     // unlock the wallet (if locked)
     Lbry.wallet_status().then(status => {
       if (status.is_locked) {
-        Lbry.wallet_unlock({ password: this.state.password ? this.state.password : '' })
-          .then(() => navigation.goBack())
-          .catch(err => {
+        Lbry.wallet_unlock({ password: this.state.password ? this.state.password : '' }).then(unlocked => {
+          if (unlocked) {
+            navigation.goBack();
+          } else {
             if (notifyUnlockFailed) {
               notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' });
             }
-          });
+          }
+        });
       } else {
         navigation.goBack();
       }
