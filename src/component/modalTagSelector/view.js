@@ -55,7 +55,7 @@ export default class ModalTagSelector extends React.PureComponent {
 
     return (
       <TouchableOpacity style={modalTagSelectorStyle.overlay} activeOpacity={1} onPress={onOverlayPress}>
-        <View style={modalTagSelectorStyle.container}>
+        <TouchableOpacity style={modalTagSelectorStyle.container} activeOpacity={1}>
           <View style={modalTagSelectorStyle.titleRow}>
             <Text style={modalTagSelectorStyle.title}>Customize your tags</Text>
           </View>
@@ -75,7 +75,7 @@ export default class ModalTagSelector extends React.PureComponent {
           <View style={modalTagSelectorStyle.buttons}>
             <Button style={modalTagSelectorStyle.doneButton} text={'Done'} onPress={onDonePress} />
           </View>
-        </View>
+        </TouchableOpacity>
       </TouchableOpacity>
     );
   }
