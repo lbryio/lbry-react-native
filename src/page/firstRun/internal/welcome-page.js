@@ -44,32 +44,38 @@ class WelcomePage extends React.PureComponent {
   }
 
   startAuthenticating = () => {
-    const { authenticate } = this.props;
     this.setState({ authenticationStarted: true, authenticationFailed: false });
     NativeModules.VersionInfo.getAppVersion().then(appVersion => {
-      NativeModules.Firebase.getMessagingToken().then(firebaseToken => {
-        Lbry.status()
-          .then(info => {
-            this.setState({ sdkStarted: true });
-
-            authenticate(appVersion, Platform.OS, firebaseToken);
-          })
-          .catch(error => {
-            if (this.state.statusTries >= WelcomePage.MAX_STATUS_TRIES) {
-              this.setState({ authenticationFailed: true });
-
-              // sdk_start_failed
-              NativeModules.Firebase.track('sdk_start_failed', null);
-            } else {
-              setTimeout(() => {
-                this.startAuthenticating();
-                this.setState({ statusTries: this.state.statusTries + 1 });
-              }, 1000); // Retry every second for a maximum of MAX_STATUS_TRIES tries (60 seconds)
-            }
-          });
-      });
+      NativeModules.Firebase.getMessagingToken()
+        .then(firebaseToken => this.performAuthenticate(appVersion, firebaseToken))
+        .catch(() => {
+          this.performAuthenticate(appVersion); /* proceed without firebase */
+        });
     });
   };
+
+  performAuthenticate(appVersion, firebaseToken) {
+    const { authenticate } = this.props;
+    Lbry.status()
+      .then(info => {
+        this.setState({ sdkStarted: true });
+
+        authenticate(appVersion, Platform.OS, firebaseToken);
+      })
+      .catch(error => {
+        if (this.state.statusTries >= WelcomePage.MAX_STATUS_TRIES) {
+          this.setState({ authenticationFailed: true });
+
+          // sdk_start_failed
+          NativeModules.Firebase.track('sdk_start_failed', null);
+        } else {
+          setTimeout(() => {
+            this.startAuthenticating();
+            this.setState({ statusTries: this.state.statusTries + 1 });
+          }, 1000); // Retry every second for a maximum of MAX_STATUS_TRIES tries (60 seconds)
+        }
+      });
+  }
 
   render() {
     const { authenticating, authToken, onWelcomePageLayout } = this.props;
