@@ -214,7 +214,7 @@ const drawer = createDrawerNavigator(
     },
   },
   {
-    drawerWidth: 300,
+    drawerWidth: 280,
     drawerBackgroundColor: 'transparent',
     headerMode: 'none',
     backBehavior: 'none',
