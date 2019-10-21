@@ -8,7 +8,7 @@ import FileListItem from 'component/fileListItem';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import UriBar from 'component/uriBar';
 import publishStyle from 'styles/publish';
-import { __, navigateToUri } from 'utils/helper';
+import { __, isClaimInList, navigateToUri } from 'utils/helper';
 
 class PublishesPage extends React.PureComponent {
   state = {
@@ -54,6 +54,8 @@ class PublishesPage extends React.PureComponent {
   };
 
   addOrRemoveItem = (uri, claim) => {
+    const { pendingClaims } = this.state;
+
     const { selectedClaimsMap } = this.state;
     let selectedUris = [...this.state.selectedUris];
 
@@ -172,8 +174,15 @@ class PublishesPage extends React.PureComponent {
                   if (selectionMode) {
                     this.handleSelectItem(item, claim);
                   } else {
-                    // TODO: when shortUrl is available for my claims, navigate to that URL instead
-                    navigateToUri(navigation, item);
+                    const { notify, pendingClaims } = this.props;
+                    if (isClaimInList(claim, pendingClaims)) {
+                      notify({
+                        message: __('This content is currently pending. It will be available in a few minutes.'),
+                      });
+                    } else {
+                      // TODO: when shortUrl is available for my claims, navigate to that URL instead
+                      navigateToUri(navigation, item);
+                    }
                   }
                 }}
                 onLongPress={claim => this.handleItemLongPress(item, claim)}

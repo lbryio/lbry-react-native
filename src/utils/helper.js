@@ -346,3 +346,14 @@ export function uploadImageAsset(filePath, success, failure) {
       }
     });
 }
+
+// TODO: This method already exists elsewhere?
+export function isClaimInList(claim, claims = []) {
+  for (let i = 0; i < claims.length; i++) {
+    if (claims[i].claim_id === claim.claim_id) {
+      return true;
+    }
+  }
+
+  return false;
+}
