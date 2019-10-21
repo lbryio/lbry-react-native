@@ -178,7 +178,7 @@ class SplashScreen extends React.PureComponent {
       Lbry.wallet_status().then(secureWalletStatus => {
         // For now, automatically unlock the wallet if a password is set so that downloads work
         NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password => {
-          if (secureWalletStatus.is_locked) {
+          if ((secureWalletStatus.is_encrypted && !secureWalletStatus.is_locked) || secureWalletStatus.is_locked) {
             this.setState({
               message: 'Unlocking account',
               details: 'Decrypting wallet',
