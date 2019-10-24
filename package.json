@@ -12,7 +12,7 @@
         "base-64": "^0.1.0",
         "@expo/vector-icons": "^8.1.0",
         "gfycat-style-urls": "^1.0.3",
-        "lbry-redux": "lbryio/lbry-redux#9919a8150998822ca997cd23418f023d64d4a3da",
+        "lbry-redux": "lbryio/lbry-redux#8ac92e3abfa0a9aacdb2fa4a144c3fadc4da6b11",
         "lbryinc": "lbryio/lbryinc#aebad10a9c5d725c3fedae4236d56f239a0bc1de",
         "lodash": ">=4.17.11",
         "merge": ">=1.2.1",
