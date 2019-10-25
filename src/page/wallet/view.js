@@ -5,6 +5,7 @@ import WalletAddress from 'component/walletAddress';
 import WalletBalance from 'component/walletBalance';
 import WalletSend from 'component/walletSend';
 import WalletRewardsDriver from 'component/walletRewardsDriver';
+import WalletSignIn from 'component/walletSignIn';
 import WalletSyncDriver from 'component/walletSyncDriver';
 import Button from 'component/button';
 import Link from 'component/link';
@@ -66,33 +67,15 @@ class WalletPage extends React.PureComponent {
       understandsRisks,
       setClientSetting,
       navigation,
+      user,
     } = this.props;
 
-    if (!understandsRisks) {
+    const signedIn = user && user.has_verified_email;
+    if (!signedIn && !understandsRisks) {
       return (
-        <View>
+        <View style={walletStyle.container}>
           <UriBar navigation={navigation} />
-          <View style={walletStyle.warning}>
-            <Text style={walletStyle.warningParagraph}>
-              This is beta software. You may lose any credits that you send to your wallet due to software bugs, deleted
-              files, or malicious third-party software. You should not use this wallet as your primary wallet.
-            </Text>
-            {!hasSyncedWallet && (
-              <Text style={walletStyle.warningParagraph}>
-                Since you are not using the LBRY sync service, you will lose all of your credits if you uninstall this
-                application. Instructions on how to enroll as well as how to backup your wallet manually are available
-                on the next page.
-              </Text>
-            )}
-            <Text style={walletStyle.warningText}>
-              If you understand the risks and you wish to continue, please tap the button below.
-            </Text>
-          </View>
-          <Button
-            text={'I understand the risks'}
-            style={[walletStyle.button, walletStyle.understand]}
-            onPress={() => setClientSetting(Constants.SETTING_ALPHA_UNDERSTANDS_RISKS, true)}
-          />
+          <WalletSignIn navigation={navigation} />
         </View>
       );
     }
