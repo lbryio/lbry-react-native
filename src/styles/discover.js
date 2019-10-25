@@ -296,7 +296,7 @@ const discoverStyle = StyleSheet.create({
     marginRight: 6,
   },
   menuScrollContent: {
-    paddingTop: 16,
+    paddingTop: 12,
   },
   menuGroup: {
     marginTop: 8,
@@ -335,6 +335,37 @@ const discoverStyle = StyleSheet.create({
     marginLeft: 8,
     fontFamily: 'Inter-UI-Regular',
     fontSize: 16,
+  },
+  signInContainer: {
+    backgroundColor: Colors.LbryGreen,
+    height: 140,
+    padding: 16,
+  },
+  signInButton: {
+    backgroundColor: Colors.White,
+    alignSelf: 'flex-start',
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+  },
+  signedInEmail: {
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 15,
+    color: Colors.White,
+  },
+  signedInAvatar: {
+    backgroundColor: Colors.NextLbryGreen,
+    width: 80,
+    height: 80,
+    marginBottom: 12,
+    borderRadius: 160,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  signedInAvatarImage: {
+    width: '100%',
+    height: '100%',
   },
 });
 
