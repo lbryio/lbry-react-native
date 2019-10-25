@@ -112,7 +112,7 @@ class SettingsPage extends React.PureComponent {
           </Text>
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>{__('Subscribed content')}</Text>
+              <Text style={settingsStyle.label}>{__('Subscriptions')}</Text>
             </View>
             <View style={settingsStyle.switchContainer}>
               <Switch
@@ -140,7 +140,7 @@ class SettingsPage extends React.PureComponent {
 
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>{__('Your interests')}</Text>
+              <Text style={settingsStyle.label}>{__('Tags you follow')}</Text>
             </View>
             <View style={settingsStyle.switchContainer}>
               <Switch
@@ -152,19 +152,21 @@ class SettingsPage extends React.PureComponent {
             </View>
           </View>
 
-          <View style={settingsStyle.row}>
-            <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>{__('Content creator tips')}</Text>
+          {false && (
+            <View style={settingsStyle.row}>
+              <View style={settingsStyle.switchText}>
+                <Text style={settingsStyle.label}>{__('Content creator tips')}</Text>
+              </View>
+              <View style={settingsStyle.switchContainer}>
+                <Switch
+                  value={actualReceiveCreatorNotifications}
+                  onValueChange={value => {
+                    this.setNativeBooleanSetting(SETTINGS.RECEIVE_CREATOR_NOTIFICATIONS, value);
+                  }}
+                />
+              </View>
             </View>
-            <View style={settingsStyle.switchContainer}>
-              <Switch
-                value={actualReceiveCreatorNotifications}
-                onValueChange={value => {
-                  this.setNativeBooleanSetting(SETTINGS.RECEIVE_CREATOR_NOTIFICATIONS, value);
-                }}
-              />
-            </View>
-          </View>
+          )}
 
           <View style={settingsStyle.sectionDivider} />
           <Text style={settingsStyle.sectionTitle}>Search</Text>
