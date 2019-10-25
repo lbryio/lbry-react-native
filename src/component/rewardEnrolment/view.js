@@ -1,8 +1,8 @@
 import React from 'react';
-import { NativeModules, Text, TouchableOpacity, View } from 'react-native';
+import { Linking, NativeModules, Text, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Button from 'component/button';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Link from 'component/link';
 import Colors from 'styles/colors';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -24,6 +24,10 @@ class RewardEnrolment extends React.Component {
     navigation.navigate({ routeName: 'Verification', key: 'verification', params: { syncFlow: false } });
   };
 
+  onLearnMorePressed = () => {
+    Linking.openURL('https://lbry.com/faq/earn-credits');
+  };
+
   render() {
     const { fetching, navigation, unclaimedRewardAmount, user } = this.props;
 
@@ -31,19 +35,25 @@ class RewardEnrolment extends React.Component {
       <View style={rewardStyle.enrollContainer} onPress>
         <View style={rewardStyle.summaryRow}>
           <Icon name="award" size={36} color={Colors.White} />
-          <Text style={rewardStyle.summaryText}>{unclaimedRewardAmount} unclaimed credits</Text>
+          <Text style={rewardStyle.summaryText}>{unclaimedRewardAmount} available credits</Text>
         </View>
 
         <View style={rewardStyle.onboarding}>
           <Text style={rewardStyle.enrollDescText}>
-            LBRY credits allow you to purchase content, publish content, and influence the network. You can start
-            earning credits by watching videos on LBRY.
+            LBRY credits allow you to purchase content, publish content, and influence the network.{'\n\n'}
+            You get credits for free for providing an email address and taking other basic actions.{'\n\n'}
+            <Link style={rewardStyle.learnMoreLink} text={'Learn more'} onPress={this.onLearnMorePressed} />.
           </Text>
         </View>
 
         <View style={rewardStyle.buttonRow}>
           <Link style={rewardStyle.notInterestedLink} text={'Not interested'} onPress={this.onNotInterestedPressed} />
-          <Button style={rewardStyle.enrollButton} theme={'light'} text={'Enroll'} onPress={this.onEnrollPressed} />
+          <Button
+            style={rewardStyle.enrollButton}
+            theme={'light'}
+            text={'Get started'}
+            onPress={this.onEnrollPressed}
+          />
         </View>
       </View>
     );

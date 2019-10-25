@@ -1,4 +1,9 @@
 import { connect } from 'react-redux';
+import { selectUnclaimedRewardValue } from 'lbryinc';
 import WalletRewardsDriver from './view';
 
-export default connect()(WalletRewardsDriver);
+const select = state => ({
+  unclaimedRewardAmount: selectUnclaimedRewardValue(state),
+});
+
+export default connect(select)(WalletRewardsDriver);

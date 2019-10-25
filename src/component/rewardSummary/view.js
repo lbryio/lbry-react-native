@@ -18,7 +18,7 @@ class RewardSummary extends React.Component {
     this.props.fetchRewards();
 
     AsyncStorage.getItem(RewardSummary.itemKey).then(isDismissed => {
-      if ('true' === isDismissed) {
+      if (isDismissed === 'true') {
         this.setState({ dismissed: true });
       }
 
@@ -71,7 +71,7 @@ class RewardSummary extends React.Component {
       <TouchableOpacity style={rewardStyle.summaryContainer} onPress={this.handleSummaryPressed}>
         <View style={rewardStyle.summaryRow}>
           <Icon name="award" size={36} color={Colors.White} />
-          <Text style={rewardStyle.summaryText}>{unclaimedRewardAmount} unclaimed credits</Text>
+          <Text style={rewardStyle.summaryText}>{unclaimedRewardAmount} available credits</Text>
         </View>
         <Button style={rewardStyle.dismissButton} theme={'light'} text={'Dismiss'} onPress={this.onDismissPressed} />
       </TouchableOpacity>
