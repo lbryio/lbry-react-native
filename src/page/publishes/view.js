@@ -8,7 +8,7 @@ import FileListItem from 'component/fileListItem';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import UriBar from 'component/uriBar';
 import publishStyle from 'styles/publish';
-import { __, isClaimInList, navigateToUri } from 'utils/helper';
+import { __, navigateToUri } from 'utils/helper';
 
 class PublishesPage extends React.PureComponent {
   state = {
@@ -175,7 +175,7 @@ class PublishesPage extends React.PureComponent {
                     this.handleSelectItem(item, claim);
                   } else {
                     const { notify, pendingClaims } = this.props;
-                    if (isClaimInList(claim, pendingClaims)) {
+                    if (pendingClaims.some(pendingClaim => pendingClaim.claim_id === claim.claim_id)) {
                       notify({
                         message: __('This content is currently pending. It will be available in a few minutes.'),
                       });
