@@ -346,3 +346,8 @@ export function uploadImageAsset(filePath, success, failure) {
       }
     });
 }
+
+// TODO: Move this to lbry-redux
+export function formatLbryUrlForWeb(url) {
+  return url.replace('lbry://', '/').replace(/#/g, ':');
+}

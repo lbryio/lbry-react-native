@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { normalizeURI } from 'lbry-redux';
-import { navigateBack, getOrderBy } from 'utils/helper';
+import { navigateBack, getOrderBy, formatLbryUrlForWeb } from 'utils/helper';
 import ChannelIconItem from 'component/channelIconItem';
 import ClaimList from 'component/claimList';
 import Colors from 'styles/colors';
@@ -172,6 +172,15 @@ class ChannelPage extends React.PureComponent {
     }
   };
 
+  onSharePressed = () => {
+    const { claim } = this.props;
+    if (claim) {
+      const { canonical_url: canonicalUrl, short_url: shortUrl, permanent_url: permanentUrl } = claim;
+      const url = Constants.SHARE_BASE_URL + formatLbryUrlForWeb(canonicalUrl || shortUrl || permanentUrl);
+      NativeModules.UtilityModule.shareUrl(url);
+    }
+  };
+
   onDeletePressed = () => {
     const { abandonClaim, claim, navigation } = this.props;
     if (claim) {
@@ -274,6 +283,12 @@ class ChannelPage extends React.PureComponent {
                   onPress={this.onDeletePressed}
                 />
               )}
+              <Button
+                style={[channelPageStyle.actionButton, channelPageStyle.shareButton]}
+                theme={'light'}
+                icon={'share-alt'}
+                onPress={this.onSharePressed}
+              />
               {!ownedChannel && <SubscribeButton style={channelPageStyle.subscribeButton} uri={fullUri} name={name} />}
               {!ownedChannel && (
                 <SubscribeNotificationButton
