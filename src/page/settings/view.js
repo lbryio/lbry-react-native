@@ -1,7 +1,7 @@
 import React from 'react';
 import { SETTINGS } from 'lbry-redux';
 import { Text, View, ScrollView, Switch, NativeModules } from 'react-native';
-import { navigateBack } from 'utils/helper';
+import { __, navigateBack } from 'utils/helper';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PageHeader from 'component/pageHeader';
 import settingsStyle from 'styles/settings';
@@ -43,6 +43,16 @@ class SettingsPage extends React.PureComponent {
     }
   }
 
+  setNativeBooleanSetting = (key, value) => {
+    const { setClientSetting } = this.props;
+    setClientSetting(key, value);
+    NativeModules.UtilityModule.setNativeBooleanSetting(key, value);
+  };
+
+  getBooleanSetting = (value, defaultValue) => {
+    return value === null || value === undefined ? defaultValue : value;
+  };
+
   render() {
     const {
       backgroundPlayEnabled,
@@ -50,14 +60,21 @@ class SettingsPage extends React.PureComponent {
       keepDaemonRunning,
       navigation,
       popDrawerStack,
+      receiveSubscriptionNotifications,
+      receiveRewardNotifications,
+      receiveInterestsNotifications,
+      receiveCreatorNotifications,
       showNsfw,
       showUriBarSuggestions,
       setClientSetting,
     } = this.props;
 
     // default to true if the setting is null or undefined
-    const actualKeepDaemonRunning =
-      keepDaemonRunning === null || keepDaemonRunning === undefined ? true : keepDaemonRunning;
+    const actualKeepDaemonRunning = this.getBooleanSetting(keepDaemonRunning, true);
+    const actualReceiveSubscriptionNotifications = this.getBooleanSetting(receiveSubscriptionNotifications, true);
+    const actualReceiveRewardNotifications = this.getBooleanSetting(receiveRewardNotifications, true);
+    const actualReceiveInterestsNotifications = this.getBooleanSetting(receiveInterestsNotifications, true);
+    const actualReceiveCreatorNotifications = this.getBooleanSetting(receiveCreatorNotifications, true);
 
     return (
       <View style={settingsStyle.container}>
@@ -87,6 +104,69 @@ class SettingsPage extends React.PureComponent {
               <Switch value={showNsfw} onValueChange={value => setClientSetting(SETTINGS.SHOW_NSFW, value)} />
             </View>
           </View>
+
+          <View style={settingsStyle.sectionDivider} />
+          <Text style={settingsStyle.sectionTitle}>{__('Notifications')}</Text>
+          <Text style={settingsStyle.sectionDescription}>
+            {__('Choose the notifications you would like to receive.')}
+          </Text>
+          <View style={settingsStyle.row}>
+            <View style={settingsStyle.switchText}>
+              <Text style={settingsStyle.label}>{__('Subscriptions')}</Text>
+            </View>
+            <View style={settingsStyle.switchContainer}>
+              <Switch
+                value={actualReceiveSubscriptionNotifications}
+                onValueChange={value => {
+                  this.setNativeBooleanSetting(SETTINGS.RECEIVE_SUBSCRIPTION_NOTIFICATIONS, value);
+                }}
+              />
+            </View>
+          </View>
+
+          <View style={settingsStyle.row}>
+            <View style={settingsStyle.switchText}>
+              <Text style={settingsStyle.label}>{__('Rewards')}</Text>
+            </View>
+            <View style={settingsStyle.switchContainer}>
+              <Switch
+                value={actualReceiveRewardNotifications}
+                onValueChange={value => {
+                  this.setNativeBooleanSetting(SETTINGS.RECEIVE_REWARD_NOTIFICATIONS, value);
+                }}
+              />
+            </View>
+          </View>
+
+          <View style={settingsStyle.row}>
+            <View style={settingsStyle.switchText}>
+              <Text style={settingsStyle.label}>{__('Tags you follow')}</Text>
+            </View>
+            <View style={settingsStyle.switchContainer}>
+              <Switch
+                value={actualReceiveInterestsNotifications}
+                onValueChange={value => {
+                  this.setNativeBooleanSetting(SETTINGS.RECEIVE_INTERESTS_NOTIFICATIONS, value);
+                }}
+              />
+            </View>
+          </View>
+
+          {false && (
+            <View style={settingsStyle.row}>
+              <View style={settingsStyle.switchText}>
+                <Text style={settingsStyle.label}>{__('Content creator tips')}</Text>
+              </View>
+              <View style={settingsStyle.switchContainer}>
+                <Switch
+                  value={actualReceiveCreatorNotifications}
+                  onValueChange={value => {
+                    this.setNativeBooleanSetting(SETTINGS.RECEIVE_CREATOR_NOTIFICATIONS, value);
+                  }}
+                />
+              </View>
+            </View>
+          )}
 
           <View style={settingsStyle.sectionDivider} />
           <Text style={settingsStyle.sectionTitle}>Search</Text>

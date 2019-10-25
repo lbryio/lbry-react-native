@@ -14,6 +14,10 @@ const select = state => ({
   keepDaemonRunning: makeSelectClientSetting(SETTINGS.KEEP_DAEMON_RUNNING)(state),
   showNsfw: makeSelectClientSetting(SETTINGS.SHOW_NSFW)(state),
   showUriBarSuggestions: makeSelectClientSetting(SETTINGS.SHOW_URI_BAR_SUGGESTIONS)(state),
+  receiveSubscriptionNotifications: makeSelectClientSetting(SETTINGS.RECEIVE_SUBSCRIPTION_NOTIFICATIONS)(state),
+  receiveRewardNotifications: makeSelectClientSetting(SETTINGS.RECEIVE_REWARD_NOTIFICATIONS)(state),
+  receiveInterestsNotifications: makeSelectClientSetting(SETTINGS.RECEIVE_INTERESTS_NOTIFICATIONS)(state),
+  receiveCreatorNotifications: makeSelectClientSetting(SETTINGS.RECEIVE_CREATOR_NOTIFICATIONS)(state),
 });
 
 const perform = dispatch => ({

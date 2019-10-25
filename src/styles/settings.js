@@ -44,6 +44,13 @@ const settingsStyle = StyleSheet.create({
     fontSize: 20,
     marginBottom: 4,
   },
+  sectionDescription: {
+    color: '#aaaaaa',
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 12,
+    lineHeight: 18,
+    marginBottom: 8,
+  },
   sectionDivider: {
     marginTop: 24,
   },
