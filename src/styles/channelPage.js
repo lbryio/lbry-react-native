@@ -172,6 +172,10 @@ const channelPageStyle = StyleSheet.create({
   deleteButton: {
     marginLeft: 8,
   },
+  shareButton: {
+    marginLeft: 8,
+    marginRight: 8,
+  },
 });
 
 export default channelPageStyle;
