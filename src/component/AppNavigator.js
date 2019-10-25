@@ -297,16 +297,18 @@ class AppWithNavigationState extends React.Component {
   }
 
   componentDidMount() {
-    const { dispatch } = this.props;
+    const { dispatch, user } = this.props;
     this.emailVerifyCheckInterval = setInterval(() => this.checkEmailVerification(), 5000);
     Linking.addEventListener('url', this._handleUrl);
 
     // call /sync/get with interval
     this.syncGetInterval = setInterval(() => {
       this.setState({ syncHashChanged: false }); // reset local state
-      NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
-        dispatch(doGetSync(walletPassword, () => this.getUserSettings()));
-      });
+      if (user && user.has_verified_email) {
+        NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
+          dispatch(doGetSync(walletPassword, () => this.getUserSettings()));
+        });
+      }
     }, SYNC_GET_INTERVAL);
   }
 
