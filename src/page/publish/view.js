@@ -17,10 +17,12 @@ import {
 import { FlatGrid } from 'react-native-super-grid';
 import {
   isNameValid,
+  batchActions,
   buildURI,
   normalizeURI,
   parseURI,
   regexInvalidURI,
+  ACTIONS,
   CLAIM_VALUES,
   LICENSES,
   MATURE_TAGS,
@@ -394,11 +396,11 @@ class PublishPage extends React.PureComponent {
   };
 
   handlePublishSuccess = data => {
-    const { clearPublishFormState, navigation, notify } = this.props;
+    const { clearPublishFormState, navigation, notify, pendingPublishSuccess } = this.props;
     const pendingClaim = data.outputs[0];
     logPublish(pendingClaim);
 
-    // TODO: fake temp claim for claim_list_mine
+    pendingPublishSuccess(pendingClaim);
 
     notify({
       message: `Your content was successfully published to ${this.state.uri}. It will be available in a few mintues.`,

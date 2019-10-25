@@ -54,6 +54,8 @@ class PublishesPage extends React.PureComponent {
   };
 
   addOrRemoveItem = (uri, claim) => {
+    const { pendingClaims } = this.state;
+
     const { selectedClaimsMap } = this.state;
     let selectedUris = [...this.state.selectedUris];
 
@@ -172,8 +174,15 @@ class PublishesPage extends React.PureComponent {
                   if (selectionMode) {
                     this.handleSelectItem(item, claim);
                   } else {
-                    // TODO: when shortUrl is available for my claims, navigate to that URL instead
-                    navigateToUri(navigation, item);
+                    const { notify, pendingClaims } = this.props;
+                    if (pendingClaims.some(pendingClaim => pendingClaim.claim_id === claim.claim_id)) {
+                      notify({
+                        message: __('This content is currently pending. It will be available in a few minutes.'),
+                      });
+                    } else {
+                      // TODO: when shortUrl is available for my claims, navigate to that URL instead
+                      navigateToUri(navigation, item);
+                    }
                   }
                 }}
                 onLongPress={claim => this.handleItemLongPress(item, claim)}
