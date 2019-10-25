@@ -29,10 +29,7 @@ const rewardStyle = StyleSheet.create({
   },
   enrollContainer: {
     flex: 1,
-    marginTop: 76,
-    marginLeft: 16,
-    marginRight: 16,
-    marginBottom: 16,
+    marginTop: 60,
     padding: 24,
     backgroundColor: Colors.LbryGreen,
   },
@@ -249,6 +246,10 @@ const rewardStyle = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Inter-UI-Regular',
     color: Colors.White,
+  },
+  learnMoreLink: {
+    fontFamily: 'Inter-UI-Regular',
+    color: Colors.NextLbryGreen,
   },
   enrollButton: {
     backgroundColor: Colors.White,

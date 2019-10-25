@@ -11,7 +11,9 @@ class PublishRewardsDriver extends React.PureComponent<Props> {
     return (
       <TouchableOpacity style={publishStyle.rewardDriverCard} onPress={() => navigation.navigate('Rewards')}>
         <Icon name="award" size={16} style={publishStyle.rewardIcon} />
-        <Text style={publishStyle.rewardDriverText}>Earn some credits to be able to publish your content.</Text>
+        <Text style={publishStyle.rewardDriverText}>
+          Publishing requires credits.{'\n'}Tap here to get some for free.
+        </Text>
       </TouchableOpacity>
     );
   }
