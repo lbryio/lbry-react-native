@@ -91,8 +91,10 @@ class SplashScreen extends React.PureComponent {
         // user is authenticated, navigate to the main view
         if (user.has_verified_email) {
           NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
-            getSync(walletPassword, () => this.getUserSettings());
-            this.navigateToMain();
+            getSync(walletPassword, () => {
+              this.getUserSettings();
+              this.navigateToMain();
+            });
           });
           return;
         }
@@ -138,8 +140,10 @@ class SplashScreen extends React.PureComponent {
       if (user && user.id && user.has_verified_email) {
         // user already authenticated
         NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
-          getSync(walletPassword, () => this.getUserSettings());
-          this.navigateToMain();
+          getSync(walletPassword, () => {
+            this.getUserSettings();
+            this.navigateToMain();
+          });
         });
       } else {
         NativeModules.VersionInfo.getAppVersion().then(appVersion => {
