@@ -67,43 +67,65 @@ class DrawerContent extends React.PureComponent {
 
     return (
       <View style={discoverStyle.drawerContentArea}>
-        <View style={discoverStyle.signInContainer}>
-          {!signedIn && (
-            <Button
-              style={discoverStyle.signInButton}
-              theme={'light'}
-              text={'Sign in'}
-              onPress={this.launchSignInFlow}
-            />
-          )}
-          {signedIn && (
-            <View style={discoverStyle.signedIn}>
-              <View style={discoverStyle.signedInAvatar}>
-                {avatarImageUrl && (
-                  <Image
-                    style={discoverStyle.signedInAvatarImage}
-                    resizeMode={'cover'}
-                    source={{ uri: avatarImageUrl }}
-                  />
-                )}
-                {!avatarImageUrl && (
-                  <Text style={channelIconStyle.autothumbCharacter}>
-                    {user.primary_email.substring(0, 1).toUpperCase()}
-                  </Text>
-                )}
+        {false && (
+          <View style={discoverStyle.signInContainer}>
+            {!signedIn && (
+              <Button
+                style={discoverStyle.signInButton}
+                theme={'light'}
+                text={'Sign in'}
+                onPress={this.launchSignInFlow}
+              />
+            )}
+            {signedIn && (
+              <View style={discoverStyle.signedIn}>
+                <View style={discoverStyle.signedInAvatar}>
+                  {avatarImageUrl && (
+                    <Image
+                      style={discoverStyle.signedInAvatarImage}
+                      resizeMode={'cover'}
+                      source={{ uri: avatarImageUrl }}
+                    />
+                  )}
+                  {!avatarImageUrl && (
+                    <Text style={channelIconStyle.autothumbCharacter}>
+                      {user.primary_email.substring(0, 1).toUpperCase()}
+                    </Text>
+                  )}
+                </View>
+                <Text style={discoverStyle.signedInEmail} numberOfLines={1}>
+                  {user.primary_email}
+                </Text>
               </View>
-              <Text style={discoverStyle.signedInEmail} numberOfLines={1}>
-                {user.primary_email}
-              </Text>
-            </View>
-          )}
-        </View>
+            )}
+          </View>
+        )}
 
         <ScrollView contentContainerStyle={discoverStyle.menuScrollContent}>
           <SafeAreaView
             style={discoverStyle.drawerContentContainer}
             forceInset={{ top: 'always', horizontal: 'never' }}
           >
+            {!signedIn && (
+              <TouchableOpacity
+                accessible
+                accessibilityLabel={'Sign In'}
+                onPress={this.launchSignInFlow}
+                delayPressIn={0}
+                style={discoverStyle.signInMenuItem}
+              >
+                <Text style={discoverStyle.signInMenuItemText}>SIGN IN</Text>
+              </TouchableOpacity>
+            )}
+
+            {signedIn && (
+              <View style={discoverStyle.signInMenuItem}>
+                <Text style={discoverStyle.signInMenuItemText} numberOfLines={1}>
+                  {user.primary_email.toUpperCase()}
+                </Text>
+              </View>
+            )}
+
             {groupNames.map(groupName => {
               const menuItems = groupedMenuItems[groupName];
 

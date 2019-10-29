@@ -367,6 +367,21 @@ const discoverStyle = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  signInMenuItem: {
+    paddingTop: 6,
+    paddingBottom: 12,
+    paddingLeft: 16,
+    paddingRight: 16,
+    marginBottom: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.VeryLightGrey,
+  },
+  signInMenuItemText: {
+    color: Colors.DescriptionGrey,
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 14,
+    textAlign: 'center',
+  },
 });
 
 export default discoverStyle;
