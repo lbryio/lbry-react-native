@@ -32,7 +32,7 @@ class RewardEnrolment extends React.Component {
     const { fetching, navigation, unclaimedRewardAmount, user } = this.props;
 
     return (
-      <View style={rewardStyle.enrollContainer} onPress>
+      <View style={rewardStyle.enrollContainer}>
         <View style={rewardStyle.summaryRow}>
           <Icon name="award" size={36} color={Colors.White} />
           <Text style={rewardStyle.summaryText}>{unclaimedRewardAmount} available credits</Text>

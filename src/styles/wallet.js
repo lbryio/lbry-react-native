@@ -305,6 +305,52 @@ const walletStyle = StyleSheet.create({
     fontSize: 16,
     marginLeft: 8,
   },
+  buttonRow: {
+    width: '100%',
+    position: 'absolute',
+    alignItems: 'center',
+    left: 24,
+    bottom: 24,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  continueLink: {
+    fontSize: 14,
+    fontFamily: 'Inter-UI-Regular',
+    color: Colors.White,
+  },
+  learnMoreLink: {
+    fontFamily: 'Inter-UI-Regular',
+    color: Colors.NextLbryGreen,
+  },
+  signInButton: {
+    backgroundColor: Colors.White,
+    paddingLeft: 16,
+    paddingRight: 16,
+  },
+  signInContainer: {
+    flex: 1,
+    marginTop: 60,
+    padding: 24,
+    backgroundColor: Colors.LbryGreen,
+  },
+  onboarding: {
+    marginTop: 36,
+  },
+  onboardingText: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 18,
+    lineHeight: 28,
+    color: Colors.White,
+  },
+  signInSummaryRow: {
+    flexDirection: 'row',
+  },
+  signInTitle: {
+    color: Colors.White,
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 28,
+  },
 });
 
 export default walletStyle;
