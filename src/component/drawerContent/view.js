@@ -9,15 +9,15 @@ import discoverStyle from 'styles/discover';
 
 const groupedMenuItems = {
   'Find content': [
-    { icon: 'hashtag', label: 'Your tags', route: Constants.DRAWER_ROUTE_DISCOVER },
+    { icon: 'hashtag', label: 'Your Tags', route: Constants.DRAWER_ROUTE_DISCOVER },
     { icon: 'heart', solid: true, label: 'Subscriptions', route: Constants.DRAWER_ROUTE_SUBSCRIPTIONS },
-    { icon: 'globe-americas', label: 'All content', route: Constants.DRAWER_ROUTE_TRENDING },
+    { icon: 'globe-americas', label: 'All Content', route: Constants.DRAWER_ROUTE_TRENDING },
   ],
   'Your content': [
     { icon: 'at', label: 'Channels', route: Constants.DRAWER_ROUTE_CHANNEL_CREATOR },
     { icon: 'download', label: 'Library', route: Constants.DRAWER_ROUTE_MY_LBRY },
     { icon: 'cloud-upload-alt', label: 'Publishes', route: Constants.DRAWER_ROUTE_PUBLISHES },
-    { icon: 'upload', label: 'New publish', route: Constants.DRAWER_ROUTE_PUBLISH },
+    { icon: 'upload', label: 'New Publish', route: Constants.DRAWER_ROUTE_PUBLISH },
   ],
   Wallet: [
     { icon: 'wallet', label: 'Wallet', route: Constants.DRAWER_ROUTE_WALLET },
@@ -112,14 +112,14 @@ class DrawerContent extends React.PureComponent {
                 accessibilityLabel={'Sign In'}
                 onPress={this.launchSignInFlow}
                 delayPressIn={0}
-                style={discoverStyle.signInMenuItem}
+                style={[discoverStyle.signInMenuItem, discoverStyle.signInMenuItemButton]}
               >
-                <Text style={discoverStyle.signInMenuItemText}>SIGN IN</Text>
+                <Text style={discoverStyle.signInMenuItemButtonText}>SIGN IN</Text>
               </TouchableOpacity>
             )}
 
             {signedIn && (
-              <View style={discoverStyle.signInMenuItem}>
+              <View style={[discoverStyle.signInMenuItem, discoverStyle.signInMenuItemBorder]}>
                 <Text style={discoverStyle.signInMenuItemText} numberOfLines={1}>
                   {user.primary_email.toUpperCase()}
                 </Text>

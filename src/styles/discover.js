@@ -295,9 +295,7 @@ const discoverStyle = StyleSheet.create({
     color: Colors.DescriptionGrey,
     marginRight: 6,
   },
-  menuScrollContent: {
-    paddingTop: 12,
-  },
+  menuScrollContent: {},
   menuGroup: {
     marginTop: 8,
     marginBottom: 8,
@@ -368,16 +366,28 @@ const discoverStyle = StyleSheet.create({
     height: '100%',
   },
   signInMenuItem: {
-    paddingTop: 6,
+    paddingTop: 16,
     paddingBottom: 12,
     paddingLeft: 16,
     paddingRight: 16,
     marginBottom: 6,
     borderBottomWidth: 1,
+  },
+  signInMenuItemBorder: {
     borderBottomColor: Colors.VeryLightGrey,
+  },
+  signInMenuItemButton: {
+    backgroundColor: Colors.LbryGreen,
+    borderBottomColor: Colors.LbryGreen,
   },
   signInMenuItemText: {
     color: Colors.DescriptionGrey,
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  signInMenuItemButtonText: {
+    color: Colors.White,
     fontFamily: 'Inter-UI-SemiBold',
     fontSize: 14,
     textAlign: 'center',
