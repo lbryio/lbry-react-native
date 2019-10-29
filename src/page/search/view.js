@@ -1,6 +1,15 @@
 import React from 'react';
 import { Lbry, parseURI, normalizeURI, isURIValid } from 'lbry-redux';
-import { ActivityIndicator, Button, FlatList, NativeModules, Text, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Button,
+  FlatList,
+  NativeModules,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { navigateToUri } from 'utils/helper';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -99,10 +108,26 @@ class SearchPage extends React.PureComponent {
   listHeaderComponent = () => {
     const { navigation } = this.props;
     const { currentUri } = this.state;
+    const query = this.getSearchQuery();
 
+    // TODO: Do a claim_search to see if the tag has any content
+    const showTagResult = query && query.trim().length > 0 && isURIValid(query);
     return (
-      <FileListItem uri={currentUri} featuredResult style={searchStyle.featuredResultItem} navigation={navigation} />
+      <View>
+        <FileListItem uri={currentUri} featuredResult style={searchStyle.featuredResultItem} navigation={navigation} />
+        {showTagResult && (
+          <TouchableOpacity style={searchStyle.tagResultItem} onPress={() => this.handleTagResultPressed(query)}>
+            <Text style={searchStyle.tagResultTitle}>#{query}</Text>
+            <Text style={searchStyle.tagResultDescription}>Explore content for this tag</Text>
+          </TouchableOpacity>
+        )}
+      </View>
     );
+  };
+
+  handleTagResultPressed = tag => {
+    const { navigation } = this.props;
+    navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: `tagPage`, params: { tag } });
   };
 
   render() {
