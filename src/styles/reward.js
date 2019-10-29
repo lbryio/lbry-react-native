@@ -250,7 +250,7 @@ const rewardStyle = StyleSheet.create({
   learnMoreLink: {
     fontFamily: 'Inter-UI-Regular',
     color: Colors.White,
-    textDecoration: 'underline',
+    textDecorationLine: 'underline',
   },
   enrollButton: {
     backgroundColor: Colors.White,
