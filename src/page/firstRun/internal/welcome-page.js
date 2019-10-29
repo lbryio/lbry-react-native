@@ -4,6 +4,7 @@ import { ActivityIndicator, NativeModules, Platform, Text, View } from 'react-na
 import AsyncStorage from '@react-native-community/async-storage';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
+import Link from 'component/link';
 import firstRunStyle from 'styles/firstRun';
 
 class WelcomePage extends React.PureComponent {
@@ -105,6 +106,11 @@ class WelcomePage extends React.PureComponent {
           <Text style={firstRunStyle.paragraph}>
             LBRY is a community-controlled content platform where you can find and publish videos, music, books, and
             more.
+          </Text>
+          <Text style={[firstRunStyle.infoParagraph, firstRunStyle.tosParagraph]}>
+            By continuing, I agree to the{' '}
+            <Link style={firstRunStyle.tosLink} text={'Terms of Service'} href={'https://lbry.com/termsofservice'} />{' '}
+            and confirm I am over the age of 13.
           </Text>
         </View>
       );

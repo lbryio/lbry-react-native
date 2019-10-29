@@ -209,6 +209,12 @@ const firstRunStyle = StyleSheet.create({
   revealIcon: {
     color: Colors.White,
   },
+  tosLink: {
+    textDecorationLine: 'underline',
+  },
+  tosParagraph: {
+    marginTop: 48,
+  },
 });
 
 export default firstRunStyle;
