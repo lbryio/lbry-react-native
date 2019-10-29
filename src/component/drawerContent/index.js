@@ -1,4 +1,18 @@
 import { connect } from 'react-redux';
+import { doFetchChannelListMine, selectMyChannelClaims } from 'lbry-redux';
+import { selectUser } from 'lbryinc';
 import DrawerContent from './view';
 
-export default connect()(DrawerContent);
+const select = state => ({
+  channels: selectMyChannelClaims(state),
+  user: selectUser(state),
+});
+
+const perform = dispatch => ({
+  fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
+});
+
+export default connect(
+  select,
+  perform
+)(DrawerContent);
