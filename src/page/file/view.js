@@ -19,7 +19,7 @@ import {
   WebView,
 } from 'react-native';
 import { NavigationEvents } from 'react-navigation';
-import { navigateBack, navigateToUri } from 'utils/helper';
+import { navigateBack, navigateToUri, formatLbryUrlForWeb } from 'utils/helper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Button from 'component/button';
@@ -508,16 +508,11 @@ class FilePage extends React.PureComponent {
     this.setState({ fileViewLogged: true });
   };
 
-  // TODO: Move this to lbry-redux
-  formatLbryUrlForWeb = url => {
-    return url.replace('lbry://', '/').replace(/#/g, ':');
-  };
-
   handleSharePress = () => {
     const { claim, notify } = this.props;
     if (claim) {
       const { canonical_url: canonicalUrl, short_url: shortUrl, permanent_url: permanentUrl } = claim;
-      const url = 'https://open.lbry.com' + this.formatLbryUrlForWeb(canonicalUrl || shortUrl || permanentUrl);
+      const url = Constants.SHARE_BASE_URL + formatLbryUrlForWeb(canonicalUrl || shortUrl || permanentUrl);
       NativeModules.UtilityModule.shareUrl(url);
     }
   };
