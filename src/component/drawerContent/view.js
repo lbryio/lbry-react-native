@@ -112,14 +112,14 @@ class DrawerContent extends React.PureComponent {
                 accessibilityLabel={'Sign In'}
                 onPress={this.launchSignInFlow}
                 delayPressIn={0}
-                style={discoverStyle.signInMenuItem}
+                style={[discoverStyle.signInMenuItem, discoverStyle.signInMenuItemButton]}
               >
-                <Text style={discoverStyle.signInMenuItemText}>SIGN IN</Text>
+                <Text style={discoverStyle.signInMenuItemButtonText}>SIGN IN</Text>
               </TouchableOpacity>
             )}
 
             {signedIn && (
-              <View style={discoverStyle.signInMenuItem}>
+              <View style={[discoverStyle.signInMenuItem, discoverStyle.signInMenuItemBorder]}>
                 <Text style={discoverStyle.signInMenuItemText} numberOfLines={1}>
                   {user.primary_email.toUpperCase()}
                 </Text>
