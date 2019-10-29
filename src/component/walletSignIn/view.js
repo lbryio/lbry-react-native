@@ -25,19 +25,20 @@ class WalletSignIn extends React.Component {
     return (
       <View style={walletStyle.signInContainer}>
         <View style={walletStyle.signInSummaryRow}>
-          <Text style={walletStyle.signInTitle}>Sign in</Text>
+          <Text style={walletStyle.signInTitle}>Account Recommended</Text>
         </View>
 
         <View style={walletStyle.onboarding}>
           <Text style={walletStyle.onboardingText}>
-            An account will allow you to earn rewards and keep your account and settings synced.{'\n\n'}
-            Without an account, you will not receive rewards, sync and backup services, or security updates.{'\n\n'}
+            An account with LBRY Inc. allows you to earn rewards, backup your wallet, and keep everything synced..
+            {'\n\n'}
+            Without an account, you assume all responsibility for securing your wallet and LBRY data.{'\n\n'}
           </Text>
         </View>
 
         <View style={walletStyle.buttonRow}>
-          <Link style={walletStyle.continueLink} text={'Continue anyway'} onPress={this.onContinuePressed} />
-          <Button style={walletStyle.signInButton} theme={'light'} text={'Sign in'} onPress={this.onSignInPressed} />
+          <Link style={walletStyle.continueLink} text={'Skip Account'} onPress={this.onContinuePressed} />
+          <Button style={walletStyle.signInButton} theme={'light'} text={'Sign Up'} onPress={this.onSignInPressed} />
         </View>
       </View>
     );
