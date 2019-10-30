@@ -13,7 +13,7 @@ import { selectCurrentRoute } from 'redux/selectors/drawer';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import SearchPage from './view';
 
-const numSearchResults = 50;
+const numSearchResults = 25;
 
 const select = state => ({
   currentRoute: selectCurrentRoute(state),
