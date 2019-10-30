@@ -35,11 +35,23 @@ const searchStyle = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingTop: 8,
-    paddingBottom: 8,
-    paddingLeft: 8,
-    paddingRight: 8,
+    padding: 8,
     backgroundColor: Colors.Black,
+  },
+  tagResultItem: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: Colors.DarkerGrey,
+  },
+  tagResultTitle: {
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 24,
+    color: Colors.White,
+  },
+  tagResultDescription: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+    color: Colors.VeryLightGrey,
   },
   searchInput: {
     width: '100%',
