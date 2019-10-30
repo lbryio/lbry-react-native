@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry, parseURI, normalizeURI, isURIValid } from 'lbry-redux';
+import { Lbry, createNormalizedClaimSearchKey, parseURI, normalizeURI, isURIValid } from 'lbry-redux';
 import {
   ActivityIndicator,
   Button,
@@ -23,6 +23,9 @@ class SearchPage extends React.PureComponent {
   state = {
     currentQuery: null,
     currentUri: null,
+    showTagResult: false,
+    claimSearchRun: false,
+    claimSearchOptions: null,
   };
 
   static navigationOptions = {
@@ -52,6 +55,9 @@ class SearchPage extends React.PureComponent {
         this.setState({
           currentQuery: searchQuery,
           currentUri: isURIValid(searchQuery) ? normalizeURI(searchQuery) : null,
+          claimSearchOptions: null,
+          claimSearchRun: false,
+          showTagResult: false,
         });
         search(searchQuery);
       }
@@ -89,7 +95,12 @@ class SearchPage extends React.PureComponent {
 
   handleSearchSubmitted = keywords => {
     const { search } = this.props;
-    this.setState({ currentUri: isURIValid(keywords) ? normalizeURI(keywords) : null });
+    this.setState({
+      currentUri: isURIValid(keywords) ? normalizeURI(keywords) : null,
+      claimSearchOptions: null,
+      claimSearchRun: false,
+      showTagResult: false,
+    });
     search(keywords);
   };
 
@@ -105,13 +116,27 @@ class SearchPage extends React.PureComponent {
     );
   };
 
-  listHeaderComponent = () => {
-    const { navigation } = this.props;
+  listHeaderComponent = showTagResult => {
+    const { navigation, claimSearch, claimSearchByQuery } = this.props;
     const { currentUri } = this.state;
     const query = this.getSearchQuery();
 
-    // TODO: Do a claim_search to see if the tag has any content
-    const showTagResult = query && query.trim().length > 0 && isURIValid(query);
+    const canBeTag = query && query.trim().length > 0 && isURIValid(query);
+    if (canBeTag && !this.state.claimSearchRun) {
+      const options = {
+        any_tags: [query],
+        page: 1,
+        no_totals: true,
+      };
+      this.setState({ claimSearchOptions: options, claimSearchRun: true }, () => claimSearch(options));
+    }
+
+    if (this.state.claimSearchRun && this.state.claimSearchOptions) {
+      const claimSearchKey = createNormalizedClaimSearchKey(this.state.claimSearchOptions);
+      const claimSearchUris = claimSearchByQuery[claimSearchKey];
+      this.setState({ showTagResult: claimSearchUris && claimSearchUris.length > 0 });
+    }
+
     return (
       <View>
         <FileListItem uri={currentUri} featuredResult style={searchStyle.featuredResultItem} navigation={navigation} />
@@ -144,6 +169,7 @@ class SearchPage extends React.PureComponent {
         )}
 
         <FlatList
+          extraData={this.state}
           style={searchStyle.scrollContainer}
           contentContainerStyle={searchStyle.scrollPadding}
           keyboardShouldPersistTaps={'handled'}
@@ -153,7 +179,7 @@ class SearchPage extends React.PureComponent {
           maxToRenderPerBatch={20}
           removeClippedSubviews
           ListEmptyComponent={!isSearching ? this.listEmptyComponent() : null}
-          ListHeaderComponent={this.state.currentUri ? this.listHeaderComponent() : null}
+          ListHeaderComponent={this.state.currentUri ? this.listHeaderComponent(this.state.showTagResult) : null}
           renderItem={({ item }) => (
             <FileListItem key={item} uri={item} style={searchStyle.resultItem} navigation={navigation} />
           )}
