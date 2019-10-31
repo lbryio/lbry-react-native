@@ -27,7 +27,15 @@ import {
   createNavigationReducer,
 } from 'react-navigation-redux-helpers';
 import { connect } from 'react-redux';
-import { AppState, BackHandler, Linking, NativeModules, TextInput, ToastAndroid } from 'react-native';
+import {
+  AppState,
+  BackHandler,
+  DeviceEventEmitter,
+  Linking,
+  NativeModules,
+  TextInput,
+  ToastAndroid,
+} from 'react-native';
 import { selectDrawerStack } from 'redux/selectors/drawer';
 import { SETTINGS, doDismissToast, doPopulateSharedUserState, doPreferenceGet, doToast, selectToast } from 'lbry-redux';
 import {
