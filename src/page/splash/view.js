@@ -273,7 +273,6 @@ class SplashScreen extends React.PureComponent {
 
     this.props.fetchRewardedContent();
     Linking.getInitialURL().then(url => {
-      console.log('checking initial url=' + url);
       if (url) {
         this.setState({ launchUrl: url });
       }
