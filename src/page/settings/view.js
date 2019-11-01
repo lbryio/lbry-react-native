@@ -105,56 +105,52 @@ class SettingsPage extends React.PureComponent {
             </View>
           </View>
 
-          {false && (
-            <View>
-              <View style={settingsStyle.sectionDivider} />
-              <Text style={settingsStyle.sectionTitle}>{__('Notifications')}</Text>
-              <Text style={settingsStyle.sectionDescription}>
-                {__('Choose the notifications you would like to receive.')}
-              </Text>
-              <View style={settingsStyle.row}>
-                <View style={settingsStyle.switchText}>
-                  <Text style={settingsStyle.label}>{__('Subscriptions')}</Text>
-                </View>
-                <View style={settingsStyle.switchContainer}>
-                  <Switch
-                    value={actualReceiveSubscriptionNotifications}
-                    onValueChange={value => {
-                      this.setNativeBooleanSetting(SETTINGS.RECEIVE_SUBSCRIPTION_NOTIFICATIONS, value);
-                    }}
-                  />
-                </View>
-              </View>
-
-              <View style={settingsStyle.row}>
-                <View style={settingsStyle.switchText}>
-                  <Text style={settingsStyle.label}>{__('Rewards')}</Text>
-                </View>
-                <View style={settingsStyle.switchContainer}>
-                  <Switch
-                    value={actualReceiveRewardNotifications}
-                    onValueChange={value => {
-                      this.setNativeBooleanSetting(SETTINGS.RECEIVE_REWARD_NOTIFICATIONS, value);
-                    }}
-                  />
-                </View>
-              </View>
-
-              <View style={settingsStyle.row}>
-                <View style={settingsStyle.switchText}>
-                  <Text style={settingsStyle.label}>{__('Tags you follow')}</Text>
-                </View>
-                <View style={settingsStyle.switchContainer}>
-                  <Switch
-                    value={actualReceiveInterestsNotifications}
-                    onValueChange={value => {
-                      this.setNativeBooleanSetting(SETTINGS.RECEIVE_INTERESTS_NOTIFICATIONS, value);
-                    }}
-                  />
-                </View>
-              </View>
+          <View style={settingsStyle.sectionDivider} />
+          <Text style={settingsStyle.sectionTitle}>{__('Notifications')}</Text>
+          <Text style={settingsStyle.sectionDescription}>
+            {__('Choose the notifications you would like to receive.')}
+          </Text>
+          <View style={settingsStyle.row}>
+            <View style={settingsStyle.switchText}>
+              <Text style={settingsStyle.label}>{__('Subscriptions')}</Text>
             </View>
-          )}
+            <View style={settingsStyle.switchContainer}>
+              <Switch
+                value={actualReceiveSubscriptionNotifications}
+                onValueChange={value => {
+                  this.setNativeBooleanSetting(SETTINGS.RECEIVE_SUBSCRIPTION_NOTIFICATIONS, value);
+                }}
+              />
+            </View>
+          </View>
+
+          <View style={settingsStyle.row}>
+            <View style={settingsStyle.switchText}>
+              <Text style={settingsStyle.label}>{__('Rewards')}</Text>
+            </View>
+            <View style={settingsStyle.switchContainer}>
+              <Switch
+                value={actualReceiveRewardNotifications}
+                onValueChange={value => {
+                  this.setNativeBooleanSetting(SETTINGS.RECEIVE_REWARD_NOTIFICATIONS, value);
+                }}
+              />
+            </View>
+          </View>
+
+          <View style={settingsStyle.row}>
+            <View style={settingsStyle.switchText}>
+              <Text style={settingsStyle.label}>{__('Content Interests')}</Text>
+            </View>
+            <View style={settingsStyle.switchContainer}>
+              <Switch
+                value={actualReceiveInterestsNotifications}
+                onValueChange={value => {
+                  this.setNativeBooleanSetting(SETTINGS.RECEIVE_INTERESTS_NOTIFICATIONS, value);
+                }}
+              />
+            </View>
+          </View>
 
           {false && (
             <View style={settingsStyle.row}>

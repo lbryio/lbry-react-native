@@ -120,7 +120,9 @@ class FileListItem extends React.PureComponent {
       shortChannelUri = signingChannel ? signingChannel.short_url : null;
 
       if (blackListedOutpoints || filteredOutpoints) {
-        const outpointsToHide = blackListedOutpoints.concat(filteredOutpoints);
+        const outpointsToHide = !blackListedOutpoints
+          ? filteredOutpoints
+          : blackListedOutpoints.concat(filteredOutpoints);
         shouldHide = outpointsToHide.some(outpoint => outpoint.txid === claim.txid && outpoint.nout === claim.nout);
       }
 

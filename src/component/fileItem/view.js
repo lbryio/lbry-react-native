@@ -66,7 +66,9 @@ class FileItem extends React.PureComponent {
 
     let shouldHide = false;
     if (blackListedOutpoints || filteredOutpoints) {
-      const outpointsToHide = blackListedOutpoints.concat(filteredOutpoints);
+      const outpointsToHide = !blackListedOutpoints
+        ? filteredOutpoints
+        : blackListedOutpoints.concat(filteredOutpoints);
       shouldHide = outpointsToHide.some(outpoint => outpoint.txid === claim.txid && outpoint.nout === claim.nout);
     }
     if (shouldHide) {
