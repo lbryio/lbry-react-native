@@ -82,7 +82,8 @@ class WalletSend extends React.PureComponent<Props> {
 
   render() {
     const { balance } = this.props;
-    const canSend = this.state.address && this.state.amount > 0 && this.state.address.trim().length > 0;
+    const canSend =
+      this.state.address && this.state.amount > 0 && this.state.address.trim().length > 0 && this.state.addressValid;
 
     return (
       <View style={walletStyle.card}>
@@ -94,7 +95,7 @@ class WalletSend extends React.PureComponent<Props> {
               this.setState({
                 address: value,
                 addressChanged: true,
-                addressValid: value.trim().length == 0 || regexAddress.test(value),
+                addressValid: value.trim().length === 0 || regexAddress.test(value),
               })
             }
             onBlur={this.handleAddressInputBlur}
