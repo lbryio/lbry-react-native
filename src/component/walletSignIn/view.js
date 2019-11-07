@@ -16,7 +16,11 @@ class WalletSignIn extends React.Component {
 
   onSignInPressed = () => {
     const { navigation } = this.props;
-    navigation.navigate({ routeName: 'Verification', key: 'verification', params: { syncFlow: true } });
+    navigation.navigate({
+      routeName: 'Verification',
+      key: 'verification',
+      params: { syncFlow: true, signInFlow: true },
+    });
   };
 
   render() {

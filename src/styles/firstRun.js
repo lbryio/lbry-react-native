@@ -153,6 +153,10 @@ const firstRunStyle = StyleSheet.create({
     color: Colors.White,
     fontSize: 16,
   },
+  closeButtonIcon: {
+    alignSelf: 'center',
+    color: Colors.White,
+  },
   buttonContainer: {
     flexDirection: 'row',
     alignItems: 'center',

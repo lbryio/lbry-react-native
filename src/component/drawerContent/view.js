@@ -54,7 +54,11 @@ class DrawerContent extends React.PureComponent {
   launchSignInFlow = () => {
     // for now, sync flow (email, then password input) will be the default sign in flow
     const { navigation } = this.props;
-    navigation.navigate({ routeName: 'Verification', key: 'verification', params: { syncFlow: true } });
+    navigation.navigate({
+      routeName: 'Verification',
+      key: 'verification',
+      params: { syncFlow: true, signInFlow: true },
+    });
   };
 
   render() {

@@ -112,7 +112,7 @@ class SyncVerifyPage extends React.PureComponent {
   };
 
   render() {
-    const { hasSyncedWallet, syncApplyIsPending } = this.props;
+    const { hasSyncedWallet, syncApplyIsPending, signInFlow } = this.props;
 
     let paragraph;
     if (!hasSyncedWallet) {
@@ -194,7 +194,7 @@ class SyncVerifyPage extends React.PureComponent {
               <Button
                 style={rewardStyle.verificationButton}
                 theme={'light'}
-                text={'Enable sync'}
+                text={signInFlow ? 'Use LBRY' : 'Enable sync'}
                 onPress={this.onEnableSyncPressed}
               />
             )}

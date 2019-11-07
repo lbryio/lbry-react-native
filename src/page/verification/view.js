@@ -1,10 +1,11 @@
 import React from 'react';
-import { Lbry } from 'lbry-redux';
+import { Lbry, doPreferenceGet } from 'lbry-redux';
 import { ActivityIndicator, Linking, NativeModules, Text, TouchableOpacity, View } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import EmailVerifyPage from './internal/email-verify-page';
 import ManualVerifyPage from './internal/manual-verify-page';
 import PhoneVerifyPage from './internal/phone-verify-page';
@@ -19,6 +20,7 @@ class VerificationScreen extends React.PureComponent {
     showSkip: false,
     skipAccountConfirmed: false,
     showBottomContainer: true,
+    signInFlow: false,
     walletPassword: null,
     isEmailVerificationPhase: false,
     isEmailVerified: false,
@@ -27,7 +29,9 @@ class VerificationScreen extends React.PureComponent {
   };
 
   componentDidMount() {
-    const { user } = this.props;
+    const { user, navigation } = this.props;
+    const { signInFlow } = navigation.state.params;
+    this.setState({ signInFlow });
     this.checkVerificationStatus(user);
     NativeModules.Firebase.setCurrentScreen('Verification');
   }
@@ -36,8 +40,22 @@ class VerificationScreen extends React.PureComponent {
     this.setState({ isEmailVerificationPhase: value });
   };
 
+  getUserSettings = () => {
+    const { populateSharedUserState } = this.props;
+
+    doPreferenceGet(
+      'shared',
+      preference => {
+        populateSharedUserState(preference);
+      },
+      error => {
+        /* failed */
+      }
+    );
+  };
+
   checkVerificationStatus = user => {
-    const { deviceWalletSynced, navigation } = this.props;
+    const { deviceWalletSynced, getSync, navigation } = this.props;
     const { syncFlow } = navigation.state.params;
 
     this.setState(
@@ -57,7 +75,13 @@ class VerificationScreen extends React.PureComponent {
           }
 
           if (this.state.isEmailVerified && syncFlow && deviceWalletSynced) {
-            navigation.goBack();
+            // retrieve user settings
+            NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
+              getSync(walletPassword, () => {
+                this.getUserSettings();
+                navigation.goBack();
+              });
+            });
           }
         } else {
           if (this.state.isEmailVerified && !this.state.isIdentityVerified && !this.state.isRewardApproved) {
@@ -167,6 +191,7 @@ class VerificationScreen extends React.PureComponent {
             syncApply={syncApply}
             syncData={syncData}
             syncHash={syncHash}
+            signInFlow={this.state.signInFlow}
           />
         );
         break;
@@ -182,7 +207,7 @@ class VerificationScreen extends React.PureComponent {
 
         {!this.state.isEmailVerificationPhase && (
           <TouchableOpacity style={firstRunStyle.closeButton} onPress={this.onCloseButtonPressed}>
-            <Text style={firstRunStyle.closeButtonText}>x</Text>
+            <Icon name={'times'} size={16} style={firstRunStyle.closeButtonIcon} />
           </TouchableOpacity>
         )}
       </View>
