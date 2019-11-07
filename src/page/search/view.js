@@ -142,7 +142,7 @@ class SearchPage extends React.PureComponent {
         <FileListItem uri={currentUri} featuredResult style={searchStyle.featuredResultItem} navigation={navigation} />
         {showTagResult && (
           <TouchableOpacity style={searchStyle.tagResultItem} onPress={() => this.handleTagResultPressed(query)}>
-            <Text style={searchStyle.tagResultTitle}>#{query}</Text>
+            <Text style={searchStyle.tagResultTitle}>#{query.toLowerCase()}</Text>
             <Text style={searchStyle.tagResultDescription}>Explore content for this tag</Text>
           </TouchableOpacity>
         )}
@@ -152,7 +152,7 @@ class SearchPage extends React.PureComponent {
 
   handleTagResultPressed = tag => {
     const { navigation } = this.props;
-    navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: `tagPage`, params: { tag } });
+    navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: `tagPage`, params: { tag: tag.toLowerCase() } });
   };
 
   render() {

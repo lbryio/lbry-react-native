@@ -140,7 +140,7 @@ class SettingsPage extends React.PureComponent {
 
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>{__('Tags you follow')}</Text>
+              <Text style={settingsStyle.label}>{__('Content Interests')}</Text>
             </View>
             <View style={settingsStyle.switchContainer}>
               <Switch

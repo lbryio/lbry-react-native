@@ -402,6 +402,39 @@ const filePageStyle = StyleSheet.create({
     marginTop: 12,
     marginBottom: 12,
   },
+  unsupportedContent: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 16,
+    padding: 24,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.White,
+  },
+  unspportedContentTextContainer: {
+    flex: 1,
+  },
+  unsupportedContentFilename: {
+    color: Colors.LbryGreen,
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 16,
+  },
+  unsupportedContentImage: {
+    width: 64,
+    height: 80,
+    marginRight: 24,
+  },
+  unsupportedContentTitle: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 20,
+  },
+  unsupportedContentText: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 16,
+    marginTop: 4,
+  },
 });
 
 export default filePageStyle;

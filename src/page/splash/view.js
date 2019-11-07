@@ -1,7 +1,7 @@
 import React from 'react';
 import { Lbry, doPreferenceGet } from 'lbry-redux';
 import { Lbryio } from 'lbryinc';
-import { ActivityIndicator, Linking, NativeModules, Platform, Text, View } from 'react-native';
+import { ActivityIndicator, DeviceEventEmitter, Linking, NativeModules, Platform, Text, View } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
 import { decode as atob } from 'base-64';
 import { navigateToUri, transformUrl } from 'utils/helper';
@@ -52,7 +52,10 @@ class SplashScreen extends React.PureComponent {
     });
     navigation.dispatch(resetAction);
 
-    const launchUrl = navigation.state.params ? navigation.state.params.launchUrl : this.state.launchUrl;
+    const launchUrl =
+      navigation.state.params && navigation.state.params.launchUrl
+        ? navigation.state.params.launchUrl
+        : this.state.launchUrl;
     if (launchUrl) {
       if (launchUrl.startsWith('lbry://?verify=')) {
         let verification = {};
@@ -118,6 +121,12 @@ class SplashScreen extends React.PureComponent {
     );
   };
 
+  onNotificationTargetLaunch = evt => {
+    if (evt.url && evt.url.startsWith('lbry://')) {
+      this.setState({ launchUrl: evt.url });
+    }
+  };
+
   finishSplashScreen = () => {
     const {
       authenticate,
@@ -149,7 +158,10 @@ class SplashScreen extends React.PureComponent {
         NativeModules.VersionInfo.getAppVersion().then(appVersion => {
           this.setState({ shouldAuthenticate: true });
           NativeModules.Firebase.getMessagingToken()
-            .then(firebaseToken => authenticate(appVersion, Platform.OS, firebaseToken))
+            .then(firebaseToken => {
+              console.log(firebaseToken);
+              authenticate(appVersion, Platform.OS, firebaseToken);
+            })
             .catch(() => authenticate(appVersion, Platform.OS));
         });
       }
@@ -250,6 +262,14 @@ class SplashScreen extends React.PureComponent {
     }, 1000);
   }
 
+  componentWillMount() {
+    DeviceEventEmitter.addListener('onNotificationTargetLaunch', this.onNotificationTargetLaunch);
+  }
+
+  componentWillUnmount() {
+    DeviceEventEmitter.removeListener('onNotificationTargetLaunch', this.onNotificationTargetLaunch);
+  }
+
   componentDidMount() {
     NativeModules.Firebase.track('app_launch', null);
     NativeModules.Firebase.setCurrentScreen('Splash');
@@ -259,6 +279,26 @@ class SplashScreen extends React.PureComponent {
       if (url) {
         this.setState({ launchUrl: url });
       }
+
+      NativeModules.UtilityModule.getNotificationLaunchTarget().then(target => {
+        if (target) {
+          this.setState({ launchUrl: target });
+        }
+
+        // Only connect after checking initial launch url / notification launch target
+        Lbry.connect()
+          .then(() => {
+            this.updateStatus();
+          })
+          .catch(e => {
+            this.setState({
+              isLagging: true,
+              message: 'Connection Failure',
+              details:
+                'We could not establish a connection to the daemon. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.',
+            });
+          });
+      });
     });
 
     // Start measuring the first launch time from the splash screen
@@ -270,19 +310,6 @@ class SplashScreen extends React.PureComponent {
         AsyncStorage.setItem('firstLaunchTime', String(moment().unix()));
       }
     });
-
-    Lbry.connect()
-      .then(() => {
-        this.updateStatus();
-      })
-      .catch(e => {
-        this.setState({
-          isLagging: true,
-          message: 'Connection Failure',
-          details:
-            'We could not establish a connection to the daemon. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.',
-        });
-      });
   }
 
   handleContinueAnywayPressed = () => {

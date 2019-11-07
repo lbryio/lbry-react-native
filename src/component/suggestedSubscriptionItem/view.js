@@ -72,7 +72,9 @@ class SuggestedSubscriptionItem extends React.PureComponent {
           )}
         </View>
 
-        <SubscribeButton style={subscriptionsStyle.suggestedItemSubscribe} uri={normalizeURI(uri)} />
+        {claim && (
+          <SubscribeButton style={subscriptionsStyle.suggestedItemSubscribe} uri={normalizeURI(claim.permanent_url)} />
+        )}
       </View>
     );
   }

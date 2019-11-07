@@ -6,6 +6,7 @@ import {
   Alert,
   DeviceEventEmitter,
   Dimensions,
+  Image,
   Linking,
   NativeModules,
   ScrollView,
@@ -739,6 +740,7 @@ class FilePage extends React.PureComponent {
       const isWebViewable = mediaType === 'text';
       const canOpen = isViewable && completed;
       const localFileUri = this.localUriForFileInfo(fileInfo);
+      const unsupported = !isPlayable && !canOpen;
 
       const openFile = () => {
         if (mediaType === 'image') {
@@ -809,9 +811,30 @@ class FilePage extends React.PureComponent {
                     thumbnail={thumbnail}
                   />
                 )}
-                {(!this.state.downloadButtonShown || this.state.downloadPressed) && !this.state.mediaLoaded && (
+                {!unsupported &&
+                  (!this.state.downloadButtonShown || this.state.downloadPressed) &&
+                  !this.state.mediaLoaded && (
                   <ActivityIndicator size="large" color={Colors.NextLbryGreen} style={filePageStyle.loading} />
                 )}
+
+                {unsupported && fileInfo && completed && (
+                  <View style={filePageStyle.unsupportedContent}>
+                    <Image
+                      style={filePageStyle.unsupportedContentImage}
+                      resizeMode={'stretch'}
+                      source={require('../../assets/gerbil-happy.png')}
+                    />
+                    <View style={filePageStyle.unspportedContentTextContainer}>
+                      <Text style={filePageStyle.unsupportedContentTitle}>Unsupported Content</Text>
+                      <Text style={filePageStyle.unsupportedContentText}>
+                        Sorry, we are unable to display this content in the app. You can find the file named{' '}
+                        <Text style={filePageStyle.unsupportedContentFilename}>{fileInfo.file_name}</Text> in your
+                        downloads folder.
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
                 {((isPlayable && !completed && !canLoadMedia) ||
                   canOpen ||
                   (!completed && !this.state.streamingMode)) &&
