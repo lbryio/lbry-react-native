@@ -46,30 +46,30 @@ import { selectDrawerStack } from 'redux/selectors/drawer';
 import FilePage from './view';
 
 const select = (state, props) => {
-  const selectProps = { uri: props.navigation.state.params.uri };
+  const { uri, fullUri } = props.navigation.state.params;
+  const contentUri = fullUri || uri;
+  const selectProps = { uri: contentUri };
   return {
     balance: selectBalance(state),
     blackListedOutpoints: selectBlackListedOutpoints(state),
     channels: selectMyChannelClaims(state),
-    claim: makeSelectClaimForUri(selectProps.uri)(state),
+    claim: makeSelectClaimForUri(contentUri)(state),
     drawerStack: selectDrawerStack(state),
-    isResolvingUri: makeSelectIsUriResolving(selectProps.uri)(state),
-    contentType: makeSelectContentTypeForUri(selectProps.uri)(state),
-    costInfo: makeSelectCostInfoForUri(selectProps.uri)(state),
-    metadata: makeSelectMetadataForUri(selectProps.uri)(state),
-    // obscureNsfw: !selectShowNsfw(state),
-    // tab: makeSelectCurrentParam('tab')(state),
-    fileInfo: makeSelectFileInfoForUri(selectProps.uri)(state),
+    isResolvingUri: makeSelectIsUriResolving(contentUri)(state),
+    contentType: makeSelectContentTypeForUri(contentUri)(state),
+    costInfo: makeSelectCostInfoForUri(contentUri)(state),
+    metadata: makeSelectMetadataForUri(contentUri)(state),
+    fileInfo: makeSelectFileInfoForUri(contentUri)(state),
     rewardedContentClaimIds: selectRewardContentClaimIds(state, selectProps),
-    channelUri: makeSelectChannelForClaimUri(selectProps.uri, true)(state),
-    position: makeSelectContentPositionForUri(selectProps.uri)(state),
+    channelUri: makeSelectChannelForClaimUri(contentUri, true)(state),
+    position: makeSelectContentPositionForUri(contentUri)(state),
     purchasedUris: selectPurchasedUris(state),
     failedPurchaseUris: selectFailedPurchaseUris(state),
     myClaimUris: selectMyClaimUrisWithoutChannels(state),
     purchaseUriErrorMessage: selectPurchaseUriErrorMessage(state),
-    streamingUrl: makeSelectStreamingUrlForUri(selectProps.uri)(state),
-    thumbnail: makeSelectThumbnailForUri(selectProps.uri)(state),
-    title: makeSelectTitleForUri(selectProps.uri)(state),
+    streamingUrl: makeSelectStreamingUrlForUri(contentUri)(state),
+    thumbnail: makeSelectThumbnailForUri(contentUri)(state),
+    title: makeSelectTitleForUri(contentUri)(state),
   };
 };
 

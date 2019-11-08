@@ -31,7 +31,7 @@ function getRouteForSpecialUri(uri) {
   return targetRoute;
 }
 
-export function dispatchNavigateToUri(dispatch, nav, uri, isNavigatingBack) {
+export function dispatchNavigateToUri(dispatch, nav, uri, isNavigatingBack, fullUri) {
   if (uri.startsWith('lbry://?')) {
     dispatch(NavigationActions.navigate({ routeName: getRouteForSpecialUri(uri) }));
     return;
@@ -45,7 +45,7 @@ export function dispatchNavigateToUri(dispatch, nav, uri, isNavigatingBack) {
     uriVars = parseUriVars(uriVarsStr);
   }
 
-  const params = { uri, uriVars };
+  const params = { uri, uriVars, fullUri: fullUri };
 
   if (!isNavigatingBack) {
     dispatch(doPushDrawerStack(uri));
@@ -108,7 +108,7 @@ function parseUriVars(vars) {
   return uriVars;
 }
 
-export function navigateToUri(navigation, uri, additionalParams, isNavigatingBack) {
+export function navigateToUri(navigation, uri, additionalParams, isNavigatingBack, fullUri) {
   if (!navigation) {
     return;
   }
@@ -131,7 +131,7 @@ export function navigateToUri(navigation, uri, additionalParams, isNavigatingBac
   }
 
   const { store } = window;
-  const params = Object.assign({ uri, uriVars }, additionalParams);
+  const params = Object.assign({ uri, uriVars, fullUri: fullUri }, additionalParams);
   if (navigation.state.routeName === 'File') {
     const stackAction = StackActions.replace({ routeName: 'File', newKey: uri, params });
     navigation.dispatch(stackAction);

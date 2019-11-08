@@ -57,7 +57,7 @@ class SuggestedSubscriptionItem extends React.PureComponent {
               style={subscriptionsStyle.suggestedItemName}
               numberOfLines={1}
               text={claim.name}
-              onPress={() => navigateToUri(navigation, normalizeURI(shortUrl || uri))}
+              onPress={() => navigateToUri(navigation, normalizeURI(shortUrl || uri), null, false, claim.permanent_url)}
             />
           )}
           {tags && (

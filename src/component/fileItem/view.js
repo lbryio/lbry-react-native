@@ -30,12 +30,12 @@ class FileItem extends React.PureComponent {
   }
 
   navigateToFileUri = () => {
-    const { navigation, uri, shortUrl } = this.props;
+    const { claim, navigation, uri, shortUrl } = this.props;
     const normalizedUri = normalizeURI(uri);
     if (NativeModules.Firebase) {
       NativeModules.Firebase.track('explore_click', { uri: normalizedUri, short_url: shortUrl });
     }
-    navigateToUri(navigation, shortUrl || uri);
+    navigateToUri(navigation, shortUrl || uri, null, false, claim ? claim.permanent_url : null);
   };
 
   render() {
@@ -124,7 +124,13 @@ class FileItem extends React.PureComponent {
                   style={discoverStyle.channelName}
                   text={channelName}
                   onPress={() => {
-                    navigateToUri(navigation, normalizeURI(shortChannelUri || fullChannelUri));
+                    navigateToUri(
+                      navigation,
+                      normalizeURI(shortChannelUri || fullChannelUri),
+                      null,
+                      false,
+                      fullChannelUri
+                    );
                   }}
                 />
               )}
