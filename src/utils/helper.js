@@ -6,26 +6,31 @@ import Constants, { DrawerRoutes, InnerDrawerRoutes } from 'constants'; // eslin
 
 const tagNameLength = 10;
 
+const specialRouteMap = {
+  about: Constants.DRAWER_ROUTE_ABOUT,
+  allContent: Constants.DRAWER_ROUTE_TRENDING,
+  channels: Constants.DRAWER_ROUTE_CHANNEL_CREATOR,
+  library: Constants.DRAWER_ROUTE_MY_LBRY,
+  publish: Constants.DRAWER_ROUTE_PUBLISH,
+  publishes: Constants.DRAWER_ROUTE_PUBLISHES,
+  rewards: Constants.DRAWER_ROUTE_REWARDS,
+  settings: Constants.DRAWER_ROUTE_SETTINGS,
+  subscriptions: Constants.DRAWER_ROUTE_SUBSCRIPTIONS,
+  wallet: Constants.FULL_ROUTE_NAME_WALLET,
+  discover: Constants.FULL_ROUTE_NAME_DISCOVER,
+};
+
 function getRouteForSpecialUri(uri) {
   let targetRoute;
   const page = uri.substring(8).trim(); // 'lbry://?'.length == 8
 
-  switch (page) {
-    case Constants.PAGE_REWARDS:
-      targetRoute = Constants.DRAWER_ROUTE_REWARDS;
-      break;
-    case Constants.PAGE_SETTINGS:
-      targetRoute = Constants.DRAWER_ROUTE_SETTINGS;
-      break;
-    case Constants.PAGE_TRENDING:
-      targetRoute = Constants.DRAWER_ROUTE_TRENDING;
-      break;
-    case Constants.PAGE_WALLET:
-      targetRoute = Constants.FULL_ROUTE_NAME_WALLET;
-      break;
-    default:
-      targetRoute = Constants.FULL_ROUTE_NAME_DISCOVER;
-      break;
+  if (specialRouteMap[page]) {
+    targetRoute = specialRouteMap[page];
+  }
+
+  if (!targetRoute) {
+    // default to the home page if there is no match for the page
+    targetRoute = Constants.FULL_ROUTE_NAME_DISCOVER;
   }
 
   return targetRoute;
