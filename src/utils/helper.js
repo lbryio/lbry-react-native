@@ -17,7 +17,7 @@ const specialRouteMap = {
   settings: Constants.DRAWER_ROUTE_SETTINGS,
   subscriptions: Constants.DRAWER_ROUTE_SUBSCRIPTIONS,
   wallet: Constants.FULL_ROUTE_NAME_WALLET,
-  yourTags: Constants.FULL_ROUTE_NAME_DISCOVER,
+  discover: Constants.FULL_ROUTE_NAME_DISCOVER,
 };
 
 function getRouteForSpecialUri(uri) {
