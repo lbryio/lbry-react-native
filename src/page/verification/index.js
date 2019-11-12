@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { doToast } from 'lbry-redux';
+import { doToast, doPopulateSharedUserState } from 'lbry-redux';
 import {
   doCheckSync,
   doGetSync,
@@ -58,6 +58,7 @@ const perform = dispatch => ({
   checkSync: () => dispatch(doCheckSync()),
   verifyPhone: verificationCode => dispatch(doUserPhoneVerify(verificationCode)),
   notify: data => dispatch(doToast(data)),
+  populateSharedUserState: settings => dispatch(doPopulateSharedUserState(settings)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
   setEmailToVerify: email => dispatch(doUserEmailToVerify(email)),
   syncApply: (hash, data, password) => dispatch(doSyncApply(hash, data, password)),
