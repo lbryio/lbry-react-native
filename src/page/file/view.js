@@ -840,7 +840,7 @@ class FilePage extends React.PureComponent {
                   (!completed && !this.state.streamingMode)) &&
                   !this.state.downloadPressed && (
                   <FileDownloadButton
-                    uri={uri}
+                    uri={claim && claim.permanent_url ? claim.permanent_url : uri}
                     style={filePageStyle.downloadButton}
                     openFile={openFile}
                     isPlayable={isPlayable}
