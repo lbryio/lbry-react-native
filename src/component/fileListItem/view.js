@@ -59,7 +59,7 @@ class FileListItem extends React.PureComponent {
     if (featuredResult && !claim) {
       navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISH, params: { vanityUrl: uri.trim() } });
     } else {
-      navigateToUri(navigation, shortUrl || uri, { autoplay });
+      navigateToUri(navigation, shortUrl || uri, { autoplay }, false, claim ? claim.permanent_url : null);
     }
   };
 
@@ -198,7 +198,13 @@ class FileListItem extends React.PureComponent {
                 style={fileListStyle.publisher}
                 text={channel}
                 onPress={() => {
-                  navigateToUri(navigation, normalizeURI(shortChannelUri || fullChannelUri));
+                  navigateToUri(
+                    navigation,
+                    normalizeURI(shortChannelUri || fullChannelUri),
+                    null,
+                    false,
+                    fullChannelUri
+                  );
                 }}
               />
             )}

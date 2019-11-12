@@ -999,7 +999,13 @@ class FilePage extends React.PureComponent {
                         numberOfLines={1}
                         ellipsizeMode={'tail'}
                         onPress={() => {
-                          navigateToUri(navigation, normalizeURI(shortChannelUri || fullChannelUri));
+                          navigateToUri(
+                            navigation,
+                            normalizeURI(shortChannelUri || fullChannelUri),
+                            null,
+                            false,
+                            fullChannelUri
+                          );
                         }}
                       />
                     )}
