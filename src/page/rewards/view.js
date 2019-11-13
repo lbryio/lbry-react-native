@@ -8,7 +8,6 @@ import CustomRewardCard from 'component/customRewardCard';
 import PageHeader from 'component/pageHeader';
 import RewardCard from 'component/rewardCard';
 import RewardEnrolment from 'component/rewardEnrolment';
-import RewardSummary from 'component/rewardSummary';
 import UriBar from 'component/uriBar';
 import rewardStyle from 'styles/reward';
 

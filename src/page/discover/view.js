@@ -11,10 +11,9 @@ import {
   View,
 } from 'react-native';
 import { DEFAULT_FOLLOWED_TAGS, Lbry, normalizeURI, parseURI } from 'lbry-redux';
-import { __, formatTagTitle, getOrderBy } from 'utils/helper';
+import { formatTagTitle, getOrderBy } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
-import CategoryList from 'component/categoryList';
 import ClaimList from 'component/claimList';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Colors from 'styles/colors';

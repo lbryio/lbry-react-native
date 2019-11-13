@@ -1,7 +1,7 @@
 import React from 'react';
 import { SETTINGS } from 'lbry-redux';
 import { Text, View, ScrollView, Switch, NativeModules } from 'react-native';
-import { __, navigateBack } from 'utils/helper';
+import { navigateBack } from 'utils/helper';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PageHeader from 'component/pageHeader';
 import settingsStyle from 'styles/settings';

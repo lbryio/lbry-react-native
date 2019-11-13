@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { buildURI, parseURI } from 'lbry-redux';
-import { __, getOrderBy } from 'utils/helper';
+import { getOrderBy } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import Button from 'component/button';

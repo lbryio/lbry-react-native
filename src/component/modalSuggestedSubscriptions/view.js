@@ -17,7 +17,7 @@ export default class ModalSuggestedSubcriptions extends React.PureComponent {
         <TouchableOpacity style={[modalStyle.container, subscriptionsStyle.modalContainer]} activeOpacity={1}>
           <SuggestedSubscriptions inModal navigation={navigation} />
           <View style={modalStyle.buttons}>
-            <Button style={modalStyle.doneButton} text={'Done'} onPress={onDonePress} />
+            <Button style={modalStyle.doneButton} text={__('Done')} onPress={onDonePress} />
           </View>
         </TouchableOpacity>
       </TouchableOpacity>

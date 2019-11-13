@@ -11,7 +11,7 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import { __, navigateToUri, uriFromFileInfo } from 'utils/helper';
+import { navigateToUri, uriFromFileInfo } from 'utils/helper';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PageHeader from 'component/pageHeader';
@@ -116,12 +116,12 @@ class DownloadsPage extends React.PureComponent {
 
     // show confirm alert
     Alert.alert(
-      __('Delete files'),
-      __('Are you sure you want to delete the selected content?'),
+      'Delete files',
+      'Are you sure you want to delete the selected content?',
       [
-        { text: __('No') },
+        { text: 'No' },
         {
-          text: __('Yes'),
+          text: 'Yes',
           onPress: () => {
             const uris = Object.keys(selectedClaimsMap);
             uris.forEach(uri => {

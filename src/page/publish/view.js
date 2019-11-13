@@ -45,7 +45,7 @@ import Tag from 'component/tag';
 import TagSearch from 'component/tagSearch';
 import UriBar from 'component/uriBar';
 import publishStyle from 'styles/publish';
-import { __, navigateToUri, logPublish, uploadImageAsset } from 'utils/helper';
+import { navigateToUri, logPublish, uploadImageAsset } from 'utils/helper';
 
 const languages = {
   en: 'English',

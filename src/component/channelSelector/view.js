@@ -87,9 +87,9 @@ export default class ChannelSelector extends React.PureComponent {
     }
 
     if (newChannelName.trim().length > 0 && !isNameValid(newChannelName)) {
-      newChannelNameError = 'Your channel name contains invalid characters.';
+      newChannelNameError = __('Your channel name contains invalid characters.');
     } else if (this.channelExists(newChannelName)) {
-      newChannelNameError = 'You have already created a channel with the same name.';
+      newChannelNameError = __('You have already created a channel with the same name.');
     }
 
     this.setState({
@@ -122,17 +122,17 @@ export default class ChannelSelector extends React.PureComponent {
     const { newChannelBid, newChannelName } = this.state;
 
     if (newChannelName.trim().length === 0 || !isNameValid(newChannelName.substr(1), false)) {
-      notify({ message: 'Your channel name contains invalid characters.' });
+      notify({ message: __('Your channel name contains invalid characters.') });
       return;
     }
 
     if (this.channelExists(newChannelName)) {
-      notify({ message: 'You have already created a channel with the same name.' });
+      notify({ message: __('You have already created a channel with the same name.') });
       return;
     }
 
     if (newChannelBid > balance) {
-      notify({ message: 'Deposit cannot be higher than your balance' });
+      notify({ message: __('Deposit cannot be higher than your balance') });
       return;
     }
 
@@ -161,7 +161,7 @@ export default class ChannelSelector extends React.PureComponent {
     };
 
     const failure = () => {
-      notify({ message: 'Unable to create channel due to an internal error.' });
+      notify({ message: __('Unable to create channel due to an internal error.') });
       this.setState({
         creatingChannel: false,
       });
@@ -227,7 +227,7 @@ export default class ChannelSelector extends React.PureComponent {
                 style={channelSelectorStyle.channelNameInput}
                 value={this.state.newChannelName}
                 onChangeText={this.handleNewChannelNameChange}
-                placeholder={'Channel name'}
+                placeholder={__('Channel name')}
                 underlineColorAndroid={Colors.NextLbryGreen}
               />
             </View>
@@ -235,7 +235,7 @@ export default class ChannelSelector extends React.PureComponent {
               <Text style={channelSelectorStyle.inlineError}>{newChannelNameError}</Text>
             )}
             <View style={channelSelectorStyle.bidRow}>
-              <Text style={channelSelectorStyle.label}>Deposit</Text>
+              <Text style={channelSelectorStyle.label}>{__('Deposit')}</Text>
               <TextInput
                 style={channelSelectorStyle.bidAmountInput}
                 value={String(newChannelBid)}
@@ -247,18 +247,18 @@ export default class ChannelSelector extends React.PureComponent {
               <Text style={channelSelectorStyle.currency}>LBC</Text>
             </View>
             <Text style={channelSelectorStyle.helpText}>
-              This LBC remains yours. It is a deposit to reserve the name and can be undone at any time.
+              {__('This LBC remains yours. It is a deposit to reserve the name and can be undone at any time.')}
             </Text>
 
             <View style={channelSelectorStyle.buttonContainer}>
               {creatingChannel && <ActivityIndicator size={'small'} color={Colors.LbryGreen} />}
               {!creatingChannel && (
                 <View style={channelSelectorStyle.buttons}>
-                  <Link style={channelSelectorStyle.cancelLink} text="Cancel" onPress={this.handleCreateCancel} />
+                  <Link style={channelSelectorStyle.cancelLink} text={__('Cancel')} onPress={this.handleCreateCancel} />
                   <Button
                     style={channelSelectorStyle.createButton}
                     disabled={!(newChannelName.trim().length > 0 && newChannelBid > 0)}
-                    text="Create"
+                    text={__('Create')}
                     onPress={this.handleCreateChannelClick}
                   />
                 </View>

@@ -2,10 +2,10 @@
 import React from 'react';
 import { Text, View, Linking } from 'react-native';
 import { buildURI, formatCredits } from 'lbry-redux';
-import { navigateToUri } from '../../../utils/helper';
-import Link from '../../link';
+import { navigateToUri } from 'utils/helper';
+import Link from 'component/link';
 import moment from 'moment';
-import transactionListStyle from '../../../styles/transactionList';
+import transactionListStyle from 'styles/transactionList';
 
 class TransactionListItem extends React.PureComponent {
   capitalize(string: string) {
@@ -43,14 +43,14 @@ class TransactionListItem extends React.PureComponent {
               style={transactionListStyle.smallLink}
               text={txid.substring(0, 8)}
               href={`https://explorer.lbry.com/tx/${txid}`}
-              error={'The transaction URL could not be opened'}
+              error={__('The transaction URL could not be opened')}
             />
           </View>
           <View style={transactionListStyle.col}>
             {date ? (
               <Text style={transactionListStyle.smallText}>{moment(date).format('MMM D')}</Text>
             ) : (
-              <Text style={transactionListStyle.smallText}>Pending</Text>
+              <Text style={transactionListStyle.smallText}>{__('Pending')}</Text>
             )}
           </View>
         </View>

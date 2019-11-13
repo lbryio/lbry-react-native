@@ -89,7 +89,7 @@ export default class TagSearch extends React.PureComponent {
         </KeyboardAvoidingView>
         {showNsfwTags && (
           <View style={tagStyle.nsfwTagsContainer}>
-            <Text style={tagStyle.nsfwTagsTitle}>Mature tags</Text>
+            <Text style={tagStyle.nsfwTagsTitle}>{__('Mature tags')}</Text>
             <View style={tagStyle.tagResultsList}>
               {MATURE_TAGS.map(tag => (
                 <Tag

@@ -40,18 +40,24 @@ class RewardEnrolment extends React.Component {
 
         <View style={rewardStyle.onboarding}>
           <Text style={rewardStyle.enrollDescText}>
-            LBRY credits allow you to purchase content, publish content, and influence the network.{'\n\n'}
-            You get credits for free for providing an email address and taking other basic actions.{'\n\n'}
-            <Link style={rewardStyle.learnMoreLink} text={'Learn more'} onPress={this.onLearnMorePressed} />.
+            {__('LBRY credits allow you to purchase content, publish content, and influence the network.')}
+            {'\n\n'}
+            {__('You get credits for free for providing an email address and taking other basic actions.')}
+            {'\n\n'}
+            <Link style={rewardStyle.learnMoreLink} text={__('Learn more')} onPress={this.onLearnMorePressed} />.
           </Text>
         </View>
 
         <View style={rewardStyle.buttonRow}>
-          <Link style={rewardStyle.notInterestedLink} text={'Not interested'} onPress={this.onNotInterestedPressed} />
+          <Link
+            style={rewardStyle.notInterestedLink}
+            text={__('Not interested')}
+            onPress={this.onNotInterestedPressed}
+          />
           <Button
             style={rewardStyle.enrollButton}
             theme={'light'}
-            text={'Get started'}
+            text={__('Get started')}
             onPress={this.onEnrollPressed}
           />
         </View>

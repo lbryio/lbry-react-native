@@ -363,7 +363,7 @@ class AppWithNavigationState extends React.Component {
       this.setState({ verifyPending: false });
 
       NativeModules.Firebase.track('email_verified', { email: user.primary_email });
-      ToastAndroid.show('Your email address was successfully verified.', ToastAndroid.LONG);
+      ToastAndroid.show(__('Your email address was successfully verified.'), ToastAndroid.LONG);
 
       // get user settings after email verification
       this.getUserSettings();
@@ -400,7 +400,7 @@ class AppWithNavigationState extends React.Component {
           this.setState({ emailVerifyDone: true });
           const message = emailVerifyErrorMessage
             ? String(emailVerifyErrorMessage)
-            : 'Your email address was successfully verified.';
+            : __('Your email address was successfully verified.');
           if (!emailVerifyErrorMessage) {
             AsyncStorage.removeItem(Constants.KEY_FIRST_RUN_EMAIL);
           }
@@ -455,7 +455,7 @@ class AppWithNavigationState extends React.Component {
           try {
             dispatch(doUserEmailVerify(verification.token, verification.recaptcha));
           } catch (error) {
-            const message = 'Invalid Verification Token';
+            const message = __('Invalid Verification Token');
             dispatch(doUserEmailVerifyFailure(message));
             dispatch(doToast({ message }));
           }
