@@ -435,6 +435,9 @@ const filePageStyle = StyleSheet.create({
     fontSize: 16,
     marginTop: 4,
   },
+  relatedLoading: {
+    marginTop: 16,
+  },
 });
 
 export default filePageStyle;

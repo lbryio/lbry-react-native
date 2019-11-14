@@ -17,6 +17,7 @@ import {
   makeSelectContentPositionForUri,
   makeSelectContentTypeForUri,
   makeSelectMetadataForUri,
+  makeSelectRecommendedContentForUri,
   makeSelectStreamingUrlForUri,
   makeSelectThumbnailForUri,
   makeSelectTitleForUri,
@@ -26,6 +27,7 @@ import {
   selectPurchasedUris,
   selectFailedPurchaseUris,
   selectPurchaseUriErrorMessage,
+  selectIsSearching,
 } from 'lbry-redux';
 import {
   doClaimEligiblePurchaseRewards,
@@ -42,6 +44,7 @@ import {
   doStopDownloadingFile,
 } from 'redux/actions/file';
 import { doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
+import { doNativeSearch } from 'redux/actions/native';
 import { selectDrawerStack } from 'redux/selectors/drawer';
 import FilePage from './view';
 
@@ -70,6 +73,8 @@ const select = (state, props) => {
     streamingUrl: makeSelectStreamingUrlForUri(contentUri)(state),
     thumbnail: makeSelectThumbnailForUri(contentUri)(state),
     title: makeSelectTitleForUri(contentUri)(state),
+    recommendedContent: makeSelectRecommendedContentForUri(contentUri)(state),
+    isSearchingRecommendContent: selectIsSearching(state),
   };
 };
 
@@ -89,6 +94,7 @@ const perform = dispatch => ({
   purchaseUri: (uri, costInfo, saveFile) => dispatch(doPurchaseUri(uri, costInfo, saveFile)),
   deletePurchasedUri: uri => dispatch(doDeletePurchasedUri(uri)),
   resolveUri: uri => dispatch(doResolveUri(uri)),
+  searchRecommended: query => dispatch(doNativeSearch(query, 20, undefined, true)),
   sendTip: (amount, claimId, isSupport, successCallback, errorCallback) =>
     dispatch(doSendTip(amount, claimId, isSupport, successCallback, errorCallback)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(true)),
