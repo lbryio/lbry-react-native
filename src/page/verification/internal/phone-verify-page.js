@@ -13,7 +13,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import Button from 'component/button';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import CountryPicker from 'react-native-country-picker-modal';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
@@ -149,10 +149,10 @@ class PhoneVerifyPage extends React.PureComponent {
         </Text>
 
         <View style={rewardStyle.phoneVerificationContainer}>
-          {this.state.phase == Constants.PHASE_COLLECTION && (
+          {this.state.phase === Constants.PHASE_COLLECTION && (
             <View>
               <Text style={[rewardStyle.bottomMarginMedium, firstRunStyle.paragraph]}>
-                Please provide a phone number to prevent fraud.
+                {__('Please provide a phone number to prevent fraud.')}
               </Text>
               <PhoneInput
                 ref={ref => {
@@ -237,9 +237,9 @@ class PhoneVerifyPage extends React.PureComponent {
             this.picker = picker;
           }}
           cca2={this.state.cca2}
-          filterable={true}
+          filterable
           onChange={value => this.selectCountry(value)}
-          showCallingCode={true}
+          showCallingCode
           translation="eng"
         >
           <View />

@@ -49,7 +49,7 @@ class EmailVerifyPage extends React.PureComponent {
         if (setEmailVerificationPhase) {
           setEmailVerificationPhase(true);
         }
-        // notify({ message: 'Please follow the instructions in the email sent to your address to continue.' });
+        // notify({ message: __('Please follow the instructions in the email sent to your address to continue.') });
         AsyncStorage.setItem(Constants.KEY_EMAIL_VERIFY_PENDING, 'true');
       }
     }
@@ -65,7 +65,7 @@ class EmailVerifyPage extends React.PureComponent {
     const { email } = this.state;
     if (!email || email.trim().length === 0 || email.indexOf('@') === -1) {
       return notify({
-        message: 'Please provide a valid email address to continue.',
+        message: __('Please provide a valid email address to continue.'),
       });
     }
 
@@ -89,7 +89,7 @@ class EmailVerifyPage extends React.PureComponent {
     // resend verification email if there was one previously set (and it wasn't changed)
     resendVerificationEmail(this.state.email);
     AsyncStorage.setItem(Constants.KEY_EMAIL_VERIFY_PENDING, 'true');
-    notify({ message: 'Please follow the instructions in the email sent to your address to continue.' });
+    notify({ message: __('Please follow the instructions in the email sent to your address to continue.') });
   };
 
   onEditPressed = () => {
@@ -110,7 +110,7 @@ class EmailVerifyPage extends React.PureComponent {
     return (
       <View style={firstRunStyle.container}>
         <Text style={rewardStyle.verificationTitle}>
-          {Constants.PHASE_COLLECTION === this.state.phase ? 'Email' : 'Verify Email'}
+          {Constants.PHASE_COLLECTION === this.state.phase ? __('Email') : __('Verify Email')}
         </Text>
         {Constants.PHASE_COLLECTION === this.state.phase && (
           <View>
@@ -138,7 +138,7 @@ class EmailVerifyPage extends React.PureComponent {
                 <Button
                   style={rewardStyle.verificationButton}
                   theme={'light'}
-                  text={'Send verification email'}
+                  text={__('Send verification email')}
                   onPress={this.onSendVerificationPressed}
                 />
               )}
@@ -162,10 +162,10 @@ class EmailVerifyPage extends React.PureComponent {
               <Button
                 style={rewardStyle.verificationButton}
                 theme={'light'}
-                text={'Resend'}
+                text={__('Resend')}
                 onPress={this.onResendPressed}
               />
-              <Link style={rewardStyle.verificationLink} text={'Edit'} onPress={this.onEditPressed} />
+              <Link style={rewardStyle.verificationLink} text={__('Edit')} onPress={this.onEditPressed} />
             </View>
           </View>
         )}

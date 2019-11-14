@@ -116,12 +116,12 @@ class DownloadsPage extends React.PureComponent {
 
     // show confirm alert
     Alert.alert(
-      'Delete files',
-      'Are you sure you want to delete the selected content?',
+      __('Delete files'),
+      __('Are you sure you want to delete the selected content?'),
       [
-        { text: 'No' },
+        { text: __('No') },
         {
-          text: 'Yes',
+          text: __('Yes'),
           onPress: () => {
             const uris = Object.keys(selectedClaimsMap);
             uris.forEach(uri => {
@@ -156,7 +156,7 @@ class DownloadsPage extends React.PureComponent {
         />
 
         {!fetching && !hasDownloads && (
-          <EmptyStateView message={'You do not have any\ndownloaded content on this device.'} />
+          <EmptyStateView message={__('You do not have any\ndownloaded content on this device.')} />
         )}
 
         <View style={downloadsStyle.subContainer}>

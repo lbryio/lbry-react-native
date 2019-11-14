@@ -78,14 +78,17 @@ class SettingsPage extends React.PureComponent {
 
     return (
       <View style={settingsStyle.container}>
-        <PageHeader title={'Settings'} onBackPressed={() => navigateBack(navigation, drawerStack, popDrawerStack)} />
+        <PageHeader
+          title={__('Settings')}
+          onBackPressed={() => navigateBack(navigation, drawerStack, popDrawerStack)}
+        />
         <ScrollView style={settingsStyle.scrollContainer}>
-          <Text style={settingsStyle.sectionTitle}>Content</Text>
+          <Text style={settingsStyle.sectionTitle}>{__('Content')}</Text>
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>Enable background media playback</Text>
+              <Text style={settingsStyle.label}>{__('Enable background media playback')}</Text>
               <Text style={settingsStyle.description}>
-                Enable this option to play audio or video in the background when the app is suspended.
+                {__('Enable this option to play audio or video in the background when the app is suspended.')}
               </Text>
             </View>
             <View style={settingsStyle.switchContainer}>
@@ -98,7 +101,7 @@ class SettingsPage extends React.PureComponent {
 
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>Show mature content</Text>
+              <Text style={settingsStyle.label}>{__('Show mature content')}</Text>
             </View>
             <View style={settingsStyle.switchContainer}>
               <Switch value={showNsfw} onValueChange={value => setClientSetting(SETTINGS.SHOW_NSFW, value)} />
@@ -169,10 +172,10 @@ class SettingsPage extends React.PureComponent {
           )}
 
           <View style={settingsStyle.sectionDivider} />
-          <Text style={settingsStyle.sectionTitle}>Search</Text>
+          <Text style={settingsStyle.sectionTitle}>{__('Search')}</Text>
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>Show URL suggestions</Text>
+              <Text style={settingsStyle.label}>{__('Show URL suggestions')}</Text>
             </View>
             <View style={settingsStyle.switchContainer}>
               <Switch
@@ -183,13 +186,16 @@ class SettingsPage extends React.PureComponent {
           </View>
 
           <View style={settingsStyle.sectionDivider} />
-          <Text style={settingsStyle.sectionTitle}>Other</Text>
+          <Text style={settingsStyle.sectionTitle}>{__('Other')}</Text>
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>Keep the daemon background service running after closing the app</Text>
+              <Text style={settingsStyle.label}>
+                {__('Keep the SDK background service running after closing the app')}
+              </Text>
               <Text style={settingsStyle.description}>
-                Enable this option for quicker app launch and to keep the synchronisation with the blockchain up to
-                date.
+                {__(
+                  'Enable this option for quicker app launch and to keep the synchronisation with the blockchain up to date.'
+                )}
               </Text>
             </View>
             <View style={settingsStyle.switchContainer}>

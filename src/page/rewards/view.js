@@ -106,7 +106,8 @@ class RewardsPage extends React.PureComponent {
         <View style={[rewardStyle.card, rewardStyle.verification]}>
           <Text style={rewardStyle.title}>Manual Reward Verification</Text>
           <Text style={rewardStyle.text}>
-            You need to be manually verified before you can start claiming rewards. Please request to be verified on the{' '}
+            __('You need to be manually verified before you can start claiming rewards.') Please request to be verified
+            on the{' '}
             <Link
               style={rewardStyle.greenLink}
               href="https://discordapp.com/invite/Z3bERWA"
@@ -129,13 +130,15 @@ class RewardsPage extends React.PureComponent {
       return (
         <View style={rewardStyle.busyContainer}>
           <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
-          <Text style={rewardStyle.infoText}>Fetching rewards...</Text>
+          <Text style={rewardStyle.infoText}>{__('Fetching rewards...')}</Text>
         </View>
       );
     } else if (user === null) {
       return (
         <View style={rewardStyle.busyContainer}>
-          <Text style={rewardStyle.infoText}>This app is unable to earn rewards due to an authentication failure.</Text>
+          <Text style={rewardStyle.infoText}>
+            {__('This app is unable to earn rewards due to an authentication failure.')}
+          </Text>
         </View>
       );
     }

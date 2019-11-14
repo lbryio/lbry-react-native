@@ -121,7 +121,7 @@ class ChannelPage extends React.PureComponent {
       return (
         <View style={channelPageStyle.aboutTab}>
           <View style={channelPageStyle.busyContainer}>
-            <Text style={channelPageStyle.infoText}>No information to display.</Text>
+            <Text style={channelPageStyle.infoText}>{__('No information to display.')}</Text>
           </View>
         </View>
       );
@@ -131,21 +131,21 @@ class ChannelPage extends React.PureComponent {
     return (
       <View style={channelPageStyle.aboutTab}>
         {!websiteUrl && !email && !description && (
-          <EmptyStateView message={"There's nothing here yet.\nPlease check back later."} />
+          <EmptyStateView message={__("There's nothing here yet.\nPlease check back later.")} />
         )}
 
         {(websiteUrl || email || description) && (
           <ScrollView style={channelPageStyle.aboutScroll} contentContainerStyle={channelPageStyle.aboutScrollContent}>
             {websiteUrl && websiteUrl.trim().length > 0 && (
               <View style={channelPageStyle.aboutItem}>
-                <Text style={channelPageStyle.aboutTitle}>Website</Text>
+                <Text style={channelPageStyle.aboutTitle}>{__('Website')}</Text>
                 <Link style={channelPageStyle.aboutText} text={websiteUrl} href={websiteUrl} />
               </View>
             )}
 
             {email && email.trim().length > 0 && (
               <View style={channelPageStyle.aboutItem}>
-                <Text style={channelPageStyle.aboutTitle}>Email</Text>
+                <Text style={channelPageStyle.aboutTitle}>{__('Email')}</Text>
                 <Link style={channelPageStyle.aboutText} text={email} href={`mailto:${email}`} />
               </View>
             )}

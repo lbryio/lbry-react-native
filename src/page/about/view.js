@@ -67,7 +67,7 @@ class AboutPage extends React.PureComponent {
 
   render() {
     const { accessToken, drawerStack, navigation, notify, popDrawerStack, userEmail } = this.props;
-    const loading = 'Loading...';
+    const loading = __('Loading...');
     const ver = this.state.versionInfo ? this.state.versionInfo : null;
 
     return (
@@ -76,20 +76,20 @@ class AboutPage extends React.PureComponent {
         <ScrollView style={aboutStyle.scrollContainer}>
           <Text style={aboutStyle.title}>Content Freedom</Text>
           <Text style={aboutStyle.paragraph}>
-            LBRY is a free, open, and community-run digital marketplace. It is a decentralized peer-to-peer content
-            distribution platform for creators to upload and share content, and earn LBRY credits for their effort.
-            Users will be able to find a wide selection of videos, music, ebooks and other digital content they are
-            interested in.
+            {__(
+              'LBRY is a free, open, and community-run digital marketplace. It is a decentralized peer-to-peer content distribution platform for creators to upload and share content, and earn LBRY credits for their effort. Users will be able to find a wide selection of videos, music, ebooks and other digital content they are interested in.'
+            )}
           </Text>
           <View style={aboutStyle.links}>
-            <Link style={aboutStyle.link} href="https://lbry.com/faq/what-is-lbry" text="What is LBRY?" />
-            <Link style={aboutStyle.link} href="https://lbry.com/faq/android-basics" text="Android App Basics" />
-            <Link style={aboutStyle.link} href="https://lbry.com/faq" text="Frequently Asked Questions" />
+            <Link style={aboutStyle.link} href="https://lbry.com/faq/what-is-lbry" text={__('What is LBRY?')} />
+            <Link style={aboutStyle.link} href="https://lbry.com/faq/android-basics" text={__('Android App Basics')} />
+            <Link style={aboutStyle.link} href="https://lbry.com/faq" text={__('Frequently Asked Questions')} />
           </View>
           <Text style={aboutStyle.socialTitle}>Get Social</Text>
           <Text style={aboutStyle.paragraph}>
-            You can interact with the LBRY team and members of the community on Discord, Facebook, Instagram, Twitter or
-            Reddit.
+            {__(
+              'You can interact with the LBRY team and members of the community on Discord, Facebook, Instagram, Twitter or Reddit.'
+            )}
           </Text>
           <View style={aboutStyle.links}>
             <Link style={aboutStyle.link} href="https://discordapp.com/invite/Z3bERWA" text="Discord" />
@@ -99,12 +99,12 @@ class AboutPage extends React.PureComponent {
             <Link style={aboutStyle.link} href="https://reddit.com/r/lbry" text="Reddit" />
             <Link style={aboutStyle.link} href="https://t.me/lbryofficial" text="Telegram" />
           </View>
-          <Text style={aboutStyle.releaseInfoTitle}>App info</Text>
+          <Text style={aboutStyle.releaseInfoTitle}>{__('App info')}</Text>
           {userEmail && userEmail.trim().length > 0 && (
             <View style={aboutStyle.verticalRow}>
               <View style={aboutStyle.innerRow}>
                 <View style={aboutStyle.col}>
-                  <Text style={aboutStyle.text}>Connected email</Text>
+                  <Text style={aboutStyle.text}>{__('Connected email')}</Text>
                 </View>
                 <View style={aboutStyle.col}>
                   <Text selectable style={aboutStyle.valueText}>
@@ -116,7 +116,7 @@ class AboutPage extends React.PureComponent {
                 <Link
                   style={aboutStyle.listLink}
                   href={`http://lbry.com/list/edit/${accessToken}`}
-                  text="Update mailing preferences"
+                  text={__('Update mailing preferences')}
                 />
               </View>
             </View>
@@ -124,7 +124,7 @@ class AboutPage extends React.PureComponent {
 
           <View style={aboutStyle.row}>
             <View style={aboutStyle.col}>
-              <Text style={aboutStyle.text}>App version</Text>
+              <Text style={aboutStyle.text}>{__('App version')}</Text>
             </View>
             <View style={aboutStyle.col}>
               <Text selectable style={aboutStyle.valueText}>
@@ -135,7 +135,7 @@ class AboutPage extends React.PureComponent {
 
           <View style={aboutStyle.row}>
             <View style={aboutStyle.col}>
-              <Text style={aboutStyle.text}>LBRY SDK</Text>
+              <Text style={aboutStyle.text}>{__('LBRY SDK')}</Text>
             </View>
             <View style={aboutStyle.col}>
               <Text selectable style={aboutStyle.valueText}>
@@ -146,7 +146,7 @@ class AboutPage extends React.PureComponent {
 
           <View style={aboutStyle.row}>
             <View style={aboutStyle.col}>
-              <Text style={aboutStyle.text}>Platform</Text>
+              <Text style={aboutStyle.text}>{__('Platform')}</Text>
             </View>
             <View style={aboutStyle.col}>
               <Text selectable style={aboutStyle.valueText}>
@@ -157,7 +157,7 @@ class AboutPage extends React.PureComponent {
 
           <View style={aboutStyle.row}>
             <View style={aboutStyle.col}>
-              <Text style={aboutStyle.text}>Installation ID</Text>
+              <Text style={aboutStyle.text}>{__('Installation ID')}</Text>
               <Text selectable style={aboutStyle.lineValueText}>
                 {this.state.lbryId ? this.state.lbryId : loading}
               </Text>
@@ -166,12 +166,12 @@ class AboutPage extends React.PureComponent {
 
           <View style={aboutStyle.row}>
             <View style={aboutStyle.col}>
-              <Text style={aboutStyle.text}>Logs</Text>
+              <Text style={aboutStyle.text}>{__('Logs')}</Text>
             </View>
             <View style={aboutStyle.col}>
               <Link
                 style={aboutStyle.listLink}
-                text="Send log"
+                text={__('Send log')}
                 onPress={() => {
                   if (NativeModules.UtilityModule) {
                     NativeModules.UtilityModule.shareLogFile(error => {

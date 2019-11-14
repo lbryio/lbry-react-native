@@ -99,7 +99,7 @@ class FirstRunScreen extends React.PureComponent {
                 if (unlocked) {
                   this.closeFinalPage();
                 } else {
-                  notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' });
+                  notify({ message: __('The wallet could not be unlocked at this time. Please restart the app.') });
                 }
               }
             );
@@ -178,7 +178,7 @@ class FirstRunScreen extends React.PureComponent {
     }
 
     if (Constants.FIRST_RUN_PAGE_SKIP_ACCOUNT === this.state.currentPage && !this.state.skipAccountConfirmed) {
-      notify({ message: 'Please confirm that you want to use LBRY without creating an account.' });
+      notify({ message: __('Please confirm that you want to use LBRY without creating an account.') });
       return;
     }
 
@@ -204,7 +204,7 @@ class FirstRunScreen extends React.PureComponent {
     // validate the email
     if (!email || email.indexOf('@') === -1) {
       return notify({
-        message: 'Please provide a valid email address to continue.',
+        message: __('Please provide a valid email address to continue.'),
       });
     }
 
@@ -410,27 +410,27 @@ class FirstRunScreen extends React.PureComponent {
                   <Text style={firstRunStyle.buttonText}>
                     «{' '}
                     {Constants.FIRST_RUN_PAGE_SKIP_ACCOUNT === this.state.currentPage
-                      ? 'Setup account'
-                      : 'Change email'}
+                      ? __('Setup account')
+                      : __('Change email')}
                   </Text>
                 </TouchableOpacity>
               )}
               {!emailNewPending && Constants.FIRST_RUN_PAGE_EMAIL_COLLECT === this.state.currentPage && (
                 <TouchableOpacity style={firstRunStyle.leftButton} onPress={this.handleLeftButtonPressed}>
-                  <Text style={firstRunStyle.smallLeftButtonText}>No, thanks »</Text>
+                  <Text style={firstRunStyle.smallLeftButtonText}>{__('No, thanks')} »</Text>
                 </TouchableOpacity>
               )}
 
               {!emailNewPending && (
                 <TouchableOpacity style={firstRunStyle.button} onPress={this.handleContinuePressed}>
                   {Constants.FIRST_RUN_PAGE_SKIP_ACCOUNT === this.state.currentPage && (
-                    <Text style={firstRunStyle.smallButtonText}>Use LBRY »</Text>
+                    <Text style={firstRunStyle.smallButtonText}>{__('Use LBRY')} »</Text>
                   )}
 
                   {Constants.FIRST_RUN_PAGE_SKIP_ACCOUNT !== this.state.currentPage &&
                     Constants.FIRST_RUN_PAGE_EMAIL_VERIFY !== this.state.currentPage && (
                     <Text style={firstRunStyle.buttonText}>
-                      {Constants.FIRST_RUN_PAGE_WALLET === this.state.currentPage ? 'Use LBRY' : 'Continue'} »
+                      {Constants.FIRST_RUN_PAGE_WALLET === this.state.currentPage ? __('Use LBRY') : __('Continue')} »
                     </Text>
                   )}
                 </TouchableOpacity>

@@ -17,8 +17,8 @@ import UriBar from 'component/uriBar';
 import discoverStyle from 'styles/discover';
 
 const TRENDING_FOR_ITEMS = [
-  { icon: 'globe-americas', name: 'everyone', label: 'Everyone' },
-  { icon: 'hashtag', name: 'tags', label: 'Tags you follow' },
+  { icon: 'globe-americas', name: 'everyone', label: __('Everyone') },
+  { icon: 'hashtag', name: 'tags', label: __('Tags you follow') },
 ];
 
 class TrendingPage extends React.PureComponent {
@@ -92,7 +92,7 @@ class TrendingPage extends React.PureComponent {
     return (
       <View style={discoverStyle.listHeader}>
         <View style={discoverStyle.titleRow}>
-          <Text style={discoverStyle.pageTitle}>All content</Text>
+          <Text style={discoverStyle.pageTitle}>{__('All Content')}</Text>
         </View>
         <View style={discoverStyle.pickerRow}>
           <View style={discoverStyle.leftPickerRow}>
@@ -126,7 +126,7 @@ class TrendingPage extends React.PureComponent {
           {TRENDING_FOR_ITEMS[1].name === currentTrendingForItem.name && (
             <Link
               style={discoverStyle.customizeLink}
-              text={'Customize'}
+              text={__('Customize')}
               onPress={() => this.setState({ showModalTagSelector: true })}
             />
           )}
@@ -170,7 +170,7 @@ class TrendingPage extends React.PureComponent {
         )}
         {showTrendingForPicker && (
           <ModalPicker
-            title={'Filter for'}
+            title={__('Filter for')}
             onOverlayPress={() => this.setState({ showTrendingForPicker: false })}
             onItemSelected={this.handleTrendingForItemSelected}
             selectedItem={currentTrendingForItem}

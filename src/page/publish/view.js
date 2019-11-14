@@ -48,31 +48,31 @@ import publishStyle from 'styles/publish';
 import { navigateToUri, logPublish, uploadImageAsset } from 'utils/helper';
 
 const languages = {
-  en: 'English',
-  zh: 'Chinese',
-  fr: 'French',
-  de: 'German',
-  jp: 'Japanese',
-  ru: 'Russian',
-  es: 'Spanish',
-  id: 'Indonesian',
-  it: 'Italian',
-  nl: 'Dutch',
-  tr: 'Turkish',
-  pl: 'Polish',
-  ms: 'Malay',
-  pt: 'Portuguese',
-  vi: 'Vietnamese',
-  th: 'Thai',
-  ar: 'Arabic',
-  cs: 'Czech',
-  hr: 'Croatian',
-  km: 'Cambodian',
-  ko: 'Korean',
-  no: 'Norwegian',
-  ro: 'Romanian',
-  hi: 'Hindi',
-  el: 'Greek',
+  en: __('English'),
+  zh: __('Chinese'),
+  fr: __('French'),
+  de: __('German'),
+  jp: __('Japanese'),
+  ru: __('Russian'),
+  es: __('Spanish'),
+  id: __('Indonesian'),
+  it: __('Italian'),
+  nl: __('Dutch'),
+  tr: __('Turkish'),
+  pl: __('Polish'),
+  ms: __('Malay'),
+  pt: __('Portuguese'),
+  vi: __('Vietnamese'),
+  th: __('Thai'),
+  ar: __('Arabic'),
+  cs: __('Czech'),
+  hr: __('Croatian'),
+  km: __('Cambodian'),
+  ko: __('Korean'),
+  no: __('Norwegian'),
+  ro: __('Romanian'),
+  hi: __('Hindi'),
+  el: __('Greek'),
 };
 
 class PublishPage extends React.PureComponent {
@@ -345,7 +345,7 @@ class PublishPage extends React.PureComponent {
 
     if (balance < Constants.MINIMUM_TRANSACTION_BALANCE) {
       notify({
-        message: 'Publishing content requires credits. Press the blue bar to get some for free.',
+        message: __('Publishing content requires credits. Press the blue bar to get some for free.'),
       });
       if (this.scrollView) {
         this.scrollView.scrollTo({ x: 0, y: 0, animated: true });
@@ -354,18 +354,18 @@ class PublishPage extends React.PureComponent {
     }
 
     if (!title || title.trim().length === 0) {
-      notify({ message: 'Please provide a title' });
+      notify({ message: __('Please provide a title') });
       return;
     }
 
     if (!name) {
-      notify({ message: 'Please specify an address where people can find your content.' });
+      notify({ message: __('Please specify an address where people can find your content.') });
       return;
     }
 
     if (!currentMedia && !editMode) {
       // sanity check. normally shouldn't happen
-      notify({ message: 'No file selected. Please select a video or take a photo before publishing.' });
+      notify({ message: __('No file selected. Please select a video or take a photo before publishing.') });
       return;
     }
 
@@ -403,7 +403,7 @@ class PublishPage extends React.PureComponent {
     pendingPublishSuccess(pendingClaim);
 
     notify({
-      message: `Your content was successfully published to ${this.state.uri}. It will be available in a few mintues.`,
+      message: __('Your content was successfully published. It will be available in a few mintues.'),
     });
     clearPublishFormState();
     this.setState({ publishStarted: false });
@@ -553,7 +553,7 @@ class PublishPage extends React.PureComponent {
   handleThumbnailUploadFailure = err => {
     const { notify } = this.props;
     this.setState({ uploadThumbnailStarted: false });
-    notify({ message: 'The thumbnail could not be uploaded. Please try again.' });
+    notify({ message: __('The thumbnail could not be uploaded. Please try again.') });
   };
 
   onFilePicked = evt => {
@@ -586,7 +586,7 @@ class PublishPage extends React.PureComponent {
       }
     } else {
       // could not determine the file path
-      notify({ message: 'The path could not be determined. Please try a different file.' });
+      notify({ message: __('The path could not be determined. Please try a different file.') });
     }
   };
 
@@ -701,7 +701,7 @@ class PublishPage extends React.PureComponent {
     }
 
     if (!isNameValid(name, false)) {
-      notify({ message: 'Your content address contains invalid characters' });
+      notify({ message: __('Your content address contains invalid characters') });
       return;
     }
 
@@ -731,7 +731,7 @@ class PublishPage extends React.PureComponent {
       updatePublishFormState({ tags: newTags });
       this.setState({ tags: newTags });
     } else {
-      notify({ message: __(`You already added the "${tag}" tag.`) });
+      notify({ message: __(`You already added the "${tag}" tag.`) }); // TODO: tokenize i18n
     }
   };
 
@@ -868,7 +868,7 @@ class PublishPage extends React.PureComponent {
     const { notify } = this.props;
     if (this.state.thumbnailImagePickerOpen || this.state.uploadThumbnailStarted) {
       if (this.state.uploadThumbnailStarted) {
-        notify({ message: 'A thumbnail is already being uploaded. Please wait for the upload to finish.' });
+        notify({ message: __('A thumbnail is already being uploaded. Please wait for the upload to finish.') });
       }
       return;
     }
@@ -913,7 +913,7 @@ class PublishPage extends React.PureComponent {
                 onPress={this.handleRecordVideoPressed}
               >
                 <Icon name="video" size={48} color={Colors.White} />
-                <Text style={publishStyle.actionText}>Record</Text>
+                <Text style={publishStyle.actionText}>{__('Record')}</Text>
               </TouchableOpacity>
               <View style={publishStyle.subActions}>
                 <TouchableOpacity
@@ -924,11 +924,11 @@ class PublishPage extends React.PureComponent {
                   onPress={this.handleTakePhotoPressed}
                 >
                   <Icon name="camera" size={48} color={Colors.White} />
-                  <Text style={publishStyle.actionText}>Take a photo</Text>
+                  <Text style={publishStyle.actionText}>{__('Take a photo')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={publishStyle.upload} onPress={this.handleUploadPressed}>
                   <Icon name="file-upload" size={48} color={Colors.White} />
-                  <Text style={publishStyle.actionText}>Upload a file</Text>
+                  <Text style={publishStyle.actionText}>{__('Upload a file')}</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -936,13 +936,13 @@ class PublishPage extends React.PureComponent {
           {(loadingVideos || !allThumbnailsChecked) && (
             <View style={publishStyle.loadingView}>
               <ActivityIndicator size="small" color={Colors.NextLbryGreen} />
-              <Text style={publishStyle.loadingText}>Please wait while we load your videos...</Text>
+              <Text style={publishStyle.loadingText}>{__('Please wait while we load your videos...')}</Text>
             </View>
           )}
           {!loadingVideos && (!videos || videos.length === 0) && (
             <View style={publishStyle.relativeCentered}>
               <Text style={publishStyle.noVideos}>
-                We could not find any videos on your device. Take a photo or record a video to get started.
+                {__('We could not find any videos on your device. Take a photo or record a video to get started.')}
               </Text>
             </View>
           )}
@@ -994,7 +994,7 @@ class PublishPage extends React.PureComponent {
             {this.state.uploadThumbnailStarted && (
               <View style={publishStyle.thumbnailUploadContainer}>
                 <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
-                <Text style={publishStyle.thumbnailUploadText}>Uploading thumbnail...</Text>
+                <Text style={publishStyle.thumbnailUploadText}>{__('Uploading thumbnail...')}</Text>
               </View>
             )}
           </TouchableOpacity>
@@ -1003,11 +1003,11 @@ class PublishPage extends React.PureComponent {
           <View style={publishStyle.card}>
             <View style={publishStyle.textInputLayout}>
               {(this.state.titleFocused || (this.state.title != null && this.state.title.trim().length > 0)) && (
-                <Text style={publishStyle.textInputTitle}>Title</Text>
+                <Text style={publishStyle.textInputTitle}>{__('Title')}</Text>
               )}
               <TextInput
                 editable={this.state.canPublish && !this.state.publishStarted}
-                placeholder={this.state.titleFocused ? '' : 'Title'}
+                placeholder={this.state.titleFocused ? '' : __('Title')}
                 style={publishStyle.inputText}
                 value={this.state.title}
                 numberOfLines={1}
@@ -1021,12 +1021,12 @@ class PublishPage extends React.PureComponent {
             <View style={publishStyle.textInputLayout}>
               {(this.state.descriptionFocused ||
                 (this.state.description != null && this.state.description.trim().length > 0)) && (
-                <Text style={publishStyle.textInputTitle}>Description</Text>
+                <Text style={publishStyle.textInputTitle}>{__('Description')}</Text>
               )}
               <TextInput
                 editable={this.state.canPublish && !this.state.publishStarted}
                 multiline
-                placeholder={this.state.descriptionFocused ? '' : 'Description'}
+                placeholder={this.state.descriptionFocused ? '' : __('Description')}
                 style={publishStyle.inputText}
                 value={this.state.description}
                 underlineColorAndroid={Colors.NextLbryGreen}
@@ -1038,7 +1038,7 @@ class PublishPage extends React.PureComponent {
           </View>
 
           <View style={publishStyle.card}>
-            <Text style={publishStyle.cardTitle}>Tags</Text>
+            <Text style={publishStyle.cardTitle}>{__('Tags')}</Text>
             <View style={publishStyle.tagList}>
               {this.state.tags &&
                 this.state.tags.map(tag => (
@@ -1055,7 +1055,7 @@ class PublishPage extends React.PureComponent {
           </View>
 
           <View style={publishStyle.card}>
-            <Text style={publishStyle.cardTitle}>Channel</Text>
+            <Text style={publishStyle.cardTitle}>{__('Channel')}</Text>
 
             <ChannelSelector
               enabled={this.state.canPublish && !this.state.publishStarted}
@@ -1066,14 +1066,16 @@ class PublishPage extends React.PureComponent {
 
           <View style={publishStyle.card}>
             <View style={publishStyle.titleRow}>
-              <Text style={publishStyle.cardTitle}>Price</Text>
+              <Text style={publishStyle.cardTitle}>{__('Price')}</Text>
               <View style={publishStyle.switchTitleRow}>
                 <Switch value={this.state.priceSet} onValueChange={value => this.setState({ priceSet: value })} />
               </View>
             </View>
 
             {!this.state.priceSet && (
-              <Text style={publishStyle.cardText}>Your content will be free. Press the toggle to set a price.</Text>
+              <Text style={publishStyle.cardText}>
+                {__('Your content will be free. Press the toggle to set a price.')}
+              </Text>
             )}
 
             {this.state.priceSet && (
@@ -1103,11 +1105,13 @@ class PublishPage extends React.PureComponent {
           </View>
 
           <View style={publishStyle.card}>
-            <Text style={publishStyle.cardTitle}>Content address</Text>
+            <Text style={publishStyle.cardTitle}>{__('Content address')}</Text>
             <Text style={publishStyle.helpText}>
-              The address where people can find your content (ex. lbry://myvideo).
+              {__('The address where people can find your content (ex. lbry://myvideo). ')}
               {this.state.editMode &&
-                ' You cannot change this address while editing your content. If you wish to use a new address, please republish the content.'}
+                __(
+                  'You cannot change this address while editing your content. If you wish to use a new address, please republish the content.'
+                )}
             </Text>
 
             <TextInput
@@ -1132,14 +1136,16 @@ class PublishPage extends React.PureComponent {
               />
               <Text style={publishStyle.currency}>LBC</Text>
             </View>
-            <Text style={publishStyle.helpText}>This LBC remains yours and the deposit can be undone at any time.</Text>
+            <Text style={publishStyle.helpText}>
+              {__('This LBC remains yours and the deposit can be undone at any time.')}
+            </Text>
           </View>
 
           {this.state.advancedMode && (
             <View style={publishStyle.card}>
-              <Text style={publishStyle.cardTitle}>Additional Options</Text>
+              <Text style={publishStyle.cardTitle}>{__('Additional Options')}</Text>
               <View>
-                <Text style={publishStyle.cardText}>Language</Text>
+                <Text style={publishStyle.cardText}>{__('Language')}</Text>
                 <Picker
                   enabled={this.state.canPublish && !this.state.publishStarted}
                   selectedValue={this.state.language}
@@ -1154,7 +1160,7 @@ class PublishPage extends React.PureComponent {
               </View>
 
               <View>
-                <Text style={publishStyle.cardText}>License</Text>
+                <Text style={publishStyle.cardText}>{__('License')}</Text>
                 <Picker
                   enabled={this.state.canPublish && !this.state.publishStarted}
                   selectedValue={this.state.license}
@@ -1162,18 +1168,22 @@ class PublishPage extends React.PureComponent {
                   itemStyle={publishStyle.pickerItem}
                   onValueChange={this.handleLicenseValueChange}
                 >
-                  <Picker.Item label={'None'} value={LICENSES.NONE} key={LICENSES.NONE} />
-                  <Picker.Item label={'Public Domain'} value={LICENSES.PUBLIC_DOMAIN} key={LICENSES.PUBLIC_DOMAIN} />
+                  <Picker.Item label={__('None')} value={LICENSES.NONE} key={LICENSES.NONE} />
+                  <Picker.Item
+                    label={__('Public Domain')}
+                    value={LICENSES.PUBLIC_DOMAIN}
+                    key={LICENSES.PUBLIC_DOMAIN}
+                  />
                   {LICENSES.CC_LICENSES.map(({ value, url }) => (
                     <Picker.Item label={value} value={value} key={value} />
                   ))}
-                  <Picker.Item label={'Copyrighted...'} value={LICENSES.COPYRIGHT} key={LICENSES.COPYRIGHT} />
-                  <Picker.Item label={'Other...'} value={LICENSES.OTHER} key={LICENSES.OTHER} />
+                  <Picker.Item label={__('Copyrighted...')} value={LICENSES.COPYRIGHT} key={LICENSES.COPYRIGHT} />
+                  <Picker.Item label={__('Other...')} value={LICENSES.OTHER} key={LICENSES.OTHER} />
                 </Picker>
                 {[LICENSES.COPYRIGHT, LICENSES.OTHER].includes(this.state.license) && (
                   <TextInput
                     editable={this.state.canPublish && !this.state.publishStarted}
-                    placeholder={'License description'}
+                    placeholder={__('License description')}
                     style={publishStyle.inputText}
                     underlineColorAndroid={Colors.NextLbryGreen}
                     numberOfLines={1}
@@ -1187,7 +1197,7 @@ class PublishPage extends React.PureComponent {
 
           <View style={publishStyle.toggleContainer}>
             <Link
-              text={this.state.advancedMode ? 'Hide extra fields' : 'Show extra fields'}
+              text={this.state.advancedMode ? __('Hide extra fields') : __('Show extra fields')}
               onPress={this.handleModePressed}
               style={publishStyle.modeLink}
             />
@@ -1201,7 +1211,7 @@ class PublishPage extends React.PureComponent {
             )}
 
             {!this.state.publishStarted && (
-              <Link style={publishStyle.cancelLink} text="Cancel" onPress={() => this.showSelector()} />
+              <Link style={publishStyle.cancelLink} text={__('Cancel')} onPress={() => this.showSelector()} />
             )}
 
             {!this.state.publishStarted && (
@@ -1209,7 +1219,7 @@ class PublishPage extends React.PureComponent {
                 <Button
                   style={publishStyle.publishButton}
                   disabled={this.state.uploadThumbnailStarted}
-                  text={this.state.editMode ? 'Save changes' : 'Publish'}
+                  text={this.state.editMode ? __('Save changes') : __('Publish')}
                   onPress={this.handlePublishPressed}
                 />
               </View>
@@ -1221,8 +1231,10 @@ class PublishPage extends React.PureComponent {
       content = (
         <ScrollView style={publishStyle.publishDetails}>
           <View style={publishStyle.successContainer}>
-            <Text style={publishStyle.successTitle}>Success!</Text>
-            <Text style={publishStyle.successText}>Congratulations! Your content was successfully uploaded.</Text>
+            <Text style={publishStyle.successTitle}>{__('Success!')}</Text>
+            <Text style={publishStyle.successText}>
+              {__('Congratulations! Your content was successfully uploaded.')}
+            </Text>
             <View style={publishStyle.successRow}>
               <Link
                 style={publishStyle.successUrl}
@@ -1232,19 +1244,24 @@ class PublishPage extends React.PureComponent {
               <TouchableOpacity
                 onPress={() => {
                   Clipboard.setString(this.state.uri);
-                  notify({ message: 'Copied.' });
+                  notify({ message: __('Copied.') });
                 }}
               >
                 <Icon name="clipboard" size={24} color={Colors.LbryGreen} />
               </TouchableOpacity>
             </View>
             <Text style={publishStyle.successText}>
-              Your content will be live in a few minutes. In the mean time, feel free to publish more content or explore
-              the app.
+              {__(
+                'Your content will be live in a few minutes. In the mean time, feel free to publish more content or explore the app.'
+              )}
             </Text>
           </View>
           <View style={publishStyle.actionButtons}>
-            <Button style={publishStyle.publishButton} text="Publish again" onPress={this.handlePublishAgainPressed} />
+            <Button
+              style={publishStyle.publishButton}
+              text={__('Publish again')}
+              onPress={this.handlePublishAgainPressed}
+            />
           </View>
         </ScrollView>
       );
@@ -1282,7 +1299,7 @@ class PublishPage extends React.PureComponent {
                 }}
                 notAuthorizedView={
                   <View style={publishStyle.fullCentered}>
-                    <Text style={publishStyle.cameraInfo}>Camera not authorized</Text>
+                    <Text style={publishStyle.cameraInfo}>{__('Camera not authorized')}</Text>
                   </View>
                 }
               />

@@ -92,7 +92,7 @@ class SyncVerifyPage extends React.PureComponent {
             navigation.goBack();
           } else {
             if (notifyUnlockFailed) {
-              notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' });
+              notify({ message: __('The wallet could not be unlocked at this time. Please restart the app.') });
             }
           }
         });
@@ -117,11 +117,11 @@ class SyncVerifyPage extends React.PureComponent {
     let paragraph;
     if (!hasSyncedWallet) {
       paragraph = (
-        <Text style={firstRunStyle.paragraph}>Please enter a password to secure your account and wallet.</Text>
+        <Text style={firstRunStyle.paragraph}>{__('Please enter a password to secure your account and wallet.')}</Text>
       );
     } else {
       paragraph = (
-        <Text style={firstRunStyle.paragraph}>Please enter the password you used to secure your wallet.</Text>
+        <Text style={firstRunStyle.paragraph}>{__('Please enter the password you used to secure your wallet.')}</Text>
       );
     }
 
@@ -130,13 +130,13 @@ class SyncVerifyPage extends React.PureComponent {
       content = (
         <View style={firstRunStyle.centered}>
           <ActivityIndicator size="large" color={Colors.White} style={firstRunStyle.waiting} />
-          <Text style={firstRunStyle.paragraph}>Retrieving your account information...</Text>
+          <Text style={firstRunStyle.paragraph}>{__('Retrieving your account information...')}</Text>
         </View>
       );
     } else {
       content = (
         <View>
-          <Text style={rewardStyle.verificationTitle}>Wallet Sync</Text>
+          <Text style={rewardStyle.verificationTitle}>{__('Wallet Sync')}</Text>
           {paragraph}
           <View style={firstRunStyle.passwordInputContainer}>
             <TextInput
@@ -170,8 +170,8 @@ class SyncVerifyPage extends React.PureComponent {
             <View style={firstRunStyle.passwordWarning}>
               <Text style={firstRunStyle.passwordWarningText}>
                 {hasSyncedWallet
-                  ? 'If you did not provide a password, please press Use LBRY to continue.'
-                  : 'You can proceed without a password, but this is not recommended.'}
+                  ? __('If you did not provide a password, please press Use LBRY to continue.')
+                  : __('You can proceed without a password, but this is not recommended.')}
               </Text>
             </View>
           )}
@@ -186,7 +186,7 @@ class SyncVerifyPage extends React.PureComponent {
             </View>
           )}
           <Text style={firstRunStyle.infoParagraph}>
-            Note: for wallet security purposes, LBRY is unable to reset your password.
+            {__('Note: for wallet security purposes, LBRY is unable to reset your password.')}
           </Text>
 
           <View style={rewardStyle.buttonContainer}>
@@ -194,7 +194,7 @@ class SyncVerifyPage extends React.PureComponent {
               <Button
                 style={rewardStyle.verificationButton}
                 theme={'light'}
-                text={signInFlow ? 'Use LBRY' : 'Enable sync'}
+                text={signInFlow ? __('Use LBRY') : __('Enable sync')}
                 onPress={this.onEnableSyncPressed}
               />
             )}

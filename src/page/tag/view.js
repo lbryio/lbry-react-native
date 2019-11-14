@@ -118,7 +118,7 @@ class TagPage extends React.PureComponent {
 
           <Link
             style={discoverStyle.customizeLink}
-            text={this.isFollowingTag(tag) ? 'Unfollow' : 'Follow'}
+            text={this.isFollowingTag(tag) ? __('Unfollow') : __('Follow')}
             onPress={this.handleFollowTagToggle}
           />
         </View>
