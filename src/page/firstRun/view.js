@@ -318,6 +318,7 @@ class FirstRunScreen extends React.PureComponent {
       authenticating,
       authToken,
       checkSync,
+      emailAlreadyExists,
       emailNewErrorMessage,
       emailNewPending,
       emailToVerify,
@@ -358,6 +359,7 @@ class FirstRunScreen extends React.PureComponent {
           <EmailVerifyPage
             onEmailViewLayout={this.onEmailViewLayout}
             email={this.state.email}
+            emailAlreadyExists={emailAlreadyExists}
             notify={notify}
             resendVerificationEmail={resendVerificationEmail}
           />

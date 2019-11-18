@@ -4,7 +4,7 @@ import { ActivityIndicator, Linking, NativeModules, Platform, Switch, Text, Text
 import AsyncStorage from '@react-native-community/async-storage';
 import Button from 'component/button';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firstRunStyle from 'styles/firstRun';
 
@@ -17,17 +17,19 @@ class EmailVerifyPage extends React.PureComponent {
   };
 
   render() {
-    const { onEmailViewLayout, email } = this.props;
+    const { onEmailViewLayout, email, emailAlreadyExists } = this.props;
 
     const content = (
       <View onLayout={() => onEmailViewLayout('verify')}>
-        <Text style={firstRunStyle.title}>Verify Email</Text>
+        <Text style={firstRunStyle.title}>{emailAlreadyExists ? 'Sign In' : 'Verify Email'}</Text>
+
         <Text style={firstRunStyle.paragraph}>
-          An email has been sent to{' '}
-          <Text style={firstRunStyle.nowrap} numberOfLines={1}>
-            {email}
-          </Text>
-          . Please follow the instructions in the message to verify your email address.
+          An email has been sent to
+          {'\n\n'}
+          {email}
+          {'\n\n'}
+          Please follow the instructions in the message to{' '}
+          {emailAlreadyExists ? 'complete signing in' : 'verify your email address'}.
         </Text>
 
         <View style={firstRunStyle.buttonContainer}>

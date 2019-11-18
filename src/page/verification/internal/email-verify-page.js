@@ -105,12 +105,12 @@ class EmailVerifyPage extends React.PureComponent {
   };
 
   render() {
-    const { emailNewPending } = this.props;
+    const { emailAlreadyExists, emailNewPending } = this.props;
 
     return (
       <View style={firstRunStyle.container}>
         <Text style={rewardStyle.verificationTitle}>
-          {Constants.PHASE_COLLECTION === this.state.phase ? 'Email' : 'Verify Email'}
+          {Constants.PHASE_COLLECTION === this.state.phase ? 'Email' : emailAlreadyExists ? 'Sign In' : 'Verify Email'}
         </Text>
         {Constants.PHASE_COLLECTION === this.state.phase && (
           <View>
@@ -138,7 +138,7 @@ class EmailVerifyPage extends React.PureComponent {
                 <Button
                   style={rewardStyle.verificationButton}
                   theme={'light'}
-                  text={'Send verification email'}
+                  text={'Continue'}
                   onPress={this.onSendVerificationPressed}
                 />
               )}
@@ -154,8 +154,11 @@ class EmailVerifyPage extends React.PureComponent {
         {Constants.PHASE_VERIFICATION === this.state.phase && (
           <View>
             <Text style={firstRunStyle.paragraph}>
-              An email has been sent to <Text style={firstRunStyle.nowrap}>{this.state.email}</Text>. Please follow the
-              instructions in the message to verify your email address.
+              An email has been sent to {'\n\n'}
+              {this.state.email}
+              {'\n\n'}
+              Please follow the instructions in the message to{' '}
+              {emailAlreadyExists ? 'finish signing in' : 'verify your email address'}.
             </Text>
 
             <View style={rewardStyle.buttonContainer}>
