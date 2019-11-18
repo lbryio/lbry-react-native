@@ -214,14 +214,14 @@ class FilePage extends React.PureComponent {
     }
   }
 
-  handleFullscreenToggle = mode => {
+  handleFullscreenToggle = isFullscreen => {
     const { toggleFullscreenMode } = this.props;
-    this.setState({ fullscreenMode: mode });
-    toggleFullscreenMode(mode);
+    this.setState({ fullscreenMode: isFullscreen });
+    toggleFullscreenMode(isFullscreen);
 
-    StatusBar.setHidden(mode);
+    StatusBar.setHidden(isFullscreen);
 
-    if (mode) {
+    if (isFullscreen) {
       // fullscreen, so change orientation to landscape mode
       NativeModules.ScreenOrientation.lockOrientationLandscape();
 
