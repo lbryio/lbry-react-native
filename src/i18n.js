@@ -28,9 +28,12 @@ function saveMessage(message) {
 function checkMessageAndSave(message, messagesFilePath) {
   if (!knownMessages[message]) {
     knownMessages[message] = message;
-    RNFS.writeFile(messagesFilePath, JSON.stringify(knownMessages, null, 2), 'utf8')
+    const contents = JSON.stringify(knownMessages, null, 2);
+
+    RNFS.writeFile(messagesFilePath, contents, 'utf8')
       .then(() => {
         // successful write
+        // send to transifex
       })
       .catch(err => {
         if (err) {
