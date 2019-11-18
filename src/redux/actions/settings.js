@@ -38,3 +38,14 @@ export function doSetTimeItem(item) {
     });
   };
 }
+
+export function doToggleFullscreenMode(mode) {
+  return dispatch => {
+    dispatch({
+      type: Constants.ACTION_FULLSCREEN_MODE_TOGGLED,
+      data: {
+        mode,
+      },
+    });
+  };
+}

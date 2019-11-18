@@ -34,3 +34,8 @@ export const makeSelectClientSetting = setting =>
 export const selectShowNsfw = makeSelectClientSetting(SETTINGS.SHOW_NSFW);
 
 export const selectKeepDaemonRunning = makeSelectClientSetting(SETTINGS.KEEP_DAEMON_RUNNING);
+
+export const selectFullscreenMode = createSelector(
+  selectState,
+  state => state.fullscreenMode
+);

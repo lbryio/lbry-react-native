@@ -45,6 +45,7 @@ import {
   doStopDownloadingFile,
 } from 'redux/actions/file';
 import { doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
+import { doToggleFullscreenMode } from 'redux/actions/settings';
 import { selectDrawerStack } from 'redux/selectors/drawer';
 import FilePage from './view';
 
@@ -102,6 +103,7 @@ const perform = dispatch => ({
   startDownload: (uri, outpoint, fileInfo) => dispatch(doStartDownload(uri, outpoint, fileInfo)),
   updateDownload: (uri, outpoint, fileInfo, progress) => dispatch(doUpdateDownload(uri, outpoint, fileInfo, progress)),
   completeDownload: (uri, outpoint, fileInfo) => dispatch(doCompleteDownload(uri, outpoint, fileInfo)),
+  toggleFullscreenMode: mode => dispatch(doToggleFullscreenMode(mode)),
 });
 
 export default connect(

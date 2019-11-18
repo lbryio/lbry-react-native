@@ -228,25 +228,25 @@ class FilePage extends React.PureComponent {
     }
   }
 
-  handleFullscreenToggle = mode => {
-    this.setState({ fullscreenMode: mode });
-    StatusBar.setHidden(mode);
-    if (NativeModules.ScreenOrientation) {
-      if (mode) {
-        // fullscreen, so change orientation to landscape mode
-        NativeModules.ScreenOrientation.lockOrientationLandscape();
-        if (NativeModules.UtilityModule) {
-          // hide the navigation bar (on devices that use have soft navigation bar)
-          NativeModules.UtilityModule.hideNavigationBar();
-        }
-      } else {
-        // Switch back to portrait mode when the media is not fullscreen
-        NativeModules.ScreenOrientation.lockOrientationPortrait();
-        if (NativeModules.UtilityModule) {
-          // hide the navigation bar (on devices that use have soft navigation bar)
-          NativeModules.UtilityModule.showNavigationBar();
-        }
-      }
+  handleFullscreenToggle = isFullscreen => {
+    const { toggleFullscreenMode } = this.props;
+    this.setState({ fullscreenMode: isFullscreen });
+    toggleFullscreenMode(isFullscreen);
+
+    StatusBar.setHidden(isFullscreen);
+
+    if (isFullscreen) {
+      // fullscreen, so change orientation to landscape mode
+      NativeModules.ScreenOrientation.lockOrientationLandscape();
+
+      // hide the navigation bar (on devices that have the soft navigation bar)
+      NativeModules.UtilityModule.hideNavigationBar();
+    } else {
+      // Switch back to portrait mode when the media is not fullscreen
+      NativeModules.ScreenOrientation.lockOrientationPortrait();
+
+      // hide the navigation bar (on devices that have the soft navigation bar)
+      NativeModules.UtilityModule.showNavigationBar();
     }
   };
 
