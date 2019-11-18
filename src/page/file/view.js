@@ -85,6 +85,7 @@ class FilePage extends React.PureComponent {
       uriVars: null,
       stopDownloadConfirmed: false,
       streamingMode: false,
+      didSearchRecommended: false,
     };
   }
 
@@ -185,10 +186,23 @@ class FilePage extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { claim, contentType, fileInfo, isResolvingUri, resolveUri, navigation } = this.props;
+    const {
+      claim,
+      contentType,
+      fileInfo,
+      isResolvingUri,
+      resolveUri,
+      navigation,
+      searchRecommended,
+      title,
+    } = this.props;
     const { uri } = this.state;
     if (!isResolvingUri && claim === undefined && uri) {
       resolveUri(uri);
+    }
+
+    if (title && !this.state.didSearchRecommended) {
+      this.setState({ didSearchRecommended: true }, () => searchRecommended(title));
     }
 
     // Returned to the page. If mediaLoaded, and currentMediaInfo is different, update
@@ -607,6 +621,8 @@ class FilePage extends React.PureComponent {
       navigation,
       position,
       purchaseUri,
+      isSearchingRecommendContent,
+      recommendedContent,
       thumbnail,
       title,
     } = this.props;
@@ -1105,7 +1121,13 @@ class FilePage extends React.PureComponent {
                 )}
 
                 <View onLayout={this.setRelatedContentPosition} />
-                <RelatedContent navigation={navigation} uri={uri} fullUri={fullUri} />
+
+                {isSearchingRecommendContent && (
+                  <ActivityIndicator size="small" color={Colors.NextLbryGreen} style={filePageStyle.relatedLoading} />
+                )}
+                {!isSearchingRecommendContent && recommendedContent && recommendedContent.length > 0 && (
+                  <RelatedContent navigation={navigation} uri={uri} fullUri={fullUri} />
+                )}
               </ScrollView>
             </View>
           )}

@@ -8,45 +8,23 @@ import fileListStyle from 'styles/fileList';
 import relatedContentStyle from 'styles/relatedContent';
 
 export default class RelatedContent extends React.PureComponent {
-  constructor() {
-    super();
-
-    this.didSearch = undefined;
-  }
-
-  componentDidMount() {
-    this.getRecommendedContent();
-  }
+  state = {
+    urlsResolved: false,
+  };
 
   componentDidUpdate(prevProps) {
-    const { claim, uri } = this.props;
+    const { resolveUris, recommendedContent } = this.props;
 
-    if (uri !== prevProps.uri) {
-      this.didSearch = false;
-    }
-
-    if (claim && !this.didSearch) {
-      this.getRecommendedContent();
-    }
-  }
-
-  getRecommendedContent() {
-    const { search, title } = this.props;
-
-    if (title) {
-      search(title);
-      this.didSearch = true;
+    if (recommendedContent && recommendedContent.length > 0 && !this.state.urisResolved) {
+      this.setState({ urisResolved: true }, () => {
+        // batch resolve the uris
+        resolveUris(recommendedContent);
+      });
     }
   }
-
-  didSearch;
 
   render() {
-    const { recommendedContent, isSearching, navigation, uri, fullUri } = this.props;
-
-    if (!isSearching && (!recommendedContent || recommendedContent.length === 0)) {
-      return null;
-    }
+    const { recommendedContent, navigation, uri, fullUri } = this.props;
 
     return (
       <View style={relatedContentStyle.container}>
@@ -59,13 +37,11 @@ export default class RelatedContent extends React.PureComponent {
                 style={fileListStyle.item}
                 key={recommendedUri}
                 uri={recommendedUri}
+                batchResolve
                 navigation={navigation}
                 autoplay
               />
             ))}
-        {isSearching && (
-          <ActivityIndicator size="small" color={Colors.NextLbryGreen} style={relatedContentStyle.loading} />
-        )}
       </View>
     );
   }
