@@ -13,6 +13,7 @@ import PropTypes from 'prop-types';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import splashStyle from 'styles/splash';
+import { __ } from 'i18n';
 
 const BLOCK_HEIGHT_INTERVAL = 1000 * 60 * 2.5; // every 2.5 minutes
 

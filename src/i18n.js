@@ -1,4 +1,5 @@
 import { NativeModules, Platform } from 'react-native';
+import { doTransifexUpload } from 'lbryinc';
 import RNFS from 'react-native-fs';
 
 const isProduction = !__DEV__; // eslint-disable-line no-undef
@@ -8,7 +9,6 @@ window.i18n_messages = window.i18n_messages || {};
 
 function saveMessage(message) {
   const messagesFilePath = RNFS.ExternalDirectoryPath + '/app-strings.json';
-  console.log(messagesFilePath);
 
   if (knownMessages === null) {
     RNFS.readFile(messagesFilePath, 'utf8')
@@ -33,7 +33,18 @@ function checkMessageAndSave(message, messagesFilePath) {
     RNFS.writeFile(messagesFilePath, contents, 'utf8')
       .then(() => {
         // successful write
-        // send to transifex
+
+        // send to transifex (should we do this even if the file doesn't get saved?)
+        doTransifexUpload(
+          contents,
+          'lbry-mobile',
+          () => {
+            /* successful */
+          },
+          err => {
+            /* failed */
+          }
+        );
       })
       .catch(err => {
         if (err) {
@@ -49,7 +60,6 @@ export function __(message, tokens) {
       ? NativeModules.I18nManager.localeIdentifier
       : NativeModules.SettingsManager.settings.AppleLocale;
   language = language ? language.substring(0, 2) : 'en';
-  console.log('LANG=' + language);
 
   if (!isProduction) {
     saveMessage(message);

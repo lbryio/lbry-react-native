@@ -15,6 +15,7 @@ import FloatingWalletBalance from 'component/floatingWalletBalance';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import UriBar from 'component/uriBar';
 import discoverStyle from 'styles/discover';
+import { __ } from 'i18n';
 
 const TRENDING_FOR_ITEMS = [
   { icon: 'globe-americas', name: 'everyone', label: __('Everyone') },
