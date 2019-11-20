@@ -36,7 +36,7 @@ class ChannelPage extends React.PureComponent {
     autoStyle: null,
     showSortPicker: false,
     showTimePicker: false,
-    orderBy: Constants.DEFAULT_ORDER_BY,
+    orderBy: ['release_time'], // sort by new by default
     activeTab: Constants.CONTENT_TAB,
   };
 
@@ -48,8 +48,9 @@ class ChannelPage extends React.PureComponent {
   }
 
   componentDidMount() {
-    const { fetchChannelListMine } = this.props;
+    const { fetchChannelListMine, setSortByItem } = this.props;
     NativeModules.Firebase.setCurrentScreen('Channel');
+    setSortByItem(Constants.CLAIM_SEARCH_SORT_BY_ITEMS[1]); // sort by newest first
     fetchChannelListMine();
   }
 
