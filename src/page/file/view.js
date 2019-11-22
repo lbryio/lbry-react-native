@@ -61,6 +61,7 @@ class FilePage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      attemptAutoGet: false,
       autoPlayMedia: false,
       autoDownloadStarted: false,
       downloadButtonShown: false,
@@ -189,10 +190,12 @@ class FilePage extends React.PureComponent {
     const {
       claim,
       contentType,
+      costInfo,
       fileInfo,
       isResolvingUri,
       resolveUri,
       navigation,
+      purchaseUri,
       searchRecommended,
       title,
     } = this.props;
@@ -213,6 +216,21 @@ class FilePage extends React.PureComponent {
         title: metadata ? metadata.title : claim.name,
         uri: this.state.uri,
       };
+    }
+
+    // attempt to retrieve images and html/text automatically once the claim is loaded, and it's free
+    const mediaType = Lbry.getMediaType(contentType);
+    const isViewable = mediaType === 'image' || mediaType === 'text';
+    if (claim && costInfo && costInfo.cost === 0 && !this.state.autoGetAttempted && isViewable) {
+      this.setState(
+        {
+          autoGetAttempted: true,
+          downloadPressed: true,
+          autoPlayMedia: true,
+          stopDownloadConfirmed: false,
+        },
+        () => purchaseUri(claim.permanent_url, costInfo, true)
+      );
     }
   }
 
