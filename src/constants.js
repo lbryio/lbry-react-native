@@ -129,7 +129,7 @@ const Constants = {
     { name: TIME_ALL, label: 'All time' },
   ],
 
-  DEFAULT_ORDER_BY: ['trending_global', 'trending_mixed'],
+  DEFAULT_ORDER_BY: ['trending_group', 'trending_mixed'],
 
   ORDER_BY_EFFECTIVE_AMOUNT: 'effective_amount',
 
