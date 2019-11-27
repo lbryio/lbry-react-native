@@ -265,8 +265,12 @@ class FirstRunScreen extends React.PureComponent {
     this.setState({ showBottomContainer: true, showSkip: true });
   };
 
-  onWalletPasswordChanged = password => {
+  onWalletPasswordChanged = (password, finalStep) => {
     this.setState({ walletPassword: password !== null ? password : '' });
+    if (finalStep) {
+      // final step for a new user
+      this.setFreshPassword();
+    }
   };
 
   onWalletViewLayout = () => {

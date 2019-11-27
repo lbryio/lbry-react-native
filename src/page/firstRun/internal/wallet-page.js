@@ -28,10 +28,24 @@ class WalletPage extends React.PureComponent {
     walletReady: false,
     hasCheckedSync: false,
     revealPassword: false,
+    autoPassword: false,
   };
 
   componentDidMount() {
     this.checkWalletReady();
+  }
+
+  componentDidUpdate() {
+    const { hasSyncedWallet, getSyncIsPending, onPasswordChanged } = this.props;
+    if (this.state.walletReady && this.state.hasCheckedSync && !getSyncIsPending) {
+      if (!hasSyncedWallet && !this.state.autoPassword) {
+        // new account, in which case, don't ask for a password, and act as the final first run step
+        this.setState({ password: '', autoPassword: true });
+        if (onPasswordChanged) {
+          onPasswordChanged('', true);
+        }
+      }
+    }
   }
 
   checkWalletReady = () => {
@@ -86,7 +100,8 @@ class WalletPage extends React.PureComponent {
           <Text style={firstRunStyle.paragraph}>{syncApplyIsPending ? 'Validating password' : 'Synchronizing'}...</Text>
         </View>
       );
-    } else {
+    } else if (hasSyncedWallet) {
+      // only display this view if it's not a new user
       content = (
         <View onLayout={onWalletViewLayout}>
           <Text style={firstRunStyle.title}>Password</Text>

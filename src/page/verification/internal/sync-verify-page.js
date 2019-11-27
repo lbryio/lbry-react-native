@@ -18,6 +18,7 @@ class SyncVerifyPage extends React.PureComponent {
     syncApplyStarted: false,
     syncChecked: false,
     revealPassword: false,
+    autoPassword: false,
   };
 
   componentDidMount() {
@@ -79,6 +80,15 @@ class SyncVerifyPage extends React.PureComponent {
     }
   }
 
+  componentDidUpdate() {
+    const { hasSyncedWallet } = this.props;
+    if (this.state.syncChecked && !this.state.autoPassword && !hasSyncedWallet) {
+      // new user sync, don't prompt for a password
+      this.setState({ password: '', autoPassword: true });
+      this.onEnableSyncPressed();
+    }
+  }
+
   finishSync = (notifyUnlockFailed = false) => {
     const { navigation, notify, setClientSetting } = this.props;
 
@@ -133,7 +143,7 @@ class SyncVerifyPage extends React.PureComponent {
           <Text style={firstRunStyle.paragraph}>Retrieving your account information...</Text>
         </View>
       );
-    } else {
+    } else if (hasSyncedWallet) {
       content = (
         <View>
           <Text style={rewardStyle.verificationTitle}>Wallet Sync</Text>
