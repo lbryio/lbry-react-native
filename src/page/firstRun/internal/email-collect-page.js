@@ -3,7 +3,7 @@ import { Lbry } from 'lbry-redux';
 import { NativeModules, Platform, Text, TextInput, View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import firstRunStyle from 'styles/firstRun';
 
 class EmailCollectPage extends React.PureComponent {
@@ -64,7 +64,7 @@ class EmailCollectPage extends React.PureComponent {
           }}
         />
         <Text style={firstRunStyle.paragraph}>
-          An account will allow you to earn rewards and keep your account and settings synced.
+          A lbry.tv account allows you to earn rewards, backup your wallet, and keep everything synced.
         </Text>
         <Text style={firstRunStyle.infoParagraph}>
           This information is disclosed only to LBRY, Inc. and not to the LBRY network.
