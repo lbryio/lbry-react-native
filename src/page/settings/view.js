@@ -1,12 +1,32 @@
 import React from 'react';
 import { SETTINGS } from 'lbry-redux';
-import { Text, View, ScrollView, Switch, NativeModules } from 'react-native';
+import { ActivityIndicator, Picker, Platform, Text, View, ScrollView, Switch, NativeModules } from 'react-native';
 import { navigateBack } from 'utils/helper';
+import { __ } from 'i18n';
+import AsyncStorage from '@react-native-community/async-storage';
+import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PageHeader from 'component/pageHeader';
+import RNFS from 'react-native-fs';
 import settingsStyle from 'styles/settings';
 
+const languageOptions = [
+  { code: 'default', name: __('Use device language') },
+  { code: 'en', name: __('English') },
+  { code: 'gu', name: __('Gujarati') },
+  { code: 'hi', name: __('Hindi') },
+  { code: 'id', name: __('Indonesian') },
+  { code: 'ms', name: __('Malay') },
+  { code: 'pl', name: __('Polish') },
+  { code: 'pt', name: __('Portuguese') },
+  { code: 'es', name: __('Spanish') },
+];
+
 class SettingsPage extends React.PureComponent {
+  state = {
+    downloadingLanguage: false,
+  };
+
   static navigationOptions = {
     title: 'Settings',
   };
@@ -53,17 +73,68 @@ class SettingsPage extends React.PureComponent {
     return value === null || value === undefined ? defaultValue : value;
   };
 
+  handleLanguageValueChange = value => {
+    const { notify, setClientSetting } = this.props;
+
+    let language;
+    if (value === 'default') {
+      language =
+        Platform.OS === 'android'
+          ? NativeModules.I18nManager.localeIdentifier
+          : NativeModules.SettingsManager.settings.AppleLocale;
+      language = language ? language.substring(0, 2) : 'en';
+    } else {
+      language = value;
+    }
+
+    // check the local filesystem for the language first? Or download remote strings first?
+
+    // download and save the language file
+    this.setState({ downloadingLanguage: true }, () => {
+      fetch('https://lbry.com/i18n/get/lbry-mobile/app-strings/' + language + '.json')
+        .then(r => r.json())
+        .then(j => {
+          window.i18n_messages[language] = j;
+
+          console.log(window.i18n_messages);
+
+          // write the language file to the filesystem
+          const langFilePath = RNFS.ExternalDirectoryPath + '/' + language + '.json';
+          RNFS.writeFile(langFilePath, JSON.stringify(j), 'utf8');
+
+          // update state and client setting
+          window.language = language;
+          setClientSetting(SETTINGS.LANGUAGE, value);
+
+          this.setState({ downloadingLanguage: false });
+        })
+        .catch(e => {
+          notify({ message: __('Failed to load %language% translations.', { language: language }), isError: true });
+          this.setState({ downloadingLanguage: false });
+        });
+    });
+  };
+
+  handleBackPressed = () => {
+    const { navigation, notify, drawerStack, popDrawerStack } = this.props;
+
+    if (this.state.downloadingLanguage) {
+      notify({ message: 'Please wait for the language file to finish downloading' });
+      return;
+    }
+
+    navigateBack(navigation, drawerStack, popDrawerStack);
+  };
+
   render() {
     const {
       backgroundPlayEnabled,
-      drawerStack,
       keepDaemonRunning,
-      navigation,
-      popDrawerStack,
       receiveSubscriptionNotifications,
       receiveRewardNotifications,
       receiveInterestsNotifications,
       receiveCreatorNotifications,
+      language,
       showNsfw,
       showUriBarSuggestions,
       setClientSetting,
@@ -78,10 +149,7 @@ class SettingsPage extends React.PureComponent {
 
     return (
       <View style={settingsStyle.container}>
-        <PageHeader
-          title={__('Settings')}
-          onBackPressed={() => navigateBack(navigation, drawerStack, popDrawerStack)}
-        />
+        <PageHeader title={__('Settings')} onBackPressed={this.handleBackPressed} />
         <ScrollView style={settingsStyle.scrollContainer}>
           <Text style={settingsStyle.sectionTitle}>{__('Content')}</Text>
           <View style={settingsStyle.row}>
@@ -96,6 +164,27 @@ class SettingsPage extends React.PureComponent {
                 value={backgroundPlayEnabled}
                 onValueChange={value => setClientSetting(SETTINGS.BACKGROUND_PLAY_ENABLED, value)}
               />
+            </View>
+          </View>
+
+          <Text style={settingsStyle.sectionTitle}>{__('Language')}</Text>
+          <View style={settingsStyle.row}>
+            <View style={settingsStyle.pickerText}>
+              <Text style={settingsStyle.label}>{__('Choose language')}</Text>
+            </View>
+            <View style={settingsStyle.pickerContainer}>
+              {this.state.downloadingLanguage && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
+              <Picker
+                enabled={!this.state.downloadingLanguage}
+                selectedValue={language || 'default'}
+                style={settingsStyle.languagePicker}
+                itemStyle={settingsStyle.languagePickerItem}
+                onValueChange={this.handleLanguageValueChange}
+              >
+                {languageOptions.map(option => (
+                  <Picker.Item label={option.name} value={option.code} key={option.code} />
+                ))}
+              </Picker>
             </View>
           </View>
 

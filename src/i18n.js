@@ -1,10 +1,13 @@
 import { NativeModules, Platform } from 'react-native';
+import { SETTINGS } from 'lbry-redux';
 import { doTransifexUpload } from 'lbryinc';
+import AsyncStorage from '@react-native-community/async-storage';
 import RNFS from 'react-native-fs';
 
 const isProduction = !__DEV__; // eslint-disable-line no-undef
 let knownMessages = null;
 
+window.language = 'en';
 window.i18n_messages = window.i18n_messages || {};
 
 function saveMessage(message) {
@@ -55,11 +58,12 @@ function checkMessageAndSave(message, messagesFilePath) {
 }
 
 export function __(message, tokens) {
-  let language =
-    Platform.OS === 'android'
+  let language = window.language;
+
+  /* Platform.OS === 'android'
       ? NativeModules.I18nManager.localeIdentifier
       : NativeModules.SettingsManager.settings.AppleLocale;
-  language = language ? language.substring(0, 2) : 'en';
+  window.language = language ? language.substring(0, 2) : 'en'; */
 
   if (!isProduction) {
     saveMessage(message);

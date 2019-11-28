@@ -28,6 +28,12 @@ const settingsStyle = StyleSheet.create({
     width: '25%',
     justifyContent: 'center',
   },
+  pickerText: {
+    width: '50%',
+  },
+  pickerContainer: {
+    width: '50%',
+  },
   label: {
     fontSize: 14,
     fontFamily: 'Inter-UI-Regular',
