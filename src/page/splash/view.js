@@ -5,6 +5,7 @@ import { ActivityIndicator, DeviceEventEmitter, Linking, NativeModules, Platform
 import { NavigationActions, StackActions } from 'react-navigation';
 import { decode as atob } from 'base-64';
 import { navigateToUri, transformUrl } from 'utils/helper';
+import { __ } from 'i18n';
 import moment from 'moment';
 import AsyncStorage from '@react-native-community/async-storage';
 import Button from 'component/button';
@@ -13,7 +14,7 @@ import PropTypes from 'prop-types';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import splashStyle from 'styles/splash';
-import { __ } from 'i18n';
+import RNFS from 'react-native-fs';
 
 const BLOCK_HEIGHT_INTERVAL = 1000 * 60 * 2.5; // every 2.5 minutes
 

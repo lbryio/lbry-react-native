@@ -96,8 +96,6 @@ class SettingsPage extends React.PureComponent {
         .then(j => {
           window.i18n_messages[language] = j;
 
-          console.log(window.i18n_messages);
-
           // write the language file to the filesystem
           const langFilePath = RNFS.ExternalDirectoryPath + '/' + language + '.json';
           RNFS.writeFile(langFilePath, JSON.stringify(j), 'utf8');
@@ -168,7 +166,7 @@ class SettingsPage extends React.PureComponent {
           </View>
 
           <Text style={settingsStyle.sectionTitle}>{__('Language')}</Text>
-          <View style={settingsStyle.row}>
+          <View style={settingsStyle.pickerRow}>
             <View style={settingsStyle.pickerText}>
               <Text style={settingsStyle.label}>{__('Choose language')}</Text>
             </View>

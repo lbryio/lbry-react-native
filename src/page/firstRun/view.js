@@ -11,6 +11,7 @@ import EmailCollectPage from './internal/email-collect-page';
 import EmailVerifyPage from './internal/email-verify-page';
 import SkipAccountPage from './internal/skip-account-page';
 import firstRunStyle from 'styles/firstRun';
+import RNFS from 'react-native-fs';
 
 class FirstRunScreen extends React.PureComponent {
   static pages = [
@@ -35,6 +36,7 @@ class FirstRunScreen extends React.PureComponent {
     showBottomContainer: false,
     walletPassword: '',
     syncApplyStarted: false,
+    languageLoaded: false,
   };
 
   componentDidMount() {
@@ -43,26 +45,45 @@ class FirstRunScreen extends React.PureComponent {
         this.setState({ launchUrl: url });
       }
     });
+  }
 
-    if (NativeModules.FirstRun) {
-      NativeModules.FirstRun.isFirstRun().then(firstRun => {
-        AsyncStorage.removeItem(Constants.KEY_FIRST_RUN_EMAIL);
-        AsyncStorage.removeItem(Constants.KEY_EMAIL_VERIFY_PENDING);
-        this.setState({ isFirstRun: firstRun });
+  componentDidUpdate() {
+    const { language } = this.props;
 
-        if (firstRun) {
-          NativeModules.Firebase.setCurrentScreen('First Run');
-          this.setState({ currentPage: FirstRunScreen.pages[0] });
-        } else {
-          // Not the first run. Navigate to the splash screen right away
-          this.launchSplashScreen();
-        }
+    if (language && !this.state.languageLoaded) {
+      this.setState({ languageLoaded: true }, () => {
+        // Load the current language setting before doing anything
+        const languageFile = RNFS.ExternalDirectoryPath + '/' + language + '.json';
+        RNFS.readFile(languageFile, 'utf8')
+          .then(fileContents => {
+            const json = JSON.parse(fileContents);
+            window.language = language;
+            window.i18n_messages[language] = json;
+            this.checkFirstRun();
+          })
+          .catch(err => {
+            // language file doesn't exist? maintain the default language
+            this.checkFirstRun();
+          });
       });
-    } else {
-      // The first run module was not detected. Go straight to the splash screen.
-      this.launchSplashScreen();
     }
   }
+
+  checkFirstRun = () => {
+    NativeModules.FirstRun.isFirstRun().then(firstRun => {
+      AsyncStorage.removeItem(Constants.KEY_FIRST_RUN_EMAIL);
+      AsyncStorage.removeItem(Constants.KEY_EMAIL_VERIFY_PENDING);
+      this.setState({ isFirstRun: firstRun });
+
+      if (firstRun) {
+        NativeModules.Firebase.setCurrentScreen('First Run');
+        this.setState({ currentPage: FirstRunScreen.pages[0] });
+      } else {
+        // Not the first run. Navigate to the splash screen right away
+        this.launchSplashScreen();
+      }
+    });
+  };
 
   componentWillReceiveProps(nextProps) {
     const { emailNewErrorMessage, emailNewPending, syncApplyErrorMessage, syncApplyIsPending, user } = nextProps;
@@ -325,6 +346,7 @@ class FirstRunScreen extends React.PureComponent {
       emailNewErrorMessage,
       emailNewPending,
       emailToVerify,
+      language,
       notify,
       hasSyncedWallet,
       getSyncIsPending,

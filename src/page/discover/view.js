@@ -256,7 +256,7 @@ class DiscoverPage extends React.PureComponent {
     return (
       <View style={discoverStyle.listHeader}>
         <View style={discoverStyle.titleRow}>
-          <Text style={discoverStyle.pageTitle}>Your tags</Text>
+          <Text style={discoverStyle.pageTitle}>{__('Your Tags')}</Text>
         </View>
         <View style={discoverStyle.pickerRow}>
           <View style={discoverStyle.leftPickerRow}>

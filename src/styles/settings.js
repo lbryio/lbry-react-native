@@ -29,10 +29,12 @@ const settingsStyle = StyleSheet.create({
     justifyContent: 'center',
   },
   pickerText: {
-    width: '50%',
+    width: '40%',
   },
   pickerContainer: {
-    width: '50%',
+    width: '60%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
   label: {
     fontSize: 14,
@@ -59,6 +61,20 @@ const settingsStyle = StyleSheet.create({
   },
   sectionDivider: {
     marginTop: 24,
+  },
+  languagePicker: {
+    width: '85%',
+  },
+  languagePickerItem: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+  },
+  pickerRow: {
+    marginBottom: 24,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 

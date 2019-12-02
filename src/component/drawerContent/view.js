@@ -138,7 +138,7 @@ class DrawerContent extends React.PureComponent {
                 <View key={groupName} style={discoverStyle.menuGroup}>
                   {groupNames[3] !== groupName && (
                     <Text key={`${groupName}-title`} style={discoverStyle.menuGroupName}>
-                      {groupName}
+                      {__(groupName)}
                     </Text>
                   )}
                   {menuItems.map(item => {
