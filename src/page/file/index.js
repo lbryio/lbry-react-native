@@ -8,6 +8,7 @@ import {
   doPurchaseUri,
   doDeletePurchasedUri,
   doResolveUri,
+  doSearch,
   doSendTip,
   doToast,
   makeSelectIsUriResolving,
@@ -17,6 +18,7 @@ import {
   makeSelectContentPositionForUri,
   makeSelectContentTypeForUri,
   makeSelectMetadataForUri,
+  makeSelectRecommendedContentForUri,
   makeSelectStreamingUrlForUri,
   makeSelectThumbnailForUri,
   makeSelectTitleForUri,
@@ -26,6 +28,7 @@ import {
   selectPurchasedUris,
   selectFailedPurchaseUris,
   selectPurchaseUriErrorMessage,
+  selectIsSearching,
 } from 'lbry-redux';
 import {
   doClaimEligiblePurchaseRewards,
@@ -42,6 +45,7 @@ import {
   doStopDownloadingFile,
 } from 'redux/actions/file';
 import { doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
+import { doToggleFullscreenMode } from 'redux/actions/settings';
 import { selectDrawerStack } from 'redux/selectors/drawer';
 import FilePage from './view';
 
@@ -70,6 +74,8 @@ const select = (state, props) => {
     streamingUrl: makeSelectStreamingUrlForUri(contentUri)(state),
     thumbnail: makeSelectThumbnailForUri(contentUri)(state),
     title: makeSelectTitleForUri(contentUri)(state),
+    recommendedContent: makeSelectRecommendedContentForUri(contentUri)(state),
+    isSearchingRecommendContent: selectIsSearching(state),
   };
 };
 
@@ -89,6 +95,7 @@ const perform = dispatch => ({
   purchaseUri: (uri, costInfo, saveFile) => dispatch(doPurchaseUri(uri, costInfo, saveFile)),
   deletePurchasedUri: uri => dispatch(doDeletePurchasedUri(uri)),
   resolveUri: uri => dispatch(doResolveUri(uri)),
+  searchRecommended: query => dispatch(doSearch(query, 20, undefined, true)),
   sendTip: (amount, claimId, isSupport, successCallback, errorCallback) =>
     dispatch(doSendTip(amount, claimId, isSupport, successCallback, errorCallback)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(true)),
@@ -96,6 +103,7 @@ const perform = dispatch => ({
   startDownload: (uri, outpoint, fileInfo) => dispatch(doStartDownload(uri, outpoint, fileInfo)),
   updateDownload: (uri, outpoint, fileInfo, progress) => dispatch(doUpdateDownload(uri, outpoint, fileInfo, progress)),
   completeDownload: (uri, outpoint, fileInfo) => dispatch(doCompleteDownload(uri, outpoint, fileInfo)),
+  toggleFullscreenMode: mode => dispatch(doToggleFullscreenMode(mode)),
 });
 
 export default connect(

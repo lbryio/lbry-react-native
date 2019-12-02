@@ -66,6 +66,8 @@ const Constants = {
   ACTION_CLEAR_PUBLISH_FORM_STATE: 'CLEAR_PUBLISH_FORM_STATE',
   ACTION_CLEAR_CHANNEL_FORM_STATE: 'CLEAR_CHANNEL_FORM_STATE',
 
+  ACTION_FULLSCREEN_MODE_TOGGLED: 'FULLSCREEN_MODE_TOGGLED',
+
   ORIENTATION_HORIZONTAL: 'horizontal',
   ORIENTATION_VERTICAL: 'vertical',
 
@@ -129,7 +131,7 @@ const Constants = {
     { name: TIME_ALL, label: __('All time') },
   ],
 
-  DEFAULT_ORDER_BY: ['trending_global', 'trending_mixed'],
+  DEFAULT_ORDER_BY: ['trending_group', 'trending_mixed'],
 
   ORDER_BY_EFFECTIVE_AMOUNT: 'effective_amount',
 

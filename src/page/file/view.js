@@ -61,6 +61,7 @@ class FilePage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      attemptAutoGet: false,
       autoPlayMedia: false,
       autoDownloadStarted: false,
       downloadButtonShown: false,
@@ -85,6 +86,7 @@ class FilePage extends React.PureComponent {
       uriVars: null,
       stopDownloadConfirmed: false,
       streamingMode: false,
+      didSearchRecommended: false,
     };
   }
 
@@ -185,10 +187,25 @@ class FilePage extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { claim, contentType, fileInfo, isResolvingUri, resolveUri, navigation } = this.props;
+    const {
+      claim,
+      contentType,
+      costInfo,
+      fileInfo,
+      isResolvingUri,
+      resolveUri,
+      navigation,
+      purchaseUri,
+      searchRecommended,
+      title,
+    } = this.props;
     const { uri } = this.state;
     if (!isResolvingUri && claim === undefined && uri) {
       resolveUri(uri);
+    }
+
+    if (title && !this.state.didSearchRecommended) {
+      this.setState({ didSearchRecommended: true }, () => searchRecommended(title));
     }
 
     // Returned to the page. If mediaLoaded, and currentMediaInfo is different, update
@@ -199,6 +216,21 @@ class FilePage extends React.PureComponent {
         title: metadata ? metadata.title : claim.name,
         uri: this.state.uri,
       };
+    }
+
+    // attempt to retrieve images and html/text automatically once the claim is loaded, and it's free
+    const mediaType = Lbry.getMediaType(contentType);
+    const isViewable = mediaType === 'image' || mediaType === 'text';
+    if (claim && costInfo && costInfo.cost === 0 && !this.state.autoGetAttempted && isViewable) {
+      this.setState(
+        {
+          autoGetAttempted: true,
+          downloadPressed: true,
+          autoPlayMedia: true,
+          stopDownloadConfirmed: false,
+        },
+        () => purchaseUri(claim.permanent_url, costInfo, true)
+      );
     }
   }
 
@@ -214,25 +246,25 @@ class FilePage extends React.PureComponent {
     }
   }
 
-  handleFullscreenToggle = mode => {
-    this.setState({ fullscreenMode: mode });
-    StatusBar.setHidden(mode);
-    if (NativeModules.ScreenOrientation) {
-      if (mode) {
-        // fullscreen, so change orientation to landscape mode
-        NativeModules.ScreenOrientation.lockOrientationLandscape();
-        if (NativeModules.UtilityModule) {
-          // hide the navigation bar (on devices that use have soft navigation bar)
-          NativeModules.UtilityModule.hideNavigationBar();
-        }
-      } else {
-        // Switch back to portrait mode when the media is not fullscreen
-        NativeModules.ScreenOrientation.lockOrientationPortrait();
-        if (NativeModules.UtilityModule) {
-          // hide the navigation bar (on devices that use have soft navigation bar)
-          NativeModules.UtilityModule.showNavigationBar();
-        }
-      }
+  handleFullscreenToggle = isFullscreen => {
+    const { toggleFullscreenMode } = this.props;
+    this.setState({ fullscreenMode: isFullscreen });
+    toggleFullscreenMode(isFullscreen);
+
+    StatusBar.setHidden(isFullscreen);
+
+    if (isFullscreen) {
+      // fullscreen, so change orientation to landscape mode
+      NativeModules.ScreenOrientation.lockOrientationLandscape();
+
+      // hide the navigation bar (on devices that have the soft navigation bar)
+      NativeModules.UtilityModule.hideNavigationBar();
+    } else {
+      // Switch back to portrait mode when the media is not fullscreen
+      NativeModules.ScreenOrientation.lockOrientationPortrait();
+
+      // hide the navigation bar (on devices that have the soft navigation bar)
+      NativeModules.UtilityModule.showNavigationBar();
     }
   };
 
@@ -607,6 +639,8 @@ class FilePage extends React.PureComponent {
       navigation,
       position,
       purchaseUri,
+      isSearchingRecommendContent,
+      recommendedContent,
       thumbnail,
       title,
     } = this.props;
@@ -1106,7 +1140,13 @@ class FilePage extends React.PureComponent {
                 )}
 
                 <View onLayout={this.setRelatedContentPosition} />
-                <RelatedContent navigation={navigation} uri={uri} fullUri={fullUri} />
+
+                {isSearchingRecommendContent && (
+                  <ActivityIndicator size="small" color={Colors.NextLbryGreen} style={filePageStyle.relatedLoading} />
+                )}
+                {!isSearchingRecommendContent && recommendedContent && recommendedContent.length > 0 && (
+                  <RelatedContent navigation={navigation} uri={uri} fullUri={fullUri} />
+                )}
               </ScrollView>
             </View>
           )}

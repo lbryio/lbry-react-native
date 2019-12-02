@@ -33,6 +33,7 @@ import {
   DeviceEventEmitter,
   Linking,
   NativeModules,
+  StatusBar,
   TextInput,
   ToastAndroid,
 } from 'react-native';
@@ -50,7 +51,7 @@ import {
   selectHashChanged,
   selectUser,
 } from 'lbryinc';
-import { makeSelectClientSetting } from 'redux/selectors/settings';
+import { makeSelectClientSetting, selectFullscreenMode } from 'redux/selectors/settings';
 import { decode as atob } from 'base-64';
 import { dispatchNavigateBack, dispatchNavigateToUri, transformUrl } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -435,6 +436,26 @@ class AppWithNavigationState extends React.Component {
       if (backgroundPlayEnabled || NativeModules.BackgroundMedia) {
         NativeModules.BackgroundMedia.hidePlaybackNotification();
       }
+
+      // check fullscreen mode and show / hide navigation bar accordingly
+      this.checkFullscreenMode();
+    }
+  };
+
+  checkFullscreenMode = () => {
+    const { fullscreenMode } = this.props;
+    StatusBar.setHidden(fullscreenMode);
+
+    if (fullscreenMode) {
+      // fullscreen, so change orientation to landscape mode
+      NativeModules.ScreenOrientation.lockOrientationLandscape();
+      // hide the navigation bar (on devices that have the soft navigation bar)
+      NativeModules.UtilityModule.hideNavigationBar();
+    } else {
+      // Switch back to portrait mode when the media is not fullscreen
+      NativeModules.ScreenOrientation.lockOrientationPortrait();
+      // hide the navigation bar (on devices that have the soft navigation bar)
+      NativeModules.UtilityModule.showNavigationBar();
     }
   };
 
@@ -489,6 +510,7 @@ const mapStateToProps = state => ({
   emailVerifyErrorMessage: selectEmailVerifyErrorMessage(state),
   showNsfw: makeSelectClientSetting(SETTINGS.SHOW_NSFW)(state),
   user: selectUser(state),
+  fullscreenMode: selectFullscreenMode(state),
 });
 
 export default connect(mapStateToProps)(AppWithNavigationState);
