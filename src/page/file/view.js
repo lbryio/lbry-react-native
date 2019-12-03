@@ -818,7 +818,7 @@ class FilePage extends React.PureComponent {
         <View style={filePageStyle.pageContainer}>
           {!this.state.fullscreenMode && <UriBar value={uri} navigation={navigation} />}
           {this.state.showWebView && isWebViewable && (
-            <WebView source={{ uri: localFileUri }} style={filePageStyle.viewer} />
+            <WebView allowFileAccess source={{ uri: localFileUri }} style={filePageStyle.viewer} />
           )}
 
           {this.state.showImageViewer && (
@@ -937,48 +937,8 @@ class FilePage extends React.PureComponent {
                 />
               )}
 
-              {showActions && showFileActions && (
-                <View style={filePageStyle.actions}>
-                  {showFileActions && (
-                    <View style={filePageStyle.fileActions}>
-                      {canEdit && (
-                        <Button
-                          style={[filePageStyle.actionButton, filePageStyle.editButton]}
-                          theme={'light'}
-                          icon={'edit'}
-                          text={'Edit'}
-                          onPress={this.onEditPressed}
-                        />
-                      )}
-
-                      {(completed || canEdit) && (
-                        <Button
-                          style={filePageStyle.actionButton}
-                          theme={'light'}
-                          icon={'trash-alt'}
-                          text={'Delete'}
-                          onPress={this.onDeletePressed}
-                        />
-                      )}
-                      {!completed &&
-                        fileInfo &&
-                        !fileInfo.stopped &&
-                        fileInfo.written_bytes < fileInfo.total_bytes &&
-                        !this.state.stopDownloadConfirmed && (
-                        <Button
-                          style={filePageStyle.actionButton}
-                          icon={'stop'}
-                          theme={'light'}
-                          text={'Stop Download'}
-                          onPress={this.onStopDownloadPressed}
-                        />
-                      )}
-                    </View>
-                  )}
-                </View>
-              )}
               <ScrollView
-                style={showActions ? filePageStyle.scrollContainerActions : filePageStyle.scrollContainer}
+                style={filePageStyle.scrollContainer}
                 contentContainerstyle={showActions ? null : filePageStyle.scrollContent}
                 keyboardShouldPersistTaps={'handled'}
                 ref={ref => {
@@ -1021,6 +981,31 @@ class FilePage extends React.PureComponent {
                     <Icon name={'flag'} size={20} style={filePageStyle.largeButtonIcon} />
                     <Text style={filePageStyle.largeButtonText}>Report</Text>
                   </TouchableOpacity>
+
+                  {canEdit && (
+                    <TouchableOpacity style={filePageStyle.largeButton} onPress={this.onEditPressed}>
+                      <Icon name={'edit'} size={20} style={filePageStyle.largeButtonIcon} />
+                      <Text style={filePageStyle.largeButtonText}>Edit</Text>
+                    </TouchableOpacity>
+                  )}
+
+                  {(completed || canEdit) && (
+                    <TouchableOpacity style={filePageStyle.largeButton} onPress={this.onDeletePressed}>
+                      <Icon name={'trash-alt'} size={20} style={filePageStyle.largeButtonIcon} />
+                      <Text style={filePageStyle.largeButtonText}>Delete</Text>
+                    </TouchableOpacity>
+                  )}
+
+                  {!completed &&
+                    fileInfo &&
+                    !fileInfo.stopped &&
+                    fileInfo.written_bytes < fileInfo.total_bytes &&
+                    !this.state.stopDownloadConfirmed && (
+                    <TouchableOpacity style={filePageStyle.largeButton} onPress={this.onStopDownloadPressed}>
+                      <Icon name={'stop'} size={20} style={filePageStyle.largeButtonIcon} />
+                      <Text style={filePageStyle.largeButtonText}>Stop Download</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
 
                 <View style={filePageStyle.channelRow}>
