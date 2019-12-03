@@ -16,8 +16,12 @@ class SyncVerifyPage extends React.PureComponent {
     password: null,
     placeholder: 'password',
     syncApplyStarted: false,
+    syncApplyCompleted: false,
     syncChecked: false,
     revealPassword: false,
+    autoPassword: false,
+    autoLoginAttempted: false,
+    autoLoginFlow: true,
   };
 
   componentDidMount() {
@@ -64,9 +68,11 @@ class SyncVerifyPage extends React.PureComponent {
     if (this.state.syncApplyStarted && !syncApplyIsPending) {
       if (syncApplyErrorMessage && syncApplyErrorMessage.trim().length > 0) {
         notify({ message: syncApplyErrorMessage, isError: true });
-        this.setState({ syncApplyStarted: false });
+        this.setState({ syncApplyStarted: false, autoLoginFlow: false });
       } else {
         // password successfully verified
+        this.setState({ syncApplyCompleted: true });
+
         if (NativeModules.UtilityModule) {
           NativeModules.UtilityModule.setSecureValue(
             Constants.KEY_WALLET_PASSWORD,
@@ -76,6 +82,19 @@ class SyncVerifyPage extends React.PureComponent {
 
         this.finishSync(true);
       }
+    }
+  }
+
+  componentDidUpdate() {
+    const { hasSyncedWallet } = this.props;
+    if (this.state.syncChecked && !this.state.autoPassword && !hasSyncedWallet) {
+      // new user sync, don't prompt for a password
+      this.setState({ password: '', autoPassword: true });
+      this.onEnableSyncPressed();
+    }
+
+    if (this.state.syncChecked && hasSyncedWallet && !this.state.autoLoginAttempted) {
+      this.setState({ autoLoginAttempted: true, password: '' }, () => this.onEnableSyncPressed());
     }
   }
 
@@ -133,7 +152,16 @@ class SyncVerifyPage extends React.PureComponent {
           <Text style={firstRunStyle.paragraph}>{__('Retrieving your account information...')}</Text>
         </View>
       );
-    } else {
+    } else if (this.state.autoLoginFlow && (syncApplyIsPending || this.state.syncApplyCompleted)) {
+      // first attempt at auto-login, only display activity indicator
+      content = (
+        <View>
+          <View style={firstRunStyle.centerInside}>
+            <ActivityIndicator size={'small'} color={Colors.White} />
+          </View>
+        </View>
+      );
+    } else if (hasSyncedWallet && this.state.autoLoginAttempted) {
       content = (
         <View>
           <Text style={rewardStyle.verificationTitle}>{__('Wallet Sync')}</Text>
@@ -198,7 +226,7 @@ class SyncVerifyPage extends React.PureComponent {
                 onPress={this.onEnableSyncPressed}
               />
             )}
-            {syncApplyIsPending && (
+            {(syncApplyIsPending || this.state.syncApplyCompleted) && (
               <View style={firstRunStyle.centerInside}>
                 <ActivityIndicator size={'small'} color={Colors.White} />
               </View>

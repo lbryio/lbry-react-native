@@ -30,13 +30,14 @@ class FirstRunScreen extends React.PureComponent {
     enterPasswordTracked: false,
     isFirstRun: false,
     launchUrl: null,
+    languageLoaded: false,
     showSkip: false,
     isEmailVerified: false,
     skipAccountConfirmed: false,
     showBottomContainer: false,
     walletPassword: '',
     syncApplyStarted: false,
-    languageLoaded: false,
+    syncApplyCompleted: false,
   };
 
   componentDidMount() {
@@ -103,8 +104,9 @@ class FirstRunScreen extends React.PureComponent {
     if (this.state.syncApplyStarted && !syncApplyIsPending) {
       if (syncApplyErrorMessage && syncApplyErrorMessage.trim().length > 0) {
         notify({ message: syncApplyErrorMessage, isError: true });
-        this.setState({ showBottomContainer: true, syncApplyStarted: false });
+        this.setState({ showBottomContainer: true, syncApplyStarted: false, syncApplyCompleted: false });
       } else {
+        this.setState({ syncApplyCompleted: true });
         // password successfully verified
         NativeModules.UtilityModule.setSecureValue(
           Constants.KEY_WALLET_PASSWORD,
@@ -183,6 +185,13 @@ class FirstRunScreen extends React.PureComponent {
     this.setState({ syncApplyStarted: true, showBottomContainer: false }, () => {
       syncApply(syncHash, syncData, this.state.walletPassword);
     });
+  };
+
+  autoLogin = () => {
+    const { hasSyncedWallet } = this.props;
+    if (hasSyncedWallet && !this.state.syncApplyStarted) {
+      this.checkWalletPassword();
+    }
   };
 
   handleContinuePressed = () => {
@@ -290,8 +299,12 @@ class FirstRunScreen extends React.PureComponent {
     this.setState({ showBottomContainer: true, showSkip: true });
   };
 
-  onWalletPasswordChanged = password => {
+  onWalletPasswordChanged = (password, finalStep) => {
     this.setState({ walletPassword: password !== null ? password : '' });
+    if (finalStep) {
+      // final step for a new user
+      this.setFreshPassword();
+    }
   };
 
   onWalletViewLayout = () => {
@@ -398,8 +411,10 @@ class FirstRunScreen extends React.PureComponent {
             getSyncIsPending={getSyncIsPending}
             syncApplyIsPending={syncApplyIsPending}
             syncApplyStarted={this.state.syncApplyStarted}
+            syncApplyCompleted={this.state.syncApplyCompleted}
             onWalletViewLayout={this.onWalletViewLayout}
             onPasswordChanged={this.onWalletPasswordChanged}
+            autoLogin={this.autoLogin}
           />
         );
         break;

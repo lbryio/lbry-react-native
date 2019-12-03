@@ -59,7 +59,7 @@ class WalletSyncDriver extends React.PureComponent<Props> {
               <Text style={walletStyle.labelText}>{__('Connected email')}</Text>
             </View>
             <View style={walletStyle.tableCol}>
-              <Text selectable style={walletStyle.valueText}>
+              <Text selectable style={walletStyle.valueText} numberOfLines={1}>
                 {userEmail || __('No connected email')}
               </Text>
             </View>

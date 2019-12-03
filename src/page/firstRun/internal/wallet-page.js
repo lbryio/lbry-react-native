@@ -28,10 +28,30 @@ class WalletPage extends React.PureComponent {
     walletReady: false,
     hasCheckedSync: false,
     revealPassword: false,
+    autoPassword: false,
+    autoLoginAttempted: false,
   };
 
   componentDidMount() {
     this.checkWalletReady();
+  }
+
+  componentDidUpdate() {
+    const { hasSyncedWallet, getSyncIsPending, onPasswordChanged, autoLogin } = this.props;
+    if (this.state.walletReady && this.state.hasCheckedSync && !getSyncIsPending) {
+      if (!hasSyncedWallet && !this.state.autoPassword) {
+        // new account, in which case, don't ask for a password, and act as the final first run step
+        this.setState({ password: '', autoPassword: true });
+        if (onPasswordChanged) {
+          onPasswordChanged('', true);
+        }
+      }
+
+      if (hasSyncedWallet && !this.state.autoLoginAttempted && autoLogin) {
+        autoLogin();
+        this.setState({ autoLoginAttempted: true });
+      }
+    }
   }
 
   checkWalletReady = () => {
@@ -69,6 +89,7 @@ class WalletPage extends React.PureComponent {
       hasSyncedWallet,
       syncApplyIsPending,
       syncApplyStarted,
+      syncApplyCompleted,
     } = this.props;
 
     let content;
@@ -79,7 +100,7 @@ class WalletPage extends React.PureComponent {
           <Text style={firstRunStyle.paragraph}>{__('Retrieving your account information...')}</Text>
         </View>
       );
-    } else if (syncApplyStarted || syncApplyIsPending) {
+    } else if (syncApplyStarted || syncApplyIsPending || syncApplyCompleted) {
       content = (
         <View style={firstRunStyle.centered}>
           <ActivityIndicator size="large" color={Colors.White} style={firstRunStyle.waiting} />
@@ -88,7 +109,8 @@ class WalletPage extends React.PureComponent {
           </Text>
         </View>
       );
-    } else {
+    } else if (hasSyncedWallet && this.state.autoLoginAttempted) {
+      // only display this view if it's not a new user (or auto-login has been attempted once)
       content = (
         <View onLayout={onWalletViewLayout}>
           <Text style={firstRunStyle.title}>Password</Text>
