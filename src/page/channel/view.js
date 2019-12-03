@@ -291,7 +291,7 @@ class ChannelPage extends React.PureComponent {
                 onPress={this.onSharePressed}
               />
               {!ownedChannel && <SubscribeButton style={channelPageStyle.subscribeButton} uri={fullUri} name={name} />}
-              {!ownedChannel && (
+              {false && !ownedChannel && (
                 <SubscribeNotificationButton
                   style={[channelPageStyle.subscribeButton, channelPageStyle.bellButton]}
                   uri={fullUri}

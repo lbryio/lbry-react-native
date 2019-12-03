@@ -1073,7 +1073,7 @@ class FilePage extends React.PureComponent {
                         hideText={false}
                       />
                     )}
-                    {channelName && (
+                    {false && channelName && (
                       <SubscribeNotificationButton
                         style={[filePageStyle.actionButton, filePageStyle.bellButton]}
                         uri={fullChannelUri}
