@@ -51,21 +51,25 @@ class FirstRunScreen extends React.PureComponent {
   componentDidUpdate() {
     const { language } = this.props;
 
-    if (language && !this.state.languageLoaded) {
+    if (!this.state.languageLoaded) {
       this.setState({ languageLoaded: true }, () => {
-        // Load the current language setting before doing anything
-        const languageFile = RNFS.ExternalDirectoryPath + '/' + language + '.json';
-        RNFS.readFile(languageFile, 'utf8')
-          .then(fileContents => {
-            const json = JSON.parse(fileContents);
-            window.language = language;
-            window.i18n_messages[language] = json;
-            this.checkFirstRun();
-          })
-          .catch(err => {
-            // language file doesn't exist? maintain the default language
-            this.checkFirstRun();
-          });
+        if (!language) {
+          this.checkFirstRun();
+        } else {
+          // Load the current language setting before doing anything
+          const languageFile = RNFS.ExternalDirectoryPath + '/' + language + '.json';
+          RNFS.readFile(languageFile, 'utf8')
+            .then(fileContents => {
+              const json = JSON.parse(fileContents);
+              window.language = language;
+              window.i18n_messages[language] = json;
+              this.checkFirstRun();
+            })
+            .catch(err => {
+              // language file doesn't exist? maintain the default language
+              this.checkFirstRun();
+            });
+        }
       });
     }
   }

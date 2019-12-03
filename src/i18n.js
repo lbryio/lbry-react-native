@@ -36,18 +36,17 @@ function checkMessageAndSave(message, messagesFilePath) {
     RNFS.writeFile(messagesFilePath, contents, 'utf8')
       .then(() => {
         // successful write
-
         // send to transifex (should we do this even if the file doesn't get saved?)
-        doTransifexUpload(
+        /* doTransifexUpload(
           contents,
           'lbry-mobile',
           () => {
-            /* successful */
+            // successful
           },
           err => {
-            /* failed */
+            // failed
           }
-        );
+        ); */
       })
       .catch(err => {
         if (err) {
@@ -58,7 +57,8 @@ function checkMessageAndSave(message, messagesFilePath) {
 }
 
 export function __(message, tokens) {
-  let language = window.language;
+  const w = global.window ? global.window : window;
+  let language = w.language;
 
   /* Platform.OS === 'android'
       ? NativeModules.I18nManager.localeIdentifier
@@ -69,9 +69,7 @@ export function __(message, tokens) {
     saveMessage(message);
   }
 
-  const translatedMessage = window.i18n_messages[language]
-    ? window.i18n_messages[language][message] || message
-    : message;
+  const translatedMessage = w.i18n_messages[language] ? w.i18n_messages[language][message] || message : message;
 
   if (!tokens) {
     return translatedMessage;
