@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert, NativeModules, Switch, Text, View } from 'react-native';
 import Button from 'component/button';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Link from 'component/link';
 import walletStyle from 'styles/wallet';
 
@@ -43,7 +43,7 @@ class WalletSyncDriver extends React.PureComponent<Props> {
             <Text style={walletStyle.labelText}>Sync status</Text>
           </View>
           <View style={walletStyle.tableColRow}>
-            <Text selectable={true} style={walletStyle.valueText}>
+            <Text selectable style={walletStyle.valueText}>
               {deviceWalletSynced ? 'On' : 'Off'}
             </Text>
             <Switch
@@ -59,8 +59,8 @@ class WalletSyncDriver extends React.PureComponent<Props> {
               <Text style={walletStyle.labelText}>Connected email</Text>
             </View>
             <View style={walletStyle.tableCol}>
-              <Text selectable={true} style={walletStyle.valueText}>
-                {userEmail ? userEmail : 'No connected email'}
+              <Text selectable style={walletStyle.valueText} numberOfLines={1}>
+                {userEmail || 'No connected email'}
               </Text>
             </View>
           </View>
