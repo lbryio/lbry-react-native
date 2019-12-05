@@ -105,16 +105,20 @@ class EmailVerifyPage extends React.PureComponent {
   };
 
   render() {
-    const { emailNewPending } = this.props;
+    const { emailAlreadyExists, emailNewPending } = this.props;
 
     return (
       <View style={firstRunStyle.container}>
         <Text style={rewardStyle.verificationTitle}>
-          {Constants.PHASE_COLLECTION === this.state.phase ? __('Email') : __('Verify Email')}
+          {Constants.PHASE_COLLECTION === this.state.phase
+            ? __('Email')
+            : emailAlreadyExists
+              ? __('Sign In')
+              : __('Verify Email')}
         </Text>
         {Constants.PHASE_COLLECTION === this.state.phase && (
           <View>
-            <Text style={firstRunStyle.paragraph}>Please provide an email address.</Text>
+            <Text style={firstRunStyle.paragraph}>{__('Please provide an email address.')}</Text>
             <TextInput
               style={firstRunStyle.emailInput}
               placeholder={this.state.placeholder}
@@ -138,7 +142,7 @@ class EmailVerifyPage extends React.PureComponent {
                 <Button
                   style={rewardStyle.verificationButton}
                   theme={'light'}
-                  text={__('Send verification email')}
+                  text={__('Continue')}
                   onPress={this.onSendVerificationPressed}
                 />
               )}
@@ -154,8 +158,12 @@ class EmailVerifyPage extends React.PureComponent {
         {Constants.PHASE_VERIFICATION === this.state.phase && (
           <View>
             <Text style={firstRunStyle.paragraph}>
-              An email has been sent to <Text style={firstRunStyle.nowrap}>{this.state.email}</Text>. Please follow the
-              instructions in the message to verify your email address.
+              {__('An email has been sent to')}
+              {'\n\n'}
+              {this.state.email}
+              {'\n\n'}
+              {emailAlreadyExists && __('Please click the link in the message to complete signing in.')}
+              {!emailAlreadyExists && __('Please click the link in the message to verify your email address')}
             </Text>
 
             <View style={rewardStyle.buttonContainer}>

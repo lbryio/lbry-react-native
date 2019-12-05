@@ -118,6 +118,7 @@ class VerificationScreen extends React.PureComponent {
       addUserEmail,
       checkSync,
       emailNewErrorMessage,
+      emailAlreadyExists,
       emailNewPending,
       emailToVerify,
       getSync,
@@ -148,6 +149,7 @@ class VerificationScreen extends React.PureComponent {
         page = (
           <EmailVerifyPage
             addUserEmail={addUserEmail}
+            emailAlreadyExists={emailAlreadyExists}
             emailNewErrorMessage={emailNewErrorMessage}
             emailNewPending={emailNewPending}
             emailToVerify={emailToVerify}

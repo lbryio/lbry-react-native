@@ -14,7 +14,7 @@ class SyncVerifyPage extends React.PureComponent {
   state = {
     checkSyncStarted: false,
     password: null,
-    placeholder: 'password',
+    placeholder: __('password'),
     syncApplyStarted: false,
     syncApplyCompleted: false,
     syncChecked: false,
@@ -182,7 +182,7 @@ class SyncVerifyPage extends React.PureComponent {
               }}
               onBlur={() => {
                 if (!this.state.password || this.state.password.length === 0) {
-                  this.setState({ placeholder: 'password' });
+                  this.setState({ placeholder: __('password') });
                 }
               }}
             />

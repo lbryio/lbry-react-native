@@ -75,7 +75,7 @@ class PhoneVerifyPage extends React.PureComponent {
         notify({ message: String(phoneVerifyErrorMessage) });
         this.setState({ codeVerifyStarted: false, phoneVerifyFailed: true });
       } else {
-        notify({ message: 'Your phone number was successfully verified.' });
+        notify({ message: __('Your phone number was successfully verified.') });
         this.setState({ codeVerifySuccessful: true, phoneVerifyFailed: false });
         if (onPhoneVerifySuccessful) {
           onPhoneVerifySuccessful();
@@ -103,7 +103,7 @@ class PhoneVerifyPage extends React.PureComponent {
 
     if (!this.phoneInput.isValidNumber()) {
       return notify({
-        message: 'Please provide a valid telephone number.',
+        message: __('Please provide a valid telephone number.'),
       });
     }
 
@@ -145,7 +145,7 @@ class PhoneVerifyPage extends React.PureComponent {
     return (
       <View style={firstRunStyle.container}>
         <Text style={rewardStyle.verificationTitle}>
-          {this.state.phase === Constants.PHASE_VERIFICATION ? 'Verify ' : ''}Phone Number
+          {this.state.phase === Constants.PHASE_VERIFICATION ? __('Verify Phone Number') : __('Phone Number')}
         </Text>
 
         <View style={rewardStyle.phoneVerificationContainer}>
@@ -169,7 +169,7 @@ class PhoneVerifyPage extends React.PureComponent {
                   <Button
                     style={[rewardStyle.verificationButton, rewardStyle.topMarginMedium]}
                     theme={'light'}
-                    text={'Send verification text'}
+                    text={__('Send verification text')}
                     onPress={this.onSendTextPressed}
                   />
                 )}
@@ -187,7 +187,7 @@ class PhoneVerifyPage extends React.PureComponent {
               {!phoneVerifyIsPending && !this.codeVerifyStarted && (
                 <View>
                   <Text style={[rewardStyle.bottomMarginSmall, firstRunStyle.paragraph]}>
-                    Please enter the verification code sent to {phone}.
+                    {__('Please enter the verification code sent to %phone%', { phone })}.
                   </Text>
                   <TextInput
                     style={rewardStyle.verificationCodeInput}
@@ -202,16 +202,16 @@ class PhoneVerifyPage extends React.PureComponent {
                     <Button
                       style={[rewardStyle.verificationButton, rewardStyle.topMarginSmall]}
                       theme={'light'}
-                      text={'Verify'}
+                      text={__('Verify')}
                       onPress={this.onVerifyPressed}
                     />
-                    <Link style={rewardStyle.verificationLink} text={'Edit'} onPress={this.onEditPressed} />
+                    <Link style={rewardStyle.verificationLink} text={__('Edit')} onPress={this.onEditPressed} />
                   </View>
                 </View>
               )}
               {phoneVerifyIsPending && (
                 <View style={firstRunStyle.centered}>
-                  <Text style={firstRunStyle.paragraph}>Verifying your phone number...</Text>
+                  <Text style={firstRunStyle.paragraph}>{__('Verifying your phone number...')}</Text>
                   <ActivityIndicator
                     color={Colors.White}
                     size="small"

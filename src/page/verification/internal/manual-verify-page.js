@@ -20,22 +20,22 @@ class ManualVerifyPage extends React.PureComponent {
   render() {
     return (
       <View style={firstRunStyle.container}>
-        <Text style={rewardStyle.verificationTitle}>Manual Reward Verification</Text>
+        <Text style={rewardStyle.verificationTitle}>{__('Manual Reward Verification')}</Text>
         <Text style={firstRunStyle.spacedParagraph}>
           {__(
             'This account must undergo review before you can participate in the rewards program. This can take anywhere from several minutes to several days.'
           )}
         </Text>
         <Text style={firstRunStyle.spacedParagraph}>
-          If you continue to see this message, please request to be verified on the{' '}
+          {__('If you continue to see this message, please request to be verified on the')}{' '}
           <Link
             style={rewardStyle.underlinedTextLink}
             href="https://discordapp.com/invite/Z3bERWA"
-            text="LBRY Discord server"
+            text={__('LBRY Discord server')}
           />
           .
         </Text>
-        <Text style={firstRunStyle.spacedParagraph}>Please enjoy free content in the meantime!</Text>
+        <Text style={firstRunStyle.spacedParagraph}>{__('Please enjoy free content in the meantime!')}</Text>
       </View>
     );
   }

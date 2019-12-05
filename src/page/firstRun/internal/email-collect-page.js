@@ -64,7 +64,7 @@ class EmailCollectPage extends React.PureComponent {
           }}
         />
         <Text style={firstRunStyle.paragraph}>
-          {__('An account will allow you to earn rewards and keep your account and settings synced.')}
+          {__('A lbry.tv account allows you to earn rewards, backup your wallet, and keep everything in sync.')}
         </Text>
         <Text style={firstRunStyle.infoParagraph}>
           {__('This information is disclosed only to LBRY, Inc. and not to the LBRY network.')}
