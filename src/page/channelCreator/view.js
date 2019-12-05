@@ -793,8 +793,8 @@ export default class ChannelCreator extends React.PureComponent {
 
         {currentPhase === Constants.PHASE_LIST && !fetchingChannels && !hasChannels && (
           <EmptyStateView
-            message={'You have not created a channel.\nStart now by creating a new channel!'}
-            buttonText={'Create a channel'}
+            message={__('You have not created a channel.\nStart now by creating a new channel!')}
+            buttonText={__('Create a channel')}
             onButtonPress={this.handleNewChannelPress}
           />
         )}
@@ -807,7 +807,7 @@ export default class ChannelCreator extends React.PureComponent {
                 <View style={channelCreatorStyle.listFooter}>
                   <Button
                     style={channelCreatorStyle.createChannelButton}
-                    text={'Create a channel'}
+                    text={__('Create a channel')}
                     onPress={this.handleNewChannelPress}
                   />
                 </View>
@@ -879,7 +879,7 @@ export default class ChannelCreator extends React.PureComponent {
                 {this.state.uploadingImage && (
                   <View style={channelCreatorStyle.uploadProgress}>
                     <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
-                    <Text style={channelCreatorStyle.uploadText}>Uploading image...</Text>
+                    <Text style={channelCreatorStyle.uploadText}>{__('Uploading image...')}</Text>
                   </View>
                 )}
               </TouchableOpacity>
@@ -911,14 +911,14 @@ export default class ChannelCreator extends React.PureComponent {
               <View style={channelCreatorStyle.textInputLayout}>
                 {(this.state.titleFocused ||
                   (this.state.newChannelTitle != null && this.state.newChannelTitle.trim().length > 0)) && (
-                  <Text style={channelCreatorStyle.textInputTitle}>Title</Text>
+                  <Text style={channelCreatorStyle.textInputTitle}>{__('Title')}</Text>
                 )}
                 <TextInput
                   editable={canSave && !creatingChannel && !updatingChannel}
                   style={channelCreatorStyle.inputText}
                   value={this.state.newChannelTitle}
                   onChangeText={this.handleNewChannelTitleChange}
-                  placeholder={this.state.titleFocused ? '' : 'Title'}
+                  placeholder={this.state.titleFocused ? '' : __('Title')}
                   underlineColorAndroid={Colors.NextLbryGreen}
                   onFocus={() => this.setState({ titleFocused: true })}
                   onBlur={() => this.setState({ titleFocused: false })}
@@ -928,7 +928,7 @@ export default class ChannelCreator extends React.PureComponent {
               <View style={channelCreatorStyle.channelInputLayout}>
                 {(this.state.channelNameFocused ||
                   (this.state.newChannelName != null && this.state.newChannelName.trim().length > 0)) && (
-                  <Text style={channelCreatorStyle.textInputTitle}>Channel</Text>
+                  <Text style={channelCreatorStyle.textInputTitle}>{__('Channel')}</Text>
                 )}
                 <View>
                   <Text style={channelCreatorStyle.channelAt}>@</Text>
@@ -937,7 +937,7 @@ export default class ChannelCreator extends React.PureComponent {
                     style={channelCreatorStyle.channelNameInput}
                     value={this.state.newChannelName}
                     onChangeText={value => this.handleNewChannelNameChange(value, true)}
-                    placeholder={this.state.channelNameFocused ? '' : 'Channel'}
+                    placeholder={this.state.channelNameFocused ? '' : __('Channel')}
                     underlineColorAndroid={Colors.NextLbryGreen}
                     onFocus={() => this.setState({ channelNameFocused: true })}
                     onBlur={() => this.setState({ channelNameFocused: false })}
@@ -948,11 +948,13 @@ export default class ChannelCreator extends React.PureComponent {
                 <Text style={channelCreatorStyle.inlineError}>{newChannelNameError}</Text>
               )}
               {editMode && (
-                <Text style={channelCreatorStyle.helpText}>The channel name cannot be changed while editing.</Text>
+                <Text style={channelCreatorStyle.helpText}>
+                  {__('The channel name cannot be changed while editing.')}
+                </Text>
               )}
 
               <View style={channelCreatorStyle.bidRow}>
-                <Text style={channelCreatorStyle.label}>Deposit</Text>
+                <Text style={channelCreatorStyle.label}>{__('Deposit')}</Text>
                 <TextInput
                   editable={canSave && !creatingChannel && !updatingChannel}
                   style={channelCreatorStyle.bidAmountInput}
@@ -965,7 +967,7 @@ export default class ChannelCreator extends React.PureComponent {
                 <Text style={channelCreatorStyle.currency}>LBC</Text>
               </View>
               <Text style={channelCreatorStyle.helpText}>
-                This LBC remains yours. It is a deposit to reserve the name and can be undone at any time.
+                {__('This LBC remains yours. It is a deposit to reserve the name and can be undone at any time.')}
               </Text>
             </View>
 
@@ -974,7 +976,7 @@ export default class ChannelCreator extends React.PureComponent {
                 <View style={channelCreatorStyle.textInputLayout}>
                   {(this.state.descriptionFocused ||
                     (this.state.description != null && this.state.description.trim().length > 0)) && (
-                    <Text style={channelCreatorStyle.textInputTitle}>Description</Text>
+                    <Text style={channelCreatorStyle.textInputTitle}>{__('Description')}</Text>
                   )}
                   <TextInput
                     editable={canSave && !creatingChannel && !updatingChannel}
@@ -982,7 +984,7 @@ export default class ChannelCreator extends React.PureComponent {
                     multiline
                     value={this.state.description}
                     onChangeText={this.handleDescriptionChange}
-                    placeholder={this.state.descriptionFocused ? '' : 'Description'}
+                    placeholder={this.state.descriptionFocused ? '' : __('Description')}
                     underlineColorAndroid={Colors.NextLbryGreen}
                     onFocus={() => this.setState({ descriptionFocused: true })}
                     onBlur={() => this.setState({ descriptionFocused: false })}
@@ -992,14 +994,14 @@ export default class ChannelCreator extends React.PureComponent {
                 <View style={channelCreatorStyle.textInputLayout}>
                   {(this.state.websiteFocused ||
                     (this.state.website != null && this.state.website.trim().length > 0)) && (
-                    <Text style={channelCreatorStyle.textInputTitle}>Website</Text>
+                    <Text style={channelCreatorStyle.textInputTitle}>{__('Website')}</Text>
                   )}
                   <TextInput
                     editable={canSave && !creatingChannel && !updatingChannel}
                     style={channelCreatorStyle.inputText}
                     value={this.state.website}
                     onChangeText={this.handleWebsiteChange}
-                    placeholder={this.state.websiteFocused ? '' : 'Website'}
+                    placeholder={this.state.websiteFocused ? '' : __('Website')}
                     underlineColorAndroid={Colors.NextLbryGreen}
                     onFocus={() => this.setState({ websiteFocused: true })}
                     onBlur={() => this.setState({ websiteFocused: false })}
@@ -1008,14 +1010,14 @@ export default class ChannelCreator extends React.PureComponent {
 
                 <View style={channelCreatorStyle.textInputLayout}>
                   {(this.state.emailFocused || (this.state.email != null && this.state.email.trim().length > 0)) && (
-                    <Text style={channelCreatorStyle.textInputTitle}>Email</Text>
+                    <Text style={channelCreatorStyle.textInputTitle}>{__('Email')}</Text>
                   )}
                   <TextInput
                     editable={canSave && !creatingChannel && !updatingChannel}
                     style={channelCreatorStyle.inputText}
                     value={this.state.email}
                     onChangeText={this.handleEmailChange}
-                    placeholder={this.state.emailFocused ? '' : 'Email'}
+                    placeholder={this.state.emailFocused ? '' : __('Email')}
                     underlineColorAndroid={Colors.NextLbryGreen}
                     onFocus={() => this.setState({ emailFocused: true })}
                     onBlur={() => this.setState({ emailFocused: false })}
@@ -1026,7 +1028,7 @@ export default class ChannelCreator extends React.PureComponent {
 
             {this.state.showOptionalFields && (
               <View style={channelCreatorStyle.card}>
-                <Text style={channelCreatorStyle.cardTitle}>Tags</Text>
+                <Text style={channelCreatorStyle.cardTitle}>{__('Tags')}</Text>
                 <View style={channelCreatorStyle.tagList}>
                   {this.state.tags &&
                     this.state.tags.map(tag => (
@@ -1050,7 +1052,7 @@ export default class ChannelCreator extends React.PureComponent {
 
             <View style={channelCreatorStyle.toggleContainer}>
               <Link
-                text={this.state.showOptionalFields ? 'Hide optional fields' : 'Show optional fields'}
+                text={this.state.showOptionalFields ? __('Hide optional fields') : __('Show optional fields')}
                 onPress={this.handleModePressed}
                 style={channelCreatorStyle.modeLink}
               />
@@ -1062,11 +1064,11 @@ export default class ChannelCreator extends React.PureComponent {
               )}
               {!creatingChannel && !updatingChannel && (
                 <View style={channelCreatorStyle.buttons}>
-                  <Link style={channelCreatorStyle.cancelLink} text="Cancel" onPress={this.handleCreateCancel} />
+                  <Link style={channelCreatorStyle.cancelLink} text={__('Cancel')} onPress={this.handleCreateCancel} />
                   <Button
                     style={channelCreatorStyle.createButton}
                     disabled={!canSave || uploadingImage}
-                    text={editMode ? 'Update' : 'Create'}
+                    text={editMode ? __('Update') : __('Create')}
                     onPress={this.handleCreateChannelClick}
                   />
                 </View>

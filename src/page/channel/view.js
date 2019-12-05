@@ -36,7 +36,7 @@ class ChannelPage extends React.PureComponent {
     autoStyle: null,
     showSortPicker: false,
     showTimePicker: false,
-    orderBy: Constants.DEFAULT_ORDER_BY,
+    orderBy: ['release_time'], // sort by new by default
     activeTab: Constants.CONTENT_TAB,
   };
 
@@ -48,8 +48,9 @@ class ChannelPage extends React.PureComponent {
   }
 
   componentDidMount() {
-    const { fetchChannelListMine } = this.props;
+    const { fetchChannelListMine, setSortByItem } = this.props;
     NativeModules.Firebase.setCurrentScreen('Channel');
+    setSortByItem(Constants.CLAIM_SEARCH_SORT_BY_ITEMS[1]); // sort by newest first
     fetchChannelListMine();
   }
 
@@ -73,12 +74,12 @@ class ChannelPage extends React.PureComponent {
         <View style={discoverStyle.pickerRow}>
           <View style={discoverStyle.leftPickerRow}>
             <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
-              <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
+              <Text style={discoverStyle.tagSortText}>{__(sortByItem.label.split(' ')[0])}</Text>
               <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
             </TouchableOpacity>
             {Constants.SORT_BY_TOP === sortByItem.name && (
               <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
-                <Text style={discoverStyle.tagSortText}>{timeItem.label}</Text>
+                <Text style={discoverStyle.tagSortText}>{__(timeItem.label)}</Text>
                 <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
               </TouchableOpacity>
             )}
@@ -121,7 +122,7 @@ class ChannelPage extends React.PureComponent {
       return (
         <View style={channelPageStyle.aboutTab}>
           <View style={channelPageStyle.busyContainer}>
-            <Text style={channelPageStyle.infoText}>No information to display.</Text>
+            <Text style={channelPageStyle.infoText}>{__('No information to display.')}</Text>
           </View>
         </View>
       );
@@ -131,21 +132,21 @@ class ChannelPage extends React.PureComponent {
     return (
       <View style={channelPageStyle.aboutTab}>
         {!websiteUrl && !email && !description && (
-          <EmptyStateView message={"There's nothing here yet.\nPlease check back later."} />
+          <EmptyStateView message={__("There's nothing here yet.\nPlease check back later.")} />
         )}
 
         {(websiteUrl || email || description) && (
           <ScrollView style={channelPageStyle.aboutScroll} contentContainerStyle={channelPageStyle.aboutScrollContent}>
             {websiteUrl && websiteUrl.trim().length > 0 && (
               <View style={channelPageStyle.aboutItem}>
-                <Text style={channelPageStyle.aboutTitle}>Website</Text>
+                <Text style={channelPageStyle.aboutTitle}>{__('Website')}</Text>
                 <Link style={channelPageStyle.aboutText} text={websiteUrl} href={websiteUrl} />
               </View>
             )}
 
             {email && email.trim().length > 0 && (
               <View style={channelPageStyle.aboutItem}>
-                <Text style={channelPageStyle.aboutTitle}>Email</Text>
+                <Text style={channelPageStyle.aboutTitle}>{__('Email')}</Text>
                 <Link style={channelPageStyle.aboutText} text={email} href={`mailto:${email}`} />
               </View>
             )}
@@ -290,7 +291,7 @@ class ChannelPage extends React.PureComponent {
                 onPress={this.onSharePressed}
               />
               {!ownedChannel && <SubscribeButton style={channelPageStyle.subscribeButton} uri={fullUri} name={name} />}
-              {!ownedChannel && (
+              {false && !ownedChannel && (
                 <SubscribeNotificationButton
                   style={[channelPageStyle.subscribeButton, channelPageStyle.bellButton]}
                   uri={fullUri}

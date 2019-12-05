@@ -34,7 +34,7 @@ class RewardCard extends React.PureComponent<Props> {
         notify({ message: errorMessage });
         clearError(reward);
       } else {
-        notify({ message: 'Reward successfully claimed!' });
+        notify({ message: __('Reward successfully claimed!') });
       }
       this.setState({ claimStarted: false });
     }
@@ -47,7 +47,7 @@ class RewardCard extends React.PureComponent<Props> {
       if (showVerification) {
         showVerification();
       }
-      notify({ message: 'Unfortunately, you are not eligible to claim this reward at this time.' });
+      notify({ message: __('Unfortunately, you are not eligible to claim this reward at this time.') });
       return;
     }
 
@@ -112,7 +112,7 @@ class RewardCard extends React.PureComponent<Props> {
               style={rewardStyle.link}
               href={`https://explorer.lbry.com/tx/${reward.transaction_id}`}
               text={reward.transaction_id.substring(0, 7)}
-              error={'The transaction URL could not be opened'}
+              error={__('The transaction URL could not be opened')}
             />
           )}
         </View>

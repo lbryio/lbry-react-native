@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry } from 'lbry-redux';
+import { SETTINGS, Lbry } from 'lbry-redux';
 import { ActivityIndicator, Linking, NativeModules, Text, TouchableOpacity, View } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -11,6 +11,7 @@ import EmailCollectPage from './internal/email-collect-page';
 import EmailVerifyPage from './internal/email-verify-page';
 import SkipAccountPage from './internal/skip-account-page';
 import firstRunStyle from 'styles/firstRun';
+import RNFS from 'react-native-fs';
 
 class FirstRunScreen extends React.PureComponent {
   static pages = [
@@ -29,12 +30,15 @@ class FirstRunScreen extends React.PureComponent {
     enterPasswordTracked: false,
     isFirstRun: false,
     launchUrl: null,
+    languageLoaded: false,
     showSkip: false,
     isEmailVerified: false,
     skipAccountConfirmed: false,
     showBottomContainer: false,
     walletPassword: '',
     syncApplyStarted: false,
+    syncApplyCompleted: false,
+    language: null,
   };
 
   componentDidMount() {
@@ -44,7 +48,52 @@ class FirstRunScreen extends React.PureComponent {
       }
     });
 
-    // FirstRun module should always be present (in order to detect first run status)
+    NativeModules.UtilityModule.getNativeStringSetting(SETTINGS.LANGUAGE, 'en').then(language =>
+      this.loadLanguage(language)
+    );
+  }
+
+  loadLanguage = language => {
+    if (!language || language === 'en') {
+      this.checkFirstRun();
+    } else {
+      // Load the current language setting before doing anything
+      const languageFile = RNFS.ExternalDirectoryPath + '/' + language + '.json';
+      RNFS.readFile(languageFile, 'utf8')
+        .then(fileContents => {
+          const json = JSON.parse(fileContents);
+          window.language = language;
+          window.i18n_messages[language] = json;
+          // language exists, so download an update
+          this.downloadLanguageUpdate(language);
+          this.checkFirstRun();
+        })
+        .catch(err => {
+          // language file doesn't exist? maintain the default language
+          this.checkFirstRun();
+        });
+    }
+  };
+
+  downloadLanguageUpdate = language => {
+    fetch('https://lbry.com/i18n/get/lbry-mobile/app-strings/' + language + '.json')
+      .then(r => r.json())
+      .then(j => {
+        window.i18n_messages[language] = j;
+
+        // write the language file to the filesystem
+        const langFilePath = RNFS.ExternalDirectoryPath + '/' + language + '.json';
+        RNFS.writeFile(langFilePath, JSON.stringify(j), 'utf8');
+
+        // update state and client setting
+        window.language = language;
+      })
+      .catch(() => {
+        /* pass */
+      });
+  };
+
+  checkFirstRun = () => {
     NativeModules.FirstRun.isFirstRun().then(firstRun => {
       AsyncStorage.removeItem(Constants.KEY_FIRST_RUN_EMAIL);
       AsyncStorage.removeItem(Constants.KEY_EMAIL_VERIFY_PENDING);
@@ -58,7 +107,7 @@ class FirstRunScreen extends React.PureComponent {
         this.launchSplashScreen();
       }
     });
-  }
+  };
 
   componentWillReceiveProps(nextProps) {
     const { emailNewErrorMessage, emailNewPending, syncApplyErrorMessage, syncApplyIsPending, user } = nextProps;
@@ -77,9 +126,10 @@ class FirstRunScreen extends React.PureComponent {
 
     if (this.state.syncApplyStarted && !syncApplyIsPending) {
       if (syncApplyErrorMessage && syncApplyErrorMessage.trim().length > 0) {
-        notify({ message: syncApplyErrorMessage, isError: true });
-        this.setState({ showBottomContainer: true, syncApplyStarted: false });
+        notify({ message: __(syncApplyErrorMessage), isError: true });
+        this.setState({ showBottomContainer: true, syncApplyStarted: false, syncApplyCompleted: false });
       } else {
+        this.setState({ syncApplyCompleted: true });
         // password successfully verified
         NativeModules.UtilityModule.setSecureValue(
           Constants.KEY_WALLET_PASSWORD,
@@ -95,7 +145,7 @@ class FirstRunScreen extends React.PureComponent {
                 if (unlocked) {
                   this.closeFinalPage();
                 } else {
-                  notify({ message: 'The wallet could not be unlocked at this time. Please restart the app.' });
+                  notify({ message: __('The wallet could not be unlocked at this time. Please restart the app.') });
                 }
               }
             );
@@ -160,6 +210,13 @@ class FirstRunScreen extends React.PureComponent {
     });
   };
 
+  autoLogin = () => {
+    const { hasSyncedWallet } = this.props;
+    if (hasSyncedWallet && !this.state.syncApplyStarted) {
+      this.checkWalletPassword();
+    }
+  };
+
   handleContinuePressed = () => {
     const { notify, user, hasSyncedWallet } = this.props;
     const pageIndex = FirstRunScreen.pages.indexOf(this.state.currentPage);
@@ -174,7 +231,7 @@ class FirstRunScreen extends React.PureComponent {
     }
 
     if (Constants.FIRST_RUN_PAGE_SKIP_ACCOUNT === this.state.currentPage && !this.state.skipAccountConfirmed) {
-      notify({ message: 'Please confirm that you want to use LBRY without creating an account.' });
+      notify({ message: __('Please confirm that you want to use LBRY without creating an account.') });
       return;
     }
 
@@ -200,7 +257,7 @@ class FirstRunScreen extends React.PureComponent {
     // validate the email
     if (!email || email.indexOf('@') === -1) {
       return notify({
-        message: 'Please provide a valid email address to continue.',
+        message: __('Please provide a valid email address to continue.'),
       });
     }
 
@@ -265,8 +322,12 @@ class FirstRunScreen extends React.PureComponent {
     this.setState({ showBottomContainer: true, showSkip: true });
   };
 
-  onWalletPasswordChanged = password => {
+  onWalletPasswordChanged = (password, finalStep) => {
     this.setState({ walletPassword: password !== null ? password : '' });
+    if (finalStep) {
+      // final step for a new user
+      this.setFreshPassword();
+    }
   };
 
   onWalletViewLayout = () => {
@@ -322,6 +383,7 @@ class FirstRunScreen extends React.PureComponent {
       emailNewErrorMessage,
       emailNewPending,
       emailToVerify,
+      language,
       notify,
       hasSyncedWallet,
       getSyncIsPending,
@@ -374,8 +436,10 @@ class FirstRunScreen extends React.PureComponent {
             getSyncIsPending={getSyncIsPending}
             syncApplyIsPending={syncApplyIsPending}
             syncApplyStarted={this.state.syncApplyStarted}
+            syncApplyCompleted={this.state.syncApplyCompleted}
             onWalletViewLayout={this.onWalletViewLayout}
             onPasswordChanged={this.onWalletPasswordChanged}
+            autoLogin={this.autoLogin}
           />
         );
         break;
@@ -408,27 +472,27 @@ class FirstRunScreen extends React.PureComponent {
                   <Text style={firstRunStyle.buttonText}>
                     «{' '}
                     {Constants.FIRST_RUN_PAGE_SKIP_ACCOUNT === this.state.currentPage
-                      ? 'Setup account'
-                      : 'Change email'}
+                      ? __('Setup account')
+                      : __('Change email')}
                   </Text>
                 </TouchableOpacity>
               )}
               {!emailNewPending && Constants.FIRST_RUN_PAGE_EMAIL_COLLECT === this.state.currentPage && (
                 <TouchableOpacity style={firstRunStyle.leftButton} onPress={this.handleLeftButtonPressed}>
-                  <Text style={firstRunStyle.smallLeftButtonText}>No, thanks »</Text>
+                  <Text style={firstRunStyle.smallLeftButtonText}>{__('No, thanks')} »</Text>
                 </TouchableOpacity>
               )}
 
               {!emailNewPending && (
                 <TouchableOpacity style={firstRunStyle.button} onPress={this.handleContinuePressed}>
                   {Constants.FIRST_RUN_PAGE_SKIP_ACCOUNT === this.state.currentPage && (
-                    <Text style={firstRunStyle.smallButtonText}>Use LBRY »</Text>
+                    <Text style={firstRunStyle.smallButtonText}>{__('Use LBRY')} »</Text>
                   )}
 
                   {Constants.FIRST_RUN_PAGE_SKIP_ACCOUNT !== this.state.currentPage &&
                     Constants.FIRST_RUN_PAGE_EMAIL_VERIFY !== this.state.currentPage && (
                     <Text style={firstRunStyle.buttonText}>
-                      {Constants.FIRST_RUN_PAGE_WALLET === this.state.currentPage ? 'Use LBRY' : 'Continue'} »
+                      {Constants.FIRST_RUN_PAGE_WALLET === this.state.currentPage ? __('Use LBRY') : __('Continue')} »
                     </Text>
                   )}
                 </TouchableOpacity>

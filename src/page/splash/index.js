@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { doBalanceSubscribe, doUpdateBlockHeight, doPopulateSharedUserState, doToast } from 'lbry-redux';
+import { SETTINGS, doBalanceSubscribe, doUpdateBlockHeight, doPopulateSharedUserState, doToast } from 'lbry-redux';
 import {
   doAuthenticate,
   doBlackListedOutpointsSubscribe,

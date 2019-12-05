@@ -28,10 +28,30 @@ class WalletPage extends React.PureComponent {
     walletReady: false,
     hasCheckedSync: false,
     revealPassword: false,
+    autoPassword: false,
+    autoLoginAttempted: false,
   };
 
   componentDidMount() {
     this.checkWalletReady();
+  }
+
+  componentDidUpdate() {
+    const { hasSyncedWallet, getSyncIsPending, onPasswordChanged, autoLogin } = this.props;
+    if (this.state.walletReady && this.state.hasCheckedSync && !getSyncIsPending) {
+      if (!hasSyncedWallet && !this.state.autoPassword) {
+        // new account, in which case, don't ask for a password, and act as the final first run step
+        this.setState({ password: '', autoPassword: true });
+        if (onPasswordChanged) {
+          onPasswordChanged('', true);
+        }
+      }
+
+      if (hasSyncedWallet && !this.state.autoLoginAttempted && autoLogin) {
+        autoLogin();
+        this.setState({ autoLoginAttempted: true });
+      }
+    }
   }
 
   checkWalletReady = () => {
@@ -69,6 +89,7 @@ class WalletPage extends React.PureComponent {
       hasSyncedWallet,
       syncApplyIsPending,
       syncApplyStarted,
+      syncApplyCompleted,
     } = this.props;
 
     let content;
@@ -76,24 +97,27 @@ class WalletPage extends React.PureComponent {
       content = (
         <View style={firstRunStyle.centered}>
           <ActivityIndicator size="large" color={Colors.White} style={firstRunStyle.waiting} />
-          <Text style={firstRunStyle.paragraph}>Retrieving your account information...</Text>
+          <Text style={firstRunStyle.paragraph}>{__('Retrieving your account information...')}</Text>
         </View>
       );
-    } else if (syncApplyStarted || syncApplyIsPending) {
+    } else if (syncApplyStarted || syncApplyIsPending || syncApplyCompleted) {
       content = (
         <View style={firstRunStyle.centered}>
           <ActivityIndicator size="large" color={Colors.White} style={firstRunStyle.waiting} />
-          <Text style={firstRunStyle.paragraph}>{syncApplyIsPending ? 'Validating password' : 'Synchronizing'}...</Text>
+          <Text style={firstRunStyle.paragraph}>
+            {syncApplyIsPending ? __('Validating password') : __('Synchronizing')}...
+          </Text>
         </View>
       );
-    } else {
+    } else if (hasSyncedWallet && this.state.autoLoginAttempted) {
+      // only display this view if it's not a new user (or auto-login has been attempted once)
       content = (
         <View onLayout={onWalletViewLayout}>
           <Text style={firstRunStyle.title}>Password</Text>
           <Text style={firstRunStyle.paragraph}>
             {hasSyncedWallet
-              ? 'Please enter the password you used to secure your wallet.'
-              : 'Please enter a password to secure your account and wallet.'}
+              ? __('Please enter the password you used to secure your wallet.')
+              : __('Please enter a password to secure your account and wallet.')}
           </Text>
           <View style={firstRunStyle.passwordInputContainer}>
             <TextInput
@@ -126,8 +150,8 @@ class WalletPage extends React.PureComponent {
             <View style={firstRunStyle.passwordWarning}>
               <Text style={firstRunStyle.passwordWarningText}>
                 {hasSyncedWallet
-                  ? 'If you did not provide a password, please press Use LBRY to continue.'
-                  : 'You can proceed without a password, but this is not recommended.'}
+                  ? __('If you did not provide a password, please press Use LBRY to continue.')
+                  : __('You can proceed without a password, but this is not recommended.')}
               </Text>
             </View>
           )}
@@ -142,7 +166,7 @@ class WalletPage extends React.PureComponent {
             </View>
           )}
           <Text style={firstRunStyle.infoParagraph}>
-            Note: for wallet security purposes, LBRY is unable to reset your password.
+            {__('Note: for wallet security purposes, LBRY is unable to reset your password.')}
           </Text>
         </View>
       );

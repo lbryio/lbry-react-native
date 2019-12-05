@@ -13,7 +13,7 @@ class EmailVerifyPage extends React.PureComponent {
     const { email, notify, resendVerificationEmail } = this.props;
     resendVerificationEmail(email);
     AsyncStorage.setItem(Constants.KEY_EMAIL_VERIFY_PENDING, 'true');
-    notify({ message: 'Please follow the instructions in the email sent to your address to continue.' });
+    notify({ message: __('Please follow the instructions in the email sent to your address to continue.') });
   };
 
   render() {
@@ -21,22 +21,22 @@ class EmailVerifyPage extends React.PureComponent {
 
     const content = (
       <View onLayout={() => onEmailViewLayout('verify')}>
-        <Text style={firstRunStyle.title}>{emailAlreadyExists ? 'Sign In' : 'Verify Email'}</Text>
+        <Text style={firstRunStyle.title}>{emailAlreadyExists ? __('Sign In') : __('Verify Email')}</Text>
 
         <Text style={firstRunStyle.paragraph}>
-          An email has been sent to
+          {__('An email has been sent to')}
           {'\n\n'}
           {email}
           {'\n\n'}
-          Please follow the instructions in the message to{' '}
-          {emailAlreadyExists ? 'complete signing in' : 'verify your email address'}.
+          {emailAlreadyExists && __('Please click the link in the message to complete signing in')}
+          {!emailAlreadyExists && __('Please click the link in the message to verify your email address')}.
         </Text>
 
         <View style={firstRunStyle.buttonContainer}>
           <Button
             style={firstRunStyle.verificationButton}
             theme={'light'}
-            text={'Resend'}
+            text={__('Resend')}
             onPress={this.onResendPressed}
           />
         </View>

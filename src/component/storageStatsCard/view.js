@@ -1,9 +1,9 @@
 import React from 'react';
 import { normalizeURI, parseURI } from 'lbry-redux';
 import { ActivityIndicator, Platform, Switch, Text, TouchableOpacity, View } from 'react-native';
-import { formatBytes } from '../../utils/helper';
-import Colors from '../../styles/colors';
-import storageStatsStyle from '../../styles/storageStats';
+import { formatBytes } from 'utils/helper';
+import Colors from 'styles/colors';
+import storageStatsStyle from 'styles/storageStats';
 
 class StorageStatsCard extends React.PureComponent {
   state = {
@@ -98,28 +98,28 @@ class StorageStatsCard extends React.PureComponent {
               {this.state.totalAudioBytes > 0 && (
                 <View style={[storageStatsStyle.row, storageStatsStyle.legendItem]}>
                   <View style={[storageStatsStyle.legendBox, storageStatsStyle.audioDistribution]} />
-                  <Text style={storageStatsStyle.legendText}>Audio</Text>
+                  <Text style={storageStatsStyle.legendText}>{__('Audio')}</Text>
                   <Text style={storageStatsStyle.legendSize}>{formatBytes(this.state.totalAudioBytes, 2)}</Text>
                 </View>
               )}
               {this.state.totalImageBytes > 0 && (
                 <View style={[storageStatsStyle.row, storageStatsStyle.legendItem]}>
                   <View style={[storageStatsStyle.legendBox, storageStatsStyle.imageDistribution]} />
-                  <Text style={storageStatsStyle.legendText}>Images</Text>
+                  <Text style={storageStatsStyle.legendText}>{__('Images')}</Text>
                   <Text style={storageStatsStyle.legendSize}>{formatBytes(this.state.totalImageBytes, 2)}</Text>
                 </View>
               )}
               {this.state.totalVideoBytes > 0 && (
                 <View style={[storageStatsStyle.row, storageStatsStyle.legendItem]}>
                   <View style={[storageStatsStyle.legendBox, storageStatsStyle.videoDistribution]} />
-                  <Text style={storageStatsStyle.legendText}>Videos</Text>
+                  <Text style={storageStatsStyle.legendText}>{__('Videos')}</Text>
                   <Text style={storageStatsStyle.legendSize}>{formatBytes(this.state.totalVideoBytes, 2)}</Text>
                 </View>
               )}
               {this.state.totalOtherBytes > 0 && (
                 <View style={[storageStatsStyle.row, storageStatsStyle.legendItem]}>
                   <View style={[storageStatsStyle.legendBox, storageStatsStyle.otherDistribution]} />
-                  <Text style={storageStatsStyle.legendText}>Other</Text>
+                  <Text style={storageStatsStyle.legendText}>{__('Other')}</Text>
                   <Text style={storageStatsStyle.legendSize}>{formatBytes(this.state.totalOtherBytes, 2)}</Text>
                 </View>
               )}

@@ -51,10 +51,12 @@ class TransactionHistoryPage extends React.PureComponent {
         {fetchingTransactions && (
           <View style={walletStyle.loadingContainer}>
             <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
-            <Text style={walletStyle.loadingText}>Loading transactions...</Text>
+            <Text style={walletStyle.loadingText}>{__('Loading transactions...')}</Text>
           </View>
         )}
-        {!fetchingTransactions && transactions.length === 0 && <EmptyStateView message={'No transactions to list.'} />}
+        {!fetchingTransactions && transactions.length === 0 && (
+          <EmptyStateView message={__('No transactions to list.')} />
+        )}
         <ScrollView style={walletStyle.transactionHistoryScroll}>
           <View style={walletStyle.historyList}>
             {!fetchingTransactions && transactions && transactions.length > 0 && (

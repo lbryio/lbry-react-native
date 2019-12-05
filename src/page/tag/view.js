@@ -105,12 +105,12 @@ class TagPage extends React.PureComponent {
         <View style={discoverStyle.pickerRow}>
           <View style={discoverStyle.leftPickerRow}>
             <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
-              <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
+              <Text style={discoverStyle.tagSortText}>{__(sortByItem.label.split(' ')[0])}</Text>
               <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
             </TouchableOpacity>
             {Constants.SORT_BY_TOP === sortByItem.name && (
               <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
-                <Text style={discoverStyle.tagSortText}>{timeItem.label}</Text>
+                <Text style={discoverStyle.tagSortText}>{__(timeItem.label)}</Text>
                 <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
               </TouchableOpacity>
             )}
@@ -118,7 +118,7 @@ class TagPage extends React.PureComponent {
 
           <Link
             style={discoverStyle.customizeLink}
-            text={this.isFollowingTag(tag) ? 'Unfollow' : 'Follow'}
+            text={this.isFollowingTag(tag) ? __('Unfollow') : __('Follow')}
             onPress={this.handleFollowTagToggle}
           />
         </View>

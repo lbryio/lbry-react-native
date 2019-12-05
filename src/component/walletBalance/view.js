@@ -16,8 +16,8 @@ class WalletBalance extends React.PureComponent<Props> {
     return (
       <View style={walletStyle.balanceCard}>
         <Image style={walletStyle.balanceBackground} resizeMode={'cover'} source={require('../../assets/stripe.png')} />
-        <Text style={walletStyle.balanceTitle}>Balance</Text>
-        <Text style={walletStyle.balanceCaption}>You currently have</Text>
+        <Text style={walletStyle.balanceTitle}>{__('Balance')}</Text>
+        <Text style={walletStyle.balanceCaption}>{__('You currently have')}</Text>
         <Text style={walletStyle.balance}>
           {(balance || balance === 0) && formatCredits(parseFloat(balance), 2) + ' LBC'}
         </Text>

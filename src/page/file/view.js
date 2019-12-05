@@ -61,6 +61,7 @@ class FilePage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      attemptAutoGet: false,
       autoPlayMedia: false,
       autoDownloadStarted: false,
       downloadButtonShown: false,
@@ -189,10 +190,12 @@ class FilePage extends React.PureComponent {
     const {
       claim,
       contentType,
+      costInfo,
       fileInfo,
       isResolvingUri,
       resolveUri,
       navigation,
+      purchaseUri,
       searchRecommended,
       title,
     } = this.props;
@@ -213,6 +216,21 @@ class FilePage extends React.PureComponent {
         title: metadata ? metadata.title : claim.name,
         uri: this.state.uri,
       };
+    }
+
+    // attempt to retrieve images and html/text automatically once the claim is loaded, and it's free
+    const mediaType = Lbry.getMediaType(contentType);
+    const isViewable = mediaType === 'image' || mediaType === 'text';
+    if (claim && costInfo && costInfo.cost === 0 && !this.state.autoGetAttempted && isViewable) {
+      this.setState(
+        {
+          autoGetAttempted: true,
+          downloadPressed: true,
+          autoPlayMedia: true,
+          stopDownloadConfirmed: false,
+        },
+        () => purchaseUri(claim.permanent_url, costInfo, true)
+      );
     }
   }
 
@@ -640,7 +658,7 @@ class FilePage extends React.PureComponent {
           {isResolvingUri && (
             <View style={filePageStyle.busyContainer}>
               <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
-              <Text style={filePageStyle.infoText}>Loading decentralized data...</Text>
+              <Text style={filePageStyle.infoText}>{__('Loading decentralized data...')}</Text>
             </View>
           )}
           {claim === null && !isResolvingUri && (
@@ -649,15 +667,15 @@ class FilePage extends React.PureComponent {
                 <EmptyStateView
                   message={
                     isChannel
-                      ? 'It looks like you just created this channel. It will appear in a few minutes.'
-                      : 'It looks you just published this content. It will appear in a few minutes.'
+                      ? __('It looks like you just created this channel. It will appear in a few minutes.')
+                      : __('It looks you just published this content. It will appear in a few minutes.')
                   }
                 />
               )}
               {!ownedClaim && (
                 <EmptyStateView
-                  message={"There's nothing at this location."}
-                  buttonText={'Publish something here'}
+                  message={__("There's nothing at this location.")}
+                  buttonText={__('Publish something here')}
                   onButtonPress={() =>
                     navigation.navigate({
                       routeName: Constants.DRAWER_ROUTE_PUBLISH,
@@ -695,10 +713,11 @@ class FilePage extends React.PureComponent {
           <View style={filePageStyle.pageContainer}>
             <View style={filePageStyle.dmcaContainer}>
               <Text style={filePageStyle.dmcaText}>
-                In response to a complaint we received under the US Digital Millennium Copyright Act, we have blocked
-                access to this content from our applications.
+                {__(
+                  'In response to a complaint we received under the US Digital Millennium Copyright Act, we have blocked access to this content from our applications.'
+                )}
               </Text>
-              <Link style={filePageStyle.dmcaLink} href="https://lbry.com/faq/dmca" text="Read More" />
+              <Link style={filePageStyle.dmcaLink} href="https://lbry.com/faq/dmca" text={__('Read More')} />
             </View>
             <UriBar value={uri} navigation={navigation} />
           </View>
@@ -841,7 +860,7 @@ class FilePage extends React.PureComponent {
                       source={require('../../assets/gerbil-happy.png')}
                     />
                     <View style={filePageStyle.unspportedContentTextContainer}>
-                      <Text style={filePageStyle.unsupportedContentTitle}>Unsupported Content</Text>
+                      <Text style={filePageStyle.unsupportedContentTitle}>{__('Unsupported Content')}</Text>
                       <Text style={filePageStyle.unsupportedContentText}>
                         Sorry, we are unable to display this content in the app. You can find the file named{' '}
                         <Text style={filePageStyle.unsupportedContentFilename}>{fileInfo.file_name}</Text> in your
@@ -928,7 +947,7 @@ class FilePage extends React.PureComponent {
                           style={[filePageStyle.actionButton, filePageStyle.editButton]}
                           theme={'light'}
                           icon={'edit'}
-                          text={'Edit'}
+                          text={__('Edit')}
                           onPress={this.onEditPressed}
                         />
                       )}
@@ -938,7 +957,7 @@ class FilePage extends React.PureComponent {
                           style={filePageStyle.actionButton}
                           theme={'light'}
                           icon={'trash-alt'}
-                          text={'Delete'}
+                          text={__('Delete')}
                           onPress={this.onDeletePressed}
                         />
                       )}
@@ -951,7 +970,7 @@ class FilePage extends React.PureComponent {
                           style={filePageStyle.actionButton}
                           icon={'stop'}
                           theme={'light'}
-                          text={'Stop Download'}
+                          text={__('Stop Download')}
                           onPress={this.onStopDownloadPressed}
                         />
                       )}
@@ -985,7 +1004,7 @@ class FilePage extends React.PureComponent {
                 <View style={filePageStyle.largeButtonsRow}>
                   <TouchableOpacity style={filePageStyle.largeButton} onPress={this.handleSharePress}>
                     <Icon name={'share-alt'} size={20} style={filePageStyle.largeButtonIcon} />
-                    <Text style={filePageStyle.largeButtonText}>Share</Text>
+                    <Text style={filePageStyle.largeButtonText}>{__('Share')}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -993,7 +1012,7 @@ class FilePage extends React.PureComponent {
                     onPress={() => this.setState({ showTipView: true })}
                   >
                     <Icon name={'gift'} size={20} style={filePageStyle.largeButtonIcon} />
-                    <Text style={filePageStyle.largeButtonText}>Tip</Text>
+                    <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -1001,7 +1020,7 @@ class FilePage extends React.PureComponent {
                     onPress={() => Linking.openURL(`https://lbry.com/dmca/${claim.claim_id}`)}
                   >
                     <Icon name={'flag'} size={20} style={filePageStyle.largeButtonIcon} />
-                    <Text style={filePageStyle.largeButtonText}>Report</Text>
+                    <Text style={filePageStyle.largeButtonText}>{__('Report')}</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -1027,7 +1046,7 @@ class FilePage extends React.PureComponent {
                     )}
                     {!channelName && (
                       <Text style={filePageStyle.anonChannelName} selectable ellipsizeMode={'tail'}>
-                        Anonymous
+                        {__('Anonymous')}
                       </Text>
                     )}
                     <DateTime
@@ -1055,7 +1074,7 @@ class FilePage extends React.PureComponent {
                         hideText={false}
                       />
                     )}
-                    {channelName && (
+                    {false && channelName && (
                       <SubscribeNotificationButton
                         style={[filePageStyle.actionButton, filePageStyle.bellButton]}
                         uri={fullChannelUri}
@@ -1086,11 +1105,11 @@ class FilePage extends React.PureComponent {
                       {this.state.sendTipStarted && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
                       <Link
                         style={[filePageStyle.link, filePageStyle.cancelTipLink]}
-                        text={'Cancel'}
+                        text={__('Cancel')}
                         onPress={() => this.setState({ showTipView: false })}
                       />
                       <Button
-                        text={'Send a tip'}
+                        text={__('Send a tip')}
                         style={[filePageStyle.button, filePageStyle.sendButton]}
                         disabled={!canSendTip || this.state.sendTipStarted}
                         onPress={this.handleSendTip}

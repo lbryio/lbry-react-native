@@ -12,7 +12,9 @@ class ChannelRewardsDriver extends React.PureComponent<Props> {
       <TouchableOpacity style={publishStyle.rewardDriverCard} onPress={() => navigation.navigate('Rewards')}>
         <Icon name="award" size={16} style={publishStyle.rewardIcon} />
         <Text style={publishStyle.rewardDriverText}>
-          Channel creation requires credits.{'\n'}Tap here to get some for free.
+          {__('Channel creation requires credits.')}
+          {'\n'}
+          {__('Tap here to get some for free.')}
         </Text>
       </TouchableOpacity>
     );

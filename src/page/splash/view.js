@@ -13,11 +13,9 @@ import PropTypes from 'prop-types';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import splashStyle from 'styles/splash';
+import RNFS from 'react-native-fs';
 
 const BLOCK_HEIGHT_INTERVAL = 1000 * 60 * 2.5; // every 2.5 minutes
-
-const testingNetwork = 'Testing network';
-const waitingForResolution = 'Waiting for name resolution';
 
 class SplashScreen extends React.PureComponent {
   static navigationOptions = {
@@ -27,8 +25,8 @@ class SplashScreen extends React.PureComponent {
   state = {
     accountUnlockFailed: false,
     daemonReady: false,
-    details: 'Starting up',
-    message: 'Connecting',
+    details: __('Starting up'),
+    message: __('Connecting'),
     isRunning: false,
     isLagging: false,
     launchUrl: null,
@@ -69,13 +67,13 @@ class SplashScreen extends React.PureComponent {
           try {
             verifyUserEmail(verification.token, verification.recaptcha);
           } catch (error) {
-            const message = 'Invalid Verification Token';
+            const message = __('Invalid Verification Token');
             verifyUserEmailFailure(message);
             notify({ message });
           }
         } else {
           notify({
-            message: 'Invalid Verification URI',
+            message: __('Invalid Verification URI'),
           });
         }
       } else {
@@ -195,16 +193,16 @@ class SplashScreen extends React.PureComponent {
         NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password => {
           if ((secureWalletStatus.is_encrypted && !secureWalletStatus.is_locked) || secureWalletStatus.is_locked) {
             this.setState({
-              message: 'Unlocking account',
-              details: 'Decrypting wallet',
+              message: __('Unlocking account'),
+              details: __('Decrypting wallet'),
             });
 
             // unlock the wallet and then finish the splash screen
             Lbry.wallet_unlock({ password: password || '' }).then(unlocked => {
               if (unlocked) {
                 this.setState({
-                  message: testingNetwork,
-                  details: waitingForResolution,
+                  message: __('Testing network'),
+                  details: __('Waiting for name resolution'),
                 });
                 this.finishSplashScreen();
               } else {
@@ -213,8 +211,8 @@ class SplashScreen extends React.PureComponent {
             });
           } else {
             this.setState({
-              message: testingNetwork,
-              details: waitingForResolution,
+              message: __('Testing network'),
+              details: __('Waiting for name resolution'),
             });
             this.finishSplashScreen();
           }
@@ -239,20 +237,20 @@ class SplashScreen extends React.PureComponent {
     if (blockchainHeaders && blockchainHeaders.downloading_headers) {
       const downloadProgress = blockchainHeaders.download_progress ? blockchainHeaders.download_progress : 0;
       this.setState({
-        message: 'Blockchain Sync',
-        details: `Catching up with the blockchain (${downloadProgress}%)`,
+        message: __('Blockchain Sync'),
+        details: `Catching up with the blockchain (${downloadProgress}%)`, // TODO: i18n tokenization
       });
     } else if (walletStatus && walletStatus.blocks_behind > 0) {
       const behind = walletStatus.blocks_behind;
-      const behindText = behind + ' block' + (behind === 1 ? '' : 's') + ' behind';
+      const behindText = behind + ' block' + (behind === 1 ? '' : 's') + ' behind'; // TODO: i18n tokenization
       this.setState({
-        message: 'Blockchain Sync',
+        message: __('Blockchain Sync'),
         details: behindText,
       });
     } else {
       this.setState({
-        message: 'Network Loading',
-        details: 'Initializing LBRY service',
+        message: __('Network Loading'),
+        details: __('Initializing LBRY service'),
       });
     }
 
@@ -292,9 +290,10 @@ class SplashScreen extends React.PureComponent {
           .catch(e => {
             this.setState({
               isLagging: true,
-              message: 'Connection Failure',
-              details:
-                'We could not establish a connection to the daemon. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.',
+              message: __('Connection Failure'),
+              details: __(
+                'We could not establish a connection to the SDK. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.'
+              ),
             });
           });
       });
@@ -315,8 +314,8 @@ class SplashScreen extends React.PureComponent {
     this.setState(
       {
         accountUnlockFailed: false,
-        message: testingNetwork,
-        details: waitingForResolution,
+        message: __('Testing network'),
+        details: __('Waiting for name resolution'),
       },
       () => this.finishSplashScreen()
     );
@@ -328,19 +327,22 @@ class SplashScreen extends React.PureComponent {
     if (accountUnlockFailed) {
       return (
         <View style={splashStyle.container}>
-          <Text style={splashStyle.errorTitle}>Oops! Something went wrong.</Text>
+          <Text style={splashStyle.errorTitle}>{__('Oops! Something went wrong.')}</Text>
           <Text style={splashStyle.paragraph}>
-            Your wallet failed to unlock, which means you may not be able to play any videos or access your funds.
+            {__(
+              'Your wallet failed to unlock, which means you may not be able to play any videos or access your funds.'
+            )}
           </Text>
           <Text style={splashStyle.paragraph}>
-            You can try to fix this by tapping Stop on the LBRY service notification and starting the app again. If the
-            problem continues, you may have to reinstall the app and restore your account.
+            {__(
+              'You can try to fix this by tapping Stop on the LBRY service notification and starting the app again. If the problem continues, you may have to reinstall the app and restore your account.'
+            )}
           </Text>
 
           <Button
             style={splashStyle.continueButton}
             theme={'light'}
-            text={'Continue anyway'}
+            text={__('Continue anyway')}
             onPress={this.handleContinueAnywayPressed}
           />
         </View>

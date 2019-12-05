@@ -3,7 +3,7 @@ import { doSetClientSetting } from 'redux/actions/settings';
 import { makeSelectClientSetting } from 'redux/selectors/settings';
 import { doToast } from 'lbry-redux';
 import { selectUserEmail } from 'lbryinc';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import WalletSyncDriver from './view';
 
 const select = state => ({

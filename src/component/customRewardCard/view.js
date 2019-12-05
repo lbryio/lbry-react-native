@@ -20,7 +20,7 @@ class CustomRewardCard extends React.PureComponent<Props> {
       if (error && error.trim().length > 0) {
         notify({ message: error });
       } else {
-        notify({ message: 'Reward successfully claimed!' });
+        notify({ message: __('Reward successfully claimed!') });
         this.setState({ rewardCode: '' });
       }
       this.setState({ claimStarted: false });
@@ -37,12 +37,12 @@ class CustomRewardCard extends React.PureComponent<Props> {
       if (showVerification) {
         showVerification();
       }
-      notify({ message: 'Unfortunately, you are not eligible to claim this reward at this time.' });
+      notify({ message: __('Unfortunately, you are not eligible to claim this reward at this time.') });
       return;
     }
 
     if (!rewardCode || rewardCode.trim().length === 0) {
-      notify({ message: 'Please enter a reward code to claim.' });
+      notify({ message: __('Please enter a reward code to claim.') });
       return;
     }
 
@@ -60,9 +60,9 @@ class CustomRewardCard extends React.PureComponent<Props> {
           {rewardIsPending && <ActivityIndicator size="small" color={Colors.NextLbryGreen} />}
         </View>
         <View style={rewardStyle.midCol}>
-          <Text style={rewardStyle.rewardTitle}>Custom Code</Text>
+          <Text style={rewardStyle.rewardTitle}>{__('Custom Code')}</Text>
           <Text style={rewardStyle.rewardDescription}>
-            Are you a supermodel or rockstar that received a custom reward code? Claim it here.
+            {__('Are you a supermodel or rockstar that received a custom reward code? Claim it here.')}
           </Text>
 
           <View>

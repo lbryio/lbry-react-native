@@ -47,7 +47,7 @@ class TransactionList extends React.PureComponent {
     return (
       <View>
         {!transactionList.length && (
-          <Text style={transactionListStyle.noTransactions}>{emptyMessage || 'No transactions to list.'}</Text>
+          <Text style={transactionListStyle.noTransactions}>{emptyMessage || __('No transactions to list.')}</Text>
         )}
 
         {!!transactionList.length && (

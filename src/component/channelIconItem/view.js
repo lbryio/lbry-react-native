@@ -63,7 +63,7 @@ export default class ChannelIconItem extends React.PureComponent {
         >
           {isPlaceholder && (
             <View style={channelIconStyle.centered}>
-              <Text style={channelIconStyle.placeholderText}>ALL</Text>
+              <Text style={channelIconStyle.placeholderText}>{__('ALL')}</Text>
             </View>
           )}
           {!isPlaceholder && thumbnail && (
