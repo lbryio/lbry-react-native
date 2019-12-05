@@ -38,16 +38,18 @@ function checkMessageAndSave(message, messagesFilePath) {
       .then(() => {
         // successful write
         // send to transifex (should we do this even if the file doesn't get saved?)
-        doTransifexUpload(
+        // TODO: load token from .env
+        /* doTransifexUpload(
           contents,
           'lbry-mobile',
+          '*token*',
           () => {
             // successful
           },
           err => {
             // failed
           }
-        );
+        ); */
       })
       .catch(err => {
         if (err) {
