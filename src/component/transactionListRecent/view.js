@@ -2,11 +2,11 @@
 import React from 'react';
 // import BusyIndicator from 'component/common/busy-indicator';
 import { Text, View } from 'react-native';
-import Button from '../button';
-import Link from '../link';
-import TransactionList from '../transactionList';
-import type { Transaction } from '../transactionList/view';
-import walletStyle from '../../styles/wallet';
+import Button from 'component/button';
+import Link from 'component/link';
+import TransactionList from 'component/transactionList';
+import type { Transaction } from 'component/transactionList/view';
+import walletStyle from 'styles/wallet';
 
 type Props = {
   fetchTransactions: () => void,
@@ -27,14 +27,14 @@ class TransactionListRecent extends React.PureComponent<Props> {
       <View style={walletStyle.transactionsCard}>
         <View style={[walletStyle.row, walletStyle.transactionsHeader]}>
           <Text style={walletStyle.transactionsTitle}>Recent Transactions</Text>
-          <Link style={walletStyle.link} navigation={navigation} text={'View All'} href={'#TransactionHistory'} />
+          <Link style={walletStyle.link} navigation={navigation} text={__('View All')} href={'#TransactionHistory'} />
         </View>
-        {fetchingTransactions && <Text style={walletStyle.infoText}>Fetching transactions...</Text>}
+        {fetchingTransactions && <Text style={walletStyle.infoText}>{__('Fetching transactions...')}</Text>}
         {!fetchingTransactions && (
           <TransactionList
             navigation={navigation}
             transactions={transactions.slice(0, 5)}
-            emptyMessage={"Looks like you don't have any recent transactions."}
+            emptyMessage={__("Looks like you don't have any recent transactions.")}
           />
         )}
       </View>

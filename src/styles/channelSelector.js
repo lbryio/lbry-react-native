@@ -11,6 +11,10 @@ const channelSelectorStyle = StyleSheet.create({
     height: 52,
     width: '100%',
   },
+  channelPickerItem: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 16,
+  },
   bidRow: {
     flex: 1,
     flexDirection: 'row',

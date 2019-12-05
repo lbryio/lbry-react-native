@@ -155,7 +155,9 @@ class ClaimList extends React.PureComponent {
 
   verticalListEmptyComponent = () => {
     return (
-      <Text style={claimListStyle.noContentText}>No content to display at this time. Please check back later.</Text>
+      <Text style={claimListStyle.noContentText}>
+        {__('No content to display at this time. Please check back later.')}
+      </Text>
     );
   };
 

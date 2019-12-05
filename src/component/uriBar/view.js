@@ -256,7 +256,7 @@ class UriBar extends React.PureComponent {
                 this.setSelection();
               }}
               selectTextOnFocus
-              placeholder={'Search movies, music, and more'}
+              placeholder={__('Search movies, music, and more')}
               underlineColorAndroid={'transparent'}
               numberOfLines={1}
               clearButtonMode={'while-editing'}

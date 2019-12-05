@@ -8,7 +8,6 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Tag from 'component/tag';
 import TagSearch from 'component/tagSearch';
 import modalTagSelectorStyle from 'styles/modalTagSelector';
-import { __ } from 'utils/helper';
 
 const minimumTags = 2;
 
@@ -57,7 +56,7 @@ export default class ModalTagSelector extends React.PureComponent {
       <TouchableOpacity style={modalTagSelectorStyle.overlay} activeOpacity={1} onPress={onOverlayPress}>
         <TouchableOpacity style={modalTagSelectorStyle.container} activeOpacity={1}>
           <View style={modalTagSelectorStyle.titleRow}>
-            <Text style={modalTagSelectorStyle.title}>Customize your tags</Text>
+            <Text style={modalTagSelectorStyle.title}>{__('Customize your tags')}</Text>
           </View>
           <View style={modalTagSelectorStyle.tagList}>
             {tags &&
@@ -73,7 +72,7 @@ export default class ModalTagSelector extends React.PureComponent {
           </View>
           <TagSearch handleAddTag={this.handleAddTag} selectedTags={tags} />
           <View style={modalTagSelectorStyle.buttons}>
-            <Button style={modalTagSelectorStyle.doneButton} text={'Done'} onPress={onDonePress} />
+            <Button style={modalTagSelectorStyle.doneButton} text={__('Done')} onPress={onDonePress} />
           </View>
         </TouchableOpacity>
       </TouchableOpacity>

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { doToast } from 'lbry-redux';
+import { SETTINGS, doToast } from 'lbry-redux';
 import {
   doAuthenticate,
   doCheckSync,
@@ -21,6 +21,7 @@ import {
   selectUser,
 } from 'lbryinc';
 import { doSetClientSetting } from 'redux/actions/settings';
+import { makeSelectClientSetting } from 'redux/selectors/settings';
 import FirstRun from './view';
 
 const select = state => ({
@@ -31,6 +32,7 @@ const select = state => ({
   emailNewPending: selectEmailNewIsPending(state),
   hasSyncedWallet: selectHasSyncedWallet(state),
   getSyncIsPending: selectGetSyncIsPending(state),
+  language: makeSelectClientSetting(SETTINGS.LANGUAGE)(state),
   syncApplyErrorMessage: selectSyncApplyErrorMessage(state),
   syncApplyIsPending: selectSyncApplyIsPending(state),
   syncHash: selectSyncHash(state),

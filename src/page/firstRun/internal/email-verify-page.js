@@ -4,7 +4,7 @@ import { ActivityIndicator, Linking, NativeModules, Platform, Switch, Text, Text
 import AsyncStorage from '@react-native-community/async-storage';
 import Button from 'component/button';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firstRunStyle from 'styles/firstRun';
 
@@ -13,7 +13,7 @@ class EmailVerifyPage extends React.PureComponent {
     const { email, notify, resendVerificationEmail } = this.props;
     resendVerificationEmail(email);
     AsyncStorage.setItem(Constants.KEY_EMAIL_VERIFY_PENDING, 'true');
-    notify({ message: 'Please follow the instructions in the email sent to your address to continue.' });
+    notify({ message: __('Please follow the instructions in the email sent to your address to continue.') });
   };
 
   render() {

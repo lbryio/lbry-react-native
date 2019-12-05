@@ -12,8 +12,8 @@ class FileDownloadButton extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    //this.checkAvailability(nextProps.uri);
-    //this.restartDownload(nextProps);
+    // this.checkAvailability(nextProps.uri);
+    // this.restartDownload(nextProps);
   }
 
   restartDownload(props) {
@@ -50,13 +50,11 @@ class FileDownloadButton extends React.PureComponent {
 
     if ((fileInfo && !fileInfo.stopped) || loading || downloading) {
       const progress = fileInfo && fileInfo.written_bytes ? (fileInfo.written_bytes / fileInfo.total_bytes) * 100 : 0,
-        label = fileInfo ? progress.toFixed(0) + '% complete' : 'Connecting...';
+        label = fileInfo ? progress.toFixed(0) + '% complete' : __('Connecting...');
 
       return (
         <View style={[style, fileDownloadButtonStyle.container]}>
-          <View
-            style={{ width: `${progress}%`, backgroundColor: '#ff0000', position: 'absolute', left: 0, top: 0 }}
-          ></View>
+          <View style={{ width: `${progress}%`, backgroundColor: '#ff0000', position: 'absolute', left: 0, top: 0 }} />
           <Text style={fileDownloadButtonStyle.text}>{label}</Text>
         </View>
       );
@@ -64,14 +62,14 @@ class FileDownloadButton extends React.PureComponent {
       if (!costInfo) {
         return (
           <View style={[style, fileDownloadButtonStyle.container]}>
-            <Text style={fileDownloadButtonStyle.text}>Fetching cost info...</Text>
+            <Text style={fileDownloadButtonStyle.text}>{__('Fetching cost info...')}</Text>
           </View>
         );
       }
       return (
         <Button
           icon={isPlayable ? 'play' : null}
-          text={isPlayable ? 'Play' : isViewable ? 'View' : 'Download'}
+          text={isPlayable ? __('Play') : isViewable ? __('View') : __('Download')}
           onLayout={onButtonLayout}
           style={[style, fileDownloadButtonStyle.container]}
           onPress={() => {
@@ -98,7 +96,7 @@ class FileDownloadButton extends React.PureComponent {
           style={[style, fileDownloadButtonStyle.container]}
           onPress={openFile}
         >
-          <Text style={fileDownloadButtonStyle.text}>{isViewable ? 'View' : 'Open'}</Text>
+          <Text style={fileDownloadButtonStyle.text}>{isViewable ? __('View') : __('Open')}</Text>
         </TouchableOpacity>
       );
     }

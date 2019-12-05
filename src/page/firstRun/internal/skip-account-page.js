@@ -28,10 +28,10 @@ class SkipAccountPage extends React.PureComponent {
       <View onLayout={onSkipAccountViewLayout}>
         <View style={firstRunStyle.row}>
           <Icon name="exclamation-triangle" style={firstRunStyle.titleIcon} size={32} color={Colors.White} />
-          <Text style={firstRunStyle.title}>Are you sure?</Text>
+          <Text style={firstRunStyle.title}>{__('Are you sure?')}</Text>
         </View>
         <Text style={firstRunStyle.paragraph}>
-          Without an account, you will not receive rewards, sync and backup services, or security updates.
+          {__('Without an account, you will not receive rewards, sync and backup services, or security updates.')}
         </Text>
 
         <View style={[firstRunStyle.row, firstRunStyle.confirmContainer]}>
@@ -45,8 +45,9 @@ class SkipAccountPage extends React.PureComponent {
             />
           </View>
           <Text style={firstRunStyle.rowParagraph}>
-            I understand that by uninstalling LBRY I will lose any balances or published content with no recovery option
-            if it is not backed up manually (see wallet page)
+            {__(
+              'I understand that by uninstalling LBRY I will lose any balances or published content with no recovery option if it is not backed up manually (see wallet page)'
+            )}
           </Text>
         </View>
       </View>

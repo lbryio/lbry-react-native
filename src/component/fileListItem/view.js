@@ -189,7 +189,7 @@ class FileListItem extends React.PureComponent {
 
             {featuredResult && !isResolving && !claim && (
               <View style={fileListStyle.titleContainer}>
-                <Text style={fileListStyle.featuredTitle}>Nothing here. Publish something!</Text>
+                <Text style={fileListStyle.featuredTitle}>{__('Nothing here. Publish something!')}</Text>
               </View>
             )}
 

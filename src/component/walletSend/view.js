@@ -38,24 +38,24 @@ class WalletSend extends React.PureComponent<Props> {
     const { address, amount } = this.state;
     if (address && !regexAddress.test(address)) {
       notify({
-        message: 'The recipient address is not a valid LBRY address.',
+        message: __('The recipient address is not a valid LBRY address.'),
       });
       return;
     }
 
     if (amount > balance) {
       notify({
-        message: 'Insufficient credits',
+        message: __('Insufficient credits'),
       });
       return;
     }
 
     if (amount && address) {
       // Show confirmation before send
-      Alert.alert('Send LBC', `Are you sure you want to send ${amount} LBC to ${address}?`, [
-        { text: 'No' },
+      Alert.alert(__('Send LBC'), `Are you sure you want to send ${amount} LBC to ${address}?`, [
+        { text: __('No') },
         {
-          text: 'Yes',
+          text: __('Yes'),
           onPress: () => {
             sendToAddress(address, parseFloat(amount));
             this.setState({ address: null, amount: null });
@@ -69,7 +69,7 @@ class WalletSend extends React.PureComponent<Props> {
     if (this.state.addressChanged && !this.state.addressValid) {
       const { notify } = this.props;
       notify({
-        message: 'The recipient address is not a valid LBRY address.',
+        message: __('The recipient address is not a valid LBRY address.'),
       });
     }
   };
@@ -87,8 +87,8 @@ class WalletSend extends React.PureComponent<Props> {
 
     return (
       <View style={walletStyle.card}>
-        <Text style={walletStyle.title}>Send Credits</Text>
-        <Text style={walletStyle.text}>Recipient address</Text>
+        <Text style={walletStyle.title}>{__('Send Credits')}</Text>
+        <Text style={walletStyle.text}>{__('Recipient address')}</Text>
         <View style={[walletStyle.row, walletStyle.bottomMarginMedium]}>
           <TextInput
             onChangeText={value =>
@@ -112,7 +112,7 @@ class WalletSend extends React.PureComponent<Props> {
             onPress={() => Clipboard.getString().then(value => this.setState({ address: value, addressChanged: true }))}
           />
         </View>
-        <Text style={walletStyle.text}>Amount</Text>
+        <Text style={walletStyle.text}>{__('Amount')}</Text>
         <View style={walletStyle.row}>
           <View style={walletStyle.amountRow}>
             <TextInput

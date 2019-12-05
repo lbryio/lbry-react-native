@@ -1,12 +1,33 @@
 import React from 'react';
 import { SETTINGS } from 'lbry-redux';
-import { Text, View, ScrollView, Switch, NativeModules } from 'react-native';
-import { __, navigateBack } from 'utils/helper';
+import { ActivityIndicator, Picker, Platform, Text, View, ScrollView, Switch, NativeModules } from 'react-native';
+import { navigateBack } from 'utils/helper';
+import AsyncStorage from '@react-native-community/async-storage';
+import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PageHeader from 'component/pageHeader';
+import RNFS from 'react-native-fs';
 import settingsStyle from 'styles/settings';
 
+const languageOptions = [
+  { code: 'default', name: 'Use device language' },
+  { code: 'en', name: 'English' },
+  { code: 'gu', name: 'Gujarati' },
+  { code: 'hi', name: 'Hindi' },
+  { code: 'id', name: 'Indonesian' },
+  { code: 'it', name: 'Italian' },
+  { code: 'ms', name: 'Malay' },
+  { code: 'tr', name: 'Turkish' },
+  { code: 'pl', name: 'Polish' },
+  { code: 'pt', name: 'Portuguese' },
+  { code: 'es', name: 'Spanish' },
+];
+
 class SettingsPage extends React.PureComponent {
+  state = {
+    downloadingLanguage: false,
+  };
+
   static navigationOptions = {
     title: 'Settings',
   };
@@ -53,17 +74,70 @@ class SettingsPage extends React.PureComponent {
     return value === null || value === undefined ? defaultValue : value;
   };
 
+  handleLanguageValueChange = value => {
+    const { notify, setClientSetting } = this.props;
+
+    let language;
+    if (value === 'default') {
+      language =
+        Platform.OS === 'android'
+          ? NativeModules.I18nManager.localeIdentifier
+          : NativeModules.SettingsManager.settings.AppleLocale;
+      language = language ? language.substring(0, 2) : 'en';
+    } else {
+      language = value;
+    }
+
+    // check the local filesystem for the language first? Or download remote strings first?
+
+    // download and save the language file
+    this.setState({ downloadingLanguage: true }, () => {
+      fetch('https://lbry.com/i18n/get/lbry-mobile/app-strings/' + language + '.json')
+        .then(r => r.json())
+        .then(j => {
+          window.i18n_messages[language] = j;
+
+          // write the language file to the filesystem
+          const langFilePath = RNFS.ExternalDirectoryPath + '/' + language + '.json';
+          RNFS.writeFile(langFilePath, JSON.stringify(j), 'utf8');
+
+          // save the setting outside redux because when the first component mounts, the redux value isn't loaded yet
+          // so we have to load it from native settings
+          NativeModules.UtilityModule.setNativeStringSetting(SETTINGS.LANGUAGE, value);
+
+          // update state and client setting
+          window.language = language;
+          setClientSetting(SETTINGS.LANGUAGE, value);
+
+          this.setState({ downloadingLanguage: false });
+        })
+        .catch(e => {
+          notify({ message: __('Failed to load %language% translations.', { language: language }), isError: true });
+          this.setState({ downloadingLanguage: false });
+        });
+    });
+  };
+
+  handleBackPressed = () => {
+    const { navigation, notify, drawerStack, popDrawerStack } = this.props;
+
+    if (this.state.downloadingLanguage) {
+      notify({ message: 'Please wait for the language file to finish downloading' });
+      return;
+    }
+
+    navigateBack(navigation, drawerStack, popDrawerStack);
+  };
+
   render() {
     const {
       backgroundPlayEnabled,
-      drawerStack,
       keepDaemonRunning,
-      navigation,
-      popDrawerStack,
       receiveSubscriptionNotifications,
       receiveRewardNotifications,
       receiveInterestsNotifications,
       receiveCreatorNotifications,
+      language,
       showNsfw,
       showUriBarSuggestions,
       setClientSetting,
@@ -78,14 +152,14 @@ class SettingsPage extends React.PureComponent {
 
     return (
       <View style={settingsStyle.container}>
-        <PageHeader title={'Settings'} onBackPressed={() => navigateBack(navigation, drawerStack, popDrawerStack)} />
+        <PageHeader title={__('Settings')} onBackPressed={this.handleBackPressed} />
         <ScrollView style={settingsStyle.scrollContainer}>
-          <Text style={settingsStyle.sectionTitle}>Content</Text>
+          <Text style={settingsStyle.sectionTitle}>{__('Content')}</Text>
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>Enable background media playback</Text>
+              <Text style={settingsStyle.label}>{__('Enable background media playback')}</Text>
               <Text style={settingsStyle.description}>
-                Enable this option to play audio or video in the background when the app is suspended.
+                {__('Enable this option to play audio or video in the background when the app is suspended.')}
               </Text>
             </View>
             <View style={settingsStyle.switchContainer}>
@@ -96,9 +170,30 @@ class SettingsPage extends React.PureComponent {
             </View>
           </View>
 
+          <Text style={settingsStyle.sectionTitle}>{__('Language')}</Text>
+          <View style={settingsStyle.pickerRow}>
+            <View style={settingsStyle.pickerText}>
+              <Text style={settingsStyle.label}>{__('Choose language')}</Text>
+            </View>
+            <View style={settingsStyle.pickerContainer}>
+              {this.state.downloadingLanguage && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
+              <Picker
+                enabled={!this.state.downloadingLanguage}
+                selectedValue={language || 'default'}
+                style={settingsStyle.languagePicker}
+                itemStyle={settingsStyle.languagePickerItem}
+                onValueChange={this.handleLanguageValueChange}
+              >
+                {languageOptions.map(option => (
+                  <Picker.Item label={__(option.name)} value={option.code} key={option.code} />
+                ))}
+              </Picker>
+            </View>
+          </View>
+
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>Show mature content</Text>
+              <Text style={settingsStyle.label}>{__('Show mature content')}</Text>
             </View>
             <View style={settingsStyle.switchContainer}>
               <Switch value={showNsfw} onValueChange={value => setClientSetting(SETTINGS.SHOW_NSFW, value)} />
@@ -169,10 +264,10 @@ class SettingsPage extends React.PureComponent {
           )}
 
           <View style={settingsStyle.sectionDivider} />
-          <Text style={settingsStyle.sectionTitle}>Search</Text>
+          <Text style={settingsStyle.sectionTitle}>{__('Search')}</Text>
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>Show URL suggestions</Text>
+              <Text style={settingsStyle.label}>{__('Show URL suggestions')}</Text>
             </View>
             <View style={settingsStyle.switchContainer}>
               <Switch
@@ -183,13 +278,16 @@ class SettingsPage extends React.PureComponent {
           </View>
 
           <View style={settingsStyle.sectionDivider} />
-          <Text style={settingsStyle.sectionTitle}>Other</Text>
+          <Text style={settingsStyle.sectionTitle}>{__('Other')}</Text>
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>Keep the daemon background service running after closing the app</Text>
+              <Text style={settingsStyle.label}>
+                {__('Keep the SDK background service running after closing the app')}
+              </Text>
               <Text style={settingsStyle.description}>
-                Enable this option for quicker app launch and to keep the synchronisation with the blockchain up to
-                date.
+                {__(
+                  'Enable this option for quicker app launch and to keep the synchronisation with the blockchain up to date.'
+                )}
               </Text>
             </View>
             <View style={settingsStyle.switchContainer}>

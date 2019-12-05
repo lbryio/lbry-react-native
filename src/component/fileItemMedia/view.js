@@ -61,6 +61,7 @@ class FileItemMedia extends React.PureComponent {
     let style = this.props.style;
     const { duration, isResolvingUri, thumbnail, title, resizeMode } = this.props;
     const atStyle = this.state.autoThumbStyle;
+
     if (this.isThumbnailValid(thumbnail) && !this.state.imageLoadFailed) {
       if (style == null) {
         style = fileItemMediaStyle.thumbnail;

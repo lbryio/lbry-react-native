@@ -87,8 +87,9 @@ class WelcomePage extends React.PureComponent {
       content = (
         <View>
           <Text style={firstRunStyle.paragraph}>
-            The LBRY servers were unreachable at this time. Please check your Internet connection and then restart the
-            app to try again.
+            {__(
+              'The LBRY servers were unreachable at this time. Please check your Internet connection and then restart the app to try again.'
+            )}
           </Text>
         </View>
       );
@@ -96,7 +97,7 @@ class WelcomePage extends React.PureComponent {
       content = (
         <View style={firstRunStyle.centered}>
           <ActivityIndicator size="large" color={Colors.White} style={firstRunStyle.waiting} />
-          <Text style={firstRunStyle.paragraph}>Please wait while we get some things ready...</Text>
+          <Text style={firstRunStyle.paragraph}>{__('Please wait while we get some things ready...')}</Text>
         </View>
       );
     } else {
@@ -104,8 +105,9 @@ class WelcomePage extends React.PureComponent {
         <View onLayout={onWelcomePageLayout}>
           <Text style={firstRunStyle.title}>Welcome to LBRY.</Text>
           <Text style={firstRunStyle.paragraph}>
-            LBRY is a community-controlled content platform where you can find and publish videos, music, books, and
-            more.
+            {__(
+              'LBRY is a community-controlled content platform where you can find and publish videos, music, books, and more.'
+            )}
           </Text>
           <Text style={[firstRunStyle.infoParagraph, firstRunStyle.tosParagraph]}>
             By continuing, I agree to the{' '}

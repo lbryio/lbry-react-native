@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, SectionList, Text, View } from 'react-native';
 import { MATURE_TAGS, createNormalizedClaimSearchKey, normalizeURI } from 'lbry-redux';
-import { __, navigateToUri } from 'utils/helper';
+import { navigateToUri } from 'utils/helper';
 import SubscribeButton from 'component/subscribeButton';
 import SuggestedSubscriptionItem from 'component/suggestedSubscriptionItem';
 import Colors from 'styles/colors';

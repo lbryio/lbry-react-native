@@ -97,14 +97,16 @@ class WalletPage extends React.PureComponent {
       content = (
         <View style={firstRunStyle.centered}>
           <ActivityIndicator size="large" color={Colors.White} style={firstRunStyle.waiting} />
-          <Text style={firstRunStyle.paragraph}>Retrieving your account information...</Text>
+          <Text style={firstRunStyle.paragraph}>{__('Retrieving your account information...')}</Text>
         </View>
       );
     } else if (syncApplyStarted || syncApplyIsPending || syncApplyCompleted) {
       content = (
         <View style={firstRunStyle.centered}>
           <ActivityIndicator size="large" color={Colors.White} style={firstRunStyle.waiting} />
-          <Text style={firstRunStyle.paragraph}>{syncApplyIsPending ? 'Validating password' : 'Synchronizing'}...</Text>
+          <Text style={firstRunStyle.paragraph}>
+            {syncApplyIsPending ? __('Validating password') : __('Synchronizing')}...
+          </Text>
         </View>
       );
     } else if (hasSyncedWallet && this.state.autoLoginAttempted) {
@@ -114,8 +116,8 @@ class WalletPage extends React.PureComponent {
           <Text style={firstRunStyle.title}>Password</Text>
           <Text style={firstRunStyle.paragraph}>
             {hasSyncedWallet
-              ? 'Please enter the password you used to secure your wallet.'
-              : 'Please enter a password to secure your account and wallet.'}
+              ? __('Please enter the password you used to secure your wallet.')
+              : __('Please enter a password to secure your account and wallet.')}
           </Text>
           <View style={firstRunStyle.passwordInputContainer}>
             <TextInput
@@ -148,8 +150,8 @@ class WalletPage extends React.PureComponent {
             <View style={firstRunStyle.passwordWarning}>
               <Text style={firstRunStyle.passwordWarningText}>
                 {hasSyncedWallet
-                  ? 'If you did not provide a password, please press Use LBRY to continue.'
-                  : 'You can proceed without a password, but this is not recommended.'}
+                  ? __('If you did not provide a password, please press Use LBRY to continue.')
+                  : __('You can proceed without a password, but this is not recommended.')}
               </Text>
             </View>
           )}
@@ -164,7 +166,7 @@ class WalletPage extends React.PureComponent {
             </View>
           )}
           <Text style={firstRunStyle.infoParagraph}>
-            Note: for wallet security purposes, LBRY is unable to reset your password.
+            {__('Note: for wallet security purposes, LBRY is unable to reset your password.')}
           </Text>
         </View>
       );
