@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry } from 'lbry-redux';
+import { SETTINGS, Lbry } from 'lbry-redux';
 import { ActivityIndicator, Linking, NativeModules, Text, TouchableOpacity, View } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -38,6 +38,7 @@ class FirstRunScreen extends React.PureComponent {
     walletPassword: '',
     syncApplyStarted: false,
     syncApplyCompleted: false,
+    language: null,
   };
 
   componentDidMount() {
@@ -46,33 +47,51 @@ class FirstRunScreen extends React.PureComponent {
         this.setState({ launchUrl: url });
       }
     });
+
+    NativeModules.UtilityModule.getNativeStringSetting(SETTINGS.LANGUAGE, 'en').then(language =>
+      this.loadLanguage(language)
+    );
   }
 
-  componentDidUpdate() {
-    const { language } = this.props;
-
-    if (!this.state.languageLoaded) {
-      this.setState({ languageLoaded: true }, () => {
-        if (!language) {
+  loadLanguage = language => {
+    if (!language || language === 'en') {
+      this.checkFirstRun();
+    } else {
+      // Load the current language setting before doing anything
+      const languageFile = RNFS.ExternalDirectoryPath + '/' + language + '.json';
+      RNFS.readFile(languageFile, 'utf8')
+        .then(fileContents => {
+          const json = JSON.parse(fileContents);
+          window.language = language;
+          window.i18n_messages[language] = json;
+          // language exists, so download an update
+          this.downloadLanguageUpdate(language);
           this.checkFirstRun();
-        } else {
-          // Load the current language setting before doing anything
-          const languageFile = RNFS.ExternalDirectoryPath + '/' + language + '.json';
-          RNFS.readFile(languageFile, 'utf8')
-            .then(fileContents => {
-              const json = JSON.parse(fileContents);
-              window.language = language;
-              window.i18n_messages[language] = json;
-              this.checkFirstRun();
-            })
-            .catch(err => {
-              // language file doesn't exist? maintain the default language
-              this.checkFirstRun();
-            });
-        }
-      });
+        })
+        .catch(err => {
+          // language file doesn't exist? maintain the default language
+          this.checkFirstRun();
+        });
     }
-  }
+  };
+
+  downloadLanguageUpdate = language => {
+    fetch('https://lbry.com/i18n/get/lbry-mobile/app-strings/' + language + '.json')
+      .then(r => r.json())
+      .then(j => {
+        window.i18n_messages[language] = j;
+
+        // write the language file to the filesystem
+        const langFilePath = RNFS.ExternalDirectoryPath + '/' + language + '.json';
+        RNFS.writeFile(langFilePath, JSON.stringify(j), 'utf8');
+
+        // update state and client setting
+        window.language = language;
+      })
+      .catch(() => {
+        /* pass */
+      });
+  };
 
   checkFirstRun = () => {
     NativeModules.FirstRun.isFirstRun().then(firstRun => {
@@ -107,7 +126,7 @@ class FirstRunScreen extends React.PureComponent {
 
     if (this.state.syncApplyStarted && !syncApplyIsPending) {
       if (syncApplyErrorMessage && syncApplyErrorMessage.trim().length > 0) {
-        notify({ message: syncApplyErrorMessage, isError: true });
+        notify({ message: __(syncApplyErrorMessage), isError: true });
         this.setState({ showBottomContainer: true, syncApplyStarted: false, syncApplyCompleted: false });
       } else {
         this.setState({ syncApplyCompleted: true });

@@ -16,7 +16,9 @@ const languageOptions = [
   { code: 'gu', name: __('Gujarati') },
   { code: 'hi', name: __('Hindi') },
   { code: 'id', name: __('Indonesian') },
+  { code: 'it', name: __('Italian') },
   { code: 'ms', name: __('Malay') },
+  { code: 'tr', name: __('Turkish') },
   { code: 'pl', name: __('Polish') },
   { code: 'pt', name: __('Portuguese') },
   { code: 'es', name: __('Spanish') },
@@ -99,6 +101,10 @@ class SettingsPage extends React.PureComponent {
           // write the language file to the filesystem
           const langFilePath = RNFS.ExternalDirectoryPath + '/' + language + '.json';
           RNFS.writeFile(langFilePath, JSON.stringify(j), 'utf8');
+
+          // save the setting outside redux because when the first component mounts, the redux value isn't loaded yet
+          // so we have to load it from native settings
+          NativeModules.UtilityModule.setNativeStringSetting(SETTINGS.LANGUAGE, value);
 
           // update state and client setting
           window.language = language;

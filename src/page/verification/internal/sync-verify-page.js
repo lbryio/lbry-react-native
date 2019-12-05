@@ -67,7 +67,7 @@ class SyncVerifyPage extends React.PureComponent {
 
     if (this.state.syncApplyStarted && !syncApplyIsPending) {
       if (syncApplyErrorMessage && syncApplyErrorMessage.trim().length > 0) {
-        notify({ message: syncApplyErrorMessage, isError: true });
+        notify({ message: __(syncApplyErrorMessage), isError: true });
         this.setState({ syncApplyStarted: false, autoLoginFlow: false });
       } else {
         // password successfully verified

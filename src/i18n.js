@@ -7,11 +7,12 @@ import RNFS from 'react-native-fs';
 const isProduction = !__DEV__; // eslint-disable-line no-undef
 let knownMessages = null;
 
-window.language = 'en';
+window.language = NativeModules.UtilityModule.language;
 window.i18n_messages = window.i18n_messages || {};
 
 function saveMessage(message) {
-  const messagesFilePath = RNFS.ExternalDirectoryPath + '/app-strings.json';
+  // file path that won't get wiped if app storage is cleared or the app is uninstalled
+  const messagesFilePath = RNFS.ExternalStorageDirectoryPath + '/lbry-app-strings.json';
 
   if (knownMessages === null) {
     RNFS.readFile(messagesFilePath, 'utf8')
@@ -37,7 +38,7 @@ function checkMessageAndSave(message, messagesFilePath) {
       .then(() => {
         // successful write
         // send to transifex (should we do this even if the file doesn't get saved?)
-        /* doTransifexUpload(
+        doTransifexUpload(
           contents,
           'lbry-mobile',
           () => {
@@ -46,7 +47,7 @@ function checkMessageAndSave(message, messagesFilePath) {
           err => {
             // failed
           }
-        ); */
+        );
       })
       .catch(err => {
         if (err) {
@@ -58,12 +59,8 @@ function checkMessageAndSave(message, messagesFilePath) {
 
 export function __(message, tokens) {
   const w = global.window ? global.window : window;
-  let language = w.language;
-
-  /* Platform.OS === 'android'
-      ? NativeModules.I18nManager.localeIdentifier
-      : NativeModules.SettingsManager.settings.AppleLocale;
-  window.language = language ? language.substring(0, 2) : 'en'; */
+  let language = w.language ? w.language : 'en';
+  console.log('w.language=' + language + '; message=' + message);
 
   if (!isProduction) {
     saveMessage(message);
