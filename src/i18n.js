@@ -60,7 +60,6 @@ function checkMessageAndSave(message, messagesFilePath) {
 export function __(message, tokens) {
   const w = global.window ? global.window : window;
   let language = w.language ? w.language : 'en';
-  console.log('w.language=' + language + '; message=' + message);
 
   if (!isProduction) {
     saveMessage(message);

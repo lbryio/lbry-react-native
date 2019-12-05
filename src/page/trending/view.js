@@ -15,11 +15,10 @@ import FloatingWalletBalance from 'component/floatingWalletBalance';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import UriBar from 'component/uriBar';
 import discoverStyle from 'styles/discover';
-import { __ } from 'i18n';
 
 const TRENDING_FOR_ITEMS = [
-  { icon: 'globe-americas', name: 'everyone', label: __('Everyone') },
-  { icon: 'hashtag', name: 'tags', label: __('Tags you follow') },
+  { icon: 'globe-americas', name: 'everyone', label: 'Everyone' },
+  { icon: 'hashtag', name: 'tags', label: 'Tags you follow' },
 ];
 
 class TrendingPage extends React.PureComponent {
@@ -101,24 +100,24 @@ class TrendingPage extends React.PureComponent {
               style={discoverStyle.allTagSortBy}
               onPress={() => this.setState({ showSortPicker: true })}
             >
-              <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
+              <Text style={discoverStyle.tagSortText}>{__(sortByItem.label.split(' ')[0])}</Text>
               <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
             </TouchableOpacity>
 
-            <Text style={discoverStyle.pickerLabel}>for</Text>
+            <Text style={discoverStyle.pickerLabel}>{__('for')}</Text>
             <TouchableOpacity
               style={discoverStyle.allTagSortBy}
               onPress={() => this.setState({ showTrendingForPicker: true })}
             >
-              <Text style={discoverStyle.tagSortText}>{currentTrendingForItem.label.split(' ')[0]}</Text>
+              <Text style={discoverStyle.tagSortText}>{__(currentTrendingForItem.label.split(' ')[0])}</Text>
               <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
             </TouchableOpacity>
 
-            {sortByTop && <Text style={discoverStyle.pickerLabel}>from</Text>}
+            {sortByTop && <Text style={discoverStyle.pickerLabel}>{__('from')}</Text>}
 
             {sortByTop && (
               <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
-                <Text style={discoverStyle.tagSortText}>{timeItem.label}</Text>
+                <Text style={discoverStyle.tagSortText}>{__(timeItem.label)}</Text>
                 <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
               </TouchableOpacity>
             )}

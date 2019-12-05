@@ -1,5 +1,3 @@
-import { __ } from 'i18n';
-
 const SORT_BY_NEW = 'new';
 const SORT_BY_HOT = 'hot';
 const SORT_BY_TOP = 'top';
@@ -98,8 +96,8 @@ const Constants = {
 
   ROUTE_FILE: 'File',
 
-  ITEM_CREATE_A_CHANNEL: __('Create a channel...'),
-  ITEM_ANONYMOUS: __('Publish anonymously'),
+  ITEM_CREATE_A_CHANNEL: 'Create a channel...',
+  ITEM_ANONYMOUS: 'Publish anonymously',
 
   SUBSCRIPTIONS_VIEW_ALL: 'view_all',
   SUBSCRIPTIONS_VIEW_LATEST_FIRST: 'view_latest_first',
@@ -118,17 +116,17 @@ const Constants = {
   TIME_ALL,
 
   CLAIM_SEARCH_SORT_BY_ITEMS: [
-    { icon: 'fire-alt', name: SORT_BY_HOT, label: __('Trending content') },
-    { icon: 'certificate', name: SORT_BY_NEW, label: __('New content') },
-    { icon: 'chart-line', name: SORT_BY_TOP, label: __('Top content') },
+    { icon: 'fire-alt', name: SORT_BY_HOT, label: 'Trending content' },
+    { icon: 'certificate', name: SORT_BY_NEW, label: 'New content' },
+    { icon: 'chart-line', name: SORT_BY_TOP, label: 'Top content' },
   ],
 
   CLAIM_SEARCH_TIME_ITEMS: [
-    { name: TIME_DAY, label: __('Past 24 hours') },
-    { name: TIME_WEEK, label: __('Past week') },
-    { name: TIME_MONTH, label: __('Past month') },
-    { name: TIME_YEAR, label: __('Past year') },
-    { name: TIME_ALL, label: __('All time') },
+    { name: TIME_DAY, label: 'Past 24 hours' },
+    { name: TIME_WEEK, label: 'Past week' },
+    { name: TIME_MONTH, label: 'Past month' },
+    { name: TIME_YEAR, label: 'Past year' },
+    { name: TIME_ALL, label: 'All time' },
   ],
 
   DEFAULT_ORDER_BY: ['trending_group', 'trending_mixed'],

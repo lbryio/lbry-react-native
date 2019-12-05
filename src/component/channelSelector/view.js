@@ -214,7 +214,11 @@ export default class ChannelSelector extends React.PureComponent {
           onValueChange={this.handlePickerValueChange}
         >
           {pickerItems.map(item => (
-            <Picker.Item label={item} value={item} key={item} />
+            <Picker.Item
+              label={[Constants.ITEM_ANONYMOUS, Constants.ITEM_CREATE_A_CHANNEL].includes(item) ? __(item) : item}
+              value={item}
+              key={item}
+            />
           ))}
         </Picker>
 

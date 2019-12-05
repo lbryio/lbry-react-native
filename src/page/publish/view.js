@@ -46,34 +46,33 @@ import TagSearch from 'component/tagSearch';
 import UriBar from 'component/uriBar';
 import publishStyle from 'styles/publish';
 import { navigateToUri, logPublish, uploadImageAsset } from 'utils/helper';
-import { __ } from 'i18n';
 
 const languages = {
-  en: __('English'),
-  zh: __('Chinese'),
-  fr: __('French'),
-  de: __('German'),
-  jp: __('Japanese'),
-  ru: __('Russian'),
-  es: __('Spanish'),
-  id: __('Indonesian'),
-  it: __('Italian'),
-  nl: __('Dutch'),
-  tr: __('Turkish'),
-  pl: __('Polish'),
-  ms: __('Malay'),
-  pt: __('Portuguese'),
-  vi: __('Vietnamese'),
-  th: __('Thai'),
-  ar: __('Arabic'),
-  cs: __('Czech'),
-  hr: __('Croatian'),
-  km: __('Cambodian'),
-  ko: __('Korean'),
-  no: __('Norwegian'),
-  ro: __('Romanian'),
-  hi: __('Hindi'),
-  el: __('Greek'),
+  en: 'English',
+  zh: 'Chinese',
+  fr: 'French',
+  de: 'German',
+  jp: 'Japanese',
+  ru: 'Russian',
+  es: 'Spanish',
+  id: 'Indonesian',
+  it: 'Italian',
+  nl: 'Dutch',
+  tr: 'Turkish',
+  pl: 'Polish',
+  ms: 'Malay',
+  pt: 'Portuguese',
+  vi: 'Vietnamese',
+  th: 'Thai',
+  ar: 'Arabic',
+  cs: 'Czech',
+  hr: 'Croatian',
+  km: 'Cambodian',
+  ko: 'Korean',
+  no: 'Norwegian',
+  ro: 'Romanian',
+  hi: 'Hindi',
+  el: 'Greek',
 };
 
 class PublishPage extends React.PureComponent {
@@ -1155,7 +1154,7 @@ class PublishPage extends React.PureComponent {
                   onValueChange={this.handleLanguageValueChange}
                 >
                   {Object.keys(languages).map(lang => (
-                    <Picker.Item label={languages[lang]} value={lang} key={lang} />
+                    <Picker.Item label={__(languages[lang])} value={lang} key={lang} />
                   ))}
                 </Picker>
               </View>

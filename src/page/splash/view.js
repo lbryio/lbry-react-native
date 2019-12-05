@@ -5,7 +5,6 @@ import { ActivityIndicator, DeviceEventEmitter, Linking, NativeModules, Platform
 import { NavigationActions, StackActions } from 'react-navigation';
 import { decode as atob } from 'base-64';
 import { navigateToUri, transformUrl } from 'utils/helper';
-import { __ } from 'i18n';
 import moment from 'moment';
 import AsyncStorage from '@react-native-community/async-storage';
 import Button from 'component/button';
@@ -17,9 +16,6 @@ import splashStyle from 'styles/splash';
 import RNFS from 'react-native-fs';
 
 const BLOCK_HEIGHT_INTERVAL = 1000 * 60 * 2.5; // every 2.5 minutes
-
-const testingNetwork = __('Testing network');
-const waitingForResolution = __('Waiting for name resolution');
 
 class SplashScreen extends React.PureComponent {
   static navigationOptions = {
@@ -205,8 +201,8 @@ class SplashScreen extends React.PureComponent {
             Lbry.wallet_unlock({ password: password || '' }).then(unlocked => {
               if (unlocked) {
                 this.setState({
-                  message: testingNetwork,
-                  details: waitingForResolution,
+                  message: __('Testing network'),
+                  details: __('Waiting for name resolution'),
                 });
                 this.finishSplashScreen();
               } else {
@@ -215,8 +211,8 @@ class SplashScreen extends React.PureComponent {
             });
           } else {
             this.setState({
-              message: testingNetwork,
-              details: waitingForResolution,
+              message: __('Testing network'),
+              details: __('Waiting for name resolution'),
             });
             this.finishSplashScreen();
           }
@@ -318,8 +314,8 @@ class SplashScreen extends React.PureComponent {
     this.setState(
       {
         accountUnlockFailed: false,
-        message: testingNetwork,
-        details: waitingForResolution,
+        message: __('Testing network'),
+        details: __('Waiting for name resolution'),
       },
       () => this.finishSplashScreen()
     );

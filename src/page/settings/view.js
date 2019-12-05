@@ -2,7 +2,6 @@ import React from 'react';
 import { SETTINGS } from 'lbry-redux';
 import { ActivityIndicator, Picker, Platform, Text, View, ScrollView, Switch, NativeModules } from 'react-native';
 import { navigateBack } from 'utils/helper';
-import { __ } from 'i18n';
 import AsyncStorage from '@react-native-community/async-storage';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -11,17 +10,17 @@ import RNFS from 'react-native-fs';
 import settingsStyle from 'styles/settings';
 
 const languageOptions = [
-  { code: 'default', name: __('Use device language') },
-  { code: 'en', name: __('English') },
-  { code: 'gu', name: __('Gujarati') },
-  { code: 'hi', name: __('Hindi') },
-  { code: 'id', name: __('Indonesian') },
-  { code: 'it', name: __('Italian') },
-  { code: 'ms', name: __('Malay') },
-  { code: 'tr', name: __('Turkish') },
-  { code: 'pl', name: __('Polish') },
-  { code: 'pt', name: __('Portuguese') },
-  { code: 'es', name: __('Spanish') },
+  { code: 'default', name: 'Use device language' },
+  { code: 'en', name: 'English' },
+  { code: 'gu', name: 'Gujarati' },
+  { code: 'hi', name: 'Hindi' },
+  { code: 'id', name: 'Indonesian' },
+  { code: 'it', name: 'Italian' },
+  { code: 'ms', name: 'Malay' },
+  { code: 'tr', name: 'Turkish' },
+  { code: 'pl', name: 'Polish' },
+  { code: 'pt', name: 'Portuguese' },
+  { code: 'es', name: 'Spanish' },
 ];
 
 class SettingsPage extends React.PureComponent {
@@ -186,7 +185,7 @@ class SettingsPage extends React.PureComponent {
                 onValueChange={this.handleLanguageValueChange}
               >
                 {languageOptions.map(option => (
-                  <Picker.Item label={option.name} value={option.code} key={option.code} />
+                  <Picker.Item label={__(option.name)} value={option.code} key={option.code} />
                 ))}
               </Picker>
             </View>

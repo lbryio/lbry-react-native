@@ -158,7 +158,7 @@ class SubscriptionsPage extends React.PureComponent {
                 style={subscriptionsStyle.tagSortBy}
                 onPress={() => this.setState({ showSortPicker: true })}
               >
-                <Text style={subscriptionsStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
+                <Text style={subscriptionsStyle.tagSortText}>{__(currentSortByItem.label.split(' ')[0])}</Text>
                 <Icon style={subscriptionsStyle.tagSortIcon} name={'sort-down'} size={14} />
               </TouchableOpacity>
 
@@ -167,7 +167,7 @@ class SubscriptionsPage extends React.PureComponent {
                   style={subscriptionsStyle.tagSortBy}
                   onPress={() => this.setState({ showTimePicker: true })}
                 >
-                  <Text style={subscriptionsStyle.tagSortText}>{timeItem.label}</Text>
+                  <Text style={subscriptionsStyle.tagSortText}>{__(timeItem.label)}</Text>
                   <Icon style={subscriptionsStyle.tagSortIcon} name={'sort-down'} size={14} />
                 </TouchableOpacity>
               )}

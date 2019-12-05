@@ -1,7 +1,6 @@
 import React from 'react';
 import { DrawerItems, SafeAreaView } from 'react-navigation';
 import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { __ } from 'i18n';
 import Button from 'component/button';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -10,23 +9,23 @@ import discoverStyle from 'styles/discover';
 
 const groupedMenuItems = {
   'Find content': [
-    { icon: 'hashtag', label: __('Your Tags'), route: Constants.DRAWER_ROUTE_DISCOVER },
-    { icon: 'heart', solid: true, label: __('Subscriptions'), route: Constants.DRAWER_ROUTE_SUBSCRIPTIONS },
-    { icon: 'globe-americas', label: __('All Content'), route: Constants.DRAWER_ROUTE_TRENDING },
+    { icon: 'hashtag', label: 'Your Tags', route: Constants.DRAWER_ROUTE_DISCOVER },
+    { icon: 'heart', solid: true, label: 'Subscriptions', route: Constants.DRAWER_ROUTE_SUBSCRIPTIONS },
+    { icon: 'globe-americas', label: 'All Content', route: Constants.DRAWER_ROUTE_TRENDING },
   ],
   'Your content': [
-    { icon: 'at', label: __('Channels'), route: Constants.DRAWER_ROUTE_CHANNEL_CREATOR },
-    { icon: 'download', label: __('Library'), route: Constants.DRAWER_ROUTE_MY_LBRY },
-    { icon: 'cloud-upload-alt', label: __('Publishes'), route: Constants.DRAWER_ROUTE_PUBLISHES },
-    { icon: 'upload', label: __('New Publish'), route: Constants.DRAWER_ROUTE_PUBLISH },
+    { icon: 'at', label: 'Channels', route: Constants.DRAWER_ROUTE_CHANNEL_CREATOR },
+    { icon: 'download', label: 'Library', route: Constants.DRAWER_ROUTE_MY_LBRY },
+    { icon: 'cloud-upload-alt', label: 'Publishes', route: Constants.DRAWER_ROUTE_PUBLISHES },
+    { icon: 'upload', label: 'New Publish', route: Constants.DRAWER_ROUTE_PUBLISH },
   ],
   Wallet: [
-    { icon: 'wallet', label: __('Wallet'), route: Constants.DRAWER_ROUTE_WALLET },
-    { icon: 'award', label: __('Rewards'), route: Constants.DRAWER_ROUTE_REWARDS },
+    { icon: 'wallet', label: 'Wallet', route: Constants.DRAWER_ROUTE_WALLET },
+    { icon: 'award', label: 'Rewards', route: Constants.DRAWER_ROUTE_REWARDS },
   ],
   Settings: [
-    { icon: 'cog', label: __('Settings'), route: Constants.DRAWER_ROUTE_SETTINGS },
-    { icon: 'info', label: __('About'), route: Constants.DRAWER_ROUTE_ABOUT },
+    { icon: 'cog', label: 'Settings', route: Constants.DRAWER_ROUTE_SETTINGS },
+    { icon: 'info', label: 'About', route: Constants.DRAWER_ROUTE_ABOUT },
   ],
 };
 
@@ -151,7 +150,7 @@ class DrawerContent extends React.PureComponent {
                     return (
                       <TouchableOpacity
                         accessible
-                        accessibilityLabel={item.label}
+                        accessibilityLabel={__(item.label)}
                         style={[
                           discoverStyle.menuItemTouchArea,
                           focused ? discoverStyle.menuItemTouchAreaFocused : null,
@@ -169,7 +168,7 @@ class DrawerContent extends React.PureComponent {
                           />
                         </View>
                         <Text style={[discoverStyle.menuItem, focused ? discoverStyle.menuItemFocused : null]}>
-                          {item.label}
+                          {__(item.label)}
                         </Text>
                       </TouchableOpacity>
                     );
