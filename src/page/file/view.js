@@ -1137,7 +1137,7 @@ class FilePage extends React.PureComponent {
                     </Text>
                     {tags && tags.length > 0 && (
                       <View style={filePageStyle.tagContainer}>
-                        <Text style={filePageStyle.tagTitle}>Tags</Text>
+                        <Text style={filePageStyle.tagTitle}>{__('Tags')}</Text>
                         <View style={filePageStyle.tagList}>{this.renderTags(tags)}</View>
                       </View>
                     )}

@@ -74,7 +74,7 @@ export default class TagSearch extends React.PureComponent {
         <TextInput
           editable={editable}
           style={tagStyle.searchInput}
-          placeholder={'Search for more tags'}
+          placeholder={__('Search for more tags')}
           underlineColorAndroid={Colors.NextLbryGreen}
           value={this.state.tag}
           numberOfLines={1}

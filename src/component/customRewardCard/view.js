@@ -74,7 +74,7 @@ class CustomRewardCard extends React.PureComponent<Props> {
             />
             <Button
               style={rewardStyle.redeemButton}
-              text={'Redeem'}
+              text={__('Redeem')}
               disabled={!this.state.rewardCode || this.state.rewardCode.trim().length === 0 || rewardIsPending}
               onPress={() => {
                 if (!rewardIsPending) {

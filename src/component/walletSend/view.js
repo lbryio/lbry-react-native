@@ -127,7 +127,7 @@ class WalletSend extends React.PureComponent<Props> {
             <Text style={[walletStyle.text, walletStyle.currency]}>LBC</Text>
           </View>
           <Button
-            text={'Send'}
+            text={__('Send')}
             style={[walletStyle.button, walletStyle.sendButton]}
             disabled={!canSend}
             onPress={this.handleSend}

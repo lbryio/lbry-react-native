@@ -75,10 +75,10 @@ class StorageStatsCard extends React.PureComponent {
         <View style={[storageStatsStyle.row, storageStatsStyle.totalSizeContainer]}>
           <View style={storageStatsStyle.summary}>
             <Text style={storageStatsStyle.totalSize}>{formatBytes(this.state.totalBytes, 2)}</Text>
-            <Text style={storageStatsStyle.annotation}>used</Text>
+            <Text style={storageStatsStyle.annotation}>{__('used')}</Text>
           </View>
           <View style={[storageStatsStyle.row, storageStatsStyle.toggleStatsContainer]}>
-            <Text style={storageStatsStyle.statsText}>Stats</Text>
+            <Text style={storageStatsStyle.statsText}>{__('Stats')}</Text>
             <Switch
               style={storageStatsStyle.statsToggle}
               value={this.state.showStats}

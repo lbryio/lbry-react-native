@@ -29,14 +29,12 @@ class WalletSignIn extends React.Component {
     return (
       <View style={walletStyle.signInContainer}>
         <View style={walletStyle.signInSummaryRow}>
-          <Text style={walletStyle.signInTitle}>Account Recommended</Text>
+          <Text style={walletStyle.signInTitle}>{__('Account Recommended')}</Text>
         </View>
 
         <View style={walletStyle.onboarding}>
           <Text style={walletStyle.onboardingText}>
-            {__(
-              'An account with LBRY Inc. allows you to earn rewards, backup your wallet, and keep everything synced.'
-            )}
+            {__('A lbry.tv account allows you to earn rewards, backup your wallet, and keep everything in sync.')}
             {'\n\n'}
             {__('Without an account, you assume all responsibility for securing your wallet and LBRY data.')}
           </Text>
