@@ -86,11 +86,9 @@ class DiscoverPage extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const { fetchSubscriptions, pushDrawerStack } = this.props;
+    const { pushDrawerStack } = this.props;
     // pushDrawerStack();
-    NativeModules.Firebase.setCurrentScreen('Your tags').then(result => {
-      fetchSubscriptions();
-    });
+    NativeModules.Firebase.setCurrentScreen('Your tags');
   };
 
   handleSortByItemSelected = item => {
@@ -122,46 +120,6 @@ class DiscoverPage extends React.PureComponent {
 
     return null;
   };
-
-  componentDidUpdate(prevProps, prevState) {
-    const { unreadSubscriptions, enabledChannelNotifications } = this.props;
-
-    const utility = NativeModules.UtilityModule;
-    const hasUnread =
-      prevProps.unreadSubscriptions &&
-      prevProps.unreadSubscriptions.length !== unreadSubscriptions.length &&
-      unreadSubscriptions.length > 0;
-
-    if (hasUnread) {
-      unreadSubscriptions.map(({ channel, uris }) => {
-        const { claimName: channelName } = parseURI(channel);
-
-        // check if notifications are enabled for the channel
-        if (enabledChannelNotifications.includes(channelName)) {
-          uris.forEach(uri => {
-            Lbry.resolve({ urls: uri }).then(result => {
-              const sub = result[uri];
-
-              if (sub && sub.value) {
-                const { source, title, thumbnail } = sub.value;
-                const isPlayable =
-                  source && source.media_type && ['audio', 'video'].includes(source.media_type.substring(0, 5));
-                if (title) {
-                  utility.showNotificationForContent(
-                    uri,
-                    title,
-                    channelName,
-                    thumbnail ? thumbnail.url : null,
-                    isPlayable
-                  );
-                }
-              }
-            });
-          });
-        }
-      });
-    }
-  }
 
   showRatingReminder = () => {
     const { ratingReminderDisabled, ratingReminderLastShown, setClientSetting } = this.props;
