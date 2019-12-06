@@ -28,6 +28,7 @@ class FirstRunScreen extends React.PureComponent {
     emailCollectTracked: false,
     emailSubmitted: false,
     enterPasswordTracked: false,
+    autoLoginTried: false,
     isFirstRun: false,
     launchUrl: null,
     languageLoaded: false,
@@ -38,7 +39,6 @@ class FirstRunScreen extends React.PureComponent {
     walletPassword: '',
     syncApplyStarted: false,
     syncApplyCompleted: false,
-    language: null,
   };
 
   componentDidMount() {
@@ -126,8 +126,16 @@ class FirstRunScreen extends React.PureComponent {
 
     if (this.state.syncApplyStarted && !syncApplyIsPending) {
       if (syncApplyErrorMessage && syncApplyErrorMessage.trim().length > 0) {
-        notify({ message: __(syncApplyErrorMessage), isError: true });
-        this.setState({ showBottomContainer: true, syncApplyStarted: false, syncApplyCompleted: false });
+        if (this.state.autoLoginTried) {
+          // don't show the error message for auto-login if it fails
+          notify({ message: __(syncApplyErrorMessage), isError: true });
+        }
+        this.setState({
+          autoLoginTried: true,
+          showBottomContainer: true,
+          syncApplyStarted: false,
+          syncApplyCompleted: false,
+        });
       } else {
         this.setState({ syncApplyCompleted: true });
         // password successfully verified
