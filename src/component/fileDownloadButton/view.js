@@ -50,7 +50,7 @@ class FileDownloadButton extends React.PureComponent {
 
     if ((fileInfo && !fileInfo.stopped) || loading || downloading) {
       const progress = fileInfo && fileInfo.written_bytes ? (fileInfo.written_bytes / fileInfo.total_bytes) * 100 : 0,
-        label = fileInfo ? progress.toFixed(0) + '% complete' : __('Connecting...');
+        label = fileInfo ? __('%progress%% complete', { progress: progress.toFixed(0) }) : __('Connecting...');
 
       return (
         <View style={[style, fileDownloadButtonStyle.container]}>

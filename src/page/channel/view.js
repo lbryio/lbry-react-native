@@ -271,7 +271,7 @@ class ChannelPage extends React.PureComponent {
                   style={channelPageStyle.actionButton}
                   theme={'light'}
                   icon={'edit'}
-                  text={'Edit'}
+                  text={__('Edit')}
                   onPress={this.onEditPressed}
                 />
               )}
@@ -280,7 +280,7 @@ class ChannelPage extends React.PureComponent {
                   style={[channelPageStyle.actionButton, channelPageStyle.deleteButton]}
                   theme={'light'}
                   icon={'trash-alt'}
-                  text={'Delete'}
+                  text={__('Delete')}
                   onPress={this.onDeletePressed}
                 />
               )}
@@ -306,14 +306,14 @@ class ChannelPage extends React.PureComponent {
               style={channelPageStyle.tab}
               onPress={() => this.setState({ activeTab: Constants.CONTENT_TAB })}
             >
-              <Text style={channelPageStyle.tabTitle}>CONTENT</Text>
+              <Text style={channelPageStyle.tabTitle}>{__('CONTENT')}</Text>
               {Constants.CONTENT_TAB === this.state.activeTab && <View style={channelPageStyle.activeTabHint} />}
             </TouchableOpacity>
             <TouchableOpacity
               style={channelPageStyle.tab}
               onPress={() => this.setState({ activeTab: Constants.ABOUT_TAB })}
             >
-              <Text style={channelPageStyle.tabTitle}>ABOUT</Text>
+              <Text style={channelPageStyle.tabTitle}>{__('ABOUT')}</Text>
               {Constants.ABOUT_TAB === this.state.activeTab && <View style={channelPageStyle.activeTabHint} />}
             </TouchableOpacity>
           </View>

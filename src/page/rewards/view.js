@@ -104,7 +104,7 @@ class RewardsPage extends React.PureComponent {
     if (this.state.isEmailVerified && this.state.isIdentityVerified && !this.state.isRewardApproved) {
       return (
         <View style={[rewardStyle.card, rewardStyle.verification]}>
-          <Text style={rewardStyle.title}>Manual Reward Verification</Text>
+          <Text style={rewardStyle.title}>{__('Manual Reward Verification')}</Text>
           <Text style={rewardStyle.text}>
             __('You need to be manually verified before you can start claiming rewards.') Please request to be verified
             on the{' '}

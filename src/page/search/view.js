@@ -109,8 +109,7 @@ class SearchPage extends React.PureComponent {
     return (
       <View style={searchStyle.noResults}>
         <Text style={searchStyle.noResultsText}>
-          There are no results to display for <Text style={searchStyle.boldText}>{query}</Text>. Please try a different
-          search term.
+          {__('There are no results to display for "%query%". Please try a different search term.', { query })}
         </Text>
       </View>
     );

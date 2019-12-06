@@ -28,7 +28,7 @@ export default class RelatedContent extends React.PureComponent {
 
     return (
       <View style={relatedContentStyle.container}>
-        <Text style={relatedContentStyle.title}>Related Content</Text>
+        <Text style={relatedContentStyle.title}>{__('Related Content')}</Text>
         {recommendedContent &&
           recommendedContent
             .filter(recommendedUri => recommendedUri !== normalizeURI(fullUri))

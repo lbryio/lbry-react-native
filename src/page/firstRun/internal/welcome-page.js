@@ -103,7 +103,7 @@ class WelcomePage extends React.PureComponent {
     } else {
       content = (
         <View onLayout={onWelcomePageLayout}>
-          <Text style={firstRunStyle.title}>Welcome to LBRY.</Text>
+          <Text style={firstRunStyle.title}>{__('Welcome to LBRY.')}</Text>
           <Text style={firstRunStyle.paragraph}>
             {__(
               'LBRY is a community-controlled content platform where you can find and publish videos, music, books, and more.'

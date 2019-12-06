@@ -113,7 +113,7 @@ class WalletPage extends React.PureComponent {
       // only display this view if it's not a new user (or auto-login has been attempted once)
       content = (
         <View onLayout={onWalletViewLayout}>
-          <Text style={firstRunStyle.title}>Password</Text>
+          <Text style={firstRunStyle.title}>{__('Password')}</Text>
           <Text style={firstRunStyle.paragraph}>
             {hasSyncedWallet
               ? __('Please enter the password you used to secure your wallet.')

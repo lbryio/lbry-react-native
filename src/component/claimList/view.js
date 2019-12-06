@@ -147,7 +147,7 @@ class ClaimList extends React.PureComponent {
   renderMorePlaceholder = () => {
     return (
       <TouchableOpacity style={discoverStyle.fileItemMore} onPress={this.onMorePressed}>
-        <Text style={discoverStyle.moreText}>more</Text>
+        <Text style={discoverStyle.moreText}>{__('more')}</Text>
         <Icon style={discoverStyle.moreIcon} name={'angle-double-down'} color={Colors.White} size={16} />
       </TouchableOpacity>
     );

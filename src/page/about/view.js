@@ -74,7 +74,7 @@ class AboutPage extends React.PureComponent {
       <View style={aboutStyle.container}>
         <PageHeader title={'About LBRY'} onBackPressed={() => navigateBack(navigation, drawerStack, popDrawerStack)} />
         <ScrollView style={aboutStyle.scrollContainer}>
-          <Text style={aboutStyle.title}>Content Freedom</Text>
+          <Text style={aboutStyle.title}>{__('Content Freedom')}</Text>
           <Text style={aboutStyle.paragraph}>
             {__(
               'LBRY is a free, open, and community-run digital marketplace. It is a decentralized peer-to-peer content distribution platform for creators to upload and share content, and earn LBRY credits for their effort. Users will be able to find a wide selection of videos, music, ebooks and other digital content they are interested in.'
@@ -85,7 +85,7 @@ class AboutPage extends React.PureComponent {
             <Link style={aboutStyle.link} href="https://lbry.com/faq/android-basics" text={__('Android App Basics')} />
             <Link style={aboutStyle.link} href="https://lbry.com/faq" text={__('Frequently Asked Questions')} />
           </View>
-          <Text style={aboutStyle.socialTitle}>Get Social</Text>
+          <Text style={aboutStyle.socialTitle}>{__('Get Social')}</Text>
           <Text style={aboutStyle.paragraph}>
             {__(
               'You can interact with the LBRY team and members of the community on Discord, Facebook, Instagram, Twitter or Reddit.'
