@@ -35,7 +35,10 @@ class RewardEnrolment extends React.Component {
       <View style={rewardStyle.enrollContainer}>
         <View style={rewardStyle.summaryRow}>
           <Icon name="award" size={36} color={Colors.White} />
-          <Text style={rewardStyle.summaryText}>{unclaimedRewardAmount} available credits</Text>
+          <Text style={rewardStyle.summaryText}>
+            {unclaimedRewardAmount === 1 && __('%amount% available credit', { amount: unclaimedRewardAmount })}
+            {unclaimedRewardAmount !== 1 && __('%amount% available credits', { amount: unclaimedRewardAmount })}
+          </Text>
         </View>
 
         <View style={rewardStyle.onboarding}>

@@ -236,5 +236,7 @@
   "used": "used",
   "Stats": "Stats",
   "Welcome to LBRY.": "Welcome to LBRY.",
-  "Account Recommended": "Account Recommended"
+  "Account Recommended": "Account Recommended",
+  "%amount% available credits": "%amount% available credits",
+  "%amount% available credit": "%amount% available credit"
 }
