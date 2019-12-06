@@ -13,15 +13,21 @@ class WalletRewardsDriver extends React.PureComponent<Props> {
         <Icon name="award" size={16} style={walletStyle.rewardIcon} />
         {signedIn && (
           <Text style={walletStyle.rewardDriverText}>
-            {unclaimedRewardAmount > 0 ? unclaimedRewardAmount : ''} free credit{unclaimedRewardAmount === 1 ? '' : 's'}{' '}
-            available in rewards. Tap to learn more.
+            {unclaimedRewardAmount === 0 && __('Free credits available in rewards.')}
+            {unclaimedRewardAmount === 1 &&
+              __('%amount% free credit available in rewards.', { amount: unclaimedRewardAmount })}
+            {unclaimedRewardAmount > 1 &&
+              __('%amount% free credits available in rewards.', { amount: unclaimedRewardAmount })}{' '}
+            {__('Tap to learn more.')}
           </Text>
         )}
 
         {!signedIn && (
           <Text style={walletStyle.rewardDriverText}>
-            Get {unclaimedRewardAmount > 0 ? unclaimedRewardAmount : ''} free credit
-            {unclaimedRewardAmount === 1 ? '' : 's'} after creating an account.
+            {unclaimedRewardAmount === 1 &&
+              __('Get %amount% free credit after creating an account.', { amount: unclaimedRewardAmount })}
+            {unclaimedRewardAmount !== 1 &&
+              __('Get %amount% free credits after creating an account.', { amount: unclaimedRewardAmount })}
           </Text>
         )}
       </TouchableOpacity>
