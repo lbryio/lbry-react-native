@@ -170,8 +170,8 @@ class SplashScreen extends React.PureComponent {
   }
 
   _updateStatusCallback(status) {
+    console.log(status);
     const { fetchSubscriptions, getSync, setClientSetting } = this.props;
-    const blockchainHeaders = status.blockchain_headers;
     const startupStatus = status.startup_status;
     const walletStatus = status.wallet;
 
@@ -222,10 +222,11 @@ class SplashScreen extends React.PureComponent {
       return;
     }
 
-    if (blockchainHeaders) {
+    const headerSyncProgress = walletStatus.headers_synchronization_progress;
+    if (headerSyncProgress && headerSyncProgress < 100) {
       this.setState({
-        isDownloadingHeaders: blockchainHeaders.downloading_headers,
-        headersDownloadProgress: blockchainHeaders.download_progress,
+        isDownloadingHeaders: true,
+        headersDownloadProgress: headerSyncProgress,
       });
     } else {
       // set downloading flag to false if blockchain_headers isn't in the status response
@@ -234,15 +235,16 @@ class SplashScreen extends React.PureComponent {
       });
     }
 
-    if (blockchainHeaders && blockchainHeaders.downloading_headers) {
-      const downloadProgress = blockchainHeaders.download_progress ? blockchainHeaders.download_progress : 0;
+    if (headerSyncProgress < 100) {
+      const downloadProgress = headerSyncProgress || 0;
       this.setState({
         message: __('Blockchain Sync'),
-        details: `Catching up with the blockchain (${downloadProgress}%)`, // TODO: i18n tokenization
+        details: __('Catching up with the blockchain (%progress%%)', { progress: downloadProgress }),
       });
     } else if (walletStatus && walletStatus.blocks_behind > 0) {
       const behind = walletStatus.blocks_behind;
-      const behindText = behind + ' block' + (behind === 1 ? '' : 's') + ' behind'; // TODO: i18n tokenization
+      const behindText =
+        behind === 1 ? __('%num% block behind', { num: behind }) : __('%num% blocks behind', { num: behind });
       this.setState({
         message: __('Blockchain Sync'),
         details: behindText,
