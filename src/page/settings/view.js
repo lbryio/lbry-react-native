@@ -11,6 +11,7 @@ import settingsStyle from 'styles/settings';
 
 const languageOptions = [
   { code: 'default', name: 'Use device language' },
+  { code: 'ar', name: 'Arabic' },
   { code: 'en', name: 'English' },
   { code: 'gu', name: 'Gujarati' },
   { code: 'hi', name: 'Hindi' },
