@@ -597,6 +597,18 @@ class FilePage extends React.PureComponent {
     setPlayerVisible();
   };
 
+  onDownloadPressed = () => {
+    const { claim, costInfo, purchaseUri } = this.props;
+    this.setState(
+      {
+        downloadPressed: true,
+        autoPlayMedia: false,
+        stopDownloadConfirmed: false,
+      },
+      () => purchaseUri(claim.permanent_url, costInfo, true)
+    );
+  };
+
   onBackButtonPressed = () => {
     const { navigation, drawerStack, popDrawerStack } = this.props;
     navigateBack(navigation, drawerStack, popDrawerStack);
@@ -963,7 +975,7 @@ class FilePage extends React.PureComponent {
                 <View style={filePageStyle.largeButtonsRow}>
                   <TouchableOpacity style={filePageStyle.largeButton} onPress={this.handleSharePress}>
                     <Icon name={'share-alt'} size={20} style={filePageStyle.largeButtonIcon} />
-                    <Text style={filePageStyle.largeButtonText}>Share</Text>
+                    <Text style={filePageStyle.largeButtonText}>{__('Share')}</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -971,39 +983,51 @@ class FilePage extends React.PureComponent {
                     onPress={() => this.setState({ showTipView: true })}
                   >
                     <Icon name={'gift'} size={20} style={filePageStyle.largeButtonIcon} />
-                    <Text style={filePageStyle.largeButtonText}>Tip</Text>
+                    <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
                   </TouchableOpacity>
 
-                  <TouchableOpacity
-                    style={filePageStyle.largeButton}
-                    onPress={() => Linking.openURL(`https://lbry.com/dmca/${claim.claim_id}`)}
-                  >
-                    <Icon name={'flag'} size={20} style={filePageStyle.largeButtonIcon} />
-                    <Text style={filePageStyle.largeButtonText}>Report</Text>
-                  </TouchableOpacity>
+                  <View style={filePageStyle.sharedLargeButton}>
+                    {!isPlayable && !fileInfo && (
+                      <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onDownloadPressed}>
+                        <Icon name={'download'} size={20} style={filePageStyle.largeButtonIcon} />
+                        <Text style={filePageStyle.largeButtonText}>{__('Download')}</Text>
+                      </TouchableOpacity>
+                    )}
+
+                    {!completed &&
+                      fileInfo &&
+                      !fileInfo.stopped &&
+                      fileInfo.written_bytes > 0 &&
+                      fileInfo.written_bytes < fileInfo.total_bytes &&
+                      !this.state.stopDownloadConfirmed && (
+                      <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onStopDownloadPressed}>
+                        <Icon name={'stop'} size={20} style={filePageStyle.largeButtonIcon} />
+                        <Text style={filePageStyle.largeButtonText}>{__('Stop')}</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+
+                  {!canEdit && (
+                    <TouchableOpacity
+                      style={filePageStyle.largeButton}
+                      onPress={() => Linking.openURL(`https://lbry.com/dmca/${claim.claim_id}`)}
+                    >
+                      <Icon name={'flag'} size={20} style={filePageStyle.largeButtonIcon} />
+                      <Text style={filePageStyle.largeButtonText}>{__('Report')}</Text>
+                    </TouchableOpacity>
+                  )}
 
                   {canEdit && (
                     <TouchableOpacity style={filePageStyle.largeButton} onPress={this.onEditPressed}>
                       <Icon name={'edit'} size={20} style={filePageStyle.largeButtonIcon} />
-                      <Text style={filePageStyle.largeButtonText}>Edit</Text>
+                      <Text style={filePageStyle.largeButtonText}>{__('Edit')}</Text>
                     </TouchableOpacity>
                   )}
 
                   {(completed || canEdit) && (
                     <TouchableOpacity style={filePageStyle.largeButton} onPress={this.onDeletePressed}>
                       <Icon name={'trash-alt'} size={20} style={filePageStyle.largeButtonIcon} />
-                      <Text style={filePageStyle.largeButtonText}>Delete</Text>
-                    </TouchableOpacity>
-                  )}
-
-                  {!completed &&
-                    fileInfo &&
-                    !fileInfo.stopped &&
-                    fileInfo.written_bytes < fileInfo.total_bytes &&
-                    !this.state.stopDownloadConfirmed && (
-                    <TouchableOpacity style={filePageStyle.largeButton} onPress={this.onStopDownloadPressed}>
-                      <Icon name={'stop'} size={20} style={filePageStyle.largeButtonIcon} />
-                      <Text style={filePageStyle.largeButtonText}>Stop Download</Text>
+                      <Text style={filePageStyle.largeButtonText}>{__('Delete')}</Text>
                     </TouchableOpacity>
                   )}
                 </View>

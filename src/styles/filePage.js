@@ -381,6 +381,15 @@ const filePageStyle = StyleSheet.create({
   backButtonIcon: {
     color: Colors.White,
   },
+  sharedLargeButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 36,
+  },
+  innerLargeButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   largeButton: {
     alignItems: 'center',
     justifyContent: 'center',
