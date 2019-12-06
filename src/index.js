@@ -40,6 +40,7 @@ import AppWithNavigationState, {
   reactNavigationMiddleware,
 } from 'component/AppNavigator';
 import { REHYDRATE, PURGE, persistCombineReducers, persistStore } from 'redux-persist';
+import { __ } from 'i18n';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4';
 import FilesystemStorage from 'redux-persist-filesystem-storage';
@@ -50,6 +51,8 @@ import formReducer from 'redux/reducers/form';
 import drawerReducer from 'redux/reducers/drawer';
 import settingsReducer from 'redux/reducers/settings';
 import thunk from 'redux-thunk';
+
+window.__ = __;
 
 const globalExceptionHandler = (error, isFatal) => {
   if (error && NativeModules.Firebase) {
@@ -200,9 +203,6 @@ const persistor = persistStore(store, persistOptions, err => {
   }
 });
 window.persistor = persistor;
-
-// TODO: Find i18n module that is compatible with react-native
-global.__ = str => str;
 
 class LBRYApp extends React.Component {
   render() {

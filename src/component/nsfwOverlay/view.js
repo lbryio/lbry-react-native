@@ -7,7 +7,7 @@ class NsfwOverlay extends React.PureComponent {
     return (
       <TouchableOpacity style={discoverStyle.overlay} activeOpacity={1} onPress={this.props.onPress}>
         <Text style={discoverStyle.overlayText}>
-          This content is Not Safe For Work. To view adult content, please change your Settings.
+          {__('This content is Not Safe For Work. To view adult content, please change your Settings.')}
         </Text>
       </TouchableOpacity>
     );

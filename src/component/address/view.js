@@ -15,7 +15,7 @@ export default class Address extends React.PureComponent<Props> {
 
     return (
       <View style={[walletStyle.row, style]}>
-        <Text selectable={true} numberOfLines={1} style={walletStyle.address}>
+        <Text selectable numberOfLines={1} style={walletStyle.address}>
           {address || ''}
         </Text>
         <Button
@@ -24,7 +24,7 @@ export default class Address extends React.PureComponent<Props> {
           onPress={() => {
             Clipboard.setString(address);
             doToast({
-              message: 'Address copied',
+              message: __('Address copied'),
             });
           }}
         />

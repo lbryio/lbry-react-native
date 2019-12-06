@@ -77,7 +77,7 @@ class DrawerContent extends React.PureComponent {
               <Button
                 style={discoverStyle.signInButton}
                 theme={'light'}
-                text={'Sign in'}
+                text={__('Sign in')}
                 onPress={this.launchSignInFlow}
               />
             )}
@@ -113,12 +113,12 @@ class DrawerContent extends React.PureComponent {
             {!signedIn && (
               <TouchableOpacity
                 accessible
-                accessibilityLabel={'Sign In'}
+                accessibilityLabel={__('Sign In')}
                 onPress={this.launchSignInFlow}
                 delayPressIn={0}
                 style={[discoverStyle.signInMenuItem, discoverStyle.signInMenuItemButton]}
               >
-                <Text style={discoverStyle.signInMenuItemButtonText}>SIGN IN</Text>
+                <Text style={discoverStyle.signInMenuItemButtonText}>{__('SIGN IN')}</Text>
               </TouchableOpacity>
             )}
 
@@ -137,7 +137,7 @@ class DrawerContent extends React.PureComponent {
                 <View key={groupName} style={discoverStyle.menuGroup}>
                   {groupNames[3] !== groupName && (
                     <Text key={`${groupName}-title`} style={discoverStyle.menuGroupName}>
-                      {groupName}
+                      {__(groupName)}
                     </Text>
                   )}
                   {menuItems.map(item => {
@@ -150,7 +150,7 @@ class DrawerContent extends React.PureComponent {
                     return (
                       <TouchableOpacity
                         accessible
-                        accessibilityLabel={item.label}
+                        accessibilityLabel={__(item.label)}
                         style={[
                           discoverStyle.menuItemTouchArea,
                           focused ? discoverStyle.menuItemTouchAreaFocused : null,
@@ -168,7 +168,7 @@ class DrawerContent extends React.PureComponent {
                           />
                         </View>
                         <Text style={[discoverStyle.menuItem, focused ? discoverStyle.menuItemFocused : null]}>
-                          {item.label}
+                          {__(item.label)}
                         </Text>
                       </TouchableOpacity>
                     );

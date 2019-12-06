@@ -34,15 +34,22 @@ class WalletSignIn extends React.Component {
 
         <View style={walletStyle.onboarding}>
           <Text style={walletStyle.onboardingText}>
-            An account with LBRY Inc. allows you to earn rewards, backup your wallet, and keep everything synced..
+            {__(
+              'An account with LBRY Inc. allows you to earn rewards, backup your wallet, and keep everything synced.'
+            )}
             {'\n\n'}
-            Without an account, you assume all responsibility for securing your wallet and LBRY data.{'\n\n'}
+            {__('Without an account, you assume all responsibility for securing your wallet and LBRY data.')}
           </Text>
         </View>
 
         <View style={walletStyle.buttonRow}>
-          <Link style={walletStyle.continueLink} text={'Skip Account'} onPress={this.onContinuePressed} />
-          <Button style={walletStyle.signInButton} theme={'light'} text={'Sign Up'} onPress={this.onSignInPressed} />
+          <Link style={walletStyle.continueLink} text={__('Skip Account')} onPress={this.onContinuePressed} />
+          <Button
+            style={walletStyle.signInButton}
+            theme={'light'}
+            text={__('Sign Up')}
+            onPress={this.onSignInPressed}
+          />
         </View>
       </View>
     );

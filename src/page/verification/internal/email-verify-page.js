@@ -49,7 +49,7 @@ class EmailVerifyPage extends React.PureComponent {
         if (setEmailVerificationPhase) {
           setEmailVerificationPhase(true);
         }
-        // notify({ message: 'Please follow the instructions in the email sent to your address to continue.' });
+        // notify({ message: __('Please follow the instructions in the email sent to your address to continue.') });
         AsyncStorage.setItem(Constants.KEY_EMAIL_VERIFY_PENDING, 'true');
       }
     }
@@ -65,7 +65,7 @@ class EmailVerifyPage extends React.PureComponent {
     const { email } = this.state;
     if (!email || email.trim().length === 0 || email.indexOf('@') === -1) {
       return notify({
-        message: 'Please provide a valid email address to continue.',
+        message: __('Please provide a valid email address to continue.'),
       });
     }
 
@@ -89,7 +89,7 @@ class EmailVerifyPage extends React.PureComponent {
     // resend verification email if there was one previously set (and it wasn't changed)
     resendVerificationEmail(this.state.email);
     AsyncStorage.setItem(Constants.KEY_EMAIL_VERIFY_PENDING, 'true');
-    notify({ message: 'Please follow the instructions in the email sent to your address to continue.' });
+    notify({ message: __('Please follow the instructions in the email sent to your address to continue.') });
   };
 
   onEditPressed = () => {
@@ -105,16 +105,20 @@ class EmailVerifyPage extends React.PureComponent {
   };
 
   render() {
-    const { emailNewPending } = this.props;
+    const { emailAlreadyExists, emailNewPending } = this.props;
 
     return (
       <View style={firstRunStyle.container}>
         <Text style={rewardStyle.verificationTitle}>
-          {Constants.PHASE_COLLECTION === this.state.phase ? 'Email' : 'Verify Email'}
+          {Constants.PHASE_COLLECTION === this.state.phase
+            ? __('Email')
+            : emailAlreadyExists
+              ? __('Sign In')
+              : __('Verify Email')}
         </Text>
         {Constants.PHASE_COLLECTION === this.state.phase && (
           <View>
-            <Text style={firstRunStyle.paragraph}>Please provide an email address.</Text>
+            <Text style={firstRunStyle.paragraph}>{__('Please provide an email address.')}</Text>
             <TextInput
               style={firstRunStyle.emailInput}
               placeholder={this.state.placeholder}
@@ -138,7 +142,7 @@ class EmailVerifyPage extends React.PureComponent {
                 <Button
                   style={rewardStyle.verificationButton}
                   theme={'light'}
-                  text={'Send verification email'}
+                  text={__('Continue')}
                   onPress={this.onSendVerificationPressed}
                 />
               )}
@@ -154,18 +158,22 @@ class EmailVerifyPage extends React.PureComponent {
         {Constants.PHASE_VERIFICATION === this.state.phase && (
           <View>
             <Text style={firstRunStyle.paragraph}>
-              An email has been sent to <Text style={firstRunStyle.nowrap}>{this.state.email}</Text>. Please follow the
-              instructions in the message to verify your email address.
+              {__('An email has been sent to')}
+              {'\n\n'}
+              {this.state.email}
+              {'\n\n'}
+              {emailAlreadyExists && __('Please click the link in the message to complete signing in.')}
+              {!emailAlreadyExists && __('Please click the link in the message to verify your email address')}
             </Text>
 
             <View style={rewardStyle.buttonContainer}>
               <Button
                 style={rewardStyle.verificationButton}
                 theme={'light'}
-                text={'Resend'}
+                text={__('Resend')}
                 onPress={this.onResendPressed}
               />
-              <Link style={rewardStyle.verificationLink} text={'Edit'} onPress={this.onEditPressed} />
+              <Link style={rewardStyle.verificationLink} text={__('Edit')} onPress={this.onEditPressed} />
             </View>
           </View>
         )}

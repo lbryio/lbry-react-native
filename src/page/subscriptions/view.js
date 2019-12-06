@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { buildURI, parseURI } from 'lbry-redux';
-import { __, getOrderBy } from 'utils/helper';
+import { getOrderBy } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import Button from 'component/button';
@@ -149,7 +149,7 @@ class SubscriptionsPage extends React.PureComponent {
       <View style={subscriptionsStyle.container}>
         <UriBar navigation={navigation} belowOverlay={this.state.showSortPicker} />
         <View style={subscriptionsStyle.titleRow}>
-          <Text style={subscriptionsStyle.pageTitle}>Channels you follow</Text>
+          <Text style={subscriptionsStyle.pageTitle}>{__('Channels you follow')}</Text>
         </View>
         {!this.state.showingSuggestedSubs && hasSubscriptions && (
           <View style={subscriptionsStyle.pickerRow}>
@@ -158,7 +158,7 @@ class SubscriptionsPage extends React.PureComponent {
                 style={subscriptionsStyle.tagSortBy}
                 onPress={() => this.setState({ showSortPicker: true })}
               >
-                <Text style={subscriptionsStyle.tagSortText}>{currentSortByItem.label.split(' ')[0]}</Text>
+                <Text style={subscriptionsStyle.tagSortText}>{__(currentSortByItem.label.split(' ')[0])}</Text>
                 <Icon style={subscriptionsStyle.tagSortIcon} name={'sort-down'} size={14} />
               </TouchableOpacity>
 
@@ -167,7 +167,7 @@ class SubscriptionsPage extends React.PureComponent {
                   style={subscriptionsStyle.tagSortBy}
                   onPress={() => this.setState({ showTimePicker: true })}
                 >
-                  <Text style={subscriptionsStyle.tagSortText}>{timeItem.label}</Text>
+                  <Text style={subscriptionsStyle.tagSortText}>{__(timeItem.label)}</Text>
                   <Icon style={subscriptionsStyle.tagSortIcon} name={'sort-down'} size={14} />
                 </TouchableOpacity>
               )}
@@ -175,7 +175,7 @@ class SubscriptionsPage extends React.PureComponent {
 
             <Link
               style={subscriptionsStyle.suggestedLink}
-              text={'Suggested'}
+              text={__('Suggested')}
               onPress={() => this.setState({ showModalSuggestedSubs: true })}
             />
           </View>
@@ -207,7 +207,9 @@ class SubscriptionsPage extends React.PureComponent {
           <View style={subscriptionsStyle.suggestedSubsContainer}>
             {!hasSubscriptions && (
               <View style={subscriptionsStyle.infoArea}>
-                <Text style={subscriptionsStyle.infoText}>You are not subscribed to any channels at the moment.</Text>
+                <Text style={subscriptionsStyle.infoText}>
+                  {__('You are not subscribed to any channels at the moment.')}
+                </Text>
               </View>
             )}
 
@@ -218,7 +220,7 @@ class SubscriptionsPage extends React.PureComponent {
                 </Text>
                 <Button
                   style={subscriptionsStyle.button}
-                  text={'View my subscriptions'}
+                  text={__('View my subscriptions')}
                   onPress={() => this.setState({ showingSuggestedSubs: false })}
                 />
               </View>

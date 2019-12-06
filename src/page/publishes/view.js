@@ -8,7 +8,7 @@ import FileListItem from 'component/fileListItem';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import UriBar from 'component/uriBar';
 import publishStyle from 'styles/publish';
-import { __, navigateToUri } from 'utils/helper';
+import { navigateToUri } from 'utils/helper';
 
 class PublishesPage extends React.PureComponent {
   state = {

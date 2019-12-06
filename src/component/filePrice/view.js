@@ -42,11 +42,16 @@ class CreditAmount extends React.PureComponent {
 
     let amountText;
     if (this.props.showFree && parseFloat(this.props.amount) === 0) {
-      amountText = 'FREE';
+      amountText = __('FREE');
     } else {
       if (this.props.label) {
         const label =
-          typeof this.props.label === 'string' ? this.props.label : parseFloat(amount) == 1 ? 'credit' : 'credits';
+          typeof this.props.label === 'string'
+            ? this.props.label
+            : parseFloat(amount) === 1
+              ? __('credit')
+              : __('credits');
+        // TODO: handling singular / plural in other languages?
 
         amountText = `${formattedAmount} ${label}`;
       } else {
@@ -57,14 +62,14 @@ class CreditAmount extends React.PureComponent {
       }
     }
 
-    /*{this.props.isEstimate ? (
+    /* {this.props.isEstimate ? (
           <span
             className="credit-amount__estimate"
             title={__('This is an estimate and does not include data fees')}
           >
             *
           </span>
-        ) : null}*/
+        ) : null} */
     return <Text style={style}>{amountText}</Text>;
   }
 }

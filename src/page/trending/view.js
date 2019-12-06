@@ -92,7 +92,7 @@ class TrendingPage extends React.PureComponent {
     return (
       <View style={discoverStyle.listHeader}>
         <View style={discoverStyle.titleRow}>
-          <Text style={discoverStyle.pageTitle}>All content</Text>
+          <Text style={discoverStyle.pageTitle}>{__('All Content')}</Text>
         </View>
         <View style={discoverStyle.pickerRow}>
           <View style={discoverStyle.leftPickerRow}>
@@ -100,24 +100,24 @@ class TrendingPage extends React.PureComponent {
               style={discoverStyle.allTagSortBy}
               onPress={() => this.setState({ showSortPicker: true })}
             >
-              <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
+              <Text style={discoverStyle.tagSortText}>{__(sortByItem.label.split(' ')[0])}</Text>
               <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
             </TouchableOpacity>
 
-            <Text style={discoverStyle.pickerLabel}>for</Text>
+            <Text style={discoverStyle.pickerLabel}>{__('for')}</Text>
             <TouchableOpacity
               style={discoverStyle.allTagSortBy}
               onPress={() => this.setState({ showTrendingForPicker: true })}
             >
-              <Text style={discoverStyle.tagSortText}>{currentTrendingForItem.label.split(' ')[0]}</Text>
+              <Text style={discoverStyle.tagSortText}>{__(currentTrendingForItem.label.split(' ')[0])}</Text>
               <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
             </TouchableOpacity>
 
-            {sortByTop && <Text style={discoverStyle.pickerLabel}>from</Text>}
+            {sortByTop && <Text style={discoverStyle.pickerLabel}>{__('from')}</Text>}
 
             {sortByTop && (
               <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
-                <Text style={discoverStyle.tagSortText}>{timeItem.label}</Text>
+                <Text style={discoverStyle.tagSortText}>{__(timeItem.label)}</Text>
                 <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
               </TouchableOpacity>
             )}
@@ -126,7 +126,7 @@ class TrendingPage extends React.PureComponent {
           {TRENDING_FOR_ITEMS[1].name === currentTrendingForItem.name && (
             <Link
               style={discoverStyle.customizeLink}
-              text={'Customize'}
+              text={__('Customize')}
               onPress={() => this.setState({ showModalTagSelector: true })}
             />
           )}
@@ -170,7 +170,7 @@ class TrendingPage extends React.PureComponent {
         )}
         {showTrendingForPicker && (
           <ModalPicker
-            title={'Filter for'}
+            title={__('Filter for')}
             onOverlayPress={() => this.setState({ showTrendingForPicker: false })}
             onItemSelected={this.handleTrendingForItemSelected}
             selectedItem={currentTrendingForItem}

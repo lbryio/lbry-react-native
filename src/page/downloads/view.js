@@ -11,7 +11,7 @@ import {
   View,
   ScrollView,
 } from 'react-native';
-import { __, navigateToUri, uriFromFileInfo } from 'utils/helper';
+import { navigateToUri, uriFromFileInfo } from 'utils/helper';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PageHeader from 'component/pageHeader';
@@ -156,7 +156,7 @@ class DownloadsPage extends React.PureComponent {
         />
 
         {!fetching && !hasDownloads && (
-          <EmptyStateView message={'You do not have any\ndownloaded content on this device.'} />
+          <EmptyStateView message={__('You do not have any\ndownloaded content on this device.')} />
         )}
 
         <View style={downloadsStyle.subContainer}>

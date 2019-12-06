@@ -143,7 +143,7 @@ class SearchPage extends React.PureComponent {
         {showTagResult && (
           <TouchableOpacity style={searchStyle.tagResultItem} onPress={() => this.handleTagResultPressed(query)}>
             <Text style={searchStyle.tagResultTitle}>#{query.toLowerCase()}</Text>
-            <Text style={searchStyle.tagResultDescription}>Explore content for this tag</Text>
+            <Text style={searchStyle.tagResultDescription}>{__('Explore content for this tag')}</Text>
           </TouchableOpacity>
         )}
       </View>

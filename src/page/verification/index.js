@@ -14,6 +14,7 @@ import {
   selectPhoneToVerify,
   selectPhoneVerifyIsPending,
   selectPhoneVerifyErrorMessage,
+  selectEmailAlreadyExists,
   selectEmailNewErrorMessage,
   selectEmailNewIsPending,
   selectEmailToVerify,
@@ -32,6 +33,7 @@ import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Verification from './view';
 
 const select = state => ({
+  emailAlreadyExists: selectEmailAlreadyExists(state),
   emailToVerify: selectEmailToVerify(state),
   emailNewErrorMessage: selectEmailNewErrorMessage(state),
   emailNewPending: selectEmailNewIsPending(state),

@@ -11,10 +11,9 @@ import {
   View,
 } from 'react-native';
 import { DEFAULT_FOLLOWED_TAGS, Lbry, normalizeURI, parseURI } from 'lbry-redux';
-import { __, formatTagTitle, getOrderBy } from 'utils/helper';
+import { formatTagTitle, getOrderBy } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
-import CategoryList from 'component/categoryList';
 import ClaimList from 'component/claimList';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Colors from 'styles/colors';
@@ -134,16 +133,18 @@ class DiscoverPage extends React.PureComponent {
         if (!isNaN(lastShownTime) && !isNaN(lastShownCount)) {
           if (now > lastShownTime + Constants.RATING_REMINDER_INTERVAL * lastShownCount) {
             Alert.alert(
-              'Enjoying LBRY?',
-              'Are you enjoying your experience with the LBRY app? You can leave a review for us on the Play Store.',
+              __('Enjoying LBRY?'),
+              __(
+                'Are you enjoying your experience with the LBRY app? You can leave a review for us on the Play Store.'
+              ),
               [
                 {
-                  text: 'Never ask again',
+                  text: __('Never ask again'),
                   onPress: () => setClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED, 'true'),
                 },
-                { text: 'Maybe later', onPress: () => this.updateRatingReminderShown(lastShownCount) },
+                { text: __('Maybe later'), onPress: () => this.updateRatingReminderShown(lastShownCount) },
                 {
-                  text: 'Rate app',
+                  text: __('Rate app'),
                   onPress: () => {
                     setClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED, 'true');
                     Linking.openURL(Constants.PLAY_STORE_URL);
@@ -170,7 +171,7 @@ class DiscoverPage extends React.PureComponent {
 
   buildSections = () => {
     return this.state.tagCollection.map(tags => ({
-      title: tags.length === 1 ? tags[0] : 'All tags you follow',
+      title: tags.length === 1 ? tags[0] : __('All tags you follow'),
       data: [tags],
     }));
   };
@@ -194,7 +195,7 @@ class DiscoverPage extends React.PureComponent {
 
   handleTagPress = name => {
     const { navigation, sortByItem } = this.props;
-    if (name.toLowerCase() !== 'all tags you follow') {
+    if (name.toLowerCase() !== __('all tags you follow')) {
       navigation.navigate({
         routeName: Constants.DRAWER_ROUTE_TAG,
         key: `tagPage`,
@@ -213,18 +214,18 @@ class DiscoverPage extends React.PureComponent {
     return (
       <View style={discoverStyle.listHeader}>
         <View style={discoverStyle.titleRow}>
-          <Text style={discoverStyle.pageTitle}>Your tags</Text>
+          <Text style={discoverStyle.pageTitle}>{__('Your Tags')}</Text>
         </View>
         <View style={discoverStyle.pickerRow}>
           <View style={discoverStyle.leftPickerRow}>
             <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
-              <Text style={discoverStyle.tagSortText}>{sortByItem.label.split(' ')[0]}</Text>
+              <Text style={discoverStyle.tagSortText}>{__(sortByItem.label.split(' ')[0])}</Text>
               <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
             </TouchableOpacity>
 
             {Constants.SORT_BY_TOP === sortByItem.name && (
               <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
-                <Text style={discoverStyle.tagSortText}>{timeItem.label}</Text>
+                <Text style={discoverStyle.tagSortText}>{__(timeItem.label)}</Text>
                 <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
               </TouchableOpacity>
             )}
@@ -232,7 +233,7 @@ class DiscoverPage extends React.PureComponent {
 
           <Link
             style={discoverStyle.customizeLink}
-            text={'Customize'}
+            text={__('Customize')}
             onPress={() => this.setState({ showModalTagSelector: true })}
           />
         </View>
@@ -248,7 +249,7 @@ class DiscoverPage extends React.PureComponent {
 
     return (
       <View style={discoverStyle.footer}>
-        <Text style={discoverStyle.footerTitle}>More tags you follow</Text>
+        <Text style={discoverStyle.footerTitle}>{__('More tags you follow')}</Text>
         <View style={discoverStyle.footerTags}>
           {remainingTags.map(tag => (
             <Text

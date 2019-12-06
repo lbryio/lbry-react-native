@@ -670,7 +670,7 @@ class FilePage extends React.PureComponent {
           {isResolvingUri && (
             <View style={filePageStyle.busyContainer}>
               <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
-              <Text style={filePageStyle.infoText}>Loading decentralized data...</Text>
+              <Text style={filePageStyle.infoText}>{__('Loading decentralized data...')}</Text>
             </View>
           )}
           {claim === null && !isResolvingUri && (
@@ -679,15 +679,15 @@ class FilePage extends React.PureComponent {
                 <EmptyStateView
                   message={
                     isChannel
-                      ? 'It looks like you just created this channel. It will appear in a few minutes.'
-                      : 'It looks you just published this content. It will appear in a few minutes.'
+                      ? __('It looks like you just created this channel. It will appear in a few minutes.')
+                      : __('It looks you just published this content. It will appear in a few minutes.')
                   }
                 />
               )}
               {!ownedClaim && (
                 <EmptyStateView
-                  message={"There's nothing at this location."}
-                  buttonText={'Publish something here'}
+                  message={__("There's nothing at this location.")}
+                  buttonText={__('Publish something here')}
                   onButtonPress={() =>
                     navigation.navigate({
                       routeName: Constants.DRAWER_ROUTE_PUBLISH,
@@ -725,10 +725,11 @@ class FilePage extends React.PureComponent {
           <View style={filePageStyle.pageContainer}>
             <View style={filePageStyle.dmcaContainer}>
               <Text style={filePageStyle.dmcaText}>
-                In response to a complaint we received under the US Digital Millennium Copyright Act, we have blocked
-                access to this content from our applications.
+                {__(
+                  'In response to a complaint we received under the US Digital Millennium Copyright Act, we have blocked access to this content from our applications.'
+                )}
               </Text>
-              <Link style={filePageStyle.dmcaLink} href="https://lbry.com/faq/dmca" text="Read More" />
+              <Link style={filePageStyle.dmcaLink} href="https://lbry.com/faq/dmca" text={__('Read More')} />
             </View>
             <UriBar value={uri} navigation={navigation} />
           </View>
@@ -871,7 +872,7 @@ class FilePage extends React.PureComponent {
                       source={require('../../assets/gerbil-happy.png')}
                     />
                     <View style={filePageStyle.unspportedContentTextContainer}>
-                      <Text style={filePageStyle.unsupportedContentTitle}>Unsupported Content</Text>
+                      <Text style={filePageStyle.unsupportedContentTitle}>{__('Unsupported Content')}</Text>
                       <Text style={filePageStyle.unsupportedContentText}>
                         Sorry, we are unable to display this content in the app. You can find the file named{' '}
                         <Text style={filePageStyle.unsupportedContentFilename}>{fileInfo.file_name}</Text> in your
@@ -1054,7 +1055,7 @@ class FilePage extends React.PureComponent {
                     )}
                     {!channelName && (
                       <Text style={filePageStyle.anonChannelName} selectable ellipsizeMode={'tail'}>
-                        Anonymous
+                        {__('Anonymous')}
                       </Text>
                     )}
                     <DateTime
@@ -1113,11 +1114,11 @@ class FilePage extends React.PureComponent {
                       {this.state.sendTipStarted && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
                       <Link
                         style={[filePageStyle.link, filePageStyle.cancelTipLink]}
-                        text={'Cancel'}
+                        text={__('Cancel')}
                         onPress={() => this.setState({ showTipView: false })}
                       />
                       <Button
-                        text={'Send a tip'}
+                        text={__('Send a tip')}
                         style={[filePageStyle.button, filePageStyle.sendButton]}
                         disabled={!canSendTip || this.state.sendTipStarted}
                         onPress={this.handleSendTip}

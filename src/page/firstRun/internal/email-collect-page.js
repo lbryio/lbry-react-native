@@ -3,7 +3,7 @@ import { Lbry } from 'lbry-redux';
 import { NativeModules, Platform, Text, TextInput, View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import Colors from 'styles/colors';
-import Constants from 'constants';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import firstRunStyle from 'styles/firstRun';
 
 class EmailCollectPage extends React.PureComponent {
@@ -44,7 +44,7 @@ class EmailCollectPage extends React.PureComponent {
 
     const content = (
       <View onLayout={() => onEmailViewLayout('collect')}>
-        <Text style={firstRunStyle.title}>Setup account</Text>
+        <Text style={firstRunStyle.title}>{__('Setup account')}</Text>
         <TextInput
           style={firstRunStyle.emailInput}
           placeholder={this.state.placeholder}
@@ -64,10 +64,10 @@ class EmailCollectPage extends React.PureComponent {
           }}
         />
         <Text style={firstRunStyle.paragraph}>
-          An account will allow you to earn rewards and keep your account and settings synced.
+          {__('A lbry.tv account allows you to earn rewards, backup your wallet, and keep everything in sync.')}
         </Text>
         <Text style={firstRunStyle.infoParagraph}>
-          This information is disclosed only to LBRY, Inc. and not to the LBRY network.
+          {__('This information is disclosed only to LBRY, Inc. and not to the LBRY network.')}
         </Text>
       </View>
     );

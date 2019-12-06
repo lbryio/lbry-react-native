@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { SETTINGS } from 'lbry-redux';
+import { SETTINGS, doToast } from 'lbry-redux';
 import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doSetClientSetting } from 'redux/actions/settings';
 import { selectCurrentRoute, selectDrawerStack } from 'redux/selectors/drawer';
@@ -12,6 +12,7 @@ const select = state => ({
   currentRoute: selectCurrentRoute(state),
   drawerStack: selectDrawerStack(state),
   keepDaemonRunning: makeSelectClientSetting(SETTINGS.KEEP_DAEMON_RUNNING)(state),
+  language: makeSelectClientSetting(SETTINGS.LANGUAGE)(state),
   showNsfw: makeSelectClientSetting(SETTINGS.SHOW_NSFW)(state),
   showUriBarSuggestions: makeSelectClientSetting(SETTINGS.SHOW_URI_BAR_SUGGESTIONS)(state),
   receiveSubscriptionNotifications: makeSelectClientSetting(SETTINGS.RECEIVE_SUBSCRIPTION_NOTIFICATIONS)(state),
@@ -21,6 +22,7 @@ const select = state => ({
 });
 
 const perform = dispatch => ({
+  notify: data => dispatch(doToast(data)),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_SETTINGS)),
   popDrawerStack: () => dispatch(doPopDrawerStack()),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
