@@ -170,7 +170,6 @@ class SplashScreen extends React.PureComponent {
   }
 
   _updateStatusCallback(status) {
-    console.log(status);
     const { fetchSubscriptions, getSync, setClientSetting } = this.props;
     const startupStatus = status.startup_status;
     const walletStatus = status.wallet;
@@ -222,7 +221,7 @@ class SplashScreen extends React.PureComponent {
       return;
     }
 
-    const headerSyncProgress = walletStatus.headers_synchronization_progress;
+    const headerSyncProgress = walletStatus ? walletStatus.headers_synchronization_progress : null;
     if (headerSyncProgress && headerSyncProgress < 100) {
       this.setState({
         isDownloadingHeaders: true,
