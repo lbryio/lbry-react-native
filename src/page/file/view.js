@@ -44,6 +44,7 @@ import Video from 'react-native-video';
 import FileRewardsDriver from 'component/fileRewardsDriver';
 import filePageStyle from 'styles/filePage';
 import uriBarStyle from 'styles/uriBar';
+import _ from 'lodash';
 
 class FilePage extends React.PureComponent {
   static navigationOptions = {
@@ -62,8 +63,9 @@ class FilePage extends React.PureComponent {
     super(props);
     this.state = {
       attemptAutoGet: false,
-      autoPlayMedia: false,
+      autoOpened: false,
       autoDownloadStarted: false,
+      autoPlayMedia: false,
       downloadButtonShown: false,
       downloadPressed: false,
       fileViewLogged: false,
@@ -127,6 +129,17 @@ class FilePage extends React.PureComponent {
     this.onComponentFocused();
   }
 
+  difference = (object, base) => {
+    function changes(object, base) {
+      return _.transform(object, function(result, value, key) {
+        if (!_.isEqual(value, base[key])) {
+          result[key] = _.isObject(value) && _.isObject(base[key]) ? changes(value, base[key]) : value;
+        }
+      });
+    }
+    return changes(object, base);
+  };
+
   componentWillReceiveProps(nextProps) {
     const {
       claim,
@@ -136,6 +149,7 @@ class FilePage extends React.PureComponent {
       navigation,
       contentType,
       notify,
+      drawerStack: prevDrawerStack,
     } = this.props;
     const { uri } = navigation.state.params;
     const {
@@ -145,6 +159,7 @@ class FilePage extends React.PureComponent {
       purchasedUris,
       purchaseUriErrorMessage,
       streamingUrl,
+      drawerStack,
     } = nextProps;
 
     if (Constants.ROUTE_FILE === currentRoute && currentRoute !== prevRoute) {
@@ -183,6 +198,17 @@ class FilePage extends React.PureComponent {
       } else if (fileInfo && fileInfo.streaming_url) {
         this.setState({ streamingMode: true, currentStreamUrl: fileInfo.streaming_url });
       }
+    }
+
+    if (
+      prevDrawerStack[prevDrawerStack.length - 1].route === Constants.DRAWER_ROUTE_FILE_VIEW &&
+      prevDrawerStack.length !== drawerStack.length
+    ) {
+      this.setState({
+        downloadPressed: false,
+        showImageViewer: false,
+        showWebView: false,
+      });
     }
   }
 
@@ -633,6 +659,39 @@ class FilePage extends React.PureComponent {
     }
   };
 
+  openFile = (localFileUri, mediaType) => {
+    const { pushDrawerStack } = this.props;
+    const isWebViewable = mediaType === 'text';
+
+    if (mediaType === 'image') {
+      // use image viewer
+      if (!this.state.showImageViewer) {
+        this.setState(
+          {
+            imageUrls: [
+              {
+                url: localFileUri,
+              },
+            ],
+            showImageViewer: true,
+          },
+          () => pushDrawerStack(Constants.DRAWER_ROUTE_FILE_VIEW)
+        );
+      }
+    }
+    if (isWebViewable) {
+      // show webview
+      if (!this.state.showWebView) {
+        this.setState(
+          {
+            showWebView: true,
+          },
+          () => pushDrawerStack(Constants.DRAWER_ROUTE_FILE_VIEW)
+        );
+      }
+    }
+  };
+
   render() {
     const {
       balance,
@@ -651,6 +710,7 @@ class FilePage extends React.PureComponent {
       navigation,
       position,
       purchaseUri,
+      pushDrawerStack,
       isSearchingRecommendContent,
       recommendedContent,
       thumbnail,
@@ -746,6 +806,7 @@ class FilePage extends React.PureComponent {
       const description = metadata.description ? metadata.description : null;
       const mediaType = Lbry.getMediaType(contentType);
       const isPlayable = mediaType === 'video' || mediaType === 'audio';
+      const isWebViewable = mediaType === 'text';
       const { height, signing_channel: signingChannel, value } = claim;
       const channelName = signingChannel && signingChannel.name;
       const channelClaimId = claim && claim.signing_channel && claim.signing_channel.claim_id;
@@ -784,34 +845,9 @@ class FilePage extends React.PureComponent {
         (fileInfo && (fileInfo.written_bytes >= 2097152 || fileInfo.written_bytes === fileInfo.total_bytes)); // 2MB = 1024*1024*2
       const duration = claim && claim.value && claim.value.video ? claim.value.video.duration : null;
       const isViewable = mediaType === 'image' || mediaType === 'text';
-      const isWebViewable = mediaType === 'text';
       const canOpen = isViewable && completed;
       const localFileUri = this.localUriForFileInfo(fileInfo);
       const unsupported = !isPlayable && !canOpen;
-
-      const openFile = () => {
-        if (mediaType === 'image') {
-          // use image viewer
-          if (!this.state.showImageViewer) {
-            this.setState({
-              imageUrls: [
-                {
-                  url: localFileUri,
-                },
-              ],
-              showImageViewer: true,
-            });
-          }
-        }
-        if (isWebViewable) {
-          // show webview
-          if (!this.state.showWebView) {
-            this.setState({
-              showWebView: true,
-            });
-          }
-        }
-      };
 
       if (fileInfo && !this.state.autoDownloadStarted && this.state.uriVars && this.state.uriVars.download === 'true') {
         this.setState({ autoDownloadStarted: true }, () => {
@@ -822,9 +858,9 @@ class FilePage extends React.PureComponent {
         });
       }
 
-      if (this.state.downloadPressed && canOpen) {
+      if (this.state.downloadPressed && canOpen && !this.state.autoOpened) {
         // automatically open a web viewable or image file after the download button is pressed
-        openFile();
+        this.setState({ autoOpened: true }, () => this.openFile(localFileUri, mediaType));
       }
 
       return (
@@ -889,7 +925,7 @@ class FilePage extends React.PureComponent {
                   <FileDownloadButton
                     uri={claim && claim.permanent_url ? claim.permanent_url : uri}
                     style={filePageStyle.downloadButton}
-                    openFile={openFile}
+                    openFile={() => this.openFile(localFileUri, mediaType)}
                     isPlayable={isPlayable}
                     isViewable={isViewable}
                     onPlay={this.onFileDownloadButtonPlayed}
@@ -975,7 +1011,7 @@ class FilePage extends React.PureComponent {
 
                 <View style={filePageStyle.largeButtonsRow}>
                   <TouchableOpacity style={filePageStyle.largeButton} onPress={this.handleSharePress}>
-                    <Icon name={'share-alt'} size={20} style={filePageStyle.largeButtonIcon} />
+                    <Icon name={'share-alt'} size={16} style={filePageStyle.largeButtonIcon} />
                     <Text style={filePageStyle.largeButtonText}>{__('Share')}</Text>
                   </TouchableOpacity>
 
@@ -983,51 +1019,61 @@ class FilePage extends React.PureComponent {
                     style={filePageStyle.largeButton}
                     onPress={() => this.setState({ showTipView: true })}
                   >
-                    <Icon name={'gift'} size={20} style={filePageStyle.largeButtonIcon} />
+                    <Icon name={'gift'} size={16} style={filePageStyle.largeButtonIcon} />
                     <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
                   </TouchableOpacity>
 
-                  <View style={filePageStyle.sharedLargeButton}>
-                    {!isPlayable && !fileInfo && (
-                      <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onDownloadPressed}>
-                        <Icon name={'download'} size={20} style={filePageStyle.largeButtonIcon} />
-                        <Text style={filePageStyle.largeButtonText}>{__('Download')}</Text>
-                      </TouchableOpacity>
-                    )}
+                  {!canEdit && (
+                    <View style={filePageStyle.sharedLargeButton}>
+                      {!fileInfo ||
+                        (fileInfo.written_bytes <= 0 && !completed && (
+                          <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onDownloadPressed}>
+                            <Icon name={'download'} size={16} style={filePageStyle.largeButtonIcon} />
+                            <Text style={filePageStyle.largeButtonText}>{__('Download')}</Text>
+                          </TouchableOpacity>
+                        ))}
 
-                    {!completed &&
-                      fileInfo &&
-                      !fileInfo.stopped &&
-                      fileInfo.written_bytes > 0 &&
-                      fileInfo.written_bytes < fileInfo.total_bytes &&
-                      !this.state.stopDownloadConfirmed && (
-                      <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onStopDownloadPressed}>
-                        <Icon name={'stop'} size={20} style={filePageStyle.largeButtonIcon} />
-                        <Text style={filePageStyle.largeButtonText}>{__('Stop')}</Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
+                      {!completed &&
+                        fileInfo &&
+                        !fileInfo.stopped &&
+                        fileInfo.written_bytes > 0 &&
+                        fileInfo.written_bytes < fileInfo.total_bytes &&
+                        !this.state.stopDownloadConfirmed && (
+                        <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onStopDownloadPressed}>
+                          <Icon name={'stop'} size={16} style={filePageStyle.largeButtonIcon} />
+                          <Text style={filePageStyle.largeButtonText}>{__('Stop')}</Text>
+                        </TouchableOpacity>
+                      )}
+
+                      {completed && fileInfo && fileInfo.written_bytes >= fileInfo.total_bytes && (
+                        <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onOpenFilePressed}>
+                          <Icon name={'folder-open'} size={16} style={filePageStyle.largeButtonIcon} />
+                          <Text style={filePageStyle.largeButtonText}>{__('Open')}</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  )}
 
                   {!canEdit && (
                     <TouchableOpacity
                       style={filePageStyle.largeButton}
                       onPress={() => Linking.openURL(`https://lbry.com/dmca/${claim.claim_id}`)}
                     >
-                      <Icon name={'flag'} size={20} style={filePageStyle.largeButtonIcon} />
+                      <Icon name={'flag'} size={16} style={filePageStyle.largeButtonIcon} />
                       <Text style={filePageStyle.largeButtonText}>{__('Report')}</Text>
                     </TouchableOpacity>
                   )}
 
                   {canEdit && (
                     <TouchableOpacity style={filePageStyle.largeButton} onPress={this.onEditPressed}>
-                      <Icon name={'edit'} size={20} style={filePageStyle.largeButtonIcon} />
+                      <Icon name={'edit'} size={16} style={filePageStyle.largeButtonIcon} />
                       <Text style={filePageStyle.largeButtonText}>{__('Edit')}</Text>
                     </TouchableOpacity>
                   )}
 
                   {(completed || canEdit) && (
                     <TouchableOpacity style={filePageStyle.largeButton} onPress={this.onDeletePressed}>
-                      <Icon name={'trash-alt'} size={20} style={filePageStyle.largeButtonIcon} />
+                      <Icon name={'trash-alt'} size={16} style={filePageStyle.largeButtonIcon} />
                       <Text style={filePageStyle.largeButtonText}>{__('Delete')}</Text>
                     </TouchableOpacity>
                   )}

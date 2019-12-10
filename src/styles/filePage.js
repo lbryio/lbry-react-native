@@ -384,7 +384,7 @@ const filePageStyle = StyleSheet.create({
   sharedLargeButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 36,
+    flex: 0.2,
   },
   innerLargeButton: {
     alignItems: 'center',
@@ -393,7 +393,7 @@ const filePageStyle = StyleSheet.create({
   largeButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 36,
+    flex: 0.2,
   },
   largeButtonIcon: {
     color: Colors.DescriptionGrey,
@@ -406,8 +406,8 @@ const filePageStyle = StyleSheet.create({
   largeButtonsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 20,
-    marginRight: 20,
+    marginLeft: 16,
+    marginRight: 16,
     marginTop: 12,
     marginBottom: 12,
   },

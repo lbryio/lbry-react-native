@@ -11,7 +11,6 @@ import settingsStyle from 'styles/settings';
 
 const languageOptions = [
   { code: 'default', name: 'Use device language' },
-  { code: 'ar', name: 'Arabic' },
   { code: 'en', name: 'English' },
   { code: 'gu', name: 'Gujarati' },
   { code: 'hi', name: 'Hindi' },
@@ -90,33 +89,41 @@ class SettingsPage extends React.PureComponent {
     }
 
     // check the local filesystem for the language first? Or download remote strings first?
+    if (language === 'en') {
+      // don't attempt to download English
+      NativeModules.UtilityModule.setNativeStringSetting(SETTINGS.LANGUAGE, language);
 
-    // download and save the language file
-    this.setState({ downloadingLanguage: true }, () => {
-      fetch('https://lbry.com/i18n/get/lbry-mobile/app-strings/' + language + '.json')
-        .then(r => r.json())
-        .then(j => {
-          window.i18n_messages[language] = j;
+      // update state and client setting
+      window.language = language;
+      setClientSetting(SETTINGS.LANGUAGE, value);
+    } else {
+      // download and save the language file
+      this.setState({ downloadingLanguage: true }, () => {
+        fetch('https://lbry.com/i18n/get/lbry-mobile/app-strings/' + language + '.json')
+          .then(r => r.json())
+          .then(j => {
+            window.i18n_messages[language] = j;
 
-          // write the language file to the filesystem
-          const langFilePath = RNFS.ExternalDirectoryPath + '/' + language + '.json';
-          RNFS.writeFile(langFilePath, JSON.stringify(j), 'utf8');
+            // write the language file to the filesystem
+            const langFilePath = RNFS.ExternalDirectoryPath + '/' + language + '.json';
+            RNFS.writeFile(langFilePath, JSON.stringify(j), 'utf8');
 
-          // save the setting outside redux because when the first component mounts, the redux value isn't loaded yet
-          // so we have to load it from native settings
-          NativeModules.UtilityModule.setNativeStringSetting(SETTINGS.LANGUAGE, value);
+            // save the setting outside redux because when the first component mounts, the redux value isn't loaded yet
+            // so we have to load it from native settings
+            NativeModules.UtilityModule.setNativeStringSetting(SETTINGS.LANGUAGE, language);
 
-          // update state and client setting
-          window.language = language;
-          setClientSetting(SETTINGS.LANGUAGE, value);
+            // update state and client setting
+            window.language = language;
+            setClientSetting(SETTINGS.LANGUAGE, value);
 
-          this.setState({ downloadingLanguage: false });
-        })
-        .catch(e => {
-          notify({ message: __('Failed to load %language% translations.', { language: language }), isError: true });
-          this.setState({ downloadingLanguage: false });
-        });
-    });
+            this.setState({ downloadingLanguage: false });
+          })
+          .catch(e => {
+            notify({ message: __('Failed to load %language% translations.', { language: language }), isError: true });
+            this.setState({ downloadingLanguage: false });
+          });
+      });
+    }
   };
 
   handleBackPressed = () => {

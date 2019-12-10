@@ -95,6 +95,7 @@ const Constants = {
   FULL_ROUTE_NAME_WALLET: 'WalletStack',
 
   ROUTE_FILE: 'File',
+  DRAWER_ROUTE_FILE_VIEW: 'FileView',
 
   ITEM_CREATE_A_CHANNEL: 'Create a channel...',
   ITEM_ANONYMOUS: 'Publish anonymously',
@@ -167,4 +168,8 @@ export const DrawerRoutes = [
 ];
 
 // sub-pages for main routes
-export const InnerDrawerRoutes = [Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM, Constants.DRAWER_ROUTE_PUBLISH_FORM];
+export const InnerDrawerRoutes = [
+  Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM,
+  Constants.DRAWER_ROUTE_PUBLISH_FORM,
+  Constants.DRAWER_ROUTE_FILE_VIEW,
+];

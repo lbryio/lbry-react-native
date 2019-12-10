@@ -44,7 +44,7 @@ import {
   doDeleteFile,
   doStopDownloadingFile,
 } from 'redux/actions/file';
-import { doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
+import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doToggleFullscreenMode } from 'redux/actions/settings';
 import { selectDrawerStack } from 'redux/selectors/drawer';
 import FilePage from './view';
@@ -92,6 +92,7 @@ const perform = dispatch => ({
   fileGet: (uri, saveFile) => dispatch(doFileGet(uri, saveFile)),
   notify: data => dispatch(doToast(data)),
   popDrawerStack: () => dispatch(doPopDrawerStack()),
+  pushDrawerStack: (routeName, params) => dispatch(doPushDrawerStack(routeName, params)),
   purchaseUri: (uri, costInfo, saveFile) => dispatch(doPurchaseUri(uri, costInfo, saveFile)),
   deletePurchasedUri: uri => dispatch(doDeletePurchasedUri(uri)),
   resolveUri: uri => dispatch(doResolveUri(uri)),
