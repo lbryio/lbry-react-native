@@ -235,7 +235,7 @@ class SplashScreen extends React.PureComponent {
     }
 
     if (headerSyncProgress < 100) {
-      const downloadProgress = isNaN(parseInt(headerSyncProgress, 10)) ? '0' : headerSyncProgress;
+      const downloadProgress = isNaN(parseInt(headerSyncProgress, 10)) ? '0' : headerSyncProgress || '0';
       this.setState({
         message: __('Blockchain Sync'),
         details: __('Catching up with the blockchain (%progress%%)', { progress: downloadProgress }),

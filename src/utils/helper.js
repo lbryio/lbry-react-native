@@ -155,6 +155,14 @@ export function navigateToUri(navigation, uri, additionalParams, isNavigatingBac
 }
 
 export function navigateBack(navigation, drawerStack, popDrawerStack) {
+  if (drawerStack[drawerStack.length - 1].route === Constants.DRAWER_ROUTE_FILE_VIEW) {
+    // inner file_view (web / image view) is handled differently
+    if (popDrawerStack) {
+      popDrawerStack();
+    }
+    return;
+  }
+
   if (popDrawerStack) {
     popDrawerStack();
   }
@@ -186,6 +194,12 @@ export function navigateBack(navigation, drawerStack, popDrawerStack) {
 }
 
 export function dispatchNavigateBack(dispatch, nav, drawerStack) {
+  if (drawerStack[drawerStack.length - 1].route === Constants.DRAWER_ROUTE_FILE_VIEW) {
+    // inner file_view (web / image view) is handled differently
+    dispatch(doPopDrawerStack());
+    return;
+  }
+
   dispatch(doPopDrawerStack());
 
   const target = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];

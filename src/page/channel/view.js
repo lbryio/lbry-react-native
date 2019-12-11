@@ -38,6 +38,7 @@ class ChannelPage extends React.PureComponent {
     showTimePicker: false,
     orderBy: ['release_time'], // sort by new by default
     activeTab: Constants.CONTENT_TAB,
+    currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[1], // should always default to sorting channel pages by new
   };
 
   componentWillMount() {
@@ -48,16 +49,14 @@ class ChannelPage extends React.PureComponent {
   }
 
   componentDidMount() {
-    const { fetchChannelListMine, setSortByItem } = this.props;
+    const { fetchChannelListMine } = this.props;
     NativeModules.Firebase.setCurrentScreen('Channel');
-    setSortByItem(Constants.CLAIM_SEARCH_SORT_BY_ITEMS[1]); // sort by newest first
     fetchChannelListMine();
   }
 
   handleSortByItemSelected = item => {
-    const { setSortByItem } = this.props;
-    setSortByItem(item);
-    this.setState({ orderBy: getOrderBy(item), showSortPicker: false });
+    // sort by specific only to this component state
+    this.setState({ currentSortByItem: item, orderBy: getOrderBy(item), showSortPicker: false });
   };
 
   handleTimeItemSelected = item => {
@@ -67,17 +66,18 @@ class ChannelPage extends React.PureComponent {
   };
 
   listHeader = () => {
-    const { sortByItem, timeItem } = this.props;
+    const { timeItem } = this.props;
+    const { currentSortByItem } = this.state;
 
     return (
       <View style={channelPageStyle.listHeader}>
         <View style={discoverStyle.pickerRow}>
           <View style={discoverStyle.leftPickerRow}>
             <TouchableOpacity style={discoverStyle.tagSortBy} onPress={() => this.setState({ showSortPicker: true })}>
-              <Text style={discoverStyle.tagSortText}>{__(sortByItem.label.split(' ')[0])}</Text>
+              <Text style={discoverStyle.tagSortText}>{__(currentSortByItem.label.split(' ')[0])}</Text>
               <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
             </TouchableOpacity>
-            {Constants.SORT_BY_TOP === sortByItem.name && (
+            {Constants.SORT_BY_TOP === currentSortByItem.name && (
               <TouchableOpacity style={discoverStyle.tagTime} onPress={() => this.setState({ showTimePicker: true })}>
                 <Text style={discoverStyle.tagSortText}>{__(timeItem.label)}</Text>
                 <Icon style={discoverStyle.tagSortIcon} name={'sort-down'} size={14} />
@@ -207,9 +207,9 @@ class ChannelPage extends React.PureComponent {
   };
 
   render() {
-    const { channels, claim, navigation, uri, drawerStack, popDrawerStack, sortByItem, timeItem } = this.props;
+    const { channels, claim, navigation, uri, drawerStack, popDrawerStack, timeItem } = this.props;
     const { name, permanent_url: permanentUrl } = claim;
-    const { autoStyle, showSortPicker, showTimePicker } = this.state;
+    const { autoStyle, currentSortByItem, showSortPicker, showTimePicker } = this.state;
     const ownedChannel = channels ? channels.map(channel => channel.permanent_url).includes(permanentUrl) : false;
 
     let thumbnailUrl,
@@ -327,7 +327,7 @@ class ChannelPage extends React.PureComponent {
             title={__('Sort content by')}
             onOverlayPress={() => this.setState({ showSortPicker: false })}
             onItemSelected={this.handleSortByItemSelected}
-            selectedItem={sortByItem}
+            selectedItem={currentSortByItem}
             items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
           />
         )}
