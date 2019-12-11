@@ -1023,7 +1023,7 @@ class FilePage extends React.PureComponent {
                     <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
                   </TouchableOpacity>
 
-                  {!canEdit && (
+                  {!canEdit && !isPlayable && (
                     <View style={filePageStyle.sharedLargeButton}>
                       {!fileInfo ||
                         (fileInfo.written_bytes <= 0 && !completed && (

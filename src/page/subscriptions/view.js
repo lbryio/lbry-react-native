@@ -243,7 +243,7 @@ class SubscriptionsPage extends React.PureComponent {
             title={__('Sort content by')}
             onOverlayPress={() => this.setState({ showSortPicker: false })}
             onItemSelected={this.handleSortByItemSelected}
-            selectedItem={this.state.currentSortByItem}
+            selectedItem={currentSortByItem}
             items={Constants.CLAIM_SEARCH_SORT_BY_ITEMS}
           />
         )}
