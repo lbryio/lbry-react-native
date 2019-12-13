@@ -1,5 +1,5 @@
 import React from 'react';
-import { CLAIM_VALUES, isNameValid } from 'lbry-redux';
+import { CLAIM_VALUES, formatCredits, isNameValid } from 'lbry-redux';
 import { ActivityIndicator, NativeModules, Picker, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { logPublish } from 'utils/helper';
 import Button from 'component/button';
@@ -14,6 +14,7 @@ export default class ChannelSelector extends React.PureComponent {
     super(props);
 
     this.state = {
+      creditsInputFocused: false,
       currentSelectedValue: Constants.ITEM_ANONYMOUS,
       newChannelName: '',
       newChannelBid: 0.1,
@@ -188,7 +189,7 @@ export default class ChannelSelector extends React.PureComponent {
 
   render() {
     const channel = this.state.addingChannel ? 'new' : this.props.channel;
-    const { enabled, fetchingChannels, channels = [] } = this.props;
+    const { balance, enabled, fetchingChannels, channels = [] } = this.props;
     const pickerItems = [Constants.ITEM_ANONYMOUS, Constants.ITEM_CREATE_A_CHANNEL].concat(
       channels ? channels.map(ch => ch.name) : []
     );
@@ -244,11 +245,18 @@ export default class ChannelSelector extends React.PureComponent {
                 style={channelSelectorStyle.bidAmountInput}
                 value={String(newChannelBid)}
                 onChangeText={this.handleNewChannelBidChange}
+                onFocus={() => this.setState({ creditsInputFocused: true })}
+                onBlur={() => this.setState({ creditsInputFocused: false })}
                 placeholder={'0.00'}
                 keyboardType={'number-pad'}
                 underlineColorAndroid={Colors.NextLbryGreen}
               />
               <Text style={channelSelectorStyle.currency}>LBC</Text>
+              <Text style={channelSelectorStyle.balance}>
+                {this.state.creditsInputFocused
+                  ? __('Bal: %balance%', { balance: formatCredits(parseFloat(balance), 1, true) })
+                  : ''}
+              </Text>
             </View>
             <Text style={channelSelectorStyle.helpText}>
               {__('This LBC remains yours. It is a deposit to reserve the name and can be undone at any time.')}

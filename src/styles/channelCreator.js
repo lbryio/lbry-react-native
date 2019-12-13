@@ -30,6 +30,11 @@ const channelCreatorStyle = StyleSheet.create({
     fontFamily: 'Inter-UI-Regular',
     fontSize: 16,
   },
+  balance: {
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 14,
+    marginLeft: 24,
+  },
   channelNameInput: {
     fontFamily: 'Inter-UI-Regular',
     fontSize: 16,

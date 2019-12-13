@@ -466,6 +466,11 @@ const publishStyle = StyleSheet.create({
     fontFamily: 'Inter-UI-SemiBold',
     fontSize: 12,
   },
+  balance: {
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 14,
+    marginLeft: 24,
+  },
 });
 
 export default publishStyle;

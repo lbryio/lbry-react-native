@@ -19,6 +19,7 @@ import {
   isNameValid,
   batchActions,
   buildURI,
+  formatCredits,
   normalizeURI,
   parseURI,
   regexInvalidURI,
@@ -83,6 +84,7 @@ class PublishPage extends React.PureComponent {
   state = {
     canPublish: true,
     canUseCamera: false,
+    creditsInputFocused: false,
     documentPickerOpen: false,
     editMode: false,
     titleFocused: false,
@@ -1133,8 +1135,15 @@ class PublishPage extends React.PureComponent {
                 keyboardType={'numeric'}
                 value={String(this.state.bid)}
                 onChangeText={this.handleBidChange}
+                onFocus={() => this.setState({ creditsInputFocused: true })}
+                onBlur={() => this.setState({ creditsInputFocused: false })}
               />
               <Text style={publishStyle.currency}>LBC</Text>
+              <Text style={publishStyle.balance}>
+                {this.state.creditsInputFocused
+                  ? __('Bal: %balance%', { balance: formatCredits(parseFloat(balance), 1, true) })
+                  : ''}
+              </Text>
             </View>
             <Text style={publishStyle.helpText}>
               {__('This LBC remains yours and the deposit can be undone at any time.')}

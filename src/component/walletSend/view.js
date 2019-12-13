@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { regexAddress } from 'lbry-redux';
+import { formatCredits, regexAddress } from 'lbry-redux';
 import { Alert, Clipboard, TextInput, Text, View } from 'react-native';
 import Button from 'component/button';
 import Colors from 'styles/colors';
@@ -24,6 +24,7 @@ class WalletSend extends React.PureComponent<Props> {
     address: null,
     addressChanged: false,
     addressValid: false,
+    creditsInputFocused: false,
   };
 
   componentWillUpdate(nextProps) {
@@ -118,6 +119,8 @@ class WalletSend extends React.PureComponent<Props> {
             <TextInput
               ref={ref => (this.amountInput = ref)}
               onChangeText={value => this.setState({ amount: value })}
+              onFocus={() => this.setState({ creditsInputFocused: true })}
+              onBlur={() => this.setState({ creditsInputFocused: false })}
               keyboardType={'numeric'}
               placeholder={'0'}
               underlineColorAndroid={Colors.NextLbryGreen}
@@ -125,6 +128,11 @@ class WalletSend extends React.PureComponent<Props> {
               style={[walletStyle.input, walletStyle.amountInput]}
             />
             <Text style={[walletStyle.text, walletStyle.currency]}>LBC</Text>
+            <Text style={walletStyle.balanceFocus}>
+              {this.state.creditsInputFocused
+                ? __('Bal: %balance%', { balance: formatCredits(parseFloat(balance), 1, true) })
+                : ''}
+            </Text>
           </View>
           <Button
             text={__('Send')}
