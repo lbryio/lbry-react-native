@@ -73,9 +73,7 @@ class FileDownloadButton extends React.PureComponent {
           onLayout={onButtonLayout}
           style={[style, fileDownloadButtonStyle.container]}
           onPress={() => {
-            if (NativeModules.Firebase) {
-              NativeModules.Firebase.track('purchase_uri', { uri: uri });
-            }
+            NativeModules.Firebase.track('purchase_uri', { uri: uri });
             purchaseUri(uri, costInfo, !isPlayable);
             if (NativeModules.UtilityModule) {
               NativeModules.UtilityModule.checkDownloads();
