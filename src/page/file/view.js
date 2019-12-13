@@ -692,6 +692,17 @@ class FilePage extends React.PureComponent {
     }
   };
 
+  onMediaContainerPressed = () => {
+    const { costInfo, contentType, purchaseUri } = this.props;
+    const { uri } = this.state;
+    const mediaType = Lbry.getMediaType(contentType);
+    const isPlayable = mediaType === 'video' || mediaType === 'audio';
+    purchaseUri(uri, costInfo, isPlayable);
+    if (isPlayable) {
+      this.onFileDownloadButtonPlayed();
+    }
+  };
+
   render() {
     const {
       balance,
@@ -885,7 +896,11 @@ class FilePage extends React.PureComponent {
               }
               onLayout={this.checkOrientation}
             >
-              <View style={filePageStyle.mediaContainer}>
+              <TouchableOpacity
+                activeOpacity={0.5}
+                style={filePageStyle.mediaContainer}
+                onPress={this.onMediaContainerPressed}
+              >
                 {(canOpen || (!fileInfo || (isPlayable && !canLoadMedia)) || (!canOpen && fileInfo)) && (
                   <FileItemMedia
                     duration={duration}
@@ -944,7 +959,7 @@ class FilePage extends React.PureComponent {
                 <TouchableOpacity style={filePageStyle.backButton} onPress={this.onBackButtonPressed}>
                   <Icon name={'arrow-left'} size={18} style={filePageStyle.backButtonIcon} />
                 </TouchableOpacity>
-              </View>
+              </TouchableOpacity>
               {(this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) && (
                 <View
                   style={playerBgStyle}
