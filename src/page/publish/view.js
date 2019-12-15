@@ -1139,11 +1139,12 @@ class PublishPage extends React.PureComponent {
                 onBlur={() => this.setState({ creditsInputFocused: false })}
               />
               <Text style={publishStyle.currency}>LBC</Text>
-              <Text style={publishStyle.balance}>
-                {this.state.creditsInputFocused
-                  ? __('Bal: %balance%', { balance: formatCredits(parseFloat(balance), 1, true) })
-                  : ''}
-              </Text>
+              <View style={publishStyle.balance}>
+                {this.state.creditsInputFocused && <Icon name="coins" size={12} />}
+                {this.state.creditsInputFocused && (
+                  <Text style={publishStyle.balanceText}>{formatCredits(parseFloat(balance), 1, true)}</Text>
+                )}
+              </View>
             </View>
             <Text style={publishStyle.helpText}>
               {__('This LBC remains yours and the deposit can be undone at any time.')}

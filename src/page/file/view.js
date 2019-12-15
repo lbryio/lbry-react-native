@@ -1174,11 +1174,12 @@ class FilePage extends React.PureComponent {
                           style={[filePageStyle.input, filePageStyle.tipAmountInput]}
                         />
                         <Text style={[filePageStyle.text, filePageStyle.currency]}>LBC</Text>
-                        <Text style={filePageStyle.balance}>
-                          {this.state.creditsInputFocused
-                            ? __('Bal: %balance%', { balance: formatCredits(parseFloat(balance), 1, true) })
-                            : ''}
-                        </Text>
+                        <View style={filePageStyle.balance}>
+                          {this.state.creditsInputFocused && <Icon name="coins" size={12} />}
+                          {this.state.creditsInputFocused && (
+                            <Text style={filePageStyle.balanceText}>{formatCredits(parseFloat(balance), 1, true)}</Text>
+                          )}
+                        </View>
                       </View>
                       {this.state.sendTipStarted && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
                       <Link

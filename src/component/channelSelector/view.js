@@ -252,11 +252,12 @@ export default class ChannelSelector extends React.PureComponent {
                 underlineColorAndroid={Colors.NextLbryGreen}
               />
               <Text style={channelSelectorStyle.currency}>LBC</Text>
-              <Text style={channelSelectorStyle.balance}>
-                {this.state.creditsInputFocused
-                  ? __('Bal: %balance%', { balance: formatCredits(parseFloat(balance), 1, true) })
-                  : ''}
-              </Text>
+              <View style={channelSelectorStyle.balance}>
+                {this.state.creditsInputFocused && <Icon name="coins" size={12} />}
+                {this.state.creditsInputFocused && (
+                  <Text style={channelSelectorStyle.balanceText}>{formatCredits(parseFloat(balance), 1, true)}</Text>
+                )}
+              </View>
             </View>
             <Text style={channelSelectorStyle.helpText}>
               {__('This LBC remains yours. It is a deposit to reserve the name and can be undone at any time.')}

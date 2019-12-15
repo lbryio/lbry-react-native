@@ -467,9 +467,14 @@ const publishStyle = StyleSheet.create({
     fontSize: 12,
   },
   balance: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginLeft: 24,
+  },
+  balanceText: {
     fontFamily: 'Inter-UI-SemiBold',
     fontSize: 14,
-    marginLeft: 24,
+    marginLeft: 4,
   },
 });
 

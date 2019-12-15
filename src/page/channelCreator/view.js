@@ -968,11 +968,12 @@ export default class ChannelCreator extends React.PureComponent {
                   underlineColorAndroid={Colors.NextLbryGreen}
                 />
                 <Text style={channelCreatorStyle.currency}>LBC</Text>
-                <Text style={channelCreatorStyle.balance}>
-                  {this.state.creditsInputFocused
-                    ? __('Bal: %balance%', { balance: formatCredits(parseFloat(balance), 1, true) })
-                    : ''}
-                </Text>
+                <View style={channelCreatorStyle.balance}>
+                  {this.state.creditsInputFocused && <Icon name="coins" size={12} />}
+                  {this.state.creditsInputFocused && (
+                    <Text style={channelCreatorStyle.balanceText}>{formatCredits(parseFloat(balance), 1, true)}</Text>
+                  )}
+                </View>
               </View>
               <Text style={channelCreatorStyle.helpText}>
                 {__('This LBC remains yours. It is a deposit to reserve the name and can be undone at any time.')}

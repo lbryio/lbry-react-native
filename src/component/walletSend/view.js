@@ -4,6 +4,7 @@ import { formatCredits, regexAddress } from 'lbry-redux';
 import { Alert, Clipboard, TextInput, Text, View } from 'react-native';
 import Button from 'component/button';
 import Colors from 'styles/colors';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import walletStyle from 'styles/wallet';
 
 type DraftTransaction = {
@@ -128,11 +129,12 @@ class WalletSend extends React.PureComponent<Props> {
               style={[walletStyle.input, walletStyle.amountInput]}
             />
             <Text style={[walletStyle.text, walletStyle.currency]}>LBC</Text>
-            <Text style={walletStyle.balanceFocus}>
-              {this.state.creditsInputFocused
-                ? __('Bal: %balance%', { balance: formatCredits(parseFloat(balance), 1, true) })
-                : ''}
-            </Text>
+            <View style={walletStyle.balanceFocus}>
+              {this.state.creditsInputFocused && <Icon name="coins" size={12} />}
+              {this.state.creditsInputFocused && (
+                <Text style={walletStyle.balanceText}>{formatCredits(parseFloat(balance), 1, true)}</Text>
+              )}
+            </View>
           </View>
           <Button
             text={__('Send')}
