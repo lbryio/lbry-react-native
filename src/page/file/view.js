@@ -68,6 +68,7 @@ class FilePage extends React.PureComponent {
       autoPlayMedia: false,
       downloadButtonShown: false,
       downloadPressed: false,
+      didSearchRecommended: false,
       fileViewLogged: false,
       fullscreenMode: false,
       fileGetStarted: false,
@@ -88,7 +89,7 @@ class FilePage extends React.PureComponent {
       uriVars: null,
       stopDownloadConfirmed: false,
       streamingMode: false,
-      didSearchRecommended: false,
+      viewCountFetched: false,
     };
   }
 
@@ -115,6 +116,7 @@ class FilePage extends React.PureComponent {
 
     this.fetchFileInfo(this.props);
     this.fetchCostInfo(this.props);
+
     fetchMyClaims();
 
     if (NativeModules.Firebase) {
@@ -145,6 +147,7 @@ class FilePage extends React.PureComponent {
       claim,
       currentRoute,
       failedPurchaseUris: prevFailedPurchaseUris,
+      fetchViewCount,
       purchasedUris: prevPurchasedUris,
       navigation,
       contentType,
@@ -209,6 +212,10 @@ class FilePage extends React.PureComponent {
         showImageViewer: false,
         showWebView: false,
       });
+    }
+
+    if (claim && !this.state.viewCountFetched) {
+      this.setState({ viewCountFetched: true }, () => fetchViewCount(claim.claim_id));
     }
   }
 
@@ -726,6 +733,7 @@ class FilePage extends React.PureComponent {
       recommendedContent,
       thumbnail,
       title,
+      viewCount,
     } = this.props;
     const { uri, autoplay } = navigation.state.params;
 
@@ -1013,14 +1021,20 @@ class FilePage extends React.PureComponent {
                   style={filePageStyle.titleTouch}
                   onPress={() => this.setState({ showDescription: !this.state.showDescription })}
                 >
-                  <View style={filePageStyle.titleRow}>
-                    <Text style={filePageStyle.title} selectable>
-                      {title}
-                    </Text>
-                    {isRewardContent && <Icon name="award" style={filePageStyle.rewardIcon} size={16} />}
-                    <View style={filePageStyle.descriptionToggle}>
-                      <Icon name={this.state.showDescription ? 'caret-up' : 'caret-down'} size={24} />
+                  <View style={filePageStyle.titleArea}>
+                    <View style={filePageStyle.titleRow}>
+                      <Text style={filePageStyle.title} selectable>
+                        {title}
+                      </Text>
+                      {isRewardContent && <Icon name="award" style={filePageStyle.rewardIcon} size={16} />}
+                      <View style={filePageStyle.descriptionToggle}>
+                        <Icon name={this.state.showDescription ? 'caret-up' : 'caret-down'} size={24} />
+                      </View>
                     </View>
+                    <Text style={filePageStyle.viewCount}>
+                      {viewCount === 1 && __('%view% view', { view: viewCount })}
+                      {viewCount > 1 && __('%view% views', { view: viewCount })}
+                    </Text>
                   </View>
                 </TouchableWithoutFeedback>
 

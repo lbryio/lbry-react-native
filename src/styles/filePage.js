@@ -447,6 +447,13 @@ const filePageStyle = StyleSheet.create({
   relatedLoading: {
     marginTop: 16,
   },
+  viewCount: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 12,
+    color: Colors.DescriptionGrey,
+    marginLeft: 12,
+    marginRight: 12,
+  },
 });
 
 export default filePageStyle;
