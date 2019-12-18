@@ -1,9 +1,10 @@
 // @flow
 import React from 'react';
-import { regexAddress } from 'lbry-redux';
+import { formatCredits, regexAddress } from 'lbry-redux';
 import { Alert, Clipboard, TextInput, Text, View } from 'react-native';
 import Button from 'component/button';
 import Colors from 'styles/colors';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import walletStyle from 'styles/wallet';
 
 type DraftTransaction = {
@@ -24,6 +25,7 @@ class WalletSend extends React.PureComponent<Props> {
     address: null,
     addressChanged: false,
     addressValid: false,
+    creditsInputFocused: false,
   };
 
   componentWillUpdate(nextProps) {
@@ -118,6 +120,8 @@ class WalletSend extends React.PureComponent<Props> {
             <TextInput
               ref={ref => (this.amountInput = ref)}
               onChangeText={value => this.setState({ amount: value })}
+              onFocus={() => this.setState({ creditsInputFocused: true })}
+              onBlur={() => this.setState({ creditsInputFocused: false })}
               keyboardType={'numeric'}
               placeholder={'0'}
               underlineColorAndroid={Colors.NextLbryGreen}
@@ -125,6 +129,12 @@ class WalletSend extends React.PureComponent<Props> {
               style={[walletStyle.input, walletStyle.amountInput]}
             />
             <Text style={[walletStyle.text, walletStyle.currency]}>LBC</Text>
+            <View style={walletStyle.balanceFocus}>
+              {this.state.creditsInputFocused && <Icon name="coins" size={12} />}
+              {this.state.creditsInputFocused && (
+                <Text style={walletStyle.balanceText}>{formatCredits(parseFloat(balance), 1, true)}</Text>
+              )}
+            </View>
           </View>
           <Button
             text={__('Send')}

@@ -277,6 +277,7 @@ const filePageStyle = StyleSheet.create({
   amountRow: {
     flexDirection: 'row',
     flex: 0.75,
+    alignItems: 'center',
   },
   button: {
     backgroundColor: Colors.LbryGreen,
@@ -299,9 +300,7 @@ const filePageStyle = StyleSheet.create({
     letterSpacing: 1,
   },
   currency: {
-    alignSelf: 'flex-start',
     fontSize: 12,
-    marginTop: 15,
     marginLeft: 4,
   },
   descriptionToggle: {
@@ -446,6 +445,16 @@ const filePageStyle = StyleSheet.create({
   },
   relatedLoading: {
     marginTop: 16,
+  },
+  balance: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginLeft: 24,
+  },
+  balanceText: {
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 14,
+    marginLeft: 4,
   },
 });
 

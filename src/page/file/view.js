@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry, normalizeURI, parseURI } from 'lbry-redux';
+import { Lbry, formatCredits, normalizeURI, parseURI } from 'lbry-redux';
 import { Lbryio } from 'lbryinc';
 import {
   ActivityIndicator,
@@ -66,6 +66,7 @@ class FilePage extends React.PureComponent {
       autoOpened: false,
       autoDownloadStarted: false,
       autoPlayMedia: false,
+      creditsInputFocused: false,
       downloadButtonShown: false,
       downloadPressed: false,
       fileViewLogged: false,
@@ -1163,6 +1164,8 @@ class FilePage extends React.PureComponent {
                           editable={!this.state.sendTipStarted}
                           ref={ref => (this.tipAmountInput = ref)}
                           onChangeText={value => this.setState({ tipAmount: value })}
+                          onFocus={() => this.setState({ creditsInputFocused: true })}
+                          onBlur={() => this.setState({ creditsInputFocused: false })}
                           underlineColorAndroid={Colors.NextLbryGreen}
                           keyboardType={'numeric'}
                           placeholder={'0'}
@@ -1171,6 +1174,12 @@ class FilePage extends React.PureComponent {
                           style={[filePageStyle.input, filePageStyle.tipAmountInput]}
                         />
                         <Text style={[filePageStyle.text, filePageStyle.currency]}>LBC</Text>
+                        <View style={filePageStyle.balance}>
+                          {this.state.creditsInputFocused && <Icon name="coins" size={12} />}
+                          {this.state.creditsInputFocused && (
+                            <Text style={filePageStyle.balanceText}>{formatCredits(parseFloat(balance), 1, true)}</Text>
+                          )}
+                        </View>
                       </View>
                       {this.state.sendTipStarted && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
                       <Link
@@ -1220,9 +1229,10 @@ class FilePage extends React.PureComponent {
               </ScrollView>
             </View>
           )}
-          {!this.state.fullscreenMode && !this.state.showImageViewer && !this.state.showWebView && (
-            <FloatingWalletBalance navigation={navigation} />
-          )}
+          {!this.state.creditsInputFocused &&
+            !this.state.fullscreenMode &&
+            !this.state.showImageViewer &&
+            !this.state.showWebView && <FloatingWalletBalance navigation={navigation} />}
         </View>
       );
     }
