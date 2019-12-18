@@ -111,6 +111,7 @@ class SubscriptionsPage extends React.PureComponent {
     return [Constants.ALL_PLACEHOLDER].concat(channelUris);
   };
 
+  // Added in 0.12.1. Can be dropped on or after 1 Feb 2020.
   unsubscribeShortChannelUrls = () => {
     // this should only have to happen once
     const { subscribedChannels, channelUnsubscribe } = this.props;
