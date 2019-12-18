@@ -51,9 +51,12 @@ class ChannelPage extends React.PureComponent {
   }
 
   componentDidMount() {
-    const { fetchChannelListMine } = this.props;
+    const { claim, fetchChannelListMine, fetchSubCount } = this.props;
     NativeModules.Firebase.setCurrentScreen('Channel');
     fetchChannelListMine();
+    if (claim) {
+      fetchSubCount(claim.claim_id);
+    }
   }
 
   handleSortByItemSelected = item => {
@@ -213,7 +216,7 @@ class ChannelPage extends React.PureComponent {
   };
 
   render() {
-    const { channels, claim, navigation, uri, drawerStack, popDrawerStack, timeItem } = this.props;
+    const { channels, claim, navigation, uri, drawerStack, popDrawerStack, subCount, timeItem } = this.props;
     const { name, permanent_url: permanentUrl } = claim;
     const { autoStyle, currentSortByItem, showSortPicker, showTimePicker, showTipView } = this.state;
     const ownedChannel = channels ? channels.map(channel => channel.permanent_url).includes(permanentUrl) : false;
@@ -258,6 +261,10 @@ class ChannelPage extends React.PureComponent {
 
             <View style={channelPageStyle.channelHeader}>
               <Text style={channelPageStyle.channelName}>{title && title.trim().length > 0 ? title : name}</Text>
+              <Text style={channelPageStyle.followerCount}>
+                {subCount === 1 && __('%follower% follower', { follower: subCount })}
+                {subCount > 1 && __('%follower% followers', { follower: subCount })}
+              </Text>
             </View>
 
             <View style={[channelPageStyle.avatarImageContainer, autoStyle]}>

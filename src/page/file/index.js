@@ -33,7 +33,9 @@ import {
 import {
   doClaimEligiblePurchaseRewards,
   doFetchCostInfoForUri,
+  doFetchViewCount,
   makeSelectCostInfoForUri,
+  makeSelectViewCountForUri,
   selectRewardContentClaimIds,
   selectBlackListedOutpoints,
 } from 'lbryinc';
@@ -76,6 +78,7 @@ const select = (state, props) => {
     title: makeSelectTitleForUri(contentUri)(state),
     recommendedContent: makeSelectRecommendedContentForUri(contentUri)(state),
     isSearchingRecommendContent: selectIsSearching(state),
+    viewCount: makeSelectViewCountForUri(contentUri)(state),
   };
 };
 
@@ -89,6 +92,7 @@ const perform = dispatch => ({
   fetchCostInfo: uri => dispatch(doFetchCostInfoForUri(uri)),
   fetchMyClaims: () => dispatch(doFetchClaimListMine()),
   fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
+  fetchViewCount: claimId => dispatch(doFetchViewCount(claimId)),
   fileGet: (uri, saveFile) => dispatch(doFileGet(uri, saveFile)),
   notify: data => dispatch(doToast(data)),
   popDrawerStack: () => dispatch(doPopDrawerStack()),
