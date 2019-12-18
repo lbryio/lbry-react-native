@@ -82,6 +82,8 @@ class SubscriptionsPage extends React.PureComponent {
     if (Constants.DRAWER_ROUTE_SUBSCRIPTIONS === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
     }
+
+    this.unsubscribeShortChannelUrls();
   }
 
   handleSortByItemSelected = item => {
@@ -107,6 +109,16 @@ class SubscriptionsPage extends React.PureComponent {
   prependSubscribedChannelsWithAll = subscribedChannels => {
     const channelUris = subscribedChannels.map(channel => channel.uri);
     return [Constants.ALL_PLACEHOLDER].concat(channelUris);
+  };
+
+  // Added in 0.12.1. Can be dropped on or after 1 Feb 2020.
+  unsubscribeShortChannelUrls = () => {
+    // this should only have to happen once
+    const { subscribedChannels, channelUnsubscribe } = this.props;
+    const badSubs = subscribedChannels.filter(sub => sub.uri.split('#')[1].length < 5);
+    if (badSubs.length > 0) {
+      badSubs.forEach(sub => channelUnsubscribe(sub));
+    }
   };
 
   render() {
