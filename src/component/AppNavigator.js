@@ -62,6 +62,7 @@ import NavigationButton from 'component/navigationButton';
 import discoverStyle from 'styles/discover';
 import searchStyle from 'styles/search';
 import SearchRightHeaderIcon from 'component/searchRightHeaderIcon';
+import Snackbar from 'react-native-snackbar';
 
 const SYNC_GET_INTERVAL = 1000 * 60 * 5; // every 5 minutes
 
@@ -364,7 +365,7 @@ class AppWithNavigationState extends React.Component {
       this.setState({ verifyPending: false });
 
       NativeModules.Firebase.track('email_verified', { email: user.primary_email });
-      ToastAndroid.show(__('Your email address was successfully verified.'), ToastAndroid.LONG);
+      Snackbar.show({ title: __('Your email address was successfully verified.'), duration: Snackbar.LENGTH_LONG });
 
       // get user settings after email verification
       this.getUserSettings();
@@ -381,7 +382,7 @@ class AppWithNavigationState extends React.Component {
     const { toast, emailToVerify, emailVerifyPending, emailVerifyErrorMessage, user } = nextProps;
 
     if (toast) {
-      const { message } = toast;
+      const { message, isError } = toast;
       let currentDisplayType;
       if (!currentDisplayType && message) {
         // default to toast if no display type set and there is a message specified
@@ -389,7 +390,14 @@ class AppWithNavigationState extends React.Component {
       }
 
       if (currentDisplayType === 'toast') {
-        ToastAndroid.show(message, ToastAndroid.LONG);
+        const props = {
+          title: message,
+          duration: Snackbar.LENGTH_LONG,
+        };
+        if (isError) {
+          props.backgroundColor = Colors.Red;
+        }
+        Snackbar.show(props);
       }
 
       dispatch(doDismissToast());
