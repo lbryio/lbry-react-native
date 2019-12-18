@@ -23,6 +23,7 @@ import EmptyStateView from 'component/emptyStateView';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
 import ModalPicker from 'component/modalPicker';
+import ModalTipView from 'component/modalTipView';
 import PageHeader from 'component/pageHeader';
 import SubscribeButton from 'component/subscribeButton';
 import SubscribeNotificationButton from 'component/subscribeNotificationButton';
@@ -36,6 +37,7 @@ class ChannelPage extends React.PureComponent {
     autoStyle: null,
     showSortPicker: false,
     showTimePicker: false,
+    showTipView: false,
     orderBy: ['release_time'], // sort by new by default
     activeTab: Constants.CONTENT_TAB,
     currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[1], // should always default to sorting channel pages by new
@@ -176,6 +178,10 @@ class ChannelPage extends React.PureComponent {
     }
   };
 
+  onTipPressed = () => {
+    this.setState({ showTipView: true });
+  };
+
   onSharePressed = () => {
     const { claim } = this.props;
     if (claim) {
@@ -212,7 +218,7 @@ class ChannelPage extends React.PureComponent {
   render() {
     const { channels, claim, navigation, uri, drawerStack, popDrawerStack, subCount, timeItem } = this.props;
     const { name, permanent_url: permanentUrl } = claim;
-    const { autoStyle, currentSortByItem, showSortPicker, showTimePicker } = this.state;
+    const { autoStyle, currentSortByItem, showSortPicker, showTimePicker, showTipView } = this.state;
     const ownedChannel = channels ? channels.map(channel => channel.permanent_url).includes(permanentUrl) : false;
 
     let thumbnailUrl,
@@ -297,6 +303,12 @@ class ChannelPage extends React.PureComponent {
                 icon={'share-alt'}
                 onPress={this.onSharePressed}
               />
+              <Button
+                style={[channelPageStyle.actionButton, channelPageStyle.tipButton]}
+                theme={'light'}
+                icon={'gift'}
+                onPress={this.onTipPressed}
+              />
               {!ownedChannel && <SubscribeButton style={channelPageStyle.subscribeButton} uri={fullUri} name={name} />}
               {false && !ownedChannel && (
                 <SubscribeNotificationButton
@@ -345,6 +357,16 @@ class ChannelPage extends React.PureComponent {
             onItemSelected={this.handleTimeItemSelected}
             selectedItem={timeItem}
             items={Constants.CLAIM_SEARCH_TIME_ITEMS}
+          />
+        )}
+        {showTipView && (
+          <ModalTipView
+            claim={claim}
+            channelName={claim.name}
+            contentName={title}
+            onCancelPress={() => this.setState({ showTipView: false })}
+            onOverlayPress={() => this.setState({ showTipView: false })}
+            onSendTipSuccessful={() => this.setState({ showTipView: false })}
           />
         )}
       </View>

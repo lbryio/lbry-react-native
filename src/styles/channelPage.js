@@ -176,6 +176,9 @@ const channelPageStyle = StyleSheet.create({
     marginLeft: 8,
     marginRight: 8,
   },
+  tipButton: {
+    marginRight: 8,
+  },
   followerCount: {
     fontFamily: 'Inter-UI-Regular',
     fontSize: 12,
