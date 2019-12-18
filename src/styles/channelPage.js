@@ -145,7 +145,7 @@ const channelPageStyle = StyleSheet.create({
     position: 'absolute',
     overflow: 'hidden',
     left: 24,
-    bottom: -40,
+    bottom: -24,
     zIndex: 100,
     alignItems: 'center',
     justifyContent: 'center',
@@ -175,6 +175,12 @@ const channelPageStyle = StyleSheet.create({
   shareButton: {
     marginLeft: 8,
     marginRight: 8,
+  },
+  followerCount: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 12,
+    color: Colors.White,
+    marginTop: 2,
   },
 });
 
