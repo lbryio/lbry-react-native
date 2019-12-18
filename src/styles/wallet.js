@@ -126,6 +126,16 @@ const walletStyle = StyleSheet.create({
     marginLeft: 16,
     marginBottom: 16,
   },
+  balanceFocus: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginLeft: 24,
+  },
+  balanceText: {
+    fontFamily: 'Inter-UI-SemiBold',
+    fontSize: 14,
+    marginLeft: 4,
+  },
   infoText: {
     color: '#aaaaaa',
     fontFamily: 'Inter-UI-Regular',

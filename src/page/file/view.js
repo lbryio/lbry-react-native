@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry, normalizeURI, parseURI } from 'lbry-redux';
+import { Lbry, formatCredits, normalizeURI, parseURI } from 'lbry-redux';
 import { Lbryio } from 'lbryinc';
 import {
   ActivityIndicator,
@@ -65,6 +65,7 @@ class FilePage extends React.PureComponent {
       autoOpened: false,
       autoDownloadStarted: false,
       autoPlayMedia: false,
+      creditsInputFocused: false,
       downloadButtonShown: false,
       downloadPressed: false,
       fileViewLogged: false,

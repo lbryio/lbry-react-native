@@ -1,5 +1,5 @@
 import React from 'react';
-import { CLAIM_VALUES, isNameValid, regexInvalidURI } from 'lbry-redux';
+import { CLAIM_VALUES, formatCredits, isNameValid, regexInvalidURI } from 'lbry-redux';
 import {
   ActivityIndicator,
   Alert,
@@ -38,6 +38,7 @@ export default class ChannelCreator extends React.PureComponent {
     autoStyle: null,
     canSave: true,
     claimId: null,
+    creditsInputFocused: false,
     currentSelectedValue: Constants.ITEM_ANONYMOUS,
     currentPhase: null,
     displayName: null,
@@ -960,11 +961,19 @@ export default class ChannelCreator extends React.PureComponent {
                   style={channelCreatorStyle.bidAmountInput}
                   value={String(newChannelBid)}
                   onChangeText={this.handleNewChannelBidChange}
+                  onFocus={() => this.setState({ creditsInputFocused: true })}
+                  onBlur={() => this.setState({ creditsInputFocused: false })}
                   placeholder={'0.00'}
                   keyboardType={'number-pad'}
                   underlineColorAndroid={Colors.NextLbryGreen}
                 />
                 <Text style={channelCreatorStyle.currency}>LBC</Text>
+                <View style={channelCreatorStyle.balance}>
+                  {this.state.creditsInputFocused && <Icon name="coins" size={12} />}
+                  {this.state.creditsInputFocused && (
+                    <Text style={channelCreatorStyle.balanceText}>{formatCredits(parseFloat(balance), 1, true)}</Text>
+                  )}
+                </View>
               </View>
               <Text style={channelCreatorStyle.helpText}>
                 {__('This LBC remains yours. It is a deposit to reserve the name and can be undone at any time.')}
