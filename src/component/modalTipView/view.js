@@ -65,14 +65,16 @@ export default class ModalTipView extends React.PureComponent {
   };
 
   render() {
-    const { balance, onCancelPress, onOverlayPress } = this.props;
+    const { balance, channelName, contentName, onCancelPress, onOverlayPress } = this.props;
     const canSendTip = this.state.tipAmount > 0;
 
     return (
       <TouchableOpacity style={modalStyle.overlay} activeOpacity={1} onPress={onOverlayPress}>
         <TouchableOpacity style={modalStyle.container} activeOpacity={1}>
           <View style={modalTipStyle.container}>
-            <Text style={modalTipStyle.title}>{__('Send a tip')}</Text>
+            <Text style={modalTipStyle.title} numberOfLines={1}>
+              {channelName ? __('Send a tip to %channel%', { channel: channelName }) : __('Send a tip')}
+            </Text>
 
             <View style={modalTipStyle.row}>
               <View style={modalTipStyle.amountRow}>
@@ -100,6 +102,20 @@ export default class ModalTipView extends React.PureComponent {
               {this.state.sendTipStarted && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
             </View>
 
+            <View style={modalTipStyle.info}>
+              <Text style={modalTipStyle.infoText}>
+                {__(
+                  'This will appear as a tip for %content%, which will boost its ability to be discovered while active.',
+                  { content: contentName }
+                )}
+              </Text>
+              <Link
+                style={modalTipStyle.learnMoreLink}
+                text={__('Learn more.')}
+                href={'https://lbry.com/faq/tipping'}
+              />
+            </View>
+
             <View style={modalTipStyle.buttonRow}>
               <Link
                 style={modalTipStyle.cancelTipLink}
@@ -109,7 +125,7 @@ export default class ModalTipView extends React.PureComponent {
                 }}
               />
               <Button
-                text={__('Send a tip')}
+                text={__('Send')}
                 style={modalTipStyle.button}
                 disabled={!canSendTip || this.state.sendTipStarted}
                 onPress={this.handleSendTip}

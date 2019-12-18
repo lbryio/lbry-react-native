@@ -355,6 +355,8 @@ class ChannelPage extends React.PureComponent {
         {showTipView && (
           <ModalTipView
             claim={claim}
+            channelName={claim.name}
+            contentName={title}
             onCancelPress={() => this.setState({ showTipView: false })}
             onOverlayPress={() => this.setState({ showTipView: false })}
             onSendTipSuccessful={() => this.setState({ showTipView: false })}

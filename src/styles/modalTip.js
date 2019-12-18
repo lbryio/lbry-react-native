@@ -53,6 +53,19 @@ const modalTipStyle = StyleSheet.create({
     fontSize: 14,
     marginLeft: 4,
   },
+  info: {
+    marginTop: 4,
+  },
+  infoText: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+    color: Colors.DescriptionGrey,
+  },
+  learnMoreLink: {
+    fontFamily: 'Inter-UI-Regular',
+    fontSize: 14,
+    color: Colors.LbryGreen,
+  },
 });
 
 export default modalTipStyle;

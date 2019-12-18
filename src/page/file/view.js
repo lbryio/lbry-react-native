@@ -36,6 +36,7 @@ import FilePrice from 'component/filePrice';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import Link from 'component/link';
 import MediaPlayer from 'component/mediaPlayer';
+import ModalTipView from 'component/modalTipView';
 import RelatedContent from 'component/relatedContent';
 import SubscribeButton from 'component/subscribeButton';
 import SubscribeNotificationButton from 'component/subscribeNotificationButton';
@@ -50,8 +51,6 @@ class FilePage extends React.PureComponent {
   static navigationOptions = {
     title: '',
   };
-
-  tipAmountInput = null;
 
   playerBackground = null;
 
@@ -83,7 +82,6 @@ class FilePage extends React.PureComponent {
       showTipView: false,
       playerBgHeight: 0,
       playerHeight: 0,
-      tipAmount: null,
       uri: null,
       uriVars: null,
       stopDownloadConfirmed: false,
@@ -576,39 +574,6 @@ class FilePage extends React.PureComponent {
     }
   };
 
-  handleSendTip = () => {
-    const { claim, balance, navigation, notify, sendTip } = this.props;
-    const { uri } = navigation.state.params;
-    const { tipAmount } = this.state;
-
-    if (tipAmount > balance) {
-      notify({
-        message: 'Insufficient credits',
-      });
-      return;
-    }
-
-    const suffix = 'credit' + (parseInt(tipAmount, 10) === 1 ? '' : 's');
-    Alert.alert(
-      'Send tip',
-      `Are you sure you want to tip ${tipAmount} ${suffix}?`,
-      [
-        { text: 'No' },
-        {
-          text: 'Yes',
-          onPress: () => {
-            this.setState({ sendTipStarted: true }, () =>
-              sendTip(tipAmount, claim.claim_id, false, () => {
-                this.setState({ tipAmount: null, showTipView: false, sendTipStarted: false });
-              })
-            );
-          },
-        },
-      ],
-      { cancelable: true }
-    );
-  };
-
   renderTags = tags => {
     const { navigation } = this.props;
     return tags.map((tag, i) => (
@@ -821,7 +786,6 @@ class FilePage extends React.PureComponent {
       const { height, signing_channel: signingChannel, value } = claim;
       const channelName = signingChannel && signingChannel.name;
       const channelClaimId = claim && claim.signing_channel && claim.signing_channel.claim_id;
-      const canSendTip = this.state.tipAmount > 0;
       const fullUri = `${claim.name}#${claim.claim_id}`;
       const canEdit = myClaimUris.includes(normalizeURI(fullUri));
       const showActions =
@@ -1154,40 +1118,6 @@ class FilePage extends React.PureComponent {
                   </View>
                 </View>
 
-                {this.state.showTipView && <View style={filePageStyle.divider} />}
-                {this.state.showTipView && (
-                  <View style={filePageStyle.tipCard}>
-                    <View style={filePageStyle.row}>
-                      <View style={filePageStyle.amountRow}>
-                        <TextInput
-                          editable={!this.state.sendTipStarted}
-                          ref={ref => (this.tipAmountInput = ref)}
-                          onChangeText={value => this.setState({ tipAmount: value })}
-                          underlineColorAndroid={Colors.NextLbryGreen}
-                          keyboardType={'numeric'}
-                          placeholder={'0'}
-                          value={this.state.tipAmount}
-                          selectTextOnFocus
-                          style={[filePageStyle.input, filePageStyle.tipAmountInput]}
-                        />
-                        <Text style={[filePageStyle.text, filePageStyle.currency]}>LBC</Text>
-                      </View>
-                      {this.state.sendTipStarted && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
-                      <Link
-                        style={[filePageStyle.link, filePageStyle.cancelTipLink]}
-                        text={__('Cancel')}
-                        onPress={() => this.setState({ showTipView: false })}
-                      />
-                      <Button
-                        text={__('Send a tip')}
-                        style={[filePageStyle.button, filePageStyle.sendButton]}
-                        disabled={!canSendTip || this.state.sendTipStarted}
-                        onPress={this.handleSendTip}
-                      />
-                    </View>
-                  </View>
-                )}
-
                 {this.state.showDescription && description && description.length > 0 && (
                   <View style={filePageStyle.divider} />
                 )}
@@ -1220,9 +1150,20 @@ class FilePage extends React.PureComponent {
               </ScrollView>
             </View>
           )}
-          {!this.state.fullscreenMode && !this.state.showImageViewer && !this.state.showWebView && (
-            <FloatingWalletBalance navigation={navigation} />
+          {this.state.showTipView && (
+            <ModalTipView
+              claim={claim}
+              channelName={channelName}
+              contentName={title}
+              onCancelPress={() => this.setState({ showTipView: false })}
+              onOverlayPress={() => this.setState({ showTipView: false })}
+              onSendTipSuccessful={() => this.setState({ showTipView: false })}
+            />
           )}
+          {!this.state.fullscreenMode &&
+            !this.state.showTipView &&
+            !this.state.showImageViewer &&
+            !this.state.showWebView && <FloatingWalletBalance navigation={navigation} />}
         </View>
       );
     }
