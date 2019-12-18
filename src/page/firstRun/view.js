@@ -309,7 +309,7 @@ class FirstRunScreen extends React.PureComponent {
   onEmailChanged = email => {
     this.setState({ email });
     if (Constants.FIRST_RUN_PAGE_EMAIL_COLLECT === this.state.currentPage) {
-      this.setState({ showSkip: !email || email.trim().length === 0 });
+      this.setState({ showSkip: !email || typeof email !== 'string' || email.trim().length === 0 });
     } else {
       this.setState({ showSkip: false });
     }
