@@ -64,6 +64,8 @@ const channelPageStyle = StyleSheet.create({
     color: Colors.White,
     fontFamily: 'Inter-UI-Regular',
     fontSize: 18,
+    padding: 2,
+    backgroundColor: '#000000aa',
   },
   subscribeButtonContainer: {
     position: 'absolute',
@@ -184,6 +186,11 @@ const channelPageStyle = StyleSheet.create({
     fontSize: 12,
     color: Colors.White,
     marginTop: 2,
+    padding: 2,
+    flexWrap: 'wrap',
+  },
+  followerCountBg: {
+    backgroundColor: '#000000aa',
   },
 });
 

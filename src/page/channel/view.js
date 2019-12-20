@@ -261,7 +261,7 @@ class ChannelPage extends React.PureComponent {
 
             <View style={channelPageStyle.channelHeader}>
               <Text style={channelPageStyle.channelName}>{title && title.trim().length > 0 ? title : name}</Text>
-              <Text style={channelPageStyle.followerCount}>
+              <Text style={[channelPageStyle.followerCount, subCount >= 1 ? channelPageStyle.followerCountBg : null]}>
                 {subCount === 1 && __('%follower% follower', { follower: subCount })}
                 {subCount > 1 && __('%follower% followers', { follower: subCount })}
               </Text>
