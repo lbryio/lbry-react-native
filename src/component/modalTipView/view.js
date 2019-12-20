@@ -10,6 +10,8 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
 
 export default class ModalTipView extends React.PureComponent {
+  tipAmountInput = null;
+
   state = {
     creditsInputFocused: false,
     sendTipStarted: false,
@@ -30,11 +32,11 @@ export default class ModalTipView extends React.PureComponent {
     const amount = parseInt(tipAmount, 10);
     const message =
       amount === 1
-        ? __('Are you sure you want to tip %amount% credit', { amount })
-        : __('Are you sure you want to tip %amount% credits', { amount });
+        ? __('Please confirm you want to tip %amount% credit', { amount })
+        : __('Please confirm you want to tip %amount% credits', { amount });
 
     Alert.alert(
-      __('Send tip'),
+      __('Send Tip'),
       message,
       [
         { text: __('No') },
@@ -71,7 +73,14 @@ export default class ModalTipView extends React.PureComponent {
     return (
       <TouchableOpacity style={modalStyle.overlay} activeOpacity={1} onPress={onOverlayPress}>
         <TouchableOpacity style={modalStyle.container} activeOpacity={1}>
-          <View style={modalTipStyle.container}>
+          <View
+            style={modalTipStyle.container}
+            onLayout={() => {
+              if (this.tipAmountInput) {
+                this.tipAmountInput.focus();
+              }
+            }}
+          >
             <Text style={modalTipStyle.title} numberOfLines={1}>
               {channelName ? __('Send a tip to %channel%', { channel: channelName }) : __('Send a tip')}
             </Text>
@@ -107,13 +116,13 @@ export default class ModalTipView extends React.PureComponent {
                 {__(
                   'This will appear as a tip for %content%, which will boost its ability to be discovered while active.',
                   { content: contentName }
-                )}
+                )}{' '}
+                <Link
+                  style={modalTipStyle.learnMoreLink}
+                  text={__('Learn more.')}
+                  href={'https://lbry.com/faq/tipping'}
+                />
               </Text>
-              <Link
-                style={modalTipStyle.learnMoreLink}
-                text={__('Learn more.')}
-                href={'https://lbry.com/faq/tipping'}
-              />
             </View>
 
             <View style={modalTipStyle.buttonRow}>
