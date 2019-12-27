@@ -101,29 +101,27 @@ class FilePage extends React.PureComponent {
 
   onComponentFocused = () => {
     StatusBar.setHidden(false);
-    NativeModules.Firebase.setCurrentScreen('File');
+    NativeModules.Firebase.setCurrentScreen('File').then(result => {
+      DeviceEventEmitter.addListener('onDownloadStarted', this.handleDownloadStarted);
+      DeviceEventEmitter.addListener('onDownloadUpdated', this.handleDownloadUpdated);
+      DeviceEventEmitter.addListener('onDownloadCompleted', this.handleDownloadCompleted);
+      DeviceEventEmitter.addListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
+      DeviceEventEmitter.addListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
 
-    DeviceEventEmitter.addListener('onDownloadStarted', this.handleDownloadStarted);
-    DeviceEventEmitter.addListener('onDownloadUpdated', this.handleDownloadUpdated);
-    DeviceEventEmitter.addListener('onDownloadCompleted', this.handleDownloadCompleted);
+      const { fetchMyClaims, fileInfo, isResolvingUri, resolveUri, navigation } = this.props;
+      const { uri, uriVars } = navigation.state.params;
+      this.setState({ uri, uriVars });
 
-    const { fetchMyClaims, fileInfo, isResolvingUri, resolveUri, navigation } = this.props;
-    const { uri, uriVars } = navigation.state.params;
-    this.setState({ uri, uriVars });
+      if (!isResolvingUri) resolveUri(uri);
 
-    if (!isResolvingUri) resolveUri(uri);
+      this.fetchFileInfo(this.props);
+      this.fetchCostInfo(this.props);
 
-    this.fetchFileInfo(this.props);
-    this.fetchCostInfo(this.props);
+      fetchMyClaims();
 
-    fetchMyClaims();
-
-    if (NativeModules.Firebase) {
       NativeModules.Firebase.track('open_file_page', { uri: uri });
-    }
-    if (NativeModules.UtilityModule) {
       NativeModules.UtilityModule.keepAwakeOn();
-    }
+    });
   };
 
   componentDidMount() {
@@ -236,9 +234,9 @@ class FilePage extends React.PureComponent {
       resolveUri(uri);
     }
 
-    if (title && !this.state.didSearchRecommended) {
+    /* if (title && !this.state.didSearchRecommended) {
       this.setState({ didSearchRecommended: true }, () => searchRecommended(title));
-    }
+    } */
 
     // Returned to the page. If mediaLoaded, and currentMediaInfo is different, update
     if (this.state.mediaLoaded && window.currentMediaInfo && window.currentMediaInfo.uri !== this.state.uri) {
@@ -402,6 +400,8 @@ class FilePage extends React.PureComponent {
     DeviceEventEmitter.removeListener('onDownloadStarted', this.handleDownloadStarted);
     DeviceEventEmitter.removeListener('onDownloadUpdated', this.handleDownloadUpdated);
     DeviceEventEmitter.removeListener('onDownloadCompleted', this.handleDownloadCompleted);
+    DeviceEventEmitter.removeListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
+    DeviceEventEmitter.removeListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
   }
 
   handleDownloadStarted = evt => {
@@ -420,6 +420,32 @@ class FilePage extends React.PureComponent {
     const { completeDownload } = this.props;
     const { uri, outpoint, fileInfo } = evt;
     completeDownload(uri, outpoint, fileInfo);
+  };
+
+  handleStoragePermissionGranted = () => {
+    // permission was allowed. proceed to download
+    const { notify } = this.props;
+
+    // update the configured download folder and then download
+    NativeModules.UtilityModule.getDownloadDirectory().then(downloadDirectory => {
+      Lbry.settings_set({
+        key: 'download_directory',
+        value: downloadDirectory,
+      })
+        .then(() => this.performDownload())
+        .catch(() => {
+          notify({ message: 'The file could not be downloaded to the default download directory.', isError: true });
+        });
+    });
+  };
+
+  handleStoragePermissionRefused = () => {
+    const { notify } = this.props;
+    this.setState({ downloadPressed: false });
+    notify({
+      message: __('The file could not be downloaded because the permission to write to storage was not granted.'),
+      isError: true,
+    });
   };
 
   localUriForFileInfo = fileInfo => {
@@ -589,14 +615,50 @@ class FilePage extends React.PureComponent {
     ));
   };
 
-  onFileDownloadButtonPlayed = () => {
-    const { setPlayerVisible } = this.props;
-    this.startTime = Date.now();
-    this.setState({ downloadPressed: true, autoPlayMedia: true, stopDownloadConfirmed: false });
-    setPlayerVisible();
+  onFileDownloadButtonPressed = () => {
+    const { costInfo, contentType, purchaseUri, setPlayerVisible } = this.props;
+    const { uri } = this.state;
+    const mediaType = Lbry.getMediaType(contentType);
+    const isPlayable = mediaType === 'video' || mediaType === 'audio';
+    const isViewable = mediaType === 'image' || mediaType === 'text';
+
+    NativeModules.Firebase.track('purchase_uri', { uri: uri });
+
+    if (!isPlayable) {
+      this.checkStoragePermissionForDownload();
+    } else {
+      purchaseUri(uri, costInfo, !isPlayable);
+    }
+
+    if (isPlayable) {
+      this.startTime = Date.now();
+      this.setState({ downloadPressed: true, autoPlayMedia: true, stopDownloadConfirmed: false });
+      setPlayerVisible();
+    }
+    if (isViewable) {
+      this.setState({ downloadPressed: true });
+    }
   };
 
   onDownloadPressed = () => {
+    this.checkStoragePermissionForDownload();
+  };
+
+  checkStoragePermissionForDownload = () => {
+    this.setState({ downloadPressed: true }, () => {
+      // check if we the permission to write to external storage has been granted
+      NativeModules.UtilityModule.canReadWriteStorage().then(canReadWrite => {
+        if (!canReadWrite) {
+          // request permission
+          NativeModules.UtilityModule.requestStoragePermission();
+        } else {
+          this.performDownload();
+        }
+      });
+    });
+  };
+
+  performDownload = () => {
     const { claim, costInfo, purchaseUri } = this.props;
     this.setState(
       {
@@ -604,7 +666,10 @@ class FilePage extends React.PureComponent {
         autoPlayMedia: false,
         stopDownloadConfirmed: false,
       },
-      () => purchaseUri(claim.permanent_url, costInfo, true)
+      () => {
+        purchaseUri(claim.permanent_url, costInfo, true);
+        NativeModules.UtilityModule.checkDownloads();
+      }
     );
   };
 
@@ -621,14 +686,7 @@ class FilePage extends React.PureComponent {
       // file already in library or URI already purchased, use fileGet directly
       this.setState({ fileGetStarted: true }, () => fileGet(uri, true));
     } else {
-      this.setState(
-        {
-          downloadPressed: true,
-          autoPlayMedia: false,
-          stopDownloadConfirmed: false,
-        },
-        () => purchaseUri(uri, costInfo, true)
-      );
+      this.checkStoragePermissionForDownload();
     }
   };
 
@@ -662,17 +720,6 @@ class FilePage extends React.PureComponent {
           () => pushDrawerStack(Constants.DRAWER_ROUTE_FILE_VIEW)
         );
       }
-    }
-  };
-
-  onMediaContainerPressed = () => {
-    const { costInfo, contentType, purchaseUri } = this.props;
-    const { uri } = this.state;
-    const mediaType = Lbry.getMediaType(contentType);
-    const isPlayable = mediaType === 'video' || mediaType === 'audio';
-    purchaseUri(uri, costInfo, isPlayable);
-    if (isPlayable) {
-      this.onFileDownloadButtonPlayed();
     }
   };
 
@@ -835,10 +882,12 @@ class FilePage extends React.PureComponent {
 
       if (fileInfo && !this.state.autoDownloadStarted && this.state.uriVars && this.state.uriVars.download === 'true') {
         this.setState({ autoDownloadStarted: true }, () => {
-          purchaseUri(uri, costInfo, !isPlayable);
-          if (NativeModules.UtilityModule) {
-            NativeModules.UtilityModule.checkDownloads();
+          if (!isPlayable) {
+            this.checkStoragePermissionForDownload();
+          } else {
+            purchaseUri(uri, costInfo, !isPlayable);
           }
+          NativeModules.UtilityModule.checkDownloads();
         });
       }
 
@@ -872,7 +921,7 @@ class FilePage extends React.PureComponent {
               <TouchableOpacity
                 activeOpacity={0.5}
                 style={filePageStyle.mediaContainer}
-                onPress={this.onMediaContainerPressed}
+                onPress={this.onFileDownloadButtonPressed}
               >
                 {(canOpen || (!fileInfo || (isPlayable && !canLoadMedia)) || (!canOpen && fileInfo)) && (
                   <FileItemMedia
@@ -916,8 +965,7 @@ class FilePage extends React.PureComponent {
                     openFile={() => this.openFile(localFileUri, mediaType)}
                     isPlayable={isPlayable}
                     isViewable={isViewable}
-                    onPlay={this.onFileDownloadButtonPlayed}
-                    onView={() => this.setState({ downloadPressed: true })}
+                    onFileActionPress={this.onFileDownloadButtonPressed}
                     onButtonLayout={() => this.setState({ downloadButtonShown: true })}
                   />
                 )}
@@ -1159,7 +1207,7 @@ class FilePage extends React.PureComponent {
                 {isSearchingRecommendContent && (
                   <ActivityIndicator size="small" color={Colors.NextLbryGreen} style={filePageStyle.relatedLoading} />
                 )}
-                {!isSearchingRecommendContent && recommendedContent && recommendedContent.length > 0 && (
+                {false && !isSearchingRecommendContent && recommendedContent && recommendedContent.length > 0 && (
                   <RelatedContent navigation={navigation} uri={uri} fullUri={fullUri} />
                 )}
               </ScrollView>

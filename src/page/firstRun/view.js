@@ -228,7 +228,13 @@ class FirstRunScreen extends React.PureComponent {
   handleContinuePressed = () => {
     const { notify, user, hasSyncedWallet } = this.props;
     const pageIndex = FirstRunScreen.pages.indexOf(this.state.currentPage);
-    if (Constants.FIRST_RUN_PAGE_WALLET === this.state.currentPage) {
+
+    if (Constants.FIRST_RUN_PAGE_WELCOME === this.state.currentPage) {
+      // only show the welcome screen on first run
+      this.closeFinalPage();
+    }
+
+    /* if (Constants.FIRST_RUN_PAGE_WALLET === this.state.currentPage) {
       // do apply sync to check if the password is valid
       if (hasSyncedWallet) {
         this.checkWalletPassword();
@@ -256,7 +262,7 @@ class FirstRunScreen extends React.PureComponent {
       } else {
         this.showNextPage();
       }
-    }
+    } */
   };
 
   handleEmailCollectPageContinue() {
@@ -500,7 +506,12 @@ class FirstRunScreen extends React.PureComponent {
                   {Constants.FIRST_RUN_PAGE_SKIP_ACCOUNT !== this.state.currentPage &&
                     Constants.FIRST_RUN_PAGE_EMAIL_VERIFY !== this.state.currentPage && (
                     <Text style={firstRunStyle.buttonText}>
-                      {Constants.FIRST_RUN_PAGE_WALLET === this.state.currentPage ? __('Use LBRY') : __('Continue')} »
+                      {[Constants.FIRST_RUN_PAGE_WALLET, Constants.FIRST_RUN_PAGE_WELCOME].includes(
+                        this.state.currentPage
+                      )
+                        ? __('Use LBRY')
+                        : __('Continue')}{' '}
+                        »
                     </Text>
                   )}
                 </TouchableOpacity>

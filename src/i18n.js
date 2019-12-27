@@ -52,8 +52,9 @@ function checkMessageAndSave(message, messagesFilePath) {
         ); */
       })
       .catch(err => {
-        if (err) {
-          throw err;
+        if (err && !isProduction) {
+          // only do this when not in production
+          console.error(err);
         }
       });
   }
