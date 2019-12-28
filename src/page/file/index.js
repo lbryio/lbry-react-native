@@ -9,7 +9,6 @@ import {
   doDeletePurchasedUri,
   doResolveUri,
   doResolveUris,
-  doSearch,
   doSendTip,
   doToast,
   makeSelectIsUriResolving,
@@ -19,7 +18,6 @@ import {
   makeSelectContentPositionForUri,
   makeSelectContentTypeForUri,
   makeSelectMetadataForUri,
-  makeSelectRecommendedContentForUri,
   makeSelectStreamingUrlForUri,
   makeSelectThumbnailForUri,
   makeSelectTitleForUri,
@@ -29,7 +27,6 @@ import {
   selectPurchasedUris,
   selectFailedPurchaseUris,
   selectPurchaseUriErrorMessage,
-  selectResolvingUris,
   selectIsSearching,
 } from 'lbry-redux';
 import {
@@ -72,8 +69,6 @@ const select = (state, props) => {
     streamingUrl: makeSelectStreamingUrlForUri(contentUri)(state),
     thumbnail: makeSelectThumbnailForUri(contentUri)(state),
     title: makeSelectTitleForUri(contentUri)(state),
-    recommendedContent: makeSelectRecommendedContentForUri(contentUri)(state),
-    resolvingUris: selectResolvingUris(state),
     isSearchingRecommendContent: selectIsSearching(state),
     viewCount: makeSelectViewCountForUri(contentUri)(state),
   };
@@ -98,7 +93,6 @@ const perform = dispatch => ({
   deletePurchasedUri: uri => dispatch(doDeletePurchasedUri(uri)),
   resolveUri: uri => dispatch(doResolveUri(uri)),
   resolveUris: uris => dispatch(doResolveUris(uris)),
-  searchRecommended: query => dispatch(doSearch(query, 20, undefined, true)),
   sendTip: (amount, claimId, isSupport, successCallback, errorCallback) =>
     dispatch(doSendTip(amount, claimId, isSupport, successCallback, errorCallback)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(true)),
@@ -108,5 +102,5 @@ const perform = dispatch => ({
 
 export default connect(
   select,
-  perform
+  perform,
 )(FilePage);

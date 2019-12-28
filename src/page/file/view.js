@@ -87,6 +87,7 @@ class FilePage extends React.PureComponent {
       playerHeight: 0,
       uri: null,
       uriVars: null,
+      showRecommended: false,
       stopDownloadConfirmed: false,
       streamingMode: false,
       viewCountFetched: false,
@@ -339,7 +340,7 @@ class FilePage extends React.PureComponent {
           },
         },
       ],
-      { cancelable: true }
+      { cancelable: true },
     );
   };
 
@@ -375,7 +376,7 @@ class FilePage extends React.PureComponent {
           },
         },
       ],
-      { cancelable: true }
+      { cancelable: true },
     );
   };
 
@@ -524,7 +525,6 @@ class FilePage extends React.PureComponent {
   };
 
   onPlaybackStarted = () => {
-    const { searchRecommended, title } = this.props;
     let timeToStartMillis, timeToStart;
     if (this.startTime) {
       timeToStartMillis = Date.now() - this.startTime;
@@ -544,9 +544,7 @@ class FilePage extends React.PureComponent {
     NativeModules.Firebase.track('play', payload);
 
     // only fetch recommended content after playback has started
-    if (title) {
-      searchRecommended(title);
-    }
+    this.setState({ showRecommended: true });
   };
 
   onPlaybackFinished = () => {
@@ -652,7 +650,7 @@ class FilePage extends React.PureComponent {
       () => {
         purchaseUri(claim.permanent_url, costInfo, true);
         NativeModules.UtilityModule.checkDownloads();
-      }
+      },
     );
   };
 
@@ -689,7 +687,7 @@ class FilePage extends React.PureComponent {
             ],
             showImageViewer: true,
           },
-          () => pushDrawerStack(Constants.DRAWER_ROUTE_FILE_VIEW)
+          () => pushDrawerStack(Constants.DRAWER_ROUTE_FILE_VIEW),
         );
       }
     }
@@ -700,7 +698,7 @@ class FilePage extends React.PureComponent {
           {
             showWebView: true,
           },
-          () => pushDrawerStack(Constants.DRAWER_ROUTE_FILE_VIEW)
+          () => pushDrawerStack(Constants.DRAWER_ROUTE_FILE_VIEW),
         );
       }
     }
@@ -736,6 +734,8 @@ class FilePage extends React.PureComponent {
     const { isChannel } = parseURI(uri);
     const myChannelUris = channels ? channels.map(channel => channel.permanent_url) : [];
     const ownedClaim = myClaimUris.includes(uri) || myChannelUris.includes(uri);
+
+    console.log('calling render...');
 
     let innerContent = null;
     if ((isResolvingUri && !claim) || !claim) {
@@ -794,7 +794,7 @@ class FilePage extends React.PureComponent {
         <View style={filePageStyle.dmcaContainer}>
           <Text style={filePageStyle.dmcaText}>
             {__(
-              'In response to a complaint we received under the US Digital Millennium Copyright Act, we have blocked access to this content from our applications.'
+              'In response to a complaint we received under the US Digital Millennium Copyright Act, we have blocked access to this content from our applications.',
             )}
           </Text>
           <Link style={filePageStyle.dmcaLink} href="https://lbry.com/faq/dmca" text={__('Read More')} />
@@ -882,6 +882,8 @@ class FilePage extends React.PureComponent {
     return (
       <View style={filePageStyle.pageContainer}>
         {!this.state.fullscreenMode && <UriBar value={uri} navigation={navigation} />}
+        {innerContent}
+
         {this.state.showWebView && isWebViewable && (
           <WebView allowFileAccess source={{ uri: localFileUri }} style={filePageStyle.viewer} />
         )}
@@ -892,7 +894,7 @@ class FilePage extends React.PureComponent {
             renderIndicator={() => null}
           />
         )}
-        {!this.state.showWebView && (
+        {!innerContent && !this.state.showWebView && (
           <View
             style={
               this.state.fullscreenMode ? filePageStyle.innerPageContainerFsMode : filePageStyle.innerPageContainer
@@ -957,7 +959,7 @@ class FilePage extends React.PureComponent {
                 <Icon name={'arrow-left'} size={18} style={filePageStyle.backButtonIcon} />
               </TouchableOpacity>
             </TouchableOpacity>
-            {(this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) && (
+            {!innerContent && (this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) && (
               <View
                 style={playerBgStyle}
                 ref={ref => {
@@ -970,10 +972,10 @@ class FilePage extends React.PureComponent {
                 }}
               />
             )}
-            {(this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) && this.state.fullscreenMode && (
-              <View style={fsPlayerBgStyle} />
-            )}
-            {(this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) && (
+            {!innerContent &&
+              (this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) &&
+              this.state.fullscreenMode && <View style={fsPlayerBgStyle} />}
+            {!innerContent && (this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) && (
               <MediaPlayer
                 claim={claim}
                 assignPlayer={ref => {
@@ -998,195 +1000,194 @@ class FilePage extends React.PureComponent {
               />
             )}
 
-            <ScrollView
-              style={filePageStyle.scrollContainer}
-              contentContainerstyle={showActions ? null : filePageStyle.scrollContent}
-              keyboardShouldPersistTaps={'handled'}
-              ref={ref => {
-                this.scrollView = ref;
-              }}
-            >
-              <TouchableWithoutFeedback
-                style={filePageStyle.titleTouch}
-                onPress={() => this.setState({ showDescription: !this.state.showDescription })}
+            {!innerContent && (
+              <ScrollView
+                style={filePageStyle.scrollContainer}
+                contentContainerstyle={showActions ? null : filePageStyle.scrollContent}
+                keyboardShouldPersistTaps={'handled'}
+                ref={ref => {
+                  this.scrollView = ref;
+                }}
               >
-                <View style={filePageStyle.titleArea}>
-                  <View style={filePageStyle.titleRow}>
-                    <Text style={filePageStyle.title} selectable>
-                      {title}
-                    </Text>
-                    {isRewardContent && <Icon name="award" style={filePageStyle.rewardIcon} size={16} />}
-                    <View style={filePageStyle.descriptionToggle}>
-                      <Icon name={this.state.showDescription ? 'caret-up' : 'caret-down'} size={24} />
-                    </View>
-                  </View>
-                  <Text style={filePageStyle.viewCount}>
-                    {viewCount === 1 && __('%view% view', { view: viewCount })}
-                    {viewCount > 1 && __('%view% views', { view: viewCount })}
-                  </Text>
-                </View>
-              </TouchableWithoutFeedback>
-
-              <View style={filePageStyle.largeButtonsRow}>
-                <TouchableOpacity style={filePageStyle.largeButton} onPress={this.handleSharePress}>
-                  <Icon name={'share-alt'} size={16} style={filePageStyle.largeButtonIcon} />
-                  <Text style={filePageStyle.largeButtonText}>{__('Share')}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={filePageStyle.largeButton}
-                  onPress={() => this.setState({ showTipView: true })}
+                <TouchableWithoutFeedback
+                  style={filePageStyle.titleTouch}
+                  onPress={() => this.setState({ showDescription: !this.state.showDescription })}
                 >
-                  <Icon name={'gift'} size={16} style={filePageStyle.largeButtonIcon} />
-                  <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
-                </TouchableOpacity>
-
-                {!canEdit && !isPlayable && (
-                  <View style={filePageStyle.sharedLargeButton}>
-                    {!fileInfo ||
-                      (fileInfo.written_bytes <= 0 && !completed && (
-                        <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onDownloadPressed}>
-                          <Icon name={'download'} size={16} style={filePageStyle.largeButtonIcon} />
-                          <Text style={filePageStyle.largeButtonText}>{__('Download')}</Text>
-                        </TouchableOpacity>
-                      ))}
-
-                    {!completed &&
-                      fileInfo &&
-                      !fileInfo.stopped &&
-                      fileInfo.written_bytes > 0 &&
-                      fileInfo.written_bytes < fileInfo.total_bytes &&
-                      !this.state.stopDownloadConfirmed && (
-                      <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onStopDownloadPressed}>
-                        <Icon name={'stop'} size={16} style={filePageStyle.largeButtonIcon} />
-                        <Text style={filePageStyle.largeButtonText}>{__('Stop')}</Text>
-                      </TouchableOpacity>
-                    )}
-
-                    {completed && fileInfo && fileInfo.written_bytes >= fileInfo.total_bytes && (
-                      <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onOpenFilePressed}>
-                        <Icon name={'folder-open'} size={16} style={filePageStyle.largeButtonIcon} />
-                        <Text style={filePageStyle.largeButtonText}>{__('Open')}</Text>
-                      </TouchableOpacity>
-                    )}
+                  <View style={filePageStyle.titleArea}>
+                    <View style={filePageStyle.titleRow}>
+                      <Text style={filePageStyle.title} selectable>
+                        {title}
+                      </Text>
+                      {isRewardContent && <Icon name="award" style={filePageStyle.rewardIcon} size={16} />}
+                      <View style={filePageStyle.descriptionToggle}>
+                        <Icon name={this.state.showDescription ? 'caret-up' : 'caret-down'} size={24} />
+                      </View>
+                    </View>
+                    <Text style={filePageStyle.viewCount}>
+                      {viewCount === 1 && __('%view% view', { view: viewCount })}
+                      {viewCount > 1 && __('%view% views', { view: viewCount })}
+                    </Text>
                   </View>
-                )}
+                </TouchableWithoutFeedback>
 
-                {!canEdit && (
+                <View style={filePageStyle.largeButtonsRow}>
+                  <TouchableOpacity style={filePageStyle.largeButton} onPress={this.handleSharePress}>
+                    <Icon name={'share-alt'} size={16} style={filePageStyle.largeButtonIcon} />
+                    <Text style={filePageStyle.largeButtonText}>{__('Share')}</Text>
+                  </TouchableOpacity>
+
                   <TouchableOpacity
                     style={filePageStyle.largeButton}
-                    onPress={() => Linking.openURL(`https://lbry.com/dmca/${claim.claim_id}`)}
+                    onPress={() => this.setState({ showTipView: true })}
                   >
-                    <Icon name={'flag'} size={16} style={filePageStyle.largeButtonIcon} />
-                    <Text style={filePageStyle.largeButtonText}>{__('Report')}</Text>
+                    <Icon name={'gift'} size={16} style={filePageStyle.largeButtonIcon} />
+                    <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
                   </TouchableOpacity>
-                )}
 
-                {canEdit && (
-                  <TouchableOpacity style={filePageStyle.largeButton} onPress={this.onEditPressed}>
-                    <Icon name={'edit'} size={16} style={filePageStyle.largeButtonIcon} />
-                    <Text style={filePageStyle.largeButtonText}>{__('Edit')}</Text>
-                  </TouchableOpacity>
-                )}
+                  {!canEdit && !isPlayable && (
+                    <View style={filePageStyle.sharedLargeButton}>
+                      {!fileInfo ||
+                        (fileInfo.written_bytes <= 0 && !completed && (
+                          <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onDownloadPressed}>
+                            <Icon name={'download'} size={16} style={filePageStyle.largeButtonIcon} />
+                            <Text style={filePageStyle.largeButtonText}>{__('Download')}</Text>
+                          </TouchableOpacity>
+                        ))}
 
-                {(completed || canEdit) && (
-                  <TouchableOpacity style={filePageStyle.largeButton} onPress={this.onDeletePressed}>
-                    <Icon name={'trash-alt'} size={16} style={filePageStyle.largeButtonIcon} />
-                    <Text style={filePageStyle.largeButtonText}>{__('Delete')}</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
+                      {!completed &&
+                        fileInfo &&
+                        !fileInfo.stopped &&
+                        fileInfo.written_bytes > 0 &&
+                        fileInfo.written_bytes < fileInfo.total_bytes &&
+                        !this.state.stopDownloadConfirmed && (
+                        <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onStopDownloadPressed}>
+                          <Icon name={'stop'} size={16} style={filePageStyle.largeButtonIcon} />
+                          <Text style={filePageStyle.largeButtonText}>{__('Stop')}</Text>
+                        </TouchableOpacity>
+                      )}
 
-              <View style={filePageStyle.channelRow}>
-                <View style={filePageStyle.publishInfo}>
-                  {channelName && (
-                    <Link
-                      style={filePageStyle.channelName}
-                      selectable
-                      text={channelName}
-                      numberOfLines={1}
-                      ellipsizeMode={'tail'}
-                      onPress={() => {
-                        navigateToUri(
-                          navigation,
-                          normalizeURI(shortChannelUri || fullChannelUri),
-                          null,
-                          false,
-                          fullChannelUri
-                        );
-                      }}
-                    />
-                  )}
-                  {!channelName && (
-                    <Text style={filePageStyle.anonChannelName} selectable ellipsizeMode={'tail'}>
-                      {__('Anonymous')}
-                    </Text>
-                  )}
-                  <DateTime
-                    style={filePageStyle.publishDate}
-                    textStyle={filePageStyle.publishDateText}
-                    uri={uri}
-                    formatOptions={{ day: 'numeric', month: 'long', year: 'numeric' }}
-                    show={DateTime.SHOW_DATE}
-                  />
-                </View>
-                <View style={filePageStyle.subscriptionRow}>
-                  {false && ((isPlayable && !fileInfo) || (isPlayable && fileInfo && !fileInfo.download_path)) && (
-                    <Button
-                      style={[filePageStyle.actionButton, filePageStyle.saveFileButton]}
-                      theme={'light'}
-                      icon={'download'}
-                      onPress={this.onSaveFilePressed}
-                    />
-                  )}
-                  {channelName && (
-                    <SubscribeButton
-                      style={filePageStyle.actionButton}
-                      uri={fullChannelUri}
-                      name={channelName}
-                      hideText={false}
-                    />
-                  )}
-                  {false && channelName && (
-                    <SubscribeNotificationButton
-                      style={[filePageStyle.actionButton, filePageStyle.bellButton]}
-                      uri={fullChannelUri}
-                      name={channelName}
-                    />
-                  )}
-                </View>
-              </View>
-
-              {this.state.showDescription && description && description.length > 0 && (
-                <View style={filePageStyle.divider} />
-              )}
-              {this.state.showDescription && description && (
-                <View>
-                  <Text style={filePageStyle.description} selectable>
-                    {this.linkify(description)}
-                  </Text>
-                  {tags && tags.length > 0 && (
-                    <View style={filePageStyle.tagContainer}>
-                      <Text style={filePageStyle.tagTitle}>{__('Tags')}</Text>
-                      <View style={filePageStyle.tagList}>{this.renderTags(tags)}</View>
+                      {completed && fileInfo && fileInfo.written_bytes >= fileInfo.total_bytes && (
+                        <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onOpenFilePressed}>
+                          <Icon name={'folder-open'} size={16} style={filePageStyle.largeButtonIcon} />
+                          <Text style={filePageStyle.largeButtonText}>{__('Open')}</Text>
+                        </TouchableOpacity>
+                      )}
                     </View>
                   )}
+
+                  {!canEdit && (
+                    <TouchableOpacity
+                      style={filePageStyle.largeButton}
+                      onPress={() => Linking.openURL(`https://lbry.com/dmca/${claim.claim_id}`)}
+                    >
+                      <Icon name={'flag'} size={16} style={filePageStyle.largeButtonIcon} />
+                      <Text style={filePageStyle.largeButtonText}>{__('Report')}</Text>
+                    </TouchableOpacity>
+                  )}
+
+                  {canEdit && (
+                    <TouchableOpacity style={filePageStyle.largeButton} onPress={this.onEditPressed}>
+                      <Icon name={'edit'} size={16} style={filePageStyle.largeButtonIcon} />
+                      <Text style={filePageStyle.largeButtonText}>{__('Edit')}</Text>
+                    </TouchableOpacity>
+                  )}
+
+                  {(completed || canEdit) && (
+                    <TouchableOpacity style={filePageStyle.largeButton} onPress={this.onDeletePressed}>
+                      <Icon name={'trash-alt'} size={16} style={filePageStyle.largeButtonIcon} />
+                      <Text style={filePageStyle.largeButtonText}>{__('Delete')}</Text>
+                    </TouchableOpacity>
+                  )}
                 </View>
-              )}
 
-              {costInfo && parseFloat(costInfo.cost) > balance && !fileInfo && (
-                <FileRewardsDriver navigation={navigation} />
-              )}
+                <View style={filePageStyle.channelRow}>
+                  <View style={filePageStyle.publishInfo}>
+                    {channelName && (
+                      <Link
+                        style={filePageStyle.channelName}
+                        selectable
+                        text={channelName}
+                        numberOfLines={1}
+                        ellipsizeMode={'tail'}
+                        onPress={() => {
+                          navigateToUri(
+                            navigation,
+                            normalizeURI(shortChannelUri || fullChannelUri),
+                            null,
+                            false,
+                            fullChannelUri,
+                          );
+                        }}
+                      />
+                    )}
+                    {!channelName && (
+                      <Text style={filePageStyle.anonChannelName} selectable ellipsizeMode={'tail'}>
+                        {__('Anonymous')}
+                      </Text>
+                    )}
+                    <DateTime
+                      style={filePageStyle.publishDate}
+                      textStyle={filePageStyle.publishDateText}
+                      uri={fullUri}
+                      formatOptions={{ day: 'numeric', month: 'long', year: 'numeric' }}
+                      show={DateTime.SHOW_DATE}
+                    />
+                  </View>
+                  <View style={filePageStyle.subscriptionRow}>
+                    {false && ((isPlayable && !fileInfo) || (isPlayable && fileInfo && !fileInfo.download_path)) && (
+                      <Button
+                        style={[filePageStyle.actionButton, filePageStyle.saveFileButton]}
+                        theme={'light'}
+                        icon={'download'}
+                        onPress={this.onSaveFilePressed}
+                      />
+                    )}
+                    {channelName && (
+                      <SubscribeButton
+                        style={filePageStyle.actionButton}
+                        uri={fullChannelUri}
+                        name={channelName}
+                        hideText={false}
+                      />
+                    )}
+                    {false && channelName && (
+                      <SubscribeNotificationButton
+                        style={[filePageStyle.actionButton, filePageStyle.bellButton]}
+                        uri={fullChannelUri}
+                        name={channelName}
+                      />
+                    )}
+                  </View>
+                </View>
 
-              <View onLayout={this.setRelatedContentPosition} />
+                {this.state.showDescription && description && description.length > 0 && (
+                  <View style={filePageStyle.divider} />
+                )}
+                {this.state.showDescription && description && (
+                  <View>
+                    <Text style={filePageStyle.description} selectable>
+                      {this.linkify(description)}
+                    </Text>
+                    {tags && tags.length > 0 && (
+                      <View style={filePageStyle.tagContainer}>
+                        <Text style={filePageStyle.tagTitle}>{__('Tags')}</Text>
+                        <View style={filePageStyle.tagList}>{this.renderTags(tags)}</View>
+                      </View>
+                    )}
+                  </View>
+                )}
 
-              {isSearchingRecommendContent && (
-                <ActivityIndicator size="small" color={Colors.NextLbryGreen} style={filePageStyle.relatedLoading} />
-              )}
-              {!isSearchingRecommendContent && recommendedContent && recommendedContent.length > 0 && (
-                <RelatedContent navigation={navigation} uri={uri} fullUri={fullUri} />
-              )}
-            </ScrollView>
+                {costInfo && parseFloat(costInfo.cost) > balance && !fileInfo && (
+                  <FileRewardsDriver navigation={navigation} />
+                )}
+
+                <View onLayout={this.setRelatedContentPosition} />
+
+                {this.state.showRecommended && (
+                  <RelatedContent navigation={navigation} title={title} uri={fullUri} fullUri={fullUri} />
+                )}
+              </ScrollView>
+            )}
           </View>
         )}
         {this.state.showTipView && (
