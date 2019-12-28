@@ -11,11 +11,6 @@ class FileDownloadButton extends React.PureComponent {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    // this.checkAvailability(nextProps.uri);
-    // this.restartDownload(nextProps);
-  }
-
   restartDownload(props) {
     const { downloading, fileInfo, uri, restartDownload } = props;
 
@@ -45,6 +40,7 @@ class FileDownloadButton extends React.PureComponent {
       doPause,
       style,
       openFile,
+      onFileActionPress,
       onButtonLayout,
     } = this.props;
 
@@ -72,19 +68,7 @@ class FileDownloadButton extends React.PureComponent {
           text={isPlayable ? __('Play') : isViewable ? __('View') : __('Download')}
           onLayout={onButtonLayout}
           style={[style, fileDownloadButtonStyle.container]}
-          onPress={() => {
-            NativeModules.Firebase.track('purchase_uri', { uri: uri });
-            purchaseUri(uri, costInfo, !isPlayable);
-            if (NativeModules.UtilityModule) {
-              NativeModules.UtilityModule.checkDownloads();
-            }
-            if (isPlayable && onPlay) {
-              this.props.onPlay();
-            }
-            if (isViewable && onView) {
-              this.props.onView();
-            }
-          }}
+          onPress={onFileActionPress}
         />
       );
     } else if (fileInfo && fileInfo.download_path) {

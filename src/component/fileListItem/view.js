@@ -158,7 +158,13 @@ class FileListItem extends React.PureComponent {
             </View>
           )}
           {fileInfo && fileInfo.completed && fileInfo.download_path && (
-            <Icon style={fileListStyle.downloadedIcon} solid color={Colors.NextLbryGreen} name={'folder'} size={16} />
+            <Icon
+              style={featuredResult ? fileListStyle.featuredDownloadedIcon : fileListStyle.downloadedIcon}
+              solid
+              color={Colors.NextLbryGreen}
+              name={'folder'}
+              size={16}
+            />
           )}
           <View style={fileListStyle.detailsContainer}>
             {featuredResult && (

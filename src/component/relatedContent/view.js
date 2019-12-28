@@ -8,18 +8,11 @@ import fileListStyle from 'styles/fileList';
 import relatedContentStyle from 'styles/relatedContent';
 
 export default class RelatedContent extends React.PureComponent {
-  state = {
-    urlsResolved: false,
-  };
-
-  componentDidUpdate(prevProps) {
+  componentDidMount() {
     const { resolveUris, recommendedContent } = this.props;
-
-    if (recommendedContent && recommendedContent.length > 0 && !this.state.urisResolved) {
-      this.setState({ urisResolved: true }, () => {
-        // batch resolve the uris
-        resolveUris(recommendedContent);
-      });
+    if (recommendedContent && recommendedContent.length > 0) {
+      // batch resolve the uris
+      resolveUris(recommendedContent);
     }
   }
 
