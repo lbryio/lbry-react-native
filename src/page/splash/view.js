@@ -115,7 +115,7 @@ class SplashScreen extends React.PureComponent {
       },
       error => {
         /* failed */
-      }
+      },
     );
   };
 
@@ -269,6 +269,8 @@ class SplashScreen extends React.PureComponent {
   }
 
   componentDidMount() {
+    console.log('hermesInternal=' + (global.HermesInternal != null));
+
     NativeModules.Firebase.track('app_launch', null);
     NativeModules.Firebase.setCurrentScreen('Splash');
 
@@ -293,7 +295,7 @@ class SplashScreen extends React.PureComponent {
               isLagging: true,
               message: __('Connection Failure'),
               details: __(
-                'We could not establish a connection to the SDK. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.'
+                'We could not establish a connection to the SDK. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.',
               ),
             });
           });
@@ -318,7 +320,7 @@ class SplashScreen extends React.PureComponent {
         message: __('Testing network'),
         details: __('Waiting for name resolution'),
       },
-      () => this.finishSplashScreen()
+      () => this.finishSplashScreen(),
     );
   };
 
@@ -331,12 +333,12 @@ class SplashScreen extends React.PureComponent {
           <Text style={splashStyle.errorTitle}>{__('Oops! Something went wrong.')}</Text>
           <Text style={splashStyle.paragraph}>
             {__(
-              'Your wallet failed to unlock, which means you may not be able to play any videos or access your funds.'
+              'Your wallet failed to unlock, which means you may not be able to play any videos or access your funds.',
             )}
           </Text>
           <Text style={splashStyle.paragraph}>
             {__(
-              'You can try to fix this by tapping Stop on the LBRY service notification and starting the app again. If the problem continues, you may have to reinstall the app and restore your account.'
+              'You can try to fix this by tapping Stop on the LBRY service notification and starting the app again. If the problem continues, you may have to reinstall the app and restore your account.',
             )}
           </Text>
 
