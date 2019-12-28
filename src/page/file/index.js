@@ -8,6 +8,7 @@ import {
   doPurchaseUri,
   doDeletePurchasedUri,
   doResolveUri,
+  doResolveUris,
   doSearch,
   doSendTip,
   doToast,
@@ -28,6 +29,7 @@ import {
   selectPurchasedUris,
   selectFailedPurchaseUris,
   selectPurchaseUriErrorMessage,
+  selectResolvingUris,
   selectIsSearching,
 } from 'lbry-redux';
 import {
@@ -39,13 +41,7 @@ import {
   selectRewardContentClaimIds,
   selectBlackListedOutpoints,
 } from 'lbryinc';
-import {
-  doStartDownload,
-  doUpdateDownload,
-  doCompleteDownload,
-  doDeleteFile,
-  doStopDownloadingFile,
-} from 'redux/actions/file';
+import { doDeleteFile, doStopDownloadingFile } from 'redux/actions/file';
 import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doToggleFullscreenMode } from 'redux/actions/settings';
 import { selectDrawerStack } from 'redux/selectors/drawer';
@@ -77,6 +73,7 @@ const select = (state, props) => {
     thumbnail: makeSelectThumbnailForUri(contentUri)(state),
     title: makeSelectTitleForUri(contentUri)(state),
     recommendedContent: makeSelectRecommendedContentForUri(contentUri)(state),
+    resolvingUris: selectResolvingUris(state),
     isSearchingRecommendContent: selectIsSearching(state),
     viewCount: makeSelectViewCountForUri(contentUri)(state),
   };
@@ -100,14 +97,12 @@ const perform = dispatch => ({
   purchaseUri: (uri, costInfo, saveFile) => dispatch(doPurchaseUri(uri, costInfo, saveFile)),
   deletePurchasedUri: uri => dispatch(doDeletePurchasedUri(uri)),
   resolveUri: uri => dispatch(doResolveUri(uri)),
+  resolveUris: uris => dispatch(doResolveUris(uris)),
   searchRecommended: query => dispatch(doSearch(query, 20, undefined, true)),
   sendTip: (amount, claimId, isSupport, successCallback, errorCallback) =>
     dispatch(doSendTip(amount, claimId, isSupport, successCallback, errorCallback)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(true)),
   stopDownload: (uri, fileInfo) => dispatch(doStopDownloadingFile(uri, fileInfo)),
-  startDownload: (uri, outpoint, fileInfo) => dispatch(doStartDownload(uri, outpoint, fileInfo)),
-  updateDownload: (uri, outpoint, fileInfo, progress) => dispatch(doUpdateDownload(uri, outpoint, fileInfo, progress)),
-  completeDownload: (uri, outpoint, fileInfo) => dispatch(doCompleteDownload(uri, outpoint, fileInfo)),
   toggleFullscreenMode: mode => dispatch(doToggleFullscreenMode(mode)),
 });
 

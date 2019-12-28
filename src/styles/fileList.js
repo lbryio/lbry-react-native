@@ -94,6 +94,11 @@ const fileListStyle = StyleSheet.create({
     top: 8,
     left: 8,
   },
+  featuredDownloadedIcon: {
+    position: 'absolute',
+    left: 16,
+    top: 16,
+  },
   fileItem: {
     marginLeft: 24,
     marginRight: 24,

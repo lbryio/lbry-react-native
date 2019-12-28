@@ -11,11 +11,6 @@ class FileDownloadButton extends React.PureComponent {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    // this.checkAvailability(nextProps.uri);
-    // this.restartDownload(nextProps);
-  }
-
   restartDownload(props) {
     const { downloading, fileInfo, uri, restartDownload } = props;
 
@@ -48,9 +43,6 @@ class FileDownloadButton extends React.PureComponent {
       onFileActionPress,
       onButtonLayout,
     } = this.props;
-
-    console.log('uri=' + uri);
-    console.log(fileInfo);
 
     if ((fileInfo && !fileInfo.stopped) || loading || downloading) {
       const progress = fileInfo && fileInfo.written_bytes ? (fileInfo.written_bytes / fileInfo.total_bytes) * 100 : 0,

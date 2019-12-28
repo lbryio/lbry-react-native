@@ -51,6 +51,7 @@ import {
   selectHashChanged,
   selectUser,
 } from 'lbryinc';
+import { doStartDownload, doUpdateDownload, doCompleteDownload } from 'redux/actions/file';
 import { makeSelectClientSetting, selectFullscreenMode } from 'redux/selectors/settings';
 import { decode as atob } from 'base-64';
 import { dispatchNavigateBack, dispatchNavigateToUri, transformUrl } from 'utils/helper';
@@ -311,6 +312,10 @@ class AppWithNavigationState extends React.Component {
     this.emailVerifyCheckInterval = setInterval(() => this.checkEmailVerification(), 5000);
     Linking.addEventListener('url', this._handleUrl);
 
+    DeviceEventEmitter.addListener('onDownloadStarted', this.handleDownloadStarted);
+    DeviceEventEmitter.addListener('onDownloadUpdated', this.handleDownloadUpdated);
+    DeviceEventEmitter.addListener('onDownloadCompleted', this.handleDownloadCompleted);
+
     // call /sync/get with interval
     this.syncGetInterval = setInterval(() => {
       this.setState({ syncHashChanged: false }); // reset local state
@@ -345,7 +350,29 @@ class AppWithNavigationState extends React.Component {
     );
   };
 
+  handleDownloadStarted = evt => {
+    const { dispatch } = this.props;
+    const { uri, outpoint, fileInfo } = evt;
+    dispatch(doStartDownload(uri, outpoint, fileInfo));
+  };
+
+  handleDownloadUpdated = evt => {
+    const { dispatch } = this.props;
+    const { uri, outpoint, fileInfo, progress } = evt;
+    dispatch(doUpdateDownload(uri, outpoint, fileInfo, progress));
+  };
+
+  handleDownloadCompleted = evt => {
+    const { dispatch } = this.props;
+    const { uri, outpoint, fileInfo } = evt;
+    dispatch(doCompleteDownload(uri, outpoint, fileInfo));
+  };
+
   componentWillUnmount() {
+    DeviceEventEmitter.removeListener('onDownloadStarted', this.handleDownloadStarted);
+    DeviceEventEmitter.removeListener('onDownloadUpdated', this.handleDownloadUpdated);
+    DeviceEventEmitter.removeListener('onDownloadCompleted', this.handleDownloadCompleted);
+
     AppState.removeEventListener('change', this._handleAppStateChange);
     BackHandler.removeEventListener('hardwareBackPress');
     Linking.removeEventListener('url', this._handleUrl);
