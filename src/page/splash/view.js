@@ -269,8 +269,6 @@ class SplashScreen extends React.PureComponent {
   }
 
   componentDidMount() {
-    console.log('hermesInternal=' + (global.HermesInternal != null));
-
     NativeModules.Firebase.track('app_launch', null);
     NativeModules.Firebase.setCurrentScreen('Splash');
 
