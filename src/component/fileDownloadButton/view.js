@@ -49,6 +49,9 @@ class FileDownloadButton extends React.PureComponent {
       onButtonLayout,
     } = this.props;
 
+    console.log('uri=' + uri);
+    console.log(fileInfo);
+
     if ((fileInfo && !fileInfo.stopped) || loading || downloading) {
       const progress = fileInfo && fileInfo.written_bytes ? (fileInfo.written_bytes / fileInfo.total_bytes) * 100 : 0,
         label = fileInfo ? __('%progress%% complete', { progress: progress.toFixed(0) }) : __('Connecting...');

@@ -179,7 +179,8 @@ class FilePage extends React.PureComponent {
       (this.state.fileGetStarted || prevPurchasedUris.length !== purchasedUris.length) &&
       NativeModules.UtilityModule
     ) {
-      if (purchasedUris.includes(uri)) {
+      const { permanent_url: permanentUrl } = claim;
+      if (purchasedUris.includes(uri) || purchasedUris.includes(permanentUrl)) {
         const { nout, txid } = claim;
         const outpoint = `${txid}:${nout}`;
         NativeModules.UtilityModule.queueDownload(outpoint);
@@ -252,15 +253,7 @@ class FilePage extends React.PureComponent {
     const mediaType = Lbry.getMediaType(contentType);
     const isViewable = mediaType === 'image' || mediaType === 'text';
     if (claim && costInfo && costInfo.cost === 0 && !this.state.autoGetAttempted && isViewable) {
-      this.setState(
-        {
-          autoGetAttempted: true,
-          downloadPressed: true,
-          autoPlayMedia: true,
-          stopDownloadConfirmed: false,
-        },
-        () => purchaseUri(claim.permanent_url, costInfo, true)
-      );
+      this.setState({ autoGetAttempted: true }, () => this.checkStoragePermissionForDownload());
     }
   }
 
@@ -429,7 +422,7 @@ class FilePage extends React.PureComponent {
     // update the configured download folder and then download
     NativeModules.UtilityModule.getDownloadDirectory().then(downloadDirectory => {
       Lbry.settings_set({
-        key: 'download_directory',
+        key: 'download_dir',
         value: downloadDirectory,
       })
         .then(() => this.performDownload())
@@ -616,12 +609,12 @@ class FilePage extends React.PureComponent {
   };
 
   onFileDownloadButtonPressed = () => {
-    const { costInfo, contentType, purchaseUri, setPlayerVisible } = this.props;
-    const { uri } = this.state;
+    const { claim, costInfo, contentType, purchaseUri, setPlayerVisible } = this.props;
     const mediaType = Lbry.getMediaType(contentType);
     const isPlayable = mediaType === 'video' || mediaType === 'audio';
     const isViewable = mediaType === 'image' || mediaType === 'text';
 
+    const { permanent_url: uri } = claim;
     NativeModules.Firebase.track('purchase_uri', { uri: uri });
 
     if (!isPlayable) {
@@ -645,16 +638,14 @@ class FilePage extends React.PureComponent {
   };
 
   checkStoragePermissionForDownload = () => {
-    this.setState({ downloadPressed: true }, () => {
-      // check if we the permission to write to external storage has been granted
-      NativeModules.UtilityModule.canReadWriteStorage().then(canReadWrite => {
-        if (!canReadWrite) {
-          // request permission
-          NativeModules.UtilityModule.requestStoragePermission();
-        } else {
-          this.performDownload();
-        }
-      });
+    // check if we the permission to write to external storage has been granted
+    NativeModules.UtilityModule.canReadWriteStorage().then(canReadWrite => {
+      if (!canReadWrite) {
+        // request permission
+        NativeModules.UtilityModule.requestStoragePermission();
+      } else {
+        this.performDownload();
+      }
     });
   };
 
@@ -957,8 +948,7 @@ class FilePage extends React.PureComponent {
 
                 {((isPlayable && !completed && !canLoadMedia) ||
                   canOpen ||
-                  (!completed && !this.state.streamingMode)) &&
-                  !this.state.downloadPressed && (
+                  (!completed && !this.state.streamingMode)) && (
                   <FileDownloadButton
                     uri={claim && claim.permanent_url ? claim.permanent_url : uri}
                     style={filePageStyle.downloadButton}
