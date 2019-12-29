@@ -178,7 +178,7 @@ class FileListItem extends React.PureComponent {
                 {!title && !name && <Text style={fileListStyle.uri}>{uri}</Text>}
                 {!title && !name && (
                   <View style={fileListStyle.row}>
-                    <ActivityIndicator size={'small'} color={featuredResult ? Colors.White : Colors.LbryGreen} />
+                    <ActivityIndicator size={'small'} color={featuredResult ? Colors.White : Colors.NextLbryGreen} />
                   </View>
                 )}
               </View>
@@ -209,7 +209,7 @@ class FileListItem extends React.PureComponent {
                     normalizeURI(shortChannelUri || fullChannelUri),
                     null,
                     false,
-                    fullChannelUri
+                    fullChannelUri,
                   );
                 }}
               />

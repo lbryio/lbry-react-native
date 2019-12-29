@@ -26,6 +26,7 @@ class SearchPage extends React.PureComponent {
     showTagResult: false,
     claimSearchRun: false,
     claimSearchOptions: null,
+    resultsResolved: false,
   };
 
   static navigationOptions = {
@@ -80,9 +81,35 @@ class SearchPage extends React.PureComponent {
       this.setState({
         currentQuery: query,
         currentUri: isURIValid(query) ? normalizeURI(query) : null,
+        resultsResolved: false,
       });
       search(query);
     }
+  }
+
+  allContentResolved() {
+    const { uris, resolvingUris } = this.props;
+    if (!this.state.resultsResolved) {
+      return false;
+    }
+    if (uris) {
+      let allResolved = true;
+      uris.forEach(uri => {
+        allResolved = allResolved && !resolvingUris.includes(uri);
+      });
+      return allResolved;
+    }
+
+    return false;
+  }
+
+  shouldComponentUpdate() {
+    const { isSearching, uris } = this.props;
+    return (isSearching && (!uris || uris.length === 0)) || (!isSearching && this.allContentResolved());
+  }
+
+  componentDidUpdate() {
+    const { isSearching, resolveUris, uris } = this.props;
   }
 
   getSearchQuery() {
@@ -130,11 +157,11 @@ class SearchPage extends React.PureComponent {
       this.setState({ claimSearchOptions: options, claimSearchRun: true }, () => claimSearch(options));
     }
 
-    if (this.state.claimSearchRun && this.state.claimSearchOptions) {
+    /* if (this.state.claimSearchRun && this.state.claimSearchOptions) {
       const claimSearchKey = createNormalizedClaimSearchKey(this.state.claimSearchOptions);
       const claimSearchUris = claimSearchByQuery[claimSearchKey];
       this.setState({ showTagResult: claimSearchUris && claimSearchUris.length > 0 });
-    }
+    } */
 
     return (
       <View>
@@ -155,7 +182,7 @@ class SearchPage extends React.PureComponent {
   };
 
   render() {
-    const { isSearching, navigation, query, uris, urisByQuery } = this.props;
+    const { isSearching, navigation, query, uris } = this.props;
 
     return (
       <View style={searchStyle.container}>
@@ -167,22 +194,30 @@ class SearchPage extends React.PureComponent {
           </View>
         )}
 
-        <FlatList
-          extraData={this.state}
-          style={searchStyle.scrollContainer}
-          contentContainerStyle={searchStyle.scrollPadding}
-          keyboardShouldPersistTaps={'handled'}
-          data={uris}
-          keyExtractor={(item, index) => item}
-          initialNumToRender={10}
-          maxToRenderPerBatch={20}
-          removeClippedSubviews
-          ListEmptyComponent={!isSearching ? this.listEmptyComponent() : null}
-          ListHeaderComponent={this.state.currentUri ? this.listHeaderComponent(this.state.showTagResult) : null}
-          renderItem={({ item }) => (
-            <FileListItem key={item} uri={item} style={searchStyle.resultItem} navigation={navigation} />
-          )}
-        />
+        {!isSearching && (
+          <FlatList
+            extraData={this.state}
+            style={searchStyle.scrollContainer}
+            contentContainerStyle={searchStyle.scrollPadding}
+            keyboardShouldPersistTaps={'handled'}
+            data={uris}
+            keyExtractor={(item, index) => item}
+            initialNumToRender={8}
+            maxToRenderPerBatch={20}
+            removeClippedSubviews
+            ListEmptyComponent={!isSearching ? this.listEmptyComponent() : null}
+            ListHeaderComponent={this.state.currentUri ? this.listHeaderComponent(this.state.showTagResult) : null}
+            renderItem={({ item }) => (
+              <FileListItem
+                key={item}
+                uri={item}
+                style={searchStyle.resultItem}
+                batchResolve
+                navigation={navigation}
+              />
+            )}
+          />
+        )}
         <FloatingWalletBalance navigation={navigation} />
       </View>
     );
