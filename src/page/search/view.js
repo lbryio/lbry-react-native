@@ -88,8 +88,8 @@ class SearchPage extends React.PureComponent {
     }
   }
 
-  allContentResolved() {
-    const { uris, resolvingUris } = this.props;
+  allContentResolved(props) {
+    const { uris, resolvingUris } = props;
     if (!this.state.resultsResolved) {
       return false;
     }
@@ -104,9 +104,9 @@ class SearchPage extends React.PureComponent {
     return false;
   }
 
-  shouldComponentUpdate() {
+  shouldComponentUpdate(nextProps) {
     const { isSearching, uris } = this.props;
-    return (isSearching && (!uris || uris.length === 0)) || (!isSearching && this.allContentResolved());
+    return (isSearching && (!uris || uris.length === 0)) || (!isSearching && this.allContentResolved(this.props));
   }
 
   componentDidUpdate() {
@@ -135,6 +135,7 @@ class SearchPage extends React.PureComponent {
       claimSearchOptions: null,
       claimSearchRun: false,
       showTagResult: false,
+      resultsResolved: false,
     });
     search(keywords);
   };
