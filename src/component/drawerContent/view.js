@@ -10,7 +10,7 @@ import discoverStyle from 'styles/discover';
 const groupedMenuItems = {
   'Find content': [
     { icon: 'hashtag', label: 'Your Tags', route: Constants.DRAWER_ROUTE_DISCOVER },
-    { icon: 'heart', solid: true, label: 'Subscriptions', route: Constants.DRAWER_ROUTE_SUBSCRIPTIONS },
+    { icon: 'heart', solid: true, label: 'Following', route: Constants.DRAWER_ROUTE_SUBSCRIPTIONS },
     { icon: 'globe-americas', label: 'All Content', route: Constants.DRAWER_ROUTE_TRENDING },
   ],
   'Your content': [

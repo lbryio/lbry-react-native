@@ -73,7 +73,7 @@ class SubscriptionsPage extends React.PureComponent {
   };
 
   componentDidMount() {
-    this.onComponentFocused();
+    // this.onComponentFocused();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -115,7 +115,10 @@ class SubscriptionsPage extends React.PureComponent {
   unsubscribeShortChannelUrls = () => {
     // this should only have to happen once
     const { subscribedChannels, channelUnsubscribe } = this.props;
-    const badSubs = subscribedChannels.filter(sub => sub.uri.split('#')[1].length < 5);
+    const badSubs = subscribedChannels.filter(sub => {
+      const parts = sub.uri.split('#');
+      return parts.length === 1 || parts[1].length < 5;
+    });
     if (badSubs.length > 0) {
       badSubs.forEach(sub => channelUnsubscribe(sub));
     }
