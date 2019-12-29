@@ -42,13 +42,15 @@ class FileListItem extends React.PureComponent {
   componentDidMount() {
     const { claim, resolveUri, uri, batchResolve } = this.props;
     if (!claim && !batchResolve) {
+      console.log('resolving on componentDidMount?');
       resolveUri(uri);
     }
   }
 
   componentDidUpdate() {
-    const { claim, resolveUri, uri } = this.props;
-    if (!claim && uri !== this.state.url) {
+    const { claim, resolveUri, uri, batchResolve } = this.props;
+    if (!claim && uri !== this.state.url && !batchResolve) {
+      console.log('resolving on componentDidUpdate?');
       this.setState({ url: uri }, () => resolveUri(uri));
     }
   }

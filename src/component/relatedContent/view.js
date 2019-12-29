@@ -38,8 +38,8 @@ export default class RelatedContent extends React.PureComponent {
   }
 
   componentDidUpdate() {
-    const { resolveUris, recommendedContent } = this.props;
-    if (!this.state.resolveStarted) {
+    const { isSearching, resolveUris, recommendedContent } = this.props;
+    if (!isSearching && !this.state.resolveStarted) {
       this.setState({ resolveStarted: true }, () => {
         if (recommendedContent && recommendedContent.length > 0) {
           // batch resolve the uris

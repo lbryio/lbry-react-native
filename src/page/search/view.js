@@ -59,6 +59,7 @@ class SearchPage extends React.PureComponent {
           claimSearchOptions: null,
           claimSearchRun: false,
           showTagResult: false,
+          resultsResolved: false,
         });
         search(searchQuery);
       }
@@ -110,6 +111,13 @@ class SearchPage extends React.PureComponent {
 
   componentDidUpdate() {
     const { isSearching, resolveUris, uris } = this.props;
+    if (!isSearching && !this.state.resultsResolved) {
+      this.setState({ resultsResolved: true }, () => {
+        if (uris && uris.length > 0) {
+          resolveUris(uris);
+        }
+      });
+    }
   }
 
   getSearchQuery() {
@@ -208,13 +216,7 @@ class SearchPage extends React.PureComponent {
             ListEmptyComponent={!isSearching ? this.listEmptyComponent() : null}
             ListHeaderComponent={this.state.currentUri ? this.listHeaderComponent(this.state.showTagResult) : null}
             renderItem={({ item }) => (
-              <FileListItem
-                key={item}
-                uri={item}
-                style={searchStyle.resultItem}
-                batchResolve
-                navigation={navigation}
-              />
+              <FileListItem key={item} uri={item} style={searchStyle.resultItem} batchResolve navigation={navigation} />
             )}
           />
         )}
