@@ -42,6 +42,7 @@ import AppWithNavigationState, {
 } from 'component/AppNavigator';
 import { REHYDRATE, PURGE, persistCombineReducers, persistStore } from 'redux-persist';
 import { __ } from 'i18n';
+import reactotron from '../reactotron';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import getStoredStateMigrateV4 from 'redux-persist/lib/integration/getStoredStateMigrateV4';
 import FilesystemStorage from 'redux-persist-filesystem-storage';
@@ -179,7 +180,7 @@ const sharedStateCallback = ({ dispatch, getState }) => {
   const emailVerified = selectUserVerifiedEmail(state);
   if (syncEnabled && emailVerified) {
     NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password =>
-      dispatch(doGetSync(password))
+      dispatch(doGetSync(password)),
     );
   }
 };
@@ -195,7 +196,7 @@ const composeEnhancers = compose;
 const store = createStore(
   enableBatching(reducers),
   {}, // initial state,
-  composeEnhancers(applyMiddleware(...middleware))
+  composeEnhancers(applyMiddleware(...middleware), reactotron.createEnhancer()),
 );
 window.store = store;
 

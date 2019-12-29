@@ -71,8 +71,8 @@ class SearchPage extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { currentRoute, query } = nextProps;
-    const { currentRoute: prevRoute, search } = this.props;
+    const { currentRoute, query, isSearching } = nextProps;
+    const { currentRoute: prevRoute, search, isSearching: prevIsSearching } = this.props;
 
     if (Constants.DRAWER_ROUTE_SEARCH === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
