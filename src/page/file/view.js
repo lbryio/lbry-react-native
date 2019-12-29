@@ -735,8 +735,6 @@ class FilePage extends React.PureComponent {
     const myChannelUris = channels ? channels.map(channel => channel.permanent_url) : [];
     const ownedClaim = myClaimUris.includes(uri) || myChannelUris.includes(uri);
 
-    console.log('calling render...');
-
     let innerContent = null;
     if ((isResolvingUri && !claim) || !claim) {
       return (
