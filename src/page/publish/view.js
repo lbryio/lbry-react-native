@@ -196,7 +196,7 @@ class PublishPage extends React.PureComponent {
         },
         () => {
           NativeModules.Gallery.getVideos().then(videos => this.setState({ videos, loadingVideos: false }));
-        }
+        },
       );
 
       // Check if this is an edit action
@@ -288,7 +288,7 @@ class PublishPage extends React.PureComponent {
           this.handleChannelChange(channelName);
         }
         pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH_FORM);
-      }
+      },
     );
   };
 
@@ -356,18 +356,26 @@ class PublishPage extends React.PureComponent {
     }
 
     if (!title || title.trim().length === 0) {
-      notify({ message: __('Please provide a title') });
+      notify({ message: __('Please provide a title'), isError: true });
       return;
     }
 
     if (!name) {
-      notify({ message: __('Please specify an address where people can find your content.') });
+      notify({ message: __('Please specify an address where people can find your content.'), isError: true });
+      return;
+    }
+
+    if (!isNameValid(name, false)) {
+      notify({ message: __('Your content address contains invalid characters.'), isError: true });
       return;
     }
 
     if (!currentMedia && !editMode) {
       // sanity check. normally shouldn't happen
-      notify({ message: __('No file selected. Please select a video or take a photo before publishing.') });
+      notify({
+        message: __('No file selected. Please select a video or take a photo before publishing.'),
+        isError: true,
+      });
       return;
     }
 
@@ -456,7 +464,7 @@ class PublishPage extends React.PureComponent {
       () => {
         this.handleNameChange(this.state.name);
         pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH_FORM);
-      }
+      },
     );
   }
 
@@ -510,7 +518,7 @@ class PublishPage extends React.PureComponent {
         clearPublishFormState();
         // reset thumbnail
         updatePublishForm({ thumbnail: null });
-      }
+      },
     );
   }
 
@@ -537,7 +545,7 @@ class PublishPage extends React.PureComponent {
       },
       () => {
         NativeModules.UtilityModule.openDocumentPicker('*/*');
-      }
+      },
     );
   };
 
@@ -583,7 +591,7 @@ class PublishPage extends React.PureComponent {
           () => {
             // upload a new thumbnail
             uploadImageAsset(fileUrl, this.handleThumbnailUploadSuccess, this.handleThumbnailUploadFailure);
-          }
+          },
         );
       }
     } else {
@@ -634,7 +642,7 @@ class PublishPage extends React.PureComponent {
               videoRecordingMode: false,
               recordingVideo: false,
             },
-            () => pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH_FORM)
+            () => pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH_FORM),
           );
         });
       }
@@ -658,7 +666,7 @@ class PublishPage extends React.PureComponent {
             showCameraOverlay: false,
             videoRecordingMode: false,
           },
-          () => pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH)
+          () => pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH),
         );
       });
     }
@@ -777,8 +785,8 @@ class PublishPage extends React.PureComponent {
             uploadImageAsset(
               this.getFilePathFromUri(uri),
               this.handleThumbnailUploadSuccess,
-              this.handleThumbnailUploadFailure
-            )
+              this.handleThumbnailUploadFailure,
+            ),
           );
         }
       } else if (mediaType === 'image' || mediaType === 'video') {
@@ -791,7 +799,7 @@ class PublishPage extends React.PureComponent {
             this.setState({ currentThumbnailUri: `file://${path}`, updatingThumbnailUri: false });
             if (!this.state.uploadedThumbnailUri) {
               this.setState({ uploadThumbnailStarted: true }, () =>
-                uploadImageAsset(path, this.handleThumbnailUploadSuccess, this.handleThumbnailUploadFailure)
+                uploadImageAsset(path, this.handleThumbnailUploadSuccess, this.handleThumbnailUploadFailure),
               );
             }
           })
@@ -817,7 +825,7 @@ class PublishPage extends React.PureComponent {
         },
         () => {
           this.handleNameChange(this.state.name);
-        }
+        },
       );
     }
   };
@@ -881,7 +889,7 @@ class PublishPage extends React.PureComponent {
       },
       () => {
         NativeModules.UtilityModule.openDocumentPicker('image/*');
-      }
+      },
     );
   };
 
@@ -1112,7 +1120,7 @@ class PublishPage extends React.PureComponent {
               {__('The address where people can find your content (ex. lbry://myvideo). ')}
               {this.state.editMode &&
                 __(
-                  'You cannot change this address while editing your content. If you wish to use a new address, please republish the content.'
+                  'You cannot change this address while editing your content. If you wish to use a new address, please republish the content.',
                 )}
             </Text>
 
@@ -1262,7 +1270,7 @@ class PublishPage extends React.PureComponent {
             </View>
             <Text style={publishStyle.successText}>
               {__(
-                'Your content will be live in a few minutes. In the mean time, feel free to publish more content or explore the app.'
+                'Your content will be live in a few minutes. In the mean time, feel free to publish more content or explore the app.',
               )}
             </Text>
           </View>

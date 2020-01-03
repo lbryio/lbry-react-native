@@ -46,7 +46,7 @@ class UriBar extends React.PureComponent {
     const { currentRoute: prevRoute } = this.props;
 
     if (Constants.DRAWER_ROUTE_SEARCH === currentRoute && currentRoute !== prevRoute) {
-      this.setState({ currentValue: query, inputText: query });
+      this.setState({ currentValue: query, inputText: query }, () => this.setCaretPosition(query));
     }
   }
 
@@ -75,7 +75,9 @@ class UriBar extends React.PureComponent {
         }
       }, UriBar.INPUT_TIMEOUT);
     }
-    this.setState({ inputText: newValue, currentValue: newValue, changeTextTimeout: timeout });
+    this.setState({ inputText: newValue, currentValue: newValue, changeTextTimeout: timeout }, () =>
+      this.setCaretPosition(newValue),
+    );
   };
 
   handleItemPress = item => {
@@ -85,7 +87,7 @@ class UriBar extends React.PureComponent {
     Keyboard.dismiss();
 
     if (SEARCH_TYPES.SEARCH === type) {
-      this.setState({ currentValue: value });
+      this.setState({ currentValue: value }, () => this.setCaretPosition(value));
       updateSearchQuery(value);
 
       if (onSearchSubmitted) {
@@ -126,6 +128,12 @@ class UriBar extends React.PureComponent {
   setSelection() {
     if (this.textInput) {
       this.textInput.setNativeProps({ selection: { start: 0, end: 0 } });
+    }
+  }
+
+  setCaretPosition(text) {
+    if (this.textInput && text && text.length > 0) {
+      this.textInput.setNativeProps({ selection: { start: text.length, end: text.length } });
     }
   }
 
@@ -179,7 +187,7 @@ class UriBar extends React.PureComponent {
       value,
     } = this.props;
     if (this.state.currentValue === null) {
-      this.setState({ currentValue: value });
+      this.setState({ currentValue: value }, () => this.setCaretPosition(value));
     }
 
     let style = [
@@ -253,7 +261,9 @@ class UriBar extends React.PureComponent {
               autoCorrect={false}
               style={uriBarStyle.uriText}
               onLayout={() => {
-                this.setSelection();
+                if (!this.state.focused) {
+                  this.setSelection();
+                }
               }}
               selectTextOnFocus
               placeholder={__('Search movies, music, and more')}

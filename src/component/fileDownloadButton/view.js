@@ -30,7 +30,6 @@ class FileDownloadButton extends React.PureComponent {
       fileInfo,
       downloading,
       uri,
-      purchaseUri,
       costInfo,
       isPlayable,
       isViewable,

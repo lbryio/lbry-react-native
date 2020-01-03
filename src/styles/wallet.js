@@ -27,11 +27,16 @@ const walletStyle = StyleSheet.create({
   },
   address: {
     fontFamily: 'Inter-UI-Regular',
+    letterSpacing: 0.8,
     borderWidth: 1,
+    borderRadius: 16,
     borderStyle: 'dashed',
-    borderColor: '#cccccc',
+    borderColor: '#e1e1e1',
     backgroundColor: '#f9f9f9',
-    padding: 8,
+    paddingTop: 8,
+    paddingLeft: 8,
+    paddingRight: 8,
+    paddingBottom: 6,
     width: '85%',
   },
   button: {

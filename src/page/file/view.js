@@ -113,8 +113,8 @@ class FilePage extends React.PureComponent {
 
       if (!isResolvingUri && !claim) resolveUri(uri);
 
-      this.fetchFileInfo(this.props);
-      this.fetchCostInfo(this.props);
+      this.fetchFileInfo(uri, this.props);
+      this.fetchCostInfo(uri, this.props);
 
       fetchMyClaims();
 
@@ -259,21 +259,26 @@ class FilePage extends React.PureComponent {
 
     // attempt to retrieve images and html/text automatically once the claim is loaded, and it's free
     const mediaType = Lbry.getMediaType(contentType);
+    const isPlayable = mediaType === 'video' || mediaType === 'audio';
     const isViewable = mediaType === 'image' || mediaType === 'text';
     if (claim && costInfo && costInfo.cost === 0 && !this.state.autoGetAttempted && isViewable) {
       this.setState({ autoGetAttempted: true }, () => this.checkStoragePermissionForDownload());
     }
-  }
 
-  fetchFileInfo(props) {
-    if (props.fileInfo === undefined) {
-      props.fetchFileInfo(props.navigation.state.params.uri);
+    if (((costInfo && costInfo.cost > 0) || !isPlayable) && !this.state.showRecommended) {
+      this.setState({ showRecommended: true });
     }
   }
 
-  fetchCostInfo(props) {
+  fetchFileInfo(uri, props) {
+    if (props.fileInfo === undefined) {
+      props.fetchFileInfo(uri);
+    }
+  }
+
+  fetchCostInfo(uri, props) {
     if (props.costInfo === undefined) {
-      props.fetchCostInfo(props.navigation.state.params.uri);
+      props.fetchCostInfo(uri);
     }
   }
 
@@ -308,12 +313,12 @@ class FilePage extends React.PureComponent {
     const { abandonClaim, claim, deleteFile, deletePurchasedUri, myClaimUris, fileInfo, navigation } = this.props;
 
     Alert.alert(
-      'Delete file',
-      'Are you sure you want to remove this file from your device?',
+      __('Delete file'),
+      __('Are you sure you want to remove this file from your device?'),
       [
-        { text: 'No' },
+        { text: __('No') },
         {
-          text: 'Yes',
+          text: __('Yes'),
           onPress: () => {
             const { uri } = navigation.state.params;
 
@@ -598,6 +603,38 @@ class FilePage extends React.PureComponent {
     ));
   };
 
+  confirmPurchaseUri = (uri, costInfo, download) => {
+    const { notify, purchaseUri, title } = this.props;
+    const { cost } = costInfo;
+
+    if (!costInfo) {
+      notify({ message: __('This content cannot be viewed at this time. Please try again in a bit.'), isError: true });
+      return;
+    }
+
+    if (costInfo.cost > 0) {
+      Alert.alert(
+        __('Confirm Purchase'),
+        __(
+          cost === 1
+            ? 'This will purchase "%title%" for %amount% credit'
+            : 'This will purchase "%title%" for %amount% credits',
+          { title, amount: cost },
+        ),
+        [
+          {
+            text: __('OK'),
+            onPress: () => purchaseUri(uri, costInfo, download),
+          },
+          { text: __('Cancel') },
+        ],
+      );
+    } else {
+      // Free content. Just call purchaseUri directly.
+      purchaseUri(uri, costInfo, download);
+    }
+  };
+
   onFileDownloadButtonPressed = () => {
     const { claim, costInfo, contentType, purchaseUri, setPlayerVisible } = this.props;
     const mediaType = Lbry.getMediaType(contentType);
@@ -610,7 +647,7 @@ class FilePage extends React.PureComponent {
     if (!isPlayable) {
       this.checkStoragePermissionForDownload();
     } else {
-      purchaseUri(uri, costInfo, !isPlayable);
+      this.confirmPurchaseUri(uri, costInfo, !isPlayable);
     }
 
     if (isPlayable) {
@@ -648,7 +685,7 @@ class FilePage extends React.PureComponent {
         stopDownloadConfirmed: false,
       },
       () => {
-        purchaseUri(claim.permanent_url, costInfo, true);
+        this.confirmPurchaseUri(claim.permanent_url, costInfo, true);
         NativeModules.UtilityModule.checkDownloads();
       },
     );
@@ -862,7 +899,7 @@ class FilePage extends React.PureComponent {
         if (!isPlayable) {
           this.checkStoragePermissionForDownload();
         } else {
-          purchaseUri(claim.permanent_url, costInfo, !isPlayable);
+          this.confirmPurchaseUri(claim.permanent_url, costInfo, !isPlayable);
         }
         NativeModules.UtilityModule.checkDownloads();
       });
@@ -950,7 +987,11 @@ class FilePage extends React.PureComponent {
                 />
               )}
               {!fileInfo && (
-                <FilePrice uri={uri} style={filePageStyle.filePriceContainer} textStyle={filePageStyle.filePriceText} />
+                <FilePrice
+                  uri={claim && claim.permanent_url ? claim.permanent_url : uri}
+                  style={filePageStyle.filePriceContainer}
+                  textStyle={filePageStyle.filePriceText}
+                />
               )}
 
               <TouchableOpacity style={filePageStyle.backButton} onPress={this.onBackButtonPressed}>

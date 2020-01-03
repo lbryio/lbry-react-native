@@ -38,9 +38,10 @@ class WalletSend extends React.PureComponent<Props> {
   handleSend = () => {
     const { balance, sendToAddress, notify } = this.props;
     const { address, amount } = this.state;
-    if (address && !regexAddress.test(address)) {
+    if (address && (!regexAddress.test(address) || address.substring(0, 1) === 'r')) {
       notify({
         message: __('The recipient address is not a valid LBRY address.'),
+        isError: true,
       });
       return;
     }
@@ -48,6 +49,7 @@ class WalletSend extends React.PureComponent<Props> {
     if (amount > balance) {
       notify({
         message: __('Insufficient credits'),
+        isError: true,
       });
       return;
     }
@@ -72,6 +74,7 @@ class WalletSend extends React.PureComponent<Props> {
       const { notify } = this.props;
       notify({
         message: __('The recipient address is not a valid LBRY address.'),
+        isError: true,
       });
     }
   };
@@ -97,9 +100,10 @@ class WalletSend extends React.PureComponent<Props> {
               this.setState({
                 address: value,
                 addressChanged: true,
-                addressValid: value.trim().length === 0 || regexAddress.test(value),
+                addressValid: value.trim().length === 0 || (regexAddress.test(value) && !value.startsWith('r')),
               })
             }
+            numberOfLines={1}
             onBlur={this.handleAddressInputBlur}
             onSubmitEditing={this.handleAddressInputSubmit}
             placeholder={'bbFxRyXXXXXXXXXXXZD8nE7XTLUxYnddTs'}
