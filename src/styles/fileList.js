@@ -120,6 +120,22 @@ const fileListStyle = StyleSheet.create({
     marginLeft: 4,
     marginTop: 4,
   },
+  filePriceContainer: {
+    backgroundColor: Colors.NextLbryGreen,
+    justifyContent: 'center',
+    position: 'absolute',
+    left: thumbnailWidth - 64,
+    top: 8,
+    width: 56,
+    height: 24,
+    borderRadius: 4,
+  },
+  filePriceText: {
+    fontFamily: 'Inter-UI-Bold',
+    fontSize: 12,
+    textAlign: 'center',
+    color: '#0c604b',
+  },
 });
 
 export default fileListStyle;

@@ -36,5 +36,5 @@ const perform = dispatch => ({
 
 export default connect(
   select,
-  perform
+  perform,
 )(FileListItem);

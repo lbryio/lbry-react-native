@@ -6,6 +6,7 @@ import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import DateTime from 'component/dateTime';
 import FileItemMedia from 'component/fileItemMedia';
+import FilePrice from 'component/filePrice';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
 import NsfwOverlay from 'component/nsfwOverlay';
@@ -42,7 +43,6 @@ class FileListItem extends React.PureComponent {
   componentDidMount() {
     const { claim, resolveUri, uri, batchResolve } = this.props;
     if (!claim && !batchResolve) {
-      console.log('resolving on componentDidMount?');
       resolveUri(uri);
     }
   }
@@ -50,7 +50,6 @@ class FileListItem extends React.PureComponent {
   componentDidUpdate() {
     const { claim, resolveUri, uri, batchResolve } = this.props;
     if (!claim && uri !== this.state.url && !batchResolve) {
-      console.log('resolving on componentDidUpdate?');
       this.setState({ url: uri }, () => resolveUri(uri));
     }
   }
@@ -168,6 +167,7 @@ class FileListItem extends React.PureComponent {
               size={16}
             />
           )}
+          <FilePrice uri={uri} style={fileListStyle.filePriceContainer} textStyle={fileListStyle.filePriceText} />
           <View style={fileListStyle.detailsContainer}>
             {featuredResult && (
               <Text style={fileListStyle.featuredUri} numberOfLines={1}>
