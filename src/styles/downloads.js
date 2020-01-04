@@ -24,7 +24,6 @@ const downloadsStyle = StyleSheet.create({
     paddingLeft: 16,
     paddingRight: 16,
     marginTop: 16,
-    marginBottom: 60,
   },
   scrollPadding: {
     marginTop: -16,

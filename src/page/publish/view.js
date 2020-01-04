@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import { FlatGrid } from 'react-native-super-grid';
 import {
+  Lbry,
   isNameValid,
   batchActions,
   buildURI,
@@ -160,6 +161,8 @@ class PublishPage extends React.PureComponent {
     DeviceEventEmitter.removeListener('onAllGalleryThumbnailsChecked', this.handleAllGalleryThumbnailsChecked);
     DeviceEventEmitter.removeListener('onDocumentPickerFilePicked', this.onFilePicked);
     DeviceEventEmitter.removeListener('onDocumentPickerCanceled', this.onPickerCanceled);
+    DeviceEventEmitter.removeListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
+    DeviceEventEmitter.removeListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
   }
 
   handleGalleryThumbnailChecked = evt => {
@@ -182,11 +185,26 @@ class PublishPage extends React.PureComponent {
     this.setState({ ...publishFormState, advancedMode });
   };
 
+  checkStoragePermission = () => {
+    // check if we the permission to write to external storage has been granted
+    NativeModules.UtilityModule.canReadWriteStorage().then(canReadWrite => {
+      if (!canReadWrite) {
+        // request permission
+        NativeModules.UtilityModule.requestStoragePermission();
+      }
+    });
+  };
+
   onComponentFocused = () => {
     const { balance, hasFormState, pushDrawerStack, setPlayerVisible, navigation } = this.props;
     NativeModules.Firebase.setCurrentScreen('Publish').then(result => {
       pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH, navigation.state.params ? navigation.state.params : null);
       setPlayerVisible();
+
+      DeviceEventEmitter.addListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
+      DeviceEventEmitter.addListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
+
+      this.checkStoragePermission();
 
       NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
       NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
@@ -891,6 +909,28 @@ class PublishPage extends React.PureComponent {
         NativeModules.UtilityModule.openDocumentPicker('image/*');
       },
     );
+  };
+
+  handleStoragePermissionGranted = () => {
+    // update the configured download folder
+    NativeModules.UtilityModule.getDownloadDirectory().then(downloadDirectory => {
+      Lbry.settings_set({
+        key: 'download_dir',
+        value: downloadDirectory,
+      })
+        .then(() => {})
+        .catch(() => {});
+    });
+  };
+
+  handleStoragePermissionRefused = () => {
+    const { notify } = this.props;
+    notify({
+      message: __(
+        'Content from your device cannot be published because the permission to read storage was not granted.',
+      ),
+      isError: true,
+    });
   };
 
   render() {

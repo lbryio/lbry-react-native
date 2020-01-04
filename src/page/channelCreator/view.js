@@ -1,5 +1,5 @@
 import React from 'react';
-import { CLAIM_VALUES, formatCredits, isNameValid, regexInvalidURI } from 'lbry-redux';
+import { CLAIM_VALUES, Lbry, formatCredits, isNameValid, regexInvalidURI } from 'lbry-redux';
 import {
   ActivityIndicator,
   Alert,
@@ -225,9 +225,9 @@ export default class ChannelCreator extends React.PureComponent {
             error => {
               notify({ message: `The image could not be uploaded: ${error}` });
               this.setState({ uploadingImage: false });
-            }
+            },
           );
-        }
+        },
       );
     } else {
       // could not determine the file path
@@ -489,12 +489,12 @@ export default class ChannelCreator extends React.PureComponent {
           claim_id: claimId,
           amount: newChannelBid,
         },
-        optionalParams
+        optionalParams,
       );
       this.setState({ updateChannelStarted: true }, () => updateChannel(params));
     } else {
       this.setState({ creatingChannel: true }, () =>
-        createChannel(channelName, newChannelBid, optionalParams).then(success, failure)
+        createChannel(channelName, newChannelBid, optionalParams).then(success, failure),
       );
     }
   };
@@ -527,7 +527,7 @@ export default class ChannelCreator extends React.PureComponent {
         avatarImagePickerOpen: false,
         coverImagePickerOpen: true,
       },
-      () => NativeModules.UtilityModule.openDocumentPicker('image/*')
+      () => this.checkStoragePermission(),
     );
   };
 
@@ -543,7 +543,7 @@ export default class ChannelCreator extends React.PureComponent {
         avatarImagePickerOpen: true,
         coverImagePickerOpen: false,
       },
-      () => NativeModules.UtilityModule.openDocumentPicker('image/*')
+      () => this.checkStoragePermission(),
     );
   };
 
@@ -673,7 +673,7 @@ export default class ChannelCreator extends React.PureComponent {
           },
         },
       ],
-      { cancelable: true }
+      { cancelable: true },
     );
   };
 
@@ -747,6 +747,42 @@ export default class ChannelCreator extends React.PureComponent {
 
   handleChannelListItemLongPress = channel => {
     this.addOrRemoveItem(channel);
+  };
+
+  checkStoragePermission = () => {
+    // check if we the permission to write to external storage has been granted
+    NativeModules.UtilityModule.canReadWriteStorage().then(canReadWrite => {
+      if (!canReadWrite) {
+        // request permission
+        NativeModules.UtilityModule.requestStoragePermission();
+      } else {
+        NativeModules.UtilityModule.openDocumentPicker('image/*');
+      }
+    });
+  };
+
+  handleStoragePermissionGranted = () => {
+    // update the configured download folder
+    NativeModules.UtilityModule.getDownloadDirectory().then(downloadDirectory => {
+      Lbry.settings_set({
+        key: 'download_dir',
+        value: downloadDirectory,
+      })
+        .then(() => {})
+        .catch(() => {});
+    });
+
+    // open picker for images
+    NativeModules.UtilityModule.openDocumentPicker('image/*');
+  };
+
+  handleStoragePermissionRefused = () => {
+    const { notify } = this.props;
+    notify({
+      message: __('Pictures from your device cannot be used because the permission to read storage was not granted.'),
+      isError: true,
+    });
+    this.setState({ avatarImagePickerOpen: false, coverImagePickerOpen: false });
   };
 
   render() {
