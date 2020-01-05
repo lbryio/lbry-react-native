@@ -15,6 +15,7 @@ import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PageHeader from 'component/pageHeader';
 import FileListItem from 'component/fileListItem';
+import FileResultItem from 'component/fileResultItem';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import UriBar from 'component/uriBar';
 import searchStyle from 'styles/search';
@@ -104,20 +105,20 @@ class SearchPage extends React.PureComponent {
     return false;
   }
 
-  shouldComponentUpdate(nextProps) {
+  /* shouldComponentUpdate(nextProps) {
     const { isSearching, uris } = this.props;
     return (isSearching && (!uris || uris.length === 0)) || (!isSearching && this.allContentResolved(this.props));
-  }
+  } */
 
   componentDidUpdate() {
-    const { isSearching, resolveUris, uris } = this.props;
+    /* const { isSearching, resolveUris, uris } = this.props;
     if (!isSearching && !this.state.resultsResolved) {
       this.setState({ resultsResolved: true }, () => {
         if (uris && uris.length > 0) {
           resolveUris(uris);
         }
       });
-    }
+    } */
   }
 
   getSearchQuery() {
@@ -191,7 +192,7 @@ class SearchPage extends React.PureComponent {
   };
 
   render() {
-    const { isSearching, navigation, query, uris } = this.props;
+    const { isSearching, navigation, query, results } = this.props;
 
     return (
       <View style={searchStyle.container}>
@@ -209,15 +210,15 @@ class SearchPage extends React.PureComponent {
             style={searchStyle.scrollContainer}
             contentContainerStyle={searchStyle.scrollPadding}
             keyboardShouldPersistTaps={'handled'}
-            data={uris}
-            keyExtractor={(item, index) => item}
+            data={results}
+            keyExtractor={(item, index) => item.claimId}
             initialNumToRender={8}
             maxToRenderPerBatch={20}
             removeClippedSubviews
             ListEmptyComponent={!isSearching ? this.listEmptyComponent() : null}
             ListHeaderComponent={this.state.currentUri ? this.listHeaderComponent(this.state.showTagResult) : null}
             renderItem={({ item }) => (
-              <FileListItem key={item} uri={item} style={searchStyle.resultItem} batchResolve navigation={navigation} />
+              <FileResultItem key={item.claimId} result={item} style={searchStyle.resultItem} navigation={navigation} />
             )}
           />
         )}

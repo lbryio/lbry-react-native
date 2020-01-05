@@ -2,8 +2,9 @@ import { connect } from 'react-redux';
 import {
   doClaimSearch,
   doResolveUris,
-  doSearch,
+  doResolvedSearch,
   doUpdateSearchQuery,
+  makeSelectResolvedSearchResults,
   makeSelectSearchUris,
   selectClaimSearchByQuery,
   selectIsSearching,
@@ -25,10 +26,11 @@ const select = state => ({
   query: selectSearchValue(state),
   resolvingUris: selectResolvingUris(state),
   uris: makeSelectSearchUris(makeSelectQueryWithOptions(null, numSearchResults)(state))(state),
+  results: makeSelectResolvedSearchResults(makeSelectQueryWithOptions(null, numSearchResults)(state))(state),
 });
 
 const perform = dispatch => ({
-  search: query => dispatch(doSearch(query, numSearchResults, null, false, {}, false)),
+  search: query => dispatch(doResolvedSearch(query, numSearchResults, null, false, {})),
   claimSearch: options => dispatch(doClaimSearch(options)),
   updateSearchQuery: query => dispatch(doUpdateSearchQuery(query)),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_SEARCH)),

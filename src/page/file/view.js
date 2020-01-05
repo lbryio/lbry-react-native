@@ -148,7 +148,6 @@ class FilePage extends React.PureComponent {
       navigation,
       contentType,
       notify,
-      recommendedContent: prevRecommendedContent,
       drawerStack: prevDrawerStack,
     } = this.props;
     const { uri } = navigation.state.params;
@@ -160,7 +159,6 @@ class FilePage extends React.PureComponent {
       purchaseUriErrorMessage,
       streamingUrl,
       drawerStack,
-      recommendedContent,
       resolveUris,
     } = nextProps;
 
@@ -213,13 +211,6 @@ class FilePage extends React.PureComponent {
 
     if (claim && !this.state.viewCountFetched) {
       this.setState({ viewCountFetched: true }, () => fetchViewCount(claim.claim_id));
-    }
-
-    if (
-      (!prevRecommendedContent && recommendedContent) ||
-      (recommendedContent && prevRecommendedContent && recommendedContent.length !== prevRecommendedContent.length)
-    ) {
-      resolveUris(recommendedContent);
     }
   }
 
@@ -760,8 +751,6 @@ class FilePage extends React.PureComponent {
       position,
       purchaseUri,
       pushDrawerStack,
-      isSearchingRecommendContent,
-      recommendedContent,
       thumbnail,
       title,
       viewCount,
