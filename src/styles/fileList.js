@@ -123,9 +123,11 @@ const fileListStyle = StyleSheet.create({
   filePriceContainer: {
     backgroundColor: Colors.NextLbryGreen,
     justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
     position: 'absolute',
-    left: thumbnailWidth - 64,
-    top: 8,
+    left: thumbnailWidth - 60,
+    top: 4,
     width: 56,
     height: 24,
     borderRadius: 4,
@@ -134,6 +136,10 @@ const fileListStyle = StyleSheet.create({
     fontFamily: 'Inter-UI-Bold',
     fontSize: 12,
     textAlign: 'center',
+    color: '#0c604b',
+  },
+  filePriceIcon: {
+    marginRight: 2,
     color: '#0c604b',
   },
 });

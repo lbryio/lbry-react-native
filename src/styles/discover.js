@@ -166,6 +166,8 @@ const discoverStyle = StyleSheet.create({
   filePriceContainer: {
     backgroundColor: Colors.NextLbryGreen,
     justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
     position: 'absolute',
     right: 8,
     top: 8,
@@ -177,6 +179,10 @@ const discoverStyle = StyleSheet.create({
     fontFamily: 'Inter-UI-Bold',
     fontSize: 12,
     textAlign: 'center',
+    color: '#0c604b',
+  },
+  filePriceIcon: {
+    marginRight: 2,
     color: '#0c604b',
   },
   rightHeaderIcon: {

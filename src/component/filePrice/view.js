@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Text, View } from 'react-native';
 import { formatCredits, formatFullPrice } from 'lbry-redux';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 class CreditAmount extends React.PureComponent {
   static propTypes = {
@@ -70,7 +71,11 @@ class CreditAmount extends React.PureComponent {
             *
           </span>
         ) : null} */
-    return <Text style={style}>{amountText}</Text>;
+    return (
+      <Text style={style} numberOfLines={1}>
+        {amountText}
+      </Text>
+    );
   }
 }
 
@@ -92,30 +97,25 @@ class FilePrice extends React.PureComponent {
   }
 
   render() {
-    const { costInfo, look = 'indicator', showFullPrice = false, style, textStyle } = this.props;
+    const { costInfo, look = 'indicator', showFullPrice = false, style, iconStyle, textStyle } = this.props;
 
     const isEstimate = costInfo ? !costInfo.includesData : null;
-
-    if (!costInfo) {
-      return (
-        <View style={style}>
-          <Text style={textStyle}>???</Text>
-        </View>
-      );
+    const amount = costInfo ? parseFloat(costInfo.cost) : 0;
+    if (!costInfo || isNaN(amount) || amount === 0) {
+      return null;
     }
 
     return (
       <View style={style}>
+        <Icon name="coins" size={9} style={iconStyle} />
         <CreditAmount
           style={textStyle}
           label={false}
-          amount={parseFloat(costInfo.cost)}
+          amount={amount}
           isEstimate={isEstimate}
           showFree
           showFullPrice={showFullPrice}
-        >
-          ???
-        </CreditAmount>
+        />
       </View>
     );
   }

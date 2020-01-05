@@ -107,7 +107,12 @@ class FileItem extends React.PureComponent {
             <Icon style={discoverStyle.downloadedIcon} solid color={Colors.NextLbryGreen} name={'folder'} size={16} />
           )}
           {!compactView && (!fileInfo || !fileInfo.completed || !fileInfo.download_path) && (
-            <FilePrice uri={uri} style={discoverStyle.filePriceContainer} textStyle={discoverStyle.filePriceText} />
+            <FilePrice
+              uri={uri}
+              style={discoverStyle.filePriceContainer}
+              iconStyle={discoverStyle.filePriceIcon}
+              textStyle={discoverStyle.filePriceText}
+            />
           )}
           {!compactView && (
             <View style={isRewardContent ? discoverStyle.rewardTitleContainer : null}>
@@ -129,7 +134,7 @@ class FileItem extends React.PureComponent {
                       normalizeURI(shortChannelUri || fullChannelUri),
                       null,
                       false,
-                      fullChannelUri
+                      fullChannelUri,
                     );
                   }}
                 />

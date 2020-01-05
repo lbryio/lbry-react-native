@@ -75,9 +75,11 @@ class UriBar extends React.PureComponent {
         }
       }, UriBar.INPUT_TIMEOUT);
     }
-    this.setState({ inputText: newValue, currentValue: newValue, changeTextTimeout: timeout }, () =>
-      this.setCaretPosition(newValue),
-    );
+    this.setState({ inputText: newValue, currentValue: newValue, changeTextTimeout: timeout }, () => {
+      if (newValue || newValue.length > 0) {
+        this.setCaretPosition(newValue);
+      }
+    });
   };
 
   handleItemPress = item => {
@@ -132,7 +134,7 @@ class UriBar extends React.PureComponent {
   }
 
   setCaretPosition(text) {
-    if (this.textInput && text && text.length > 0) {
+    if (this.textInput && text && text.length >= 0) {
       this.textInput.setNativeProps({ selection: { start: text.length, end: text.length } });
     }
   }

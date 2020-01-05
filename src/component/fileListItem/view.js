@@ -167,7 +167,12 @@ class FileListItem extends React.PureComponent {
               size={16}
             />
           )}
-          <FilePrice uri={uri} style={fileListStyle.filePriceContainer} textStyle={fileListStyle.filePriceText} />
+          <FilePrice
+            uri={uri}
+            style={fileListStyle.filePriceContainer}
+            iconStyle={fileListStyle.filePriceIcon}
+            textStyle={fileListStyle.filePriceText}
+          />
           <View style={fileListStyle.detailsContainer}>
             {featuredResult && (
               <Text style={fileListStyle.featuredUri} numberOfLines={1}>
