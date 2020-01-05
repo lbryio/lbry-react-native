@@ -44,20 +44,21 @@ class FileResultItem extends React.PureComponent {
   };
 
   render() {
-    const { featuredResult, fileInfo, navigation, result, rewardedContentClaimIds, style } = this.props;
+    const { featuredResult, fileInfo, navigation, obscureNsfw, result, rewardedContentClaimIds, style } = this.props;
     const {
       channel,
       channel_claim_id: channelClaimId,
       claimId,
+      duration,
       fee,
       name,
+      nsfw,
       release_time: releaseTime,
       thumbnail_url: thumbnailUrl,
       title,
     } = result;
 
-    const obscure = false; // obscureNsfw && nsfw;
-    const duration = 0;
+    const obscure = obscureNsfw && nsfw;
     const url = normalizeURI(`${name}#${claimId}`);
     const hasChannel = !!channel;
     const channelUrl = channel ? normalizeURI(`${channel}#${channelClaimId}`) : null;
@@ -83,7 +84,7 @@ class FileResultItem extends React.PureComponent {
             />
           )}
           <FilePrice
-            cost={fee}
+            cost={fee ? parseFloat(fee) / 100000000 : 0}
             uri={url}
             style={fileListStyle.filePriceContainer}
             iconStyle={fileListStyle.filePriceIcon}

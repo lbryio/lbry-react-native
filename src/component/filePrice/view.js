@@ -99,7 +99,7 @@ class FilePrice extends React.PureComponent {
 
     const isEstimate = costInfo ? !costInfo.includesData : null;
     const amount = cost ? parseFloat(cost) : costInfo ? parseFloat(costInfo.cost) : 0;
-    if (!costInfo || isNaN(amount) || amount === 0) {
+    if (isNaN(amount) || amount === 0) {
       return null;
     }
 
