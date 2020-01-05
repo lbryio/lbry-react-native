@@ -18,7 +18,7 @@ const select = (state, props) => ({
 
 const perform = dispatch => ({
   resolveUris: uris => dispatch(doResolveUris(uris)),
-  searchRecommended: query => dispatch(doSearch(query, 20, undefined, true, false)),
+  searchRecommended: (query, claimId) => dispatch(doSearch(query, 20, undefined, true, { related_to: claimId }, false)),
 });
 
 export default connect(

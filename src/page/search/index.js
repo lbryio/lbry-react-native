@@ -28,7 +28,7 @@ const select = state => ({
 });
 
 const perform = dispatch => ({
-  search: query => dispatch(doSearch(query, numSearchResults, null, false, false)),
+  search: query => dispatch(doSearch(query, numSearchResults, null, false, {}, false)),
   claimSearch: options => dispatch(doClaimSearch(options)),
   updateSearchQuery: query => dispatch(doUpdateSearchQuery(query)),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_SEARCH)),

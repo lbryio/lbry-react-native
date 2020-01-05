@@ -13,9 +13,9 @@ export default class RelatedContent extends React.PureComponent {
   };
 
   componentDidMount() {
-    const { title, searchRecommended } = this.props;
-    if (title) {
-      searchRecommended(title);
+    const { title, claimId, searchRecommended } = this.props;
+    if (title && claimId) {
+      searchRecommended(title, claimId);
     }
   }
 

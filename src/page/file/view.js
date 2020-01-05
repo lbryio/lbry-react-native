@@ -991,6 +991,7 @@ class FilePage extends React.PureComponent {
                   uri={claim && claim.permanent_url ? claim.permanent_url : uri}
                   style={filePageStyle.filePriceContainer}
                   textStyle={filePageStyle.filePriceText}
+                  iconStyle={filePageStyle.filePriceIcon}
                 />
               )}
 
@@ -1223,7 +1224,13 @@ class FilePage extends React.PureComponent {
                 <View onLayout={this.setRelatedContentPosition} />
 
                 {this.state.showRecommended && (
-                  <RelatedContent navigation={navigation} title={title} uri={fullUri} fullUri={fullUri} />
+                  <RelatedContent
+                    navigation={navigation}
+                    claimId={claim.claim_id}
+                    title={title}
+                    uri={fullUri}
+                    fullUri={fullUri}
+                  />
                 )}
               </ScrollView>
             )}

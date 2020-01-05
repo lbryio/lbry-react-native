@@ -170,6 +170,8 @@ const filePageStyle = StyleSheet.create({
   filePriceContainer: {
     backgroundColor: Colors.NextLbryGreen,
     justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
     position: 'absolute',
     right: 16,
     top: 16,
@@ -182,6 +184,9 @@ const filePageStyle = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
     color: '#0c604b',
+  },
+  filePriceIcon: {
+    marginRight: 2,
   },
   actions: {
     flexDirection: 'row',
