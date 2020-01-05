@@ -46,15 +46,9 @@ class UriBar extends React.PureComponent {
     const { currentRoute: prevRoute } = this.props;
 
     if (Constants.DRAWER_ROUTE_SEARCH === currentRoute && currentRoute !== prevRoute) {
-      this.setState({ currentValue: query, inputText: query }, () => this.setCaretPosition());
+      this.setState({ currentValue: query, inputText: query });
     }
   }
-
-  handleChange = evt => {
-    if (evt.nativeEvent && evt.nativeEvent.text) {
-      this.setCaretPosition();
-    }
-  };
 
   handleChangeText = text => {
     const newValue = text || '';
@@ -130,17 +124,8 @@ class UriBar extends React.PureComponent {
   };
 
   setSelection() {
-    if (this.textInput) {
+    if (this.textInput && !this.state.focused) {
       this.textInput.setNativeProps({ selection: { start: 0, end: 0 } });
-    }
-  }
-
-  setCaretPosition() {
-    if (this.textInput) {
-      const text = this.textInput.props.value;
-      if (text && text.length > 0) {
-        this.textInput.setNativeProps({ selection: { start: text.length, end: text.length } });
-      }
     }
   }
 
@@ -194,7 +179,7 @@ class UriBar extends React.PureComponent {
       value,
     } = this.props;
     if (this.state.currentValue === null) {
-      this.setState({ currentValue: value }, () => this.setCaretPosition());
+      this.setState({ currentValue: value });
     }
 
     let style = [
