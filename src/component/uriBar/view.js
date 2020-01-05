@@ -18,8 +18,9 @@ class UriBar extends React.PureComponent {
 
   keyboardDidHideListener = null;
 
+  changeTextTimeout = -1;
+
   state = {
-    changeTextTimeout: null,
     currentValue: null,
     inputText: null,
     focused: false,
@@ -29,7 +30,6 @@ class UriBar extends React.PureComponent {
   componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
-    this.setSelection();
   }
 
   componentWillUnmount() {
@@ -52,14 +52,14 @@ class UriBar extends React.PureComponent {
 
   handleChangeText = text => {
     const newValue = text || '';
-    clearTimeout(this.state.changeTextTimeout);
+    clearTimeout(this.changeTextTimeout);
     const { updateSearchQuery, onSearchSubmitted, showUriBarSuggestions, navigation } = this.props;
 
     updateSearchQuery(text);
 
-    let timeout = -1;
+    this.changeTextTimeout = -1;
     if (!showUriBarSuggestions) {
-      timeout = setTimeout(() => {
+      /* this.changeTextTimeout = setTimeout(() => {
         if (text.trim().length === 0) {
           // don't do anything if the text is empty
           return;
@@ -73,9 +73,9 @@ class UriBar extends React.PureComponent {
             navigation.navigate({ routeName: 'Search', key: 'searchPage', params: { searchQuery: text } });
           }
         }
-      }, UriBar.INPUT_TIMEOUT);
+      }, UriBar.INPUT_TIMEOUT); */
     }
-    this.setState({ inputText: newValue, currentValue: newValue, changeTextTimeout: timeout });
+    this.setState({ inputText: newValue, currentValue: newValue });
   };
 
   handleItemPress = item => {
@@ -122,12 +122,6 @@ class UriBar extends React.PureComponent {
     }
     this.setState({ focused: false, keyboardHeight: 0 });
   };
-
-  setSelection() {
-    if (this.textInput && !this.state.focused) {
-      this.textInput.setNativeProps({ selection: { start: 0, end: 0 } });
-    }
-  }
 
   handleSubmitEditing = () => {
     const { navigation, onSearchSubmitted, updateSearchQuery } = this.props;
@@ -252,11 +246,7 @@ class UriBar extends React.PureComponent {
               }}
               autoCorrect={false}
               style={uriBarStyle.uriText}
-              onLayout={() => {
-                if (!this.state.focused) {
-                  this.setSelection();
-                }
-              }}
+              selection={!this.state.focused ? { start: 0, end: 0 } : null}
               selectTextOnFocus
               placeholder={__('Search movies, music, and more')}
               underlineColorAndroid={'transparent'}
@@ -267,12 +257,8 @@ class UriBar extends React.PureComponent {
               inlineImageLeft={'baseline_search_black_24'}
               inlineImagePadding={16}
               onFocus={() => this.setState({ focused: true })}
-              onBlur={() => {
-                this.setState({ focused: false });
-                this.setSelection();
-              }}
+              onBlur={() => this.setState({ focused: false })}
               onChangeText={this.handleChangeText}
-              onChange={this.handleChange}
               onSubmitEditing={this.handleSubmitEditing}
             />
           )}

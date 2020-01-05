@@ -31,6 +31,7 @@ const uriBarStyle = StyleSheet.create({
     paddingRight: 12,
     fontFamily: 'Inter-UI-Regular',
     fontSize: 16,
+    height: 44,
     lineHeight: 18,
     flex: 17,
   },
