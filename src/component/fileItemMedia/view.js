@@ -61,6 +61,7 @@ class FileItemMedia extends React.PureComponent {
     let style = this.props.style;
     const { duration, isResolvingUri, thumbnail, title, resizeMode } = this.props;
     const atStyle = this.state.autoThumbStyle;
+    const hasDuration = !!duration;
 
     if (this.isThumbnailValid(thumbnail) && !this.state.imageLoadFailed) {
       if (style == null) {
@@ -75,7 +76,7 @@ class FileItemMedia extends React.PureComponent {
             resizeMode={this.getFastImageResizeMode(resizeMode)}
             style={fileItemMediaStyle.image}
           />
-          {duration && (
+          {duration > 0 && (
             <VideoDuration
               duration={duration}
               style={fileItemMediaStyle.duration}
@@ -104,7 +105,7 @@ class FileItemMedia extends React.PureComponent {
                 .toUpperCase()}
           </Text>
         )}
-        {duration && (
+        {duration > 0 && (
           <VideoDuration
             duration={duration}
             style={fileItemMediaStyle.duration}

@@ -63,14 +63,6 @@ class CreditAmount extends React.PureComponent {
       }
     }
 
-    /* {this.props.isEstimate ? (
-          <span
-            className="credit-amount__estimate"
-            title={__('This is an estimate and does not include data fees')}
-          >
-            *
-          </span>
-        ) : null} */
     return (
       <Text style={style} numberOfLines={1}>
         {amountText}
@@ -81,11 +73,17 @@ class CreditAmount extends React.PureComponent {
 
 class FilePrice extends React.PureComponent {
   componentWillMount() {
-    this.fetchCost(this.props);
+    const { cost } = this.props;
+    if (isNaN(parseFloat(cost))) {
+      this.fetchCost(this.props);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
-    this.fetchCost(nextProps);
+    const { cost } = this.props;
+    if (isNaN(parseFloat(cost))) {
+      this.fetchCost(nextProps);
+    }
   }
 
   fetchCost(props) {
@@ -97,11 +95,11 @@ class FilePrice extends React.PureComponent {
   }
 
   render() {
-    const { costInfo, look = 'indicator', showFullPrice = false, style, iconStyle, textStyle } = this.props;
+    const { cost, costInfo, look = 'indicator', showFullPrice = false, style, iconStyle, textStyle } = this.props;
 
     const isEstimate = costInfo ? !costInfo.includesData : null;
-    const amount = costInfo ? parseFloat(costInfo.cost) : 0;
-    if (!costInfo || isNaN(amount) || amount === 0) {
+    const amount = cost ? parseFloat(cost) : costInfo ? parseFloat(costInfo.cost) : 0;
+    if (isNaN(amount) || amount === 0) {
       return null;
     }
 
