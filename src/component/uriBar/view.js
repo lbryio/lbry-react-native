@@ -46,9 +46,15 @@ class UriBar extends React.PureComponent {
     const { currentRoute: prevRoute } = this.props;
 
     if (Constants.DRAWER_ROUTE_SEARCH === currentRoute && currentRoute !== prevRoute) {
-      this.setState({ currentValue: query, inputText: query }, () => this.setCaretPosition(query));
+      this.setState({ currentValue: query, inputText: query }, () => this.setCaretPosition());
     }
   }
+
+  handleChange = evt => {
+    if (evt.nativeEvent && evt.nativeEvent.text) {
+      this.setCaretPosition();
+    }
+  };
 
   handleChangeText = text => {
     const newValue = text || '';
@@ -75,11 +81,7 @@ class UriBar extends React.PureComponent {
         }
       }, UriBar.INPUT_TIMEOUT);
     }
-    this.setState({ inputText: newValue, currentValue: newValue, changeTextTimeout: timeout }, () => {
-      if (newValue || newValue.length > 0) {
-        this.setCaretPosition(newValue);
-      }
-    });
+    this.setState({ inputText: newValue, currentValue: newValue, changeTextTimeout: timeout });
   };
 
   handleItemPress = item => {
@@ -133,9 +135,12 @@ class UriBar extends React.PureComponent {
     }
   }
 
-  setCaretPosition(text) {
-    if (this.textInput && text && text.length >= 0) {
-      this.textInput.setNativeProps({ selection: { start: text.length, end: text.length } });
+  setCaretPosition() {
+    if (this.textInput) {
+      const text = this.textInput.props.value;
+      if (text && text.length > 0) {
+        this.textInput.setNativeProps({ selection: { start: text.length, end: text.length } });
+      }
     }
   }
 
@@ -189,7 +194,7 @@ class UriBar extends React.PureComponent {
       value,
     } = this.props;
     if (this.state.currentValue === null) {
-      this.setState({ currentValue: value }, () => this.setCaretPosition(value));
+      this.setState({ currentValue: value }, () => this.setCaretPosition());
     }
 
     let style = [
@@ -282,6 +287,7 @@ class UriBar extends React.PureComponent {
                 this.setSelection();
               }}
               onChangeText={this.handleChangeText}
+              onChange={this.handleChange}
               onSubmitEditing={this.handleSubmitEditing}
             />
           )}
