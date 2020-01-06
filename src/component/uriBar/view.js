@@ -58,8 +58,6 @@ class UriBar extends React.PureComponent {
     clearTimeout(this.changeTextTimeout);
     const { updateSearchQuery, onSearchSubmitted, showUriBarSuggestions, navigation } = this.props;
 
-    updateSearchQuery(text);
-
     this.changeTextTimeout = -1;
     if (!showUriBarSuggestions) {
       this.changeTextTimeout = setTimeout(() => {
@@ -70,6 +68,7 @@ class UriBar extends React.PureComponent {
 
         if (!text.startsWith('lbry://')) {
           // not a URI input, so this is a search, perform a direct search
+          updateSearchQuery(text);
           if (onSearchSubmitted) {
             onSearchSubmitted(text);
           } else {
@@ -77,6 +76,8 @@ class UriBar extends React.PureComponent {
           }
         }
       }, UriBar.INPUT_TIMEOUT);
+    } else {
+      updateSearchQuery(text);
     }
     this.setState({ inputText: newValue, currentValue: newValue });
   };

@@ -28,6 +28,7 @@ class SearchPage extends React.PureComponent {
     claimSearchRun: false,
     claimSearchOptions: null,
     resultsResolved: false,
+    tagResultDisplayed: false,
   };
 
   static navigationOptions = {
@@ -61,6 +62,7 @@ class SearchPage extends React.PureComponent {
           claimSearchRun: false,
           showTagResult: false,
           resultsResolved: false,
+          tagResultDisplayed: false,
         });
         search(searchQuery);
       }
@@ -84,6 +86,7 @@ class SearchPage extends React.PureComponent {
         currentQuery: query,
         currentUri: isURIValid(query) ? normalizeURI(query) : null,
         resultsResolved: false,
+        tagResultDisplayed: false,
       });
       search(query);
     }
@@ -111,14 +114,12 @@ class SearchPage extends React.PureComponent {
   } */
 
   componentDidUpdate() {
-    /* const { isSearching, resolveUris, uris } = this.props;
-    if (!isSearching && !this.state.resultsResolved) {
-      this.setState({ resultsResolved: true }, () => {
-        if (uris && uris.length > 0) {
-          resolveUris(uris);
-        }
-      });
-    } */
+    const { claimSearchByQuery } = this.props;
+    if (this.state.claimSearchRun && this.state.claimSearchOptions && !this.state.tagResultDisplayed) {
+      const claimSearchKey = createNormalizedClaimSearchKey(this.state.claimSearchOptions);
+      const claimSearchUris = claimSearchByQuery[claimSearchKey];
+      this.setState({ showTagResult: claimSearchUris && claimSearchUris.length > 0, tagResultDisplayed: true });
+    }
   }
 
   getSearchQuery() {
@@ -137,6 +138,7 @@ class SearchPage extends React.PureComponent {
       claimSearchRun: false,
       showTagResult: false,
       resultsResolved: false,
+      tagResultDisplayed: false,
     });
     search(keywords);
   };
@@ -152,26 +154,19 @@ class SearchPage extends React.PureComponent {
     );
   };
 
-  listHeaderComponent = showTagResult => {
-    const { navigation, claimSearch, claimSearchByQuery } = this.props;
+  listHeaderComponent = (showTagResult, query) => {
+    const { navigation, claimSearch } = this.props;
     const { currentUri } = this.state;
-    const query = this.getSearchQuery();
 
     const canBeTag = query && query.trim().length > 0 && isURIValid(query);
     if (canBeTag && !this.state.claimSearchRun) {
       const options = {
-        any_tags: [query],
+        any_tags: [query.toLowerCase()],
         page: 1,
         no_totals: true,
       };
       this.setState({ claimSearchOptions: options, claimSearchRun: true }, () => claimSearch(options));
     }
-
-    /* if (this.state.claimSearchRun && this.state.claimSearchOptions) {
-      const claimSearchKey = createNormalizedClaimSearchKey(this.state.claimSearchOptions);
-      const claimSearchUris = claimSearchByQuery[claimSearchKey];
-      this.setState({ showTagResult: claimSearchUris && claimSearchUris.length > 0 });
-    } */
 
     return (
       <View>
@@ -216,7 +211,7 @@ class SearchPage extends React.PureComponent {
             maxToRenderPerBatch={20}
             removeClippedSubviews
             ListEmptyComponent={!isSearching ? this.listEmptyComponent() : null}
-            ListHeaderComponent={this.state.currentUri ? this.listHeaderComponent(this.state.showTagResult) : null}
+            ListHeaderComponent={this.listHeaderComponent(this.state.showTagResult, this.state.currentQuery)}
             renderItem={({ item }) => (
               <FileResultItem key={item.claimId} result={item} style={searchStyle.resultItem} navigation={navigation} />
             )}
