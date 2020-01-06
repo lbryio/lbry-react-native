@@ -145,6 +145,7 @@ class FilePage extends React.PureComponent {
       failedPurchaseUris: prevFailedPurchaseUris,
       fetchViewCount,
       purchasedUris: prevPurchasedUris,
+      purchaseUriErrorMessage: prevPurchaseUriErrorMessage,
       navigation,
       contentType,
       notify,
@@ -166,7 +167,11 @@ class FilePage extends React.PureComponent {
       this.onComponentFocused();
     }
 
-    if (failedPurchaseUris.includes(uri) && !purchasedUris.includes(uri)) {
+    if (
+      failedPurchaseUris.includes(uri) &&
+      !purchasedUris.includes(uri) &&
+      prevPurchaseUriErrorMessage !== purchaseUriErrorMessage
+    ) {
       if (purchaseUriErrorMessage && purchaseUriErrorMessage.trim().length > 0) {
         notify({ message: purchaseUriErrorMessage, isError: true });
       }
@@ -222,17 +227,7 @@ class FilePage extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {
-      claim,
-      contentType,
-      costInfo,
-      fileInfo,
-      isResolvingUri,
-      resolveUri,
-      navigation,
-      purchaseUri,
-      title,
-    } = this.props;
+    const { claim, contentType, costInfo, fileInfo, isResolvingUri, resolveUri, navigation, title } = this.props;
     const { uri } = this.state;
     if (!isResolvingUri && claim === undefined && uri) {
       resolveUri(uri);
@@ -258,6 +253,24 @@ class FilePage extends React.PureComponent {
 
     if (((costInfo && costInfo.cost > 0) || !isPlayable) && !this.state.showRecommended) {
       this.setState({ showRecommended: true });
+    }
+
+    if (
+      !fileInfo &&
+      !this.state.autoDownloadStarted &&
+      claim &&
+      costInfo &&
+      costInfo.cost === 0 &&
+      (isPlayable || (this.state.uriVars && this.state.uriVars.download === 'true'))
+    ) {
+      this.setState({ autoDownloadStarted: true }, () => {
+        if (!isPlayable) {
+          this.checkStoragePermissionForDownload();
+        } else {
+          this.confirmPurchaseUri(claim.permanent_url, costInfo, !isPlayable);
+        }
+        NativeModules.UtilityModule.checkDownloads();
+      });
     }
   }
 
@@ -877,22 +890,6 @@ class FilePage extends React.PureComponent {
     const canOpen = isViewable && completed;
     const localFileUri = this.localUriForFileInfo(fileInfo);
     const unsupported = !isPlayable && !canOpen;
-
-    if (
-      !this.state.autoDownloadStarted &&
-      claim &&
-      costInfo &&
-      ((isPlayable && costInfo.cost === 0) || (this.state.uriVars && this.state.uriVars.download === 'true'))
-    ) {
-      this.setState({ autoDownloadStarted: true }, () => {
-        if (!isPlayable) {
-          this.checkStoragePermissionForDownload();
-        } else {
-          this.confirmPurchaseUri(claim.permanent_url, costInfo, !isPlayable);
-        }
-        NativeModules.UtilityModule.checkDownloads();
-      });
-    }
 
     if (this.state.downloadPressed && canOpen && !this.state.autoOpened) {
       // automatically open a web viewable or image file after the download button is pressed
