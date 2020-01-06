@@ -58,7 +58,6 @@ window.__ = __;
 
 const globalExceptionHandler = (error, isFatal) => {
   if (error && NativeModules.Firebase) {
-    console.log(error);
     NativeModules.Firebase.logException(!!isFatal, error.message ? error.message : 'No message', JSON.stringify(error));
   }
 };
@@ -201,7 +200,7 @@ const store = createStore(
 );
 window.store = store;
 
-const persistor = persistStore(store, persistOptions, err => {
+const persistor = persistStore(store, null, err => {
   if (err) {
     console.log('Unable to load saved SETTINGS');
   }

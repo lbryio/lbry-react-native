@@ -94,9 +94,9 @@ class SplashScreen extends React.PureComponent {
           NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
             getSync(walletPassword, () => {
               this.getUserSettings();
-              this.navigateToMain();
             });
           });
+          this.navigateToMain();
           return;
         }
 
@@ -137,32 +137,32 @@ class SplashScreen extends React.PureComponent {
       user,
     } = this.props;
 
-    Lbry.resolve({ urls: 'lbry://one' }).then(() => {
-      // Leave the splash screen
-      balanceSubscribe();
-      blacklistedOutpointsSubscribe();
-      filteredOutpointsSubscribe();
-      checkSubscriptionsInit();
+    // Lbry.resolve({ urls: 'lbry://one' }).then(() => {
+    // Leave the splash screen
+    balanceSubscribe();
+    blacklistedOutpointsSubscribe();
+    filteredOutpointsSubscribe();
+    checkSubscriptionsInit();
 
-      if (user && user.id && user.has_verified_email) {
-        // user already authenticated
-        NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
-          getSync(walletPassword, () => {
-            this.getUserSettings();
-            this.navigateToMain();
-          });
+    if (user && user.id && user.has_verified_email) {
+      // user already authenticated
+      NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
+        getSync(walletPassword, () => {
+          this.getUserSettings();
         });
-      } else {
-        NativeModules.VersionInfo.getAppVersion().then(appVersion => {
-          this.setState({ shouldAuthenticate: true });
-          NativeModules.Firebase.getMessagingToken()
-            .then(firebaseToken => {
-              authenticate(appVersion, Platform.OS, firebaseToken);
-            })
-            .catch(() => authenticate(appVersion, Platform.OS));
-        });
-      }
-    });
+      });
+      this.navigateToMain();
+    } else {
+      NativeModules.VersionInfo.getAppVersion().then(appVersion => {
+        this.setState({ shouldAuthenticate: true });
+        NativeModules.Firebase.getMessagingToken()
+          .then(firebaseToken => {
+            authenticate(appVersion, Platform.OS, firebaseToken);
+          })
+          .catch(() => authenticate(appVersion, Platform.OS));
+      });
+    }
+    // });
   };
 
   handleAccountUnlockFailed() {
@@ -200,8 +200,8 @@ class SplashScreen extends React.PureComponent {
             Lbry.wallet_unlock({ password: password || '' }).then(unlocked => {
               if (unlocked) {
                 this.setState({
-                  message: __('Testing network'),
-                  details: __('Waiting for name resolution'),
+                  message: __('Authenticating'),
+                  details: __('Waiting for authentication'),
                 });
                 this.finishSplashScreen();
               } else {
@@ -210,8 +210,8 @@ class SplashScreen extends React.PureComponent {
             });
           } else {
             this.setState({
-              message: __('Testing network'),
-              details: __('Waiting for name resolution'),
+              message: __('Authenticating'),
+              details: __('Waiting for authentication'),
             });
             this.finishSplashScreen();
           }
@@ -315,8 +315,8 @@ class SplashScreen extends React.PureComponent {
     this.setState(
       {
         accountUnlockFailed: false,
-        message: __('Testing network'),
-        details: __('Waiting for name resolution'),
+        message: __('Authenticating'),
+        details: __('Waiting for authentication'),
       },
       () => this.finishSplashScreen(),
     );

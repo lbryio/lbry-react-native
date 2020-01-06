@@ -17,8 +17,8 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
-  WebView,
 } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { NavigationEvents } from 'react-navigation';
 import { navigateBack, navigateToUri, formatLbryUrlForWeb } from 'utils/helper';
 import Icon from 'react-native-vector-icons/FontAwesome5';

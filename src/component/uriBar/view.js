@@ -25,11 +25,13 @@ class UriBar extends React.PureComponent {
     inputText: null,
     focused: false,
     keyboardHeight: 0,
+    selection: undefined,
   };
 
   componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow);
     this.keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', this._keyboardDidHide);
+    this.setState({ selection: { start: 0, end: 0 } });
   }
 
   componentWillUnmount() {
@@ -51,6 +53,7 @@ class UriBar extends React.PureComponent {
   }
 
   handleChangeText = text => {
+    this.setState({ selection: undefined });
     const newValue = text || '';
     clearTimeout(this.changeTextTimeout);
     const { updateSearchQuery, onSearchSubmitted, showUriBarSuggestions, navigation } = this.props;
@@ -59,7 +62,7 @@ class UriBar extends React.PureComponent {
 
     this.changeTextTimeout = -1;
     if (!showUriBarSuggestions) {
-      /* this.changeTextTimeout = setTimeout(() => {
+      this.changeTextTimeout = setTimeout(() => {
         if (text.trim().length === 0) {
           // don't do anything if the text is empty
           return;
@@ -73,7 +76,7 @@ class UriBar extends React.PureComponent {
             navigation.navigate({ routeName: 'Search', key: 'searchPage', params: { searchQuery: text } });
           }
         }
-      }, UriBar.INPUT_TIMEOUT); */
+      }, UriBar.INPUT_TIMEOUT);
     }
     this.setState({ inputText: newValue, currentValue: newValue });
   };
@@ -151,6 +154,26 @@ class UriBar extends React.PureComponent {
         navigation.navigate({ routeName: 'Search', key: 'searchPage', params: { searchQuery: inputText } });
       }
     }
+  };
+
+  handleFocus = () => {
+    this.setState(
+      {
+        focused: true,
+      },
+      () => {
+        this.setState({
+          selection: { start: 0, end: this.state.currentValue ? this.state.currentValue.length : 0 },
+        });
+      },
+    );
+  };
+
+  handleBlur = () => {
+    this.setState({
+      focused: false,
+      selection: { start: 0, end: 0 },
+    });
   };
 
   onSearchPageBlurred() {
@@ -246,8 +269,7 @@ class UriBar extends React.PureComponent {
               }}
               autoCorrect={false}
               style={uriBarStyle.uriText}
-              selection={!this.state.focused ? { start: 0, end: 0 } : null}
-              selectTextOnFocus
+              selection={this.state.selection}
               placeholder={__('Search movies, music, and more')}
               underlineColorAndroid={'transparent'}
               numberOfLines={1}
@@ -256,8 +278,8 @@ class UriBar extends React.PureComponent {
               returnKeyType={'go'}
               inlineImageLeft={'baseline_search_black_24'}
               inlineImagePadding={16}
-              onFocus={() => this.setState({ focused: true })}
-              onBlur={() => this.setState({ focused: false })}
+              onFocus={this.handleFocus}
+              onBlur={this.handleBlur}
               onChangeText={this.handleChangeText}
               onSubmitEditing={this.handleSubmitEditing}
             />

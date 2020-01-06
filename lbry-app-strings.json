@@ -243,5 +243,10 @@
   "Are you a supermodel or rockstar that received a custom reward code? Claim it here.": "Are you a supermodel or rockstar that received a custom reward code? Claim it here.",
   "Redeem": "Redeem",
   "Please confirm that you want to use LBRY without creating an account.": "Please confirm that you want to use LBRY without creating an account.",
-  "You sent %amount% LBC as a tip, Mahalo!": "You sent %amount% LBC as a tip, Mahalo!"
+  "You sent %amount% LBC as a tip, Mahalo!": "You sent %amount% LBC as a tip, Mahalo!",
+  "%follower% follower": "%follower% follower",
+  "Authenticating": "Authenticating",
+  "Waiting for authentication": "Waiting for authentication",
+  "Delete file": "Delete file",
+  "Are you sure you want to remove this file from your device?": "Are you sure you want to remove this file from your device?"
 }
