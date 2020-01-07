@@ -3,6 +3,8 @@ import { buildURI, normalizeURI } from 'lbry-redux';
 import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
 import { navigateToUri } from 'utils/helper';
 import Colors from 'styles/colors';
+import ChannelIconItem from 'component/channelIconItem';
+import channelIconStyle from 'styles/channelIcon';
 import discoverStyle from 'styles/discover';
 import FileItem from 'component/fileItem';
 import SubscribeButton from 'component/subscribeButton';
@@ -11,11 +13,20 @@ import Link from 'component/link';
 import Tag from 'component/tag';
 
 class SuggestedSubscriptionItem extends React.PureComponent {
+  state = {
+    autoStyle: null,
+  };
+
   componentDidMount() {
     const { claim, uri, resolveUri } = this.props;
     if (!claim) {
       resolveUri(uri);
     }
+
+    this.setState({
+      autoStyle:
+        ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)],
+    });
   }
 
   render() {
@@ -28,6 +39,7 @@ class SuggestedSubscriptionItem extends React.PureComponent {
       }
     }
 
+    const hasThumbnail = !!thumbnail;
     if (isResolvingUri) {
       return (
         <View style={subscriptionsStyle.itemLoadingContainer}>
@@ -38,12 +50,15 @@ class SuggestedSubscriptionItem extends React.PureComponent {
 
     return (
       <View style={subscriptionsStyle.suggestedItem}>
-        <View style={subscriptionsStyle.suggestedItemThumbnailContainer}>
-          <Image
-            style={subscriptionsStyle.suggestedItemThumbnail}
-            resizeMode={'cover'}
-            source={thumbnail ? { uri: thumbnail } : require('../../assets/default_avatar.jpg')}
-          />
+        <View style={[subscriptionsStyle.suggestedItemThumbnailContainer, this.state.autoStyle]}>
+          {hasThumbnail && (
+            <Image style={subscriptionsStyle.suggestedItemThumbnail} resizeMode={'cover'} source={{ uri: thumbnail }} />
+          )}
+          {!hasThumbnail && (
+            <Text style={channelIconStyle.autothumbCharacter}>
+              {title ? title.substring(0, 1).toUpperCase() : claim ? claim.name.substring(1, 2).toUpperCase() : ''}
+            </Text>
+          )}
         </View>
 
         <View style={subscriptionsStyle.suggestedItemDetails}>

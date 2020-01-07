@@ -73,7 +73,7 @@ class SubscriptionsPage extends React.PureComponent {
   };
 
   componentDidMount() {
-    // this.onComponentFocused();
+    this.onComponentFocused();
   }
 
   componentWillReceiveProps(nextProps) {

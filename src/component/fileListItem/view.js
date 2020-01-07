@@ -1,8 +1,10 @@
 import React from 'react';
 import { normalizeURI, parseURI } from 'lbry-redux';
-import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, Platform, Text, TouchableOpacity, View } from 'react-native';
 import { navigateToUri, formatBytes } from 'utils/helper';
 import Colors from 'styles/colors';
+import ChannelIconItem from 'component/channelIconItem';
+import channelIconStyle from 'styles/channelIcon';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import DateTime from 'component/dateTime';
 import FileItemMedia from 'component/fileItemMedia';
@@ -15,6 +17,7 @@ import fileListStyle from 'styles/fileList';
 
 class FileListItem extends React.PureComponent {
   state = {
+    autoStyle: null,
     url: null,
   };
 
@@ -45,6 +48,11 @@ class FileListItem extends React.PureComponent {
     if (!claim && !batchResolve) {
       resolveUri(uri);
     }
+
+    this.setState({
+      autoStyle:
+        ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)],
+    });
   }
 
   componentDidUpdate() {
@@ -135,10 +143,13 @@ class FileListItem extends React.PureComponent {
       return null;
     }
 
+    const isChannel = name && name.startsWith('@');
+    const hasThumbnail = !!thumbnail;
+
     return (
       <View style={style}>
         <TouchableOpacity
-          style={style}
+          style={[style, isChannel ? fileListStyle.channelContainer : null]}
           onPress={this.onPressHandler}
           onLongPress={() => {
             if (onLongPress) {
@@ -146,13 +157,31 @@ class FileListItem extends React.PureComponent {
             }
           }}
         >
-          <FileItemMedia
-            style={fileListStyle.thumbnail}
-            duration={duration}
-            resizeMode="cover"
-            title={title || name || normalizeURI(uri).substring(7)}
-            thumbnail={thumbnail}
-          />
+          {!isChannel && (
+            <FileItemMedia
+              style={fileListStyle.thumbnail}
+              duration={duration}
+              resizeMode="cover"
+              title={title || name || normalizeURI(uri).substring(7)}
+              thumbnail={thumbnail}
+            />
+          )}
+
+          {isChannel && (
+            <View style={fileListStyle.thumbnail}>
+              <View style={fileListStyle.channelThumbnailContainer}>
+                {hasThumbnail && (
+                  <Image style={fileListStyle.channelThumbnail} resizeMode={'cover'} source={{ uri: thumbnail }} />
+                )}
+                {!hasThumbnail && (
+                  <Text style={channelIconStyle.autothumbCharacter}>
+                    {title ? title.substring(0, 1).toUpperCase() : claim.name.substring(1, 2).toUpperCase()}
+                  </Text>
+                )}
+              </View>
+            </View>
+          )}
+
           {selected && (
             <View style={fileListStyle.selectedOverlay}>
               <Icon name={'check-circle'} solid color={Colors.NextLbryGreen} size={32} />
@@ -206,17 +235,17 @@ class FileListItem extends React.PureComponent {
               </View>
             )}
 
-            {channel && !hideChannel && (
+            {(channel || isChannel) && !hideChannel && (
               <Link
                 style={fileListStyle.publisher}
-                text={channel}
+                text={isChannel ? name : channel}
                 onPress={() => {
                   navigateToUri(
                     navigation,
-                    normalizeURI(shortChannelUri || fullChannelUri),
+                    normalizeURI(isChannel ? uri : shortChannelUri || fullChannelUri),
                     null,
                     false,
-                    fullChannelUri,
+                    isChannel ? claim && claim.permanent_url : fullChannelUri,
                   );
                 }}
               />

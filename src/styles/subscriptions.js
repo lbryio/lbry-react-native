@@ -199,6 +199,8 @@ const subscriptionsStyle = StyleSheet.create({
     height: 70,
     borderRadius: 140,
     overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   suggestedItemThumbnail: {
     width: '100%',

@@ -3,8 +3,11 @@ import { normalizeURI, parseURI } from 'lbry-redux';
 import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native';
 import { navigateToUri, formatBytes } from 'utils/helper';
 import Colors from 'styles/colors';
+import ChannelIconItem from 'component/channelIconItem';
+import channelIconStyle from 'styles/channelIcon';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import DateTime from 'component/dateTime';
+import FastImage from 'react-native-fast-image';
 import FileItemMedia from 'component/fileItemMedia';
 import FilePrice from 'component/filePrice';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -14,6 +17,17 @@ import ProgressBar from 'component/progressBar';
 import fileListStyle from 'styles/fileList';
 
 class FileResultItem extends React.PureComponent {
+  state = {
+    autoStyle: null,
+  };
+
+  componentDidMount() {
+    this.setState({
+      autoStyle:
+        ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)],
+    });
+  }
+
   getStorageForFileInfo = fileInfo => {
     if (!fileInfo.completed) {
       const written = formatBytes(fileInfo.written_bytes);
@@ -58,6 +72,8 @@ class FileResultItem extends React.PureComponent {
       title,
     } = result;
 
+    const isChannel = name && name.startsWith('@');
+    const hasThumbnail = !!thumbnailUrl;
     const obscure = obscureNsfw && nsfw;
     const url = normalizeURI(`${name}#${claimId}`);
     const hasChannel = !!channel;
@@ -66,14 +82,39 @@ class FileResultItem extends React.PureComponent {
 
     return (
       <View style={style}>
-        <TouchableOpacity style={style} onPress={this.onPressHandler}>
-          <FileItemMedia
-            style={fileListStyle.thumbnail}
-            duration={duration}
-            resizeMode="cover"
-            title={title || name || normalizeURI(url).substring(7)}
-            thumbnail={thumbnailUrl}
-          />
+        <TouchableOpacity
+          style={[style, isChannel ? fileListStyle.channelContainer : null]}
+          onPress={this.onPressHandler}
+        >
+          {!isChannel && (
+            <FileItemMedia
+              style={fileListStyle.thumbnail}
+              duration={duration}
+              resizeMode="cover"
+              title={title || name || normalizeURI(url).substring(7)}
+              thumbnail={thumbnailUrl}
+            />
+          )}
+
+          {isChannel && (
+            <View style={fileListStyle.thumbnail}>
+              <View style={fileListStyle.channelThumbnailContainer}>
+                {hasThumbnail && (
+                  <FastImage
+                    style={fileListStyle.channelThumbnail}
+                    resizeMode={FastImage.resizeMode.cover}
+                    source={{ uri: thumbnailUrl }}
+                  />
+                )}
+                {!hasThumbnail && (
+                  <Text style={channelIconStyle.autothumbCharacter}>
+                    {title ? title.substring(0, 1).toUpperCase() : name.substring(1, 2).toUpperCase()}
+                  </Text>
+                )}
+              </View>
+            </View>
+          )}
+
           {fileInfo && fileInfo.completed && fileInfo.download_path && (
             <Icon
               style={featuredResult ? fileListStyle.featuredDownloadedIcon : fileListStyle.downloadedIcon}
@@ -100,15 +141,22 @@ class FileResultItem extends React.PureComponent {
               </View>
             )}
 
-            {hasChannel && (
-              <Link
-                style={fileListStyle.publisher}
-                text={channel}
-                onPress={() => {
-                  navigateToUri(navigation, normalizeURI(channelUrl), null, false, channelUrl);
-                }}
-              />
-            )}
+            {hasChannel ||
+              (isChannel && (
+                <Link
+                  style={fileListStyle.publisher}
+                  text={isChannel ? name : channel}
+                  onPress={() => {
+                    navigateToUri(
+                      navigation,
+                      normalizeURI(isChannel ? url : channelUrl),
+                      null,
+                      false,
+                      isChannel ? url : channelUrl,
+                    );
+                  }}
+                />
+              ))}
 
             <View style={fileListStyle.info}>
               {fileInfo && !isNaN(fileInfo.written_bytes) && fileInfo.written_bytes > 0 && (

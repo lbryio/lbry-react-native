@@ -38,6 +38,18 @@ const fileListStyle = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  channelThumbnailContainer: {
+    width: thumbnailHeight, // maintain same width and height
+    height: thumbnailHeight,
+    borderRadius: 140,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  channelThumbnail: {
+    width: '100%',
+    height: '100%',
+  },
   selectedOverlay: {
     position: 'absolute',
     left: 0,
@@ -62,6 +74,9 @@ const fileListStyle = StyleSheet.create({
     fontSize: screenWidthPixels <= 720 ? 11 : 12,
     marginTop: screenWidthPixels <= 720 ? 1 : 3,
     color: Colors.LbryGreen,
+  },
+  channelContainer: {
+    alignItems: 'center',
   },
   loading: {
     position: 'absolute',
