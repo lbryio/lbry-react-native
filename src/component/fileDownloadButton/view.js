@@ -43,7 +43,17 @@ class FileDownloadButton extends React.PureComponent {
       onButtonLayout,
     } = this.props;
 
-    if ((fileInfo && !fileInfo.stopped) || loading || downloading) {
+    if (fileInfo && fileInfo.download_path && fileInfo.completed) {
+      return (
+        <TouchableOpacity
+          onLayout={onButtonLayout}
+          style={[style, fileDownloadButtonStyle.container]}
+          onPress={openFile}
+        >
+          <Text style={fileDownloadButtonStyle.text}>{isViewable ? __('View') : __('Open')}</Text>
+        </TouchableOpacity>
+      );
+    } else if ((fileInfo && !fileInfo.stopped) || loading || downloading) {
       const progress = fileInfo && fileInfo.written_bytes ? (fileInfo.written_bytes / fileInfo.total_bytes) * 100 : 0,
         label = fileInfo ? __('%progress%% complete', { progress: progress.toFixed(0) }) : __('Connecting...');
 
@@ -69,16 +79,6 @@ class FileDownloadButton extends React.PureComponent {
           style={[style, fileDownloadButtonStyle.container]}
           onPress={onFileActionPress}
         />
-      );
-    } else if (fileInfo && fileInfo.download_path) {
-      return (
-        <TouchableOpacity
-          onLayout={onButtonLayout}
-          style={[style, fileDownloadButtonStyle.container]}
-          onPress={openFile}
-        >
-          <Text style={fileDownloadButtonStyle.text}>{isViewable ? __('View') : __('Open')}</Text>
-        </TouchableOpacity>
       );
     }
 

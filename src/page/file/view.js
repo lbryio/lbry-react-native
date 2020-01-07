@@ -706,6 +706,18 @@ class FilePage extends React.PureComponent {
     navigateBack(navigation, drawerStack, popDrawerStack);
   };
 
+  onOpenFilePressed = () => {
+    const { contentType, fileInfo, notify } = this.props;
+    const localFileUri = this.localUriForFileInfo(fileInfo);
+    const mediaType = Lbry.getMediaType(contentType);
+    const isViewable = mediaType === 'image' || mediaType === 'text';
+    if (isViewable) {
+      this.openFile(localFileUri, mediaType, contentType);
+    } else {
+      notify({ message: __('This file cannot be displayed in the LBRY app.') });
+    }
+  };
+
   onSaveFilePressed = () => {
     const { costInfo, fileGet, fileInfo, navigation, purchasedUris, purchaseUri } = this.props;
     const { uri } = navigation.state.params;
@@ -1131,13 +1143,12 @@ class FilePage extends React.PureComponent {
 
                   {!canEdit && !isPlayable && (
                     <View style={filePageStyle.sharedLargeButton}>
-                      {!fileInfo ||
-                        (fileInfo.written_bytes <= 0 && !completed && (
-                          <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onDownloadPressed}>
-                            <Icon name={'download'} size={16} style={filePageStyle.largeButtonIcon} />
-                            <Text style={filePageStyle.largeButtonText}>{__('Download')}</Text>
-                          </TouchableOpacity>
-                        ))}
+                      {(!fileInfo || (fileInfo.written_bytes <= 0 && !completed)) && (
+                        <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onDownloadPressed}>
+                          <Icon name={'download'} size={16} style={filePageStyle.largeButtonIcon} />
+                          <Text style={filePageStyle.largeButtonText}>{__('Download')}</Text>
+                        </TouchableOpacity>
+                      )}
 
                       {!completed &&
                         fileInfo &&
@@ -1151,7 +1162,7 @@ class FilePage extends React.PureComponent {
                         </TouchableOpacity>
                       )}
 
-                      {completed && fileInfo && fileInfo.written_bytes >= fileInfo.total_bytes && (
+                      {completed && fileInfo && (
                         <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onOpenFilePressed}>
                           <Icon name={'folder-open'} size={16} style={filePageStyle.largeButtonIcon} />
                           <Text style={filePageStyle.largeButtonText}>{__('Open')}</Text>

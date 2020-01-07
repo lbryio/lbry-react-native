@@ -126,7 +126,6 @@ class PhoneVerifyPage extends React.PureComponent {
   };
 
   onPressFlag = () => {
-    console.log('setting country picker visible...');
     this.setState({ countryPickerVisible: true });
   };
 
