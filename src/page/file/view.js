@@ -295,9 +295,8 @@ class FilePage extends React.PureComponent {
   handleFullscreenToggle = isFullscreen => {
     const { toggleFullscreenMode } = this.props;
     this.setState({ fullscreenMode: isFullscreen });
-    toggleFullscreenMode(isFullscreen);
 
-    StatusBar.setHidden(isFullscreen);
+    toggleFullscreenMode(isFullscreen);
 
     if (isFullscreen) {
       // fullscreen, so change orientation to landscape mode
@@ -309,9 +308,11 @@ class FilePage extends React.PureComponent {
       // Switch back to portrait mode when the media is not fullscreen
       NativeModules.ScreenOrientation.lockOrientationPortrait();
 
-      // hide the navigation bar (on devices that have the soft navigation bar)
+      // show the navigation bar (on devices that have the soft navigation bar)
       NativeModules.UtilityModule.showNavigationBar();
     }
+
+    StatusBar.setHidden(isFullscreen);
   };
 
   onEditPressed = () => {
@@ -965,7 +966,6 @@ class FilePage extends React.PureComponent {
       <View style={filePageStyle.pageContainer}>
         {!this.state.fullscreenMode && <UriBar value={uri} navigation={navigation} />}
         {innerContent}
-
         {this.state.showWebView && isWebViewable && (
           <WebView
             ref={ref => {
