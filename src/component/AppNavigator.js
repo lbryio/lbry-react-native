@@ -108,7 +108,7 @@ const discoverStack = createStackNavigator(
   {
     headerMode: 'screen',
     transitionConfig: () => ({ screenInterpolator: () => null }),
-  }
+  },
 );
 
 discoverStack.navigationOptions = ({ navigation }) => {
@@ -142,7 +142,7 @@ const walletStack = createStackNavigator(
   {
     headerMode: 'screen',
     transitionConfig: () => ({ screenInterpolator: () => null }),
-  }
+  },
 );
 
 const drawerIconSize = 18;
@@ -231,11 +231,12 @@ const drawer = createDrawerNavigator(
     backBehavior: 'none',
     unmountInactiveRoutes: true,
     contentComponent: DrawerContent,
+    overlayColor: 'rgba(0, 0, 0, 0.7)',
     contentOptions: {
       activeTintColor: Colors.LbryGreen,
       labelStyle: discoverStyle.menuText,
     },
-  }
+  },
 );
 
 const mainStackNavigator = new createStackNavigator(
@@ -264,7 +265,7 @@ const mainStackNavigator = new createStackNavigator(
   },
   {
     headerMode: 'none',
-  }
+  },
 );
 
 export const AppNavigator = mainStackNavigator;
@@ -303,7 +304,7 @@ class AppWithNavigationState extends React.Component {
         }
 
         return false;
-      }.bind(this)
+      }.bind(this),
     );
   }
 
@@ -346,7 +347,7 @@ class AppWithNavigationState extends React.Component {
       },
       error => {
         /* failed */
-      }
+      },
     );
   };
 
@@ -519,7 +520,7 @@ class AppWithNavigationState extends React.Component {
           dispatch(
             doToast({
               message: 'Invalid Verification URI',
-            })
+            }),
           );
         }
       } else {
