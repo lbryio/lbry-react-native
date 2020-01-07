@@ -34,6 +34,7 @@ class PhoneVerifyPage extends React.PureComponent {
       codeVerifyStarted: false,
       codeVerifySuccessful: false,
       countryCode: null,
+      countryPickerVisible: false,
       newPhoneAdded: false,
       number: null,
       phoneVerifyFailed: false,
@@ -125,15 +126,16 @@ class PhoneVerifyPage extends React.PureComponent {
   };
 
   onPressFlag = () => {
-    if (this.picker) {
-      this.picker.openModal();
-    }
+    console.log('setting country picker visible...');
+    this.setState({ countryPickerVisible: true });
   };
 
-  selectCountry(country) {
+  selectCountry = country => {
     this.phoneInput.selectCountry(country.cca2.toLowerCase());
-    this.setState({ cca2: country.cca2 });
-  }
+    this.setState({ cca2: country.cca2, countryPickerVisible: false }, () => {
+      this.phoneInput.focus();
+    });
+  };
 
   handleChangeText = text => {
     this.setState({ verificationCode: text });
@@ -233,17 +235,17 @@ class PhoneVerifyPage extends React.PureComponent {
         </View>
 
         <CountryPicker
-          ref={picker => {
-            this.picker = picker;
-          }}
-          cca2={this.state.cca2}
-          filterable
-          onChange={value => this.selectCountry(value)}
-          showCallingCode
+          countryCode={this.state.cca2}
+          withAlphaFilter
+          withFilter
+          withFlag
+          withFlagButton={false}
+          withCallingCode
+          withModal
+          onSelect={this.selectCountry}
           translation="eng"
-        >
-          <View />
-        </CountryPicker>
+          modalProps={{ visible: this.state.countryPickerVisible }}
+        />
       </View>
     );
   }
