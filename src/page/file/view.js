@@ -45,6 +45,8 @@ import Video from 'react-native-video';
 import FileRewardsDriver from 'component/fileRewardsDriver';
 import filePageStyle from 'styles/filePage';
 import uriBarStyle from 'styles/uriBar';
+import RNFS from 'react-native-fs';
+import showdown from 'showdown';
 import _ from 'lodash';
 
 class FilePage extends React.PureComponent {
@@ -57,6 +59,10 @@ class FilePage extends React.PureComponent {
   scrollView = null;
 
   startTime = null;
+
+  webView = null;
+
+  converter = null;
 
   constructor(props) {
     super(props);
@@ -712,7 +718,7 @@ class FilePage extends React.PureComponent {
     }
   };
 
-  openFile = (localFileUri, mediaType) => {
+  openFile = (localFileUri, mediaType, contentType) => {
     const { pushDrawerStack } = this.props;
     const isWebViewable = mediaType === 'text';
 
@@ -739,10 +745,53 @@ class FilePage extends React.PureComponent {
           {
             showWebView: true,
           },
-          () => pushDrawerStack(Constants.DRAWER_ROUTE_FILE_VIEW),
+          () => {
+            pushDrawerStack(Constants.DRAWER_ROUTE_FILE_VIEW);
+          },
         );
       }
     }
+  };
+
+  handleWebViewLoad = () => {
+    const { contentType, fileInfo } = this.props;
+    const localFileUri = this.localUriForFileInfo(fileInfo);
+    if (this.webView && ['text/markdown', 'text/md'].includes(contentType)) {
+      RNFS.readFile(localFileUri, 'utf8').then(markdown => {
+        if (this.webView) {
+          if (!this.converter) {
+            this.converter = new showdown.Converter();
+          }
+          const html = this.converter.makeHtml(markdown);
+          this.webView.injectJavaScript(
+            'document.getElementById("content").innerHTML = \'' +
+              html.replace(/\n/g, '').replace(/'/g, "\\'") +
+              "'; true;",
+          );
+        }
+      });
+    }
+  };
+
+  buildWebViewSource = () => {
+    const { contentType, fileInfo } = this.props;
+    const localFileUri = this.localUriForFileInfo(fileInfo);
+
+    if (['text/markdown', 'text/md'].includes(contentType)) {
+      const html =
+        '<!doctype html>' +
+        '<html>' +
+        '  <head>' +
+        '    <meta charset="utf-8"/>' +
+        '  </head>' +
+        '  <body>' +
+        '    <div id="content"></div>' +
+        '  </body>' +
+        '</html>';
+      return { html };
+    }
+
+    return { uri: localFileUri };
   };
 
   render() {
@@ -780,7 +829,7 @@ class FilePage extends React.PureComponent {
         <View style={filePageStyle.pageContainer}>
           <UriBar value={uri} navigation={navigation} />
           {isResolvingUri && (
-            <View style={filePageStyle.busyContainer}>
+            <View stylebuildWeb={filePageStyle.busyContainer}>
               <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
               <Text style={filePageStyle.infoText}>{__('Loading decentralized data...')}</Text>
             </View>
@@ -893,7 +942,7 @@ class FilePage extends React.PureComponent {
 
     if (this.state.downloadPressed && canOpen && !this.state.autoOpened) {
       // automatically open a web viewable or image file after the download button is pressed
-      this.setState({ autoOpened: true }, () => this.openFile(localFileUri, mediaType));
+      this.setState({ autoOpened: true }, () => this.openFile(localFileUri, mediaType, contentType));
     }
 
     if (isChannel) {
@@ -906,7 +955,17 @@ class FilePage extends React.PureComponent {
         {innerContent}
 
         {this.state.showWebView && isWebViewable && (
-          <WebView allowFileAccess source={{ uri: localFileUri }} style={filePageStyle.viewer} />
+          <WebView
+            ref={ref => {
+              this.webView = ref;
+            }}
+            allowFileAccess
+            javaScriptEnabled
+            originWhiteList={['*']}
+            source={this.buildWebViewSource()}
+            style={filePageStyle.viewer}
+            onLoad={this.handleWebViewLoad}
+          />
         )}
         {this.state.showImageViewer && (
           <ImageViewer
@@ -965,7 +1024,7 @@ class FilePage extends React.PureComponent {
                 <FileDownloadButton
                   uri={claim && claim.permanent_url ? claim.permanent_url : uri}
                   style={filePageStyle.downloadButton}
-                  openFile={() => this.openFile(localFileUri, mediaType)}
+                  openFile={() => this.openFile(localFileUri, mediaType, contentType)}
                   isPlayable={isPlayable}
                   isViewable={isViewable}
                   onFileActionPress={this.onFileDownloadButtonPressed}

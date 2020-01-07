@@ -89,7 +89,7 @@ class UriBar extends React.PureComponent {
     Keyboard.dismiss();
 
     if (SEARCH_TYPES.SEARCH === type) {
-      this.setState({ currentValue: value }, () => this.setCaretPosition(value));
+      this.setState({ currentValue: value });
       updateSearchQuery(value);
 
       if (onSearchSubmitted) {

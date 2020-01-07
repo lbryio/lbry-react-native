@@ -50,7 +50,8 @@
         "redux-persist-transform-filter": "0.0.18",
         "redux-thunk": "^2.3.0",
         "rn-fetch-blob": "0.12.0",
-        "seedrandom": "3.0.3"
+        "seedrandom": "3.0.3",
+        "showdown": "1.9.1"
     },
     "devDependencies": {
         "@babel/core": "^7.6.2",
