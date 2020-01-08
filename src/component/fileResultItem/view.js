@@ -98,7 +98,7 @@ class FileResultItem extends React.PureComponent {
 
           {isChannel && (
             <View style={fileListStyle.thumbnail}>
-              <View style={fileListStyle.channelThumbnailContainer}>
+              <View style={[fileListStyle.channelThumbnailContainer, this.state.autoStyle]}>
                 {hasThumbnail && (
                   <FastImage
                     style={fileListStyle.channelThumbnail}

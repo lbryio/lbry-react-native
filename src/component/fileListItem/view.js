@@ -169,7 +169,7 @@ class FileListItem extends React.PureComponent {
 
           {isChannel && (
             <View style={fileListStyle.thumbnail}>
-              <View style={fileListStyle.channelThumbnailContainer}>
+              <View style={[fileListStyle.channelThumbnailContainer, this.state.autoStyle]}>
                 {hasThumbnail && (
                   <Image style={fileListStyle.channelThumbnail} resizeMode={'cover'} source={{ uri: thumbnail }} />
                 )}
