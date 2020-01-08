@@ -32,6 +32,7 @@ const fileListStyle = StyleSheet.create({
     color: Colors.White,
   },
   thumbnail: {
+    backgroundColor: Colors.ThumbnailPlaceholder,
     width: thumbnailWidth,
     height: thumbnailHeight,
     marginRight: screenWidthPixels <= 720 ? 10 : 12,

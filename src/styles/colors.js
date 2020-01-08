@@ -24,6 +24,8 @@ const Colors = {
   StatsAudio: '#f6a637',
   StatsImage: '#ff4a7d',
   StatsOther: '#26bcf7',
+
+  ThumbnailPlaceholder: '#d5d5d5',
 };
 
 export default Colors;
