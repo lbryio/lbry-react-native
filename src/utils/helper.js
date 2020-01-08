@@ -370,3 +370,25 @@ export function uploadImageAsset(filePath, success, failure) {
 export function formatLbryUrlForWeb(url) {
   return url.replace('lbry://', '/').replace(/#/g, ':');
 }
+
+export function getDownloadProgress(fileInfo) {
+  return Math.ceil((fileInfo.written_bytes / fileInfo.total_bytes) * 100);
+}
+
+export function getStorageForFileInfo(fileInfo) {
+  if (!fileInfo.completed) {
+    const written = formatBytes(fileInfo.written_bytes);
+    const total = formatBytes(fileInfo.total_bytes);
+    return `(${written} / ${total})`;
+  }
+
+  return formatBytes(fileInfo.written_bytes);
+}
+
+export function formatTitle(title) {
+  if (!title) {
+    return title;
+  }
+
+  return title.length > 80 ? title.substring(0, 77).trim() + '...' : title;
+}

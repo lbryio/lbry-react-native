@@ -1,7 +1,7 @@
 import React from 'react';
 import { normalizeURI, parseURI } from 'lbry-redux';
 import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native';
-import { navigateToUri, formatBytes } from 'utils/helper';
+import { navigateToUri, formatTitle, getDownloadProgress, getStorageForFileInfo } from 'utils/helper';
 import Colors from 'styles/colors';
 import ChannelIconItem from 'component/channelIconItem';
 import channelIconStyle from 'styles/channelIcon';
@@ -27,28 +27,6 @@ class FileResultItem extends React.PureComponent {
         ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)],
     });
   }
-
-  getStorageForFileInfo = fileInfo => {
-    if (!fileInfo.completed) {
-      const written = formatBytes(fileInfo.written_bytes);
-      const total = formatBytes(fileInfo.total_bytes);
-      return `(${written} / ${total})`;
-    }
-
-    return formatBytes(fileInfo.written_bytes);
-  };
-
-  formatTitle = title => {
-    if (!title) {
-      return title;
-    }
-
-    return title.length > 80 ? title.substring(0, 77).trim() + '...' : title;
-  };
-
-  getDownloadProgress = fileInfo => {
-    return Math.ceil((fileInfo.written_bytes / fileInfo.total_bytes) * 100);
-  };
 
   onPressHandler = () => {
     const { autoplay, navigation, result } = this.props;
@@ -135,7 +113,7 @@ class FileResultItem extends React.PureComponent {
             {(title || name) && (
               <View style={fileListStyle.titleContainer}>
                 <Text style={featuredResult ? fileListStyle.featuredTitle : fileListStyle.title}>
-                  {this.formatTitle(title) || this.formatTitle(name)}
+                  {formatTitle(title) || formatTitle(name)}
                 </Text>
                 {isRewardContent && <Icon style={fileListStyle.rewardIcon} name="award" size={12} />}
               </View>
@@ -160,7 +138,7 @@ class FileResultItem extends React.PureComponent {
 
             <View style={fileListStyle.info}>
               {fileInfo && !isNaN(fileInfo.written_bytes) && fileInfo.written_bytes > 0 && (
-                <Text>{this.getStorageForFileInfo(fileInfo)}</Text>
+                <Text>{getStorageForFileInfo(fileInfo)}</Text>
               )}
               <DateTime
                 style={fileListStyle.publishInfo}
@@ -178,7 +156,7 @@ class FileResultItem extends React.PureComponent {
                     color={Colors.NextLbryGreen}
                     height={3}
                     style={fileListStyle.progress}
-                    progress={this.getDownloadProgress(fileInfo)}
+                    progress={getDownloadProgress(fileInfo)}
                   />
                 )}
               </View>
