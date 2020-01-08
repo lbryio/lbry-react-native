@@ -1,12 +1,13 @@
 import React from 'react';
 import { normalizeURI, parseURI } from 'lbry-redux';
-import { ActivityIndicator, Image, Platform, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native';
 import { navigateToUri, formatTitle, getDownloadProgress, getStorageForFileInfo } from 'utils/helper';
 import Colors from 'styles/colors';
 import ChannelIconItem from 'component/channelIconItem';
 import channelIconStyle from 'styles/channelIcon';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import DateTime from 'component/dateTime';
+import FastImage from 'react-native-fast-image';
 import FileItemMedia from 'component/fileItemMedia';
 import FilePrice from 'component/filePrice';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -153,7 +154,11 @@ class FileListItem extends React.PureComponent {
             <View style={fileListStyle.thumbnail}>
               <View style={[fileListStyle.channelThumbnailContainer, this.state.autoStyle]}>
                 {hasThumbnail && (
-                  <Image style={fileListStyle.channelThumbnail} resizeMode={'cover'} source={{ uri: thumbnail }} />
+                  <FastImage
+                    style={fileListStyle.channelThumbnail}
+                    resizeMode={FastImage.resizeMode.cover}
+                    source={{ uri: thumbnail }}
+                  />
                 )}
                 {!hasThumbnail && (
                   <Text style={channelIconStyle.autothumbCharacter}>
