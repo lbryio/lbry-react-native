@@ -136,6 +136,8 @@ const Constants = {
 
   DEFAULT_PAGE_SIZE: 10,
 
+  SEARCH_RESULTS_PAGE_SIZE: 25,
+
   ALL_PLACEHOLDER: '_all',
 
   MORE_PLACEHOLDER: '_more',

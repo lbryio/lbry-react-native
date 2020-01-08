@@ -20,7 +20,6 @@ import FloatingWalletBalance from 'component/floatingWalletBalance';
 import UriBar from 'component/uriBar';
 import searchStyle from 'styles/search';
 
-const pageSize = 25;
 const softLimit = 500;
 
 class SearchPage extends React.PureComponent {
@@ -195,7 +194,7 @@ class SearchPage extends React.PureComponent {
   };
 
   handleVerticalEndReached = () => {
-    // fetch more content
+    // fetch more results
     const { lastPageReached, results, search, isSearching } = this.props;
     if (lastPageReached || (results && results.length > softLimit)) {
       return;
