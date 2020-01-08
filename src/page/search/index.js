@@ -5,6 +5,7 @@ import {
   doResolvedSearch,
   doUpdateSearchQuery,
   makeSelectResolvedSearchResults,
+  makeSelectResolvedSearchResultsLastPageReached,
   makeSelectSearchUris,
   selectClaimSearchByQuery,
   selectIsSearching,
@@ -27,10 +28,13 @@ const select = state => ({
   resolvingUris: selectResolvingUris(state),
   uris: makeSelectSearchUris(makeSelectQueryWithOptions(null, numSearchResults)(state))(state),
   results: makeSelectResolvedSearchResults(makeSelectQueryWithOptions(null, numSearchResults)(state))(state),
+  lastPageReached: makeSelectResolvedSearchResultsLastPageReached(
+    makeSelectQueryWithOptions(null, numSearchResults)(state),
+  )(state),
 });
 
 const perform = dispatch => ({
-  search: query => dispatch(doResolvedSearch(query, numSearchResults, null, false, {})),
+  search: (query, from) => dispatch(doResolvedSearch(query, numSearchResults, from, false, {})),
   claimSearch: options => dispatch(doClaimSearch(options)),
   updateSearchQuery: query => dispatch(doUpdateSearchQuery(query)),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_SEARCH)),

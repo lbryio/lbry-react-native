@@ -80,6 +80,12 @@ const searchStyle = StyleSheet.create({
   loading: {
     position: 'absolute',
   },
+  moreLoading: {
+    width: '100%',
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default searchStyle;
