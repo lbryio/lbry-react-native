@@ -109,6 +109,7 @@ class FilePage extends React.PureComponent {
 
   onComponentFocused = () => {
     StatusBar.setHidden(false);
+    console.log('fileComponent Focused...');
     NativeModules.Firebase.setCurrentScreen('File').then(result => {
       DeviceEventEmitter.addListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
       DeviceEventEmitter.addListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
@@ -652,13 +653,13 @@ class FilePage extends React.PureComponent {
     const isPlayable = mediaType === 'video' || mediaType === 'audio';
     const isViewable = mediaType === 'image' || mediaType === 'text';
 
-    const { permanent_url: uri } = claim;
-    NativeModules.Firebase.track('purchase_uri', { uri: uri });
+    const purchaseUrl = this.getPurchaseUrl();
+    NativeModules.Firebase.track('purchase_uri', { uri: purchaseUrl });
 
     if (!isPlayable) {
       this.checkStoragePermissionForDownload();
     } else {
-      this.confirmPurchaseUri(uri, costInfo, !isPlayable);
+      this.confirmPurchaseUri(purchaseUrl, costInfo, !isPlayable);
     }
 
     if (isPlayable) {
@@ -669,6 +670,19 @@ class FilePage extends React.PureComponent {
     if (isViewable) {
       this.setState({ downloadPressed: true });
     }
+  };
+
+  getPurchaseUrl = () => {
+    const { claim, navigation } = this.props;
+    const { permanent_url: permanentUrl } = claim;
+
+    let purchaseUrl;
+    if (navigation.state.params) {
+      const { uri, fullUri } = navigation.state.params;
+      purchaseUrl = fullUri || uri || permanentUrl;
+    }
+
+    return purchaseUrl;
   };
 
   onDownloadPressed = () => {
@@ -796,6 +810,11 @@ class FilePage extends React.PureComponent {
         '<html>' +
         '  <head>' +
         '    <meta charset="utf-8"/>' +
+        '    <meta name="viewport" content="width=device-width, user-scalable=no"/>' +
+        '    <style type="text/css">' +
+        '    body { margin: 16px }' +
+        '    img { width: 100%; }' +
+        '    </style>' +
         '  </head>' +
         '  <body>' +
         '    <div id="content"></div>' +
@@ -842,7 +861,7 @@ class FilePage extends React.PureComponent {
         <View style={filePageStyle.pageContainer}>
           <UriBar value={uri} navigation={navigation} />
           {isResolvingUri && (
-            <View stylebuildWeb={filePageStyle.busyContainer}>
+            <View style={filePageStyle.busyContainer}>
               <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
               <Text style={filePageStyle.infoText}>{__('Loading decentralized data...')}</Text>
             </View>
