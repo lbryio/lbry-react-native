@@ -454,7 +454,6 @@ const filePageStyle = StyleSheet.create({
     fontFamily: 'Inter-UI-Regular',
     fontSize: 12,
     color: Colors.DescriptionGrey,
-    marginTop: -6,
     marginLeft: 12,
     marginRight: 12,
   },
