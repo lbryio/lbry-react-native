@@ -46,8 +46,8 @@ const floatingButtonStyle = StyleSheet.create({
     fontSize: 16,
   },
   bottomRight: {
-    right: 10,
-    bottom: 10,
+    right: 0,
+    bottom: 0,
   },
   rewardIcon: {
     color: Colors.White,
