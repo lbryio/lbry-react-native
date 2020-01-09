@@ -64,6 +64,10 @@ class FilePage extends React.PureComponent {
 
   converter = null;
 
+  linkHandlerScript = `(function () {
+    window.onclick = function(evt) { evt.preventDefault(); window.ReactNativeWebView.postMessage(evt.target.href); evt.stopPropagation(); }
+  }());`;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -109,7 +113,6 @@ class FilePage extends React.PureComponent {
 
   onComponentFocused = () => {
     StatusBar.setHidden(false);
-    console.log('fileComponent Focused...');
     NativeModules.Firebase.setCurrentScreen('File').then(result => {
       DeviceEventEmitter.addListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
       DeviceEventEmitter.addListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
@@ -800,6 +803,13 @@ class FilePage extends React.PureComponent {
     }
   };
 
+  handleWebViewMessage = evt => {
+    const href = evt.nativeEvent.data;
+    if (href && href.startsWith('http')) {
+      Linking.openURL(href);
+    }
+  };
+
   buildWebViewSource = () => {
     const { contentType, fileInfo } = this.props;
     const localFileUri = this.localUriForFileInfo(fileInfo);
@@ -996,6 +1006,8 @@ class FilePage extends React.PureComponent {
             source={this.buildWebViewSource()}
             style={filePageStyle.viewer}
             onLoad={this.handleWebViewLoad}
+            injectedJavaScript={this.linkHandlerScript}
+            onMessage={this.handleWebViewMessage}
           />
         )}
         {this.state.showImageViewer && (
