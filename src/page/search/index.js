@@ -24,17 +24,15 @@ const select = state => ({
   isSearching: selectIsSearching(state),
   query: selectSearchValue(state),
   resolvingUris: selectResolvingUris(state),
-  uris: makeSelectSearchUris(makeSelectQueryWithOptions(null, Constants.SEARCH_RESULTS_PAGE_SIZE)(state))(state),
-  results: makeSelectResolvedSearchResults(makeSelectQueryWithOptions(null, Constants.SEARCH_RESULTS_PAGE_SIZE)(state))(
-    state,
-  ),
+  uris: makeSelectSearchUris(makeSelectQueryWithOptions(null, Constants.DEFAULT_PAGE_SIZE)(state))(state),
+  results: makeSelectResolvedSearchResults(makeSelectQueryWithOptions(null, Constants.DEFAULT_PAGE_SIZE)(state))(state),
   lastPageReached: makeSelectResolvedSearchResultsLastPageReached(
-    makeSelectQueryWithOptions(null, Constants.SEARCH_RESULTS_PAGE_SIZE)(state),
+    makeSelectQueryWithOptions(null, Constants.DEFAULT_PAGE_SIZE)(state),
   )(state),
 });
 
 const perform = dispatch => ({
-  search: (query, from) => dispatch(doResolvedSearch(query, Constants.SEARCH_RESULTS_PAGE_SIZE, from, false, {})),
+  search: (query, from) => dispatch(doResolvedSearch(query, Constants.DEFAULT_PAGE_SIZE, from, false, {})),
   claimSearch: options => dispatch(doClaimSearch(options)),
   updateSearchQuery: query => dispatch(doUpdateSearchQuery(query)),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_SEARCH)),

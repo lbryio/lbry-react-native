@@ -243,7 +243,7 @@ class SearchPage extends React.PureComponent {
         )}
         {this.state.currentFrom > 0 && isSearching && (
           <View style={searchStyle.moreLoading}>
-            <ActivityIndicator size="small" coolor={Colors.NextLbryGreen} />
+            <ActivityIndicator size="small" color={Colors.NextLbryGreen} />
           </View>
         )}
         <FloatingWalletBalance navigation={navigation} />
