@@ -15,7 +15,7 @@ import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PageHeader from 'component/pageHeader';
 import FileListItem from 'component/fileListItem';
-import FileResultItem from 'component/fileResultItem';
+import ClaimResultItem from 'component/claimResultItem';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import UriBar from 'component/uriBar';
 import searchStyle from 'styles/search';
@@ -237,7 +237,12 @@ class SearchPage extends React.PureComponent {
             ListEmptyComponent={!isSearching ? this.listEmptyComponent() : null}
             ListHeaderComponent={this.listHeaderComponent(this.state.showTagResult, this.state.currentQuery)}
             renderItem={({ item }) => (
-              <FileResultItem key={item.claimId} result={item} style={searchStyle.resultItem} navigation={navigation} />
+              <ClaimResultItem
+                key={item.claimId}
+                result={item}
+                style={searchStyle.resultItem}
+                navigation={navigation}
+              />
             )}
           />
         )}

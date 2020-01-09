@@ -1,10 +1,13 @@
 import React from 'react';
 import { normalizeURI, parseURI } from 'lbry-redux';
 import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native';
-import { navigateToUri, formatBytes } from 'utils/helper';
+import { navigateToUri, formatTitle, getDownloadProgress, getStorageForFileInfo } from 'utils/helper';
 import Colors from 'styles/colors';
+import ChannelIconItem from 'component/channelIconItem';
+import channelIconStyle from 'styles/channelIcon';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import DateTime from 'component/dateTime';
+import FastImage from 'react-native-fast-image';
 import FileItemMedia from 'component/fileItemMedia';
 import FilePrice from 'component/filePrice';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -12,29 +15,28 @@ import Link from 'component/link';
 import NsfwOverlay from 'component/nsfwOverlay';
 import ProgressBar from 'component/progressBar';
 import fileListStyle from 'styles/fileList';
+import seedrandom from 'seedrandom';
 
-class FileResultItem extends React.PureComponent {
-  getStorageForFileInfo = fileInfo => {
-    if (!fileInfo.completed) {
-      const written = formatBytes(fileInfo.written_bytes);
-      const total = formatBytes(fileInfo.total_bytes);
-      return `(${written} / ${total})`;
+class ClaimResultItem extends React.PureComponent {
+  state = {
+    autoStyle: null,
+  };
+
+  componentDidMount() {
+    const { result } = this.props;
+
+    if (!result || !result.name || !result.claimId) {
+      this.setState({
+        autoStyle:
+          ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)],
+      });
+    } else {
+      // result property set, use deterministic random style
+      const rng = seedrandom(normalizeURI(`${result.name}#${result.claimId}`));
+      const index = Math.floor(rng.quick() * ChannelIconItem.AUTO_THUMB_STYLES.length);
+      this.setState({ autoStyle: ChannelIconItem.AUTO_THUMB_STYLES[index] });
     }
-
-    return formatBytes(fileInfo.written_bytes);
-  };
-
-  formatTitle = title => {
-    if (!title) {
-      return title;
-    }
-
-    return title.length > 80 ? title.substring(0, 77).trim() + '...' : title;
-  };
-
-  getDownloadProgress = fileInfo => {
-    return Math.ceil((fileInfo.written_bytes / fileInfo.total_bytes) * 100);
-  };
+  }
 
   onPressHandler = () => {
     const { autoplay, navigation, result } = this.props;
@@ -58,6 +60,8 @@ class FileResultItem extends React.PureComponent {
       title,
     } = result;
 
+    const isChannel = name && name.startsWith('@');
+    const hasThumbnail = !!thumbnailUrl;
     const obscure = obscureNsfw && nsfw;
     const url = normalizeURI(`${name}#${claimId}`);
     const hasChannel = !!channel;
@@ -66,14 +70,39 @@ class FileResultItem extends React.PureComponent {
 
     return (
       <View style={style}>
-        <TouchableOpacity style={style} onPress={this.onPressHandler}>
-          <FileItemMedia
-            style={fileListStyle.thumbnail}
-            duration={duration}
-            resizeMode="cover"
-            title={title || name || normalizeURI(url).substring(7)}
-            thumbnail={thumbnailUrl}
-          />
+        <TouchableOpacity
+          style={[style, isChannel ? fileListStyle.channelContainer : null]}
+          onPress={this.onPressHandler}
+        >
+          {!isChannel && (
+            <FileItemMedia
+              style={fileListStyle.thumbnail}
+              duration={duration}
+              resizeMode="cover"
+              title={title || name || normalizeURI(url).substring(7)}
+              thumbnail={thumbnailUrl}
+            />
+          )}
+
+          {isChannel && (
+            <View style={fileListStyle.thumbnail}>
+              <View style={[fileListStyle.channelThumbnailContainer, this.state.autoStyle]}>
+                {hasThumbnail && (
+                  <FastImage
+                    style={fileListStyle.channelThumbnail}
+                    resizeMode={FastImage.resizeMode.cover}
+                    source={{ uri: thumbnailUrl }}
+                  />
+                )}
+                {!hasThumbnail && (
+                  <Text style={channelIconStyle.autothumbCharacter}>
+                    {title ? title.substring(0, 1).toUpperCase() : name.substring(1, 2).toUpperCase()}
+                  </Text>
+                )}
+              </View>
+            </View>
+          )}
+
           {fileInfo && fileInfo.completed && fileInfo.download_path && (
             <Icon
               style={featuredResult ? fileListStyle.featuredDownloadedIcon : fileListStyle.downloadedIcon}
@@ -94,25 +123,32 @@ class FileResultItem extends React.PureComponent {
             {(title || name) && (
               <View style={fileListStyle.titleContainer}>
                 <Text style={featuredResult ? fileListStyle.featuredTitle : fileListStyle.title}>
-                  {this.formatTitle(title) || this.formatTitle(name)}
+                  {formatTitle(title) || formatTitle(name)}
                 </Text>
                 {isRewardContent && <Icon style={fileListStyle.rewardIcon} name="award" size={12} />}
               </View>
             )}
 
-            {hasChannel && (
-              <Link
-                style={fileListStyle.publisher}
-                text={channel}
-                onPress={() => {
-                  navigateToUri(navigation, normalizeURI(channelUrl), null, false, channelUrl);
-                }}
-              />
-            )}
+            {hasChannel ||
+              (isChannel && (
+                <Link
+                  style={fileListStyle.publisher}
+                  text={isChannel ? name : channel}
+                  onPress={() => {
+                    navigateToUri(
+                      navigation,
+                      normalizeURI(isChannel ? url : channelUrl),
+                      null,
+                      false,
+                      isChannel ? url : channelUrl,
+                    );
+                  }}
+                />
+              ))}
 
             <View style={fileListStyle.info}>
               {fileInfo && !isNaN(fileInfo.written_bytes) && fileInfo.written_bytes > 0 && (
-                <Text>{this.getStorageForFileInfo(fileInfo)}</Text>
+                <Text>{getStorageForFileInfo(fileInfo)}</Text>
               )}
               <DateTime
                 style={fileListStyle.publishInfo}
@@ -130,7 +166,7 @@ class FileResultItem extends React.PureComponent {
                     color={Colors.NextLbryGreen}
                     height={3}
                     style={fileListStyle.progress}
-                    progress={this.getDownloadProgress(fileInfo)}
+                    progress={getDownloadProgress(fileInfo)}
                   />
                 )}
               </View>
@@ -143,4 +179,4 @@ class FileResultItem extends React.PureComponent {
   }
 }
 
-export default FileResultItem;
+export default ClaimResultItem;

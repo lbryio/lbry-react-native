@@ -21,6 +21,7 @@ import ChannelRewardsDriver from 'component/channelRewardsDriver';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import EmptyStateView from 'component/emptyStateView';
+import FastImage from 'react-native-fast-image';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
@@ -867,9 +868,9 @@ export default class ChannelCreator extends React.PureComponent {
                 >
                   <View style={[channelCreatorStyle.channelListAvatar, itemAutoStyle]}>
                     {itemThumbnailUrl && (
-                      <Image
+                      <FastImage
                         style={channelCreatorStyle.avatarImage}
-                        resizeMode={'cover'}
+                        resizeMode={FastImage.resizeMode.cover}
                         source={{ uri: itemThumbnailUrl }}
                       />
                     )}

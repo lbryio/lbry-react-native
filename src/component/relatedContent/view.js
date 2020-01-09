@@ -4,7 +4,7 @@ import { normalizeURI } from 'lbry-redux';
 import { navigateToUri } from 'utils/helper';
 import Colors from 'styles/colors';
 import FileListItem from 'component/fileListItem';
-import FileResultItem from 'component/fileResultItem';
+import ClaimResultItem from 'component/claimResultItem';
 import fileListStyle from 'styles/fileList';
 import relatedContentStyle from 'styles/relatedContent';
 
@@ -30,7 +30,7 @@ export default class RelatedContent extends React.PureComponent {
         {isSearching && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
         {recommendedContent &&
           recommendedContent.map(result => (
-            <FileResultItem
+            <ClaimResultItem
               style={fileListStyle.item}
               key={result.claimId}
               result={result}
