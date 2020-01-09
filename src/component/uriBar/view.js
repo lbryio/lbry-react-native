@@ -183,10 +183,6 @@ class UriBar extends React.PureComponent {
     });
   };
 
-  onSearchPageBlurred() {
-    this.setState({ currenValueSet: false });
-  }
-
   render() {
     const {
       allowEdit,
