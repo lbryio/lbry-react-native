@@ -170,6 +170,12 @@ class UriBar extends React.PureComponent {
     );
   };
 
+  handleTouchStart = () => {
+    if (this.state.focused) {
+      this.setState({ selection: null });
+    }
+  };
+
   handleBlur = () => {
     this.setState({
       focused: false,
@@ -268,6 +274,7 @@ class UriBar extends React.PureComponent {
               ref={ref => {
                 this.textInput = ref;
               }}
+              onTouchStart={this.handleTouchStart}
               autoCorrect={false}
               style={uriBarStyle.uriText}
               selection={this.state.selection}
