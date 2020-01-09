@@ -299,8 +299,6 @@ class FilePage extends React.PureComponent {
 
   handleFullscreenToggle = isFullscreen => {
     const { toggleFullscreenMode } = this.props;
-    this.setState({ fullscreenMode: isFullscreen });
-
     toggleFullscreenMode(isFullscreen);
 
     if (isFullscreen) {
@@ -317,6 +315,7 @@ class FilePage extends React.PureComponent {
       NativeModules.UtilityModule.showNavigationBar();
     }
 
+    this.setState({ fullscreenMode: isFullscreen });
     StatusBar.setHidden(isFullscreen);
   };
 
