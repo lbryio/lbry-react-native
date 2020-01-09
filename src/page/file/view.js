@@ -9,6 +9,7 @@ import {
   Image,
   Linking,
   NativeModules,
+  Platform,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -185,7 +186,7 @@ class FilePage extends React.PureComponent {
       if (purchaseUriErrorMessage && purchaseUriErrorMessage.trim().length > 0) {
         notify({ message: purchaseUriErrorMessage, isError: true });
       }
-      this.setState({ downloadPressed: false, fileViewLogged: false, mediaLoaded: false });
+      this.setState({ downloadPressed: false, fileViewLogged: false, mediaLoaded: false, showRecommended: true });
     }
 
     const mediaType = Lbry.getMediaType(contentType);
@@ -261,7 +262,7 @@ class FilePage extends React.PureComponent {
       this.setState({ autoGetAttempted: true }, () => this.checkStoragePermissionForDownload());
     }
 
-    if (((costInfo && costInfo.cost > 0) || !isPlayable) && !this.state.showRecommended) {
+    if (((costInfo && costInfo.cost > 0) || !isPlayable) && (!fileInfo && !isViewable) && !this.state.showRecommended) {
       this.setState({ showRecommended: true });
     }
 
@@ -620,13 +621,13 @@ class FilePage extends React.PureComponent {
 
   confirmPurchaseUri = (uri, costInfo, download) => {
     const { notify, purchaseUri, title } = this.props;
-    const { cost } = costInfo;
-
     if (!costInfo) {
       notify({ message: __('This content cannot be viewed at this time. Please try again in a bit.'), isError: true });
+      this.fetchCostInfo(uri, this.props);
       return;
     }
 
+    const { cost } = costInfo;
     if (costInfo.cost > 0) {
       Alert.alert(
         __('Confirm Purchase'),
@@ -763,6 +764,7 @@ class FilePage extends React.PureComponent {
               },
             ],
             showImageViewer: true,
+            showRecommended: true,
           },
           () => pushDrawerStack(Constants.DRAWER_ROUTE_FILE_VIEW),
         );
@@ -774,6 +776,7 @@ class FilePage extends React.PureComponent {
         this.setState(
           {
             showWebView: true,
+            showRecommended: true,
           },
           () => {
             pushDrawerStack(Constants.DRAWER_ROUTE_FILE_VIEW);
@@ -815,21 +818,40 @@ class FilePage extends React.PureComponent {
     const localFileUri = this.localUriForFileInfo(fileInfo);
 
     if (['text/markdown', 'text/md'].includes(contentType)) {
-      const html =
-        '<!doctype html>' +
-        '<html>' +
-        '  <head>' +
-        '    <meta charset="utf-8"/>' +
-        '    <meta name="viewport" content="width=device-width, user-scalable=no"/>' +
-        '    <style type="text/css">' +
-        '    body { margin: 16px }' +
-        '    img { width: 100%; }' +
-        '    </style>' +
-        '  </head>' +
-        '  <body>' +
-        '    <div id="content"></div>' +
-        '  </body>' +
-        '</html>';
+      let fontdecl = '';
+      if (Platform.OS === 'android') {
+        fontdecl = `
+          @font-face {
+            font-family: 'Inter';
+            src: url('file:///android_asset/fonts/Inter-Regular.otf');
+            font-weight: normal;
+          }
+          @font-face {
+            font-family: 'Inter;
+            src: url('file:///android_asset/fonts/Inter-Bold.otf');
+            font-weight: bold;
+          }
+          `;
+      }
+
+      const html = `
+        <!doctype html>
+        <html>
+          <head>
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, user-scalable=no"/>
+            <style type="text/css">
+              ${fontdecl}
+              body { font-family: 'Inter', sans-serif; margin: 16px }
+              img { width: 100%; }
+            </style>
+          </head>
+          <body>
+            <div id="content"></div>
+          </body>
+        </html>
+        `;
+
       return { html };
     }
 

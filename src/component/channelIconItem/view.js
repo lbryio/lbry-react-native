@@ -51,7 +51,7 @@ export default class ChannelIconItem extends React.PureComponent {
       <TouchableOpacity style={channelIconStyle.container} onPress={onPress}>
         {isResolvingUri && (
           <View style={channelIconStyle.centered}>
-            <ActivityIndicator size={'small'} color={Colors.LbryGreen} />
+            <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
           </View>
         )}
         <View

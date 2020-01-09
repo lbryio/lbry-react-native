@@ -43,7 +43,7 @@ class SuggestedSubscriptionItem extends React.PureComponent {
     if (isResolvingUri) {
       return (
         <View style={subscriptionsStyle.itemLoadingContainer}>
-          <ActivityIndicator size={'small'} color={Colors.LbryGreen} />
+          <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
         </View>
       );
     }

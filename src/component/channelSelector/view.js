@@ -191,7 +191,7 @@ export default class ChannelSelector extends React.PureComponent {
     const channel = this.state.addingChannel ? 'new' : this.props.channel;
     const { balance, enabled, fetchingChannels, channels = [] } = this.props;
     const pickerItems = [Constants.ITEM_ANONYMOUS, Constants.ITEM_CREATE_A_CHANNEL].concat(
-      channels ? channels.map(ch => ch.name) : []
+      channels ? channels.map(ch => ch.name) : [],
     );
 
     const {
@@ -264,7 +264,7 @@ export default class ChannelSelector extends React.PureComponent {
             </Text>
 
             <View style={channelSelectorStyle.buttonContainer}>
-              {creatingChannel && <ActivityIndicator size={'small'} color={Colors.LbryGreen} />}
+              {creatingChannel && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
               {!creatingChannel && (
                 <View style={channelSelectorStyle.buttons}>
                   <Link style={channelSelectorStyle.cancelLink} text={__('Cancel')} onPress={this.handleCreateCancel} />
