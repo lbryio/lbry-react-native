@@ -140,6 +140,7 @@ class PublishPage extends React.PureComponent {
 
     // other
     publishStarted: false,
+    storagePermissionRequired: false,
   };
 
   didFocusListener;
@@ -195,6 +196,18 @@ class PublishPage extends React.PureComponent {
     });
   };
 
+  loadVideos = () => {
+    this.setState(
+      {
+        loadingVideos: true,
+        storagePermissionRequired: false,
+      },
+      () => {
+        NativeModules.Gallery.getVideos().then(videos => this.setState({ videos, loadingVideos: false }));
+      },
+    );
+  };
+
   onComponentFocused = () => {
     const { balance, hasFormState, pushDrawerStack, setPlayerVisible, navigation } = this.props;
     NativeModules.Firebase.setCurrentScreen('Publish').then(result => {
@@ -204,18 +217,19 @@ class PublishPage extends React.PureComponent {
       DeviceEventEmitter.addListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
       DeviceEventEmitter.addListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
 
-      this.checkStoragePermission();
-
       NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
       NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
-      this.setState(
-        {
-          loadingVideos: true,
-        },
-        () => {
-          NativeModules.Gallery.getVideos().then(videos => this.setState({ videos, loadingVideos: false }));
-        },
-      );
+
+      NativeModules.UtilityModule.canReadWriteStorage().then(canReadWrite => {
+        if (!canReadWrite) {
+          this.setState({ storagePermissionRequired: true }, () =>
+            NativeModules.UtilityModule.requestStoragePermission(),
+          );
+        } else {
+          // Can only load videos when the storage permission is granted
+          this.loadVideos();
+        }
+      });
 
       // Check if this is an edit action
       let isEditMode = false,
@@ -913,6 +927,7 @@ class PublishPage extends React.PureComponent {
 
   handleStoragePermissionGranted = () => {
     // update the configured download folder
+    this.loadVideos();
     NativeModules.UtilityModule.getDownloadDirectory().then(downloadDirectory => {
       Lbry.settings_set({
         key: 'download_dir',
@@ -942,6 +957,7 @@ class PublishPage extends React.PureComponent {
       currentPhase,
       checkedThumbnails,
       loadingVideos,
+      storagePermissionRequired,
       thumbnailPath,
       videos,
     } = this.state;
@@ -983,13 +999,20 @@ class PublishPage extends React.PureComponent {
               </View>
             </View>
           </View>
-          {(loadingVideos || !allThumbnailsChecked) && (
+          {storagePermissionRequired && (
+            <View style={publishStyle.relativeCentered}>
+              <Text style={publishStyle.noVideos}>
+                {__('The storage permission is required to be able to display and publish your videos.')}
+              </Text>
+            </View>
+          )}
+          {!storagePermissionRequired && (loadingVideos || !allThumbnailsChecked) && (
             <View style={publishStyle.loadingView}>
               <ActivityIndicator size="small" color={Colors.NextLbryGreen} />
               <Text style={publishStyle.loadingText}>{__('Please wait while we load your videos...')}</Text>
             </View>
           )}
-          {!loadingVideos && (!videos || videos.length === 0) && (
+          {!storagePermissionRequired && !loadingVideos && (!videos || videos.length === 0) && (
             <View style={publishStyle.relativeCentered}>
               <Text style={publishStyle.noVideos}>
                 {__('We could not find any videos on your device. Take a photo or record a video to get started.')}
