@@ -1,7 +1,7 @@
 import React from 'react';
 import { normalizeURI, parseURI } from 'lbry-redux';
 import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native';
-import { navigateToUri, formatTitle, getDownloadProgress, getStorageForFileInfo } from 'utils/helper';
+import { navigateToUri, getDownloadProgress, getStorageForFileInfo } from 'utils/helper';
 import Colors from 'styles/colors';
 import ChannelIconItem from 'component/channelIconItem';
 import channelIconStyle from 'styles/channelIcon';
@@ -116,7 +116,9 @@ class ClaimResultItem extends React.PureComponent {
           <View style={fileListStyle.detailsContainer}>
             {(title || name) && (
               <View style={fileListStyle.titleContainer}>
-                <Text style={fileListStyle.title}>{formatTitle(title) || formatTitle(name)}</Text>
+                <Text style={fileListStyle.title} numberOfLines={3}>
+                  {title || name}
+                </Text>
                 {isRewardContent && <Icon style={fileListStyle.rewardIcon} name="award" size={12} />}
               </View>
             )}

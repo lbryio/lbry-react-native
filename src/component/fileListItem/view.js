@@ -1,7 +1,7 @@
 import React from 'react';
 import { normalizeURI, parseURI } from 'lbry-redux';
 import { ActivityIndicator, Platform, Text, TouchableOpacity, View } from 'react-native';
-import { navigateToUri, formatTitle, getDownloadProgress, getStorageForFileInfo } from 'utils/helper';
+import { navigateToUri, getDownloadProgress, getStorageForFileInfo } from 'utils/helper';
 import Colors from 'styles/colors';
 import ChannelIconItem from 'component/channelIconItem';
 import channelIconStyle from 'styles/channelIcon';
@@ -151,7 +151,7 @@ class FileListItem extends React.PureComponent {
           )}
 
           {isChannel && (
-            <View style={fileListStyle.thumbnail}>
+            <View style={fileListStyle.channelThumbnailView}>
               <View style={[fileListStyle.channelThumbnailContainer, this.state.autoStyle]}>
                 {hasThumbnail && (
                   <FastImage
@@ -209,8 +209,11 @@ class FileListItem extends React.PureComponent {
 
             {(title || name) && (
               <View style={fileListStyle.titleContainer}>
-                <Text style={featuredResult ? fileListStyle.featuredTitle : fileListStyle.title}>
-                  {formatTitle(title) || formatTitle(name)}
+                <Text
+                  style={featuredResult ? fileListStyle.featuredTitle : fileListStyle.title}
+                  numberOfLines={hideChannel ? 4 : 3}
+                >
+                  {title || name}
                 </Text>
                 {isRewardContent && <Icon style={fileListStyle.rewardIcon} name="award" size={12} />}
               </View>

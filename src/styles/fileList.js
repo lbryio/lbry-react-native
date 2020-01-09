@@ -28,7 +28,7 @@ const fileListStyle = StyleSheet.create({
   },
   featuredTitle: {
     fontFamily: 'Inter-SemiBold',
-    fontSize: screenWidthPixels <= 720 ? 12 : 16,
+    fontSize: screenWidthPixels <= 720 ? 11 : 16,
     color: Colors.White,
   },
   thumbnail: {
@@ -70,16 +70,16 @@ const fileListStyle = StyleSheet.create({
   },
   title: {
     fontFamily: 'Inter-SemiBold',
-    fontSize: screenWidthPixels <= 720 ? 12 : 14,
+    fontSize: screenWidthPixels <= 720 ? 11 : 14,
   },
   uri: {
     fontFamily: 'Inter-SemiBold',
-    fontSize: screenWidthPixels <= 720 ? 12 : 14,
+    fontSize: screenWidthPixels <= 720 ? 11 : 14,
     marginBottom: 8,
   },
   publisher: {
     fontFamily: 'Inter-SemiBold',
-    fontSize: screenWidthPixels <= 720 ? 11 : 12,
+    fontSize: screenWidthPixels <= 720 ? 10 : 12,
     marginTop: screenWidthPixels <= 720 ? 1 : 3,
     color: Colors.LbryGreen,
   },
@@ -96,14 +96,14 @@ const fileListStyle = StyleSheet.create({
   },
   infoText: {
     fontFamily: 'Inter-Regular',
-    fontSize: screenWidthPixels <= 720 ? 11 : 12,
+    fontSize: screenWidthPixels <= 720 ? 10 : 12,
     color: Colors.ChannelGrey,
   },
   downloadInfo: {
     marginTop: 2,
   },
   progress: {
-    marginTop: screenWidthPixels <= 720 ? 2 : 4,
+    marginTop: screenWidthPixels <= 720 ? 1 : 4,
   },
   progressCompleted: {
     backgroundColor: Colors.LbryGreen,
