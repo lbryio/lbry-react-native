@@ -12,7 +12,7 @@ import {
 } from 'lbry-redux';
 import { selectBlackListedOutpoints, selectFilteredOutpoints, selectRewardContentClaimIds } from 'lbryinc';
 import { selectShowNsfw } from 'redux/selectors/settings';
-import FileResultItem from './view';
+import ClaimResultItem from './view';
 
 const select = (state, props) => ({
   blackListedOutpoints: selectBlackListedOutpoints(state),
@@ -37,4 +37,4 @@ const perform = dispatch => ({
 export default connect(
   select,
   perform,
-)(FileResultItem);
+)(ClaimResultItem);

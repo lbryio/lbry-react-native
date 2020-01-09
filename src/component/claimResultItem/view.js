@@ -15,17 +15,27 @@ import Link from 'component/link';
 import NsfwOverlay from 'component/nsfwOverlay';
 import ProgressBar from 'component/progressBar';
 import fileListStyle from 'styles/fileList';
+import seedrandom from 'seedrandom';
 
-class FileResultItem extends React.PureComponent {
+class ClaimResultItem extends React.PureComponent {
   state = {
     autoStyle: null,
   };
 
   componentDidMount() {
-    this.setState({
-      autoStyle:
-        ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)],
-    });
+    const { result } = this.props;
+
+    if (!result || !result.name || !result.claimId) {
+      this.setState({
+        autoStyle:
+          ChannelIconItem.AUTO_THUMB_STYLES[Math.floor(Math.random() * ChannelIconItem.AUTO_THUMB_STYLES.length)],
+      });
+    } else {
+      // result property set, use deterministic random style
+      const rng = seedrandom(normalizeURI(`${result.name}#${result.claimId}`));
+      const index = Math.floor(rng.quick() * ChannelIconItem.AUTO_THUMB_STYLES.length);
+      this.setState({ autoStyle: ChannelIconItem.AUTO_THUMB_STYLES[index] });
+    }
   }
 
   onPressHandler = () => {
@@ -169,4 +179,4 @@ class FileResultItem extends React.PureComponent {
   }
 }
 
-export default FileResultItem;
+export default ClaimResultItem;
