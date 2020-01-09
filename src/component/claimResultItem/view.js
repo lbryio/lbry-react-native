@@ -46,7 +46,7 @@ class ClaimResultItem extends React.PureComponent {
   };
 
   render() {
-    const { featuredResult, fileInfo, navigation, obscureNsfw, result, rewardedContentClaimIds, style } = this.props;
+    const { fileInfo, navigation, obscureNsfw, result, rewardedContentClaimIds, style } = this.props;
     const {
       channel,
       channel_claim_id: channelClaimId,
@@ -65,7 +65,7 @@ class ClaimResultItem extends React.PureComponent {
     const obscure = obscureNsfw && nsfw;
     const url = normalizeURI(`${name}#${claimId}`);
     const hasChannel = !!channel;
-    const channelUrl = channel ? normalizeURI(`${channel}#${channelClaimId}`) : null;
+    const channelUrl = hasChannel ? normalizeURI(`${channel}#${channelClaimId}`) : null;
     const isRewardContent = rewardedContentClaimIds.includes(claimId);
 
     return (
@@ -104,13 +104,7 @@ class ClaimResultItem extends React.PureComponent {
           )}
 
           {fileInfo && fileInfo.completed && fileInfo.download_path && (
-            <Icon
-              style={featuredResult ? fileListStyle.featuredDownloadedIcon : fileListStyle.downloadedIcon}
-              solid
-              color={Colors.NextLbryGreen}
-              name={'folder'}
-              size={16}
-            />
+            <Icon style={fileListStyle.downloadedIcon} solid color={Colors.NextLbryGreen} name={'folder'} size={16} />
           )}
           <FilePrice
             cost={fee ? parseFloat(fee) / 100000000 : 0}
@@ -122,29 +116,26 @@ class ClaimResultItem extends React.PureComponent {
           <View style={fileListStyle.detailsContainer}>
             {(title || name) && (
               <View style={fileListStyle.titleContainer}>
-                <Text style={featuredResult ? fileListStyle.featuredTitle : fileListStyle.title}>
-                  {formatTitle(title) || formatTitle(name)}
-                </Text>
+                <Text style={fileListStyle.title}>{formatTitle(title) || formatTitle(name)}</Text>
                 {isRewardContent && <Icon style={fileListStyle.rewardIcon} name="award" size={12} />}
               </View>
             )}
 
-            {hasChannel ||
-              (isChannel && (
-                <Link
-                  style={fileListStyle.publisher}
-                  text={isChannel ? name : channel}
-                  onPress={() => {
-                    navigateToUri(
-                      navigation,
-                      normalizeURI(isChannel ? url : channelUrl),
-                      null,
-                      false,
-                      isChannel ? url : channelUrl,
-                    );
-                  }}
-                />
-              ))}
+            {(hasChannel || isChannel) && (
+              <Link
+                style={fileListStyle.publisher}
+                text={isChannel ? name : channel}
+                onPress={() => {
+                  navigateToUri(
+                    navigation,
+                    normalizeURI(isChannel ? url : channelUrl),
+                    null,
+                    false,
+                    isChannel ? url : channelUrl,
+                  );
+                }}
+              />
+            )}
 
             <View style={fileListStyle.info}>
               {fileInfo && !isNaN(fileInfo.written_bytes) && fileInfo.written_bytes > 0 && (
