@@ -30,7 +30,7 @@ const emptyStateStyle = StyleSheet.create({
   message: {
     marginTop: 24,
     textAlign: 'center',
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     lineHeight: 28,
     marginBottom: 24,

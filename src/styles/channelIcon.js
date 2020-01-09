@@ -10,7 +10,7 @@ const channelIconStyle = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   placeholderText: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
   },
   thumbnailContainer: {
@@ -39,14 +39,14 @@ const channelIconStyle = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     width: 80,
     marginTop: 4,
     textAlign: 'center',
   },
   autothumbCharacter: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 48,
     color: Colors.White,
   },

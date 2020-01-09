@@ -42,7 +42,7 @@ const floatingButtonStyle = StyleSheet.create({
   },
   text: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 16,
   },
   bottomRight: {

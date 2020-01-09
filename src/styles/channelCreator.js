@@ -17,7 +17,7 @@ const channelCreatorStyle = StyleSheet.create({
     backgroundColor: Colors.PageBackground,
   },
   channelPicker: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     height: 52,
     width: '100%',
@@ -27,7 +27,7 @@ const channelCreatorStyle = StyleSheet.create({
     alignItems: 'center',
   },
   label: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   balance: {
@@ -36,24 +36,24 @@ const channelCreatorStyle = StyleSheet.create({
     marginLeft: 24,
   },
   balanceText: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     marginLeft: 4,
   },
   channelNameInput: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     paddingLeft: 20,
   },
   bidAmountInput: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginLeft: 16,
     textAlign: 'right',
     width: 80,
   },
   helpText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     color: Colors.DescriptionGrey,
   },
@@ -68,7 +68,7 @@ const channelCreatorStyle = StyleSheet.create({
     position: 'absolute',
     left: 4,
     top: 13,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   buttonContainer: {
@@ -90,7 +90,7 @@ const channelCreatorStyle = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   inlineError: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     color: Colors.Red,
     marginTop: 2,
@@ -151,12 +151,12 @@ const channelCreatorStyle = StyleSheet.create({
     alignItems: 'center',
   },
   channelListTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     marginBottom: 4,
   },
   channelListName: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   channelListAvatar: {
@@ -189,13 +189,13 @@ const channelCreatorStyle = StyleSheet.create({
     marginBottom: 4,
   },
   textInputTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     marginBottom: -10,
     marginLeft: 4,
   },
   inputText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   toggleContainer: {
@@ -209,7 +209,7 @@ const channelCreatorStyle = StyleSheet.create({
     marginRight: 16,
   },
   cardTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 20,
     marginBottom: 8,
   },
@@ -243,7 +243,7 @@ const channelCreatorStyle = StyleSheet.create({
   },
   editIcon: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 12,
   },
   uploadProgress: {
@@ -262,7 +262,7 @@ const channelCreatorStyle = StyleSheet.create({
   },
   uploadText: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 12,
     marginLeft: 4,
   },

@@ -16,16 +16,16 @@ const storageStatsStyle = StyleSheet.create({
     padding: 16,
   },
   totalSize: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 36,
   },
   annotation: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     marginTop: -4,
   },
   statsText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   distributionBar: {
@@ -57,12 +57,12 @@ const storageStatsStyle = StyleSheet.create({
     height: 16,
   },
   legendText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     flex: 0.3,
   },
   legendSize: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     flex: 0.6,
     textAlign: 'right',

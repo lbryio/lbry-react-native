@@ -32,14 +32,14 @@ const aboutStyle = StyleSheet.create({
   title: {
     color: Colors.LbryGreen,
     fontSize: 24,
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     marginTop: 16,
     marginLeft: 12,
     marginRight: 12,
     marginBottom: 8,
   },
   paragraph: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     lineHeight: 24,
     marginLeft: 12,
@@ -53,13 +53,13 @@ const aboutStyle = StyleSheet.create({
   },
   link: {
     color: Colors.LbryGreen,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginBottom: 24,
   },
   listLink: {
     color: Colors.LbryGreen,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 15,
     alignSelf: 'flex-end',
   },
@@ -67,30 +67,30 @@ const aboutStyle = StyleSheet.create({
     alignSelf: 'stretch',
   },
   socialTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     marginLeft: 12,
     marginRight: 12,
     marginBottom: 8,
     fontSize: 20,
   },
   releaseInfoTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     marginLeft: 12,
     marginRight: 12,
     marginBottom: 12,
     fontSize: 20,
   },
   text: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 15,
   },
   valueText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     textAlign: 'right',
     fontSize: 15,
   },
   lineValueText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 15,
   },
 });

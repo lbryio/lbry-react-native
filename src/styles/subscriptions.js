@@ -37,7 +37,7 @@ const subscriptionsStyle = StyleSheet.create({
     paddingTop: 24,
   },
   infoText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginTop: 8,
     marginBottom: 8,
@@ -57,7 +57,7 @@ const subscriptionsStyle = StyleSheet.create({
     marginTop: 16,
   },
   contentText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginLeft: 24,
     marginRight: 24,
@@ -96,7 +96,7 @@ const subscriptionsStyle = StyleSheet.create({
     justifyContent: 'center',
   },
   fileItemName: {
-    fontFamily: 'Inter-UI-Bold',
+    fontFamily: 'Inter-Bold',
     marginTop: 8,
     fontSize: 18,
   },
@@ -109,7 +109,7 @@ const subscriptionsStyle = StyleSheet.create({
     borderBottomWidth: 1,
   },
   channelTitle: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 20,
     marginLeft: 24,
     marginTop: 16,
@@ -136,16 +136,16 @@ const subscriptionsStyle = StyleSheet.create({
     color: Colors.LbryGreen,
   },
   inactiveMode: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
   },
   activeMode: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
   },
   claimList: {
     flex: 1,
   },
   pageTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 24,
   },
   titleRow: {
@@ -171,7 +171,7 @@ const subscriptionsStyle = StyleSheet.create({
     marginRight: 24,
   },
   tagSortText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     marginRight: 4,
   },
@@ -216,13 +216,13 @@ const subscriptionsStyle = StyleSheet.create({
     top: 0,
   },
   suggestedItemTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginBottom: 4,
     width: '85%',
   },
   suggestedItemName: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     marginBottom: 4,
     color: Colors.LbryGreen,
@@ -233,7 +233,7 @@ const subscriptionsStyle = StyleSheet.create({
     flexWrap: 'wrap',
   },
   suggestedSubTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 20,
     marginLeft: 16,
     marginRight: 16,
@@ -251,7 +251,7 @@ const subscriptionsStyle = StyleSheet.create({
     alignItems: 'center',
   },
   suggestedLink: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   modalContainer: {

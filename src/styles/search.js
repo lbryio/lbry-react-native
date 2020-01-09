@@ -44,19 +44,19 @@ const searchStyle = StyleSheet.create({
     backgroundColor: Colors.DarkerGrey,
   },
   tagResultTitle: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 24,
     color: Colors.White,
   },
   tagResultDescription: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     color: Colors.VeryLightGrey,
   },
   searchInput: {
     width: '100%',
     height: '100%',
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   noResults: {
@@ -67,14 +67,14 @@ const searchStyle = StyleSheet.create({
     alignItems: 'center',
   },
   noResultsText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginTop: 16,
     marginLeft: 16,
     marginRight: 16,
   },
   boldText: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 16,
   },
   loading: {

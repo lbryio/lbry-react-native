@@ -8,14 +8,14 @@ const splashStyle = StyleSheet.create({
     backgroundColor: Colors.LbryGreen,
   },
   title: {
-    fontFamily: 'Inter-UI-Bold',
+    fontFamily: 'Inter-Bold',
     fontSize: 64,
     textAlign: 'center',
     marginBottom: 48,
     color: Colors.White,
   },
   errorTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 28,
     marginBottom: 24,
     marginLeft: 24,
@@ -23,7 +23,7 @@ const splashStyle = StyleSheet.create({
     color: Colors.White,
   },
   paragraph: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     lineHeight: 24,
     marginBottom: 20,
@@ -48,7 +48,7 @@ const splashStyle = StyleSheet.create({
     width: '50%',
   },
   details: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     marginLeft: 16,
     marginRight: 16,
@@ -56,7 +56,7 @@ const splashStyle = StyleSheet.create({
     textAlign: 'center',
   },
   message: {
-    fontFamily: 'Inter-UI-Bold',
+    fontFamily: 'Inter-Bold',
     fontSize: 18,
     color: Colors.White,
     marginLeft: 16,

@@ -78,7 +78,7 @@ const mediaPlayerStyle = StyleSheet.create({
     bottom: 14,
   },
   elapsedDuration: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     position: 'absolute',
     left: 8,
     bottom: 24,
@@ -86,7 +86,7 @@ const mediaPlayerStyle = StyleSheet.create({
     color: '#ffffff',
   },
   totalDuration: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     position: 'absolute',
     right: 48,
     bottom: 24,

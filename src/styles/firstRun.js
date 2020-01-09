@@ -17,7 +17,7 @@ const firstRunStyle = StyleSheet.create({
     backgroundColor: Colors.LbryGreen,
   },
   title: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 40,
     marginLeft: 32,
     marginRight: 32,
@@ -25,7 +25,7 @@ const firstRunStyle = StyleSheet.create({
     color: Colors.White,
   },
   paragraph: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     lineHeight: 24,
     marginLeft: 32,
@@ -34,7 +34,7 @@ const firstRunStyle = StyleSheet.create({
     color: Colors.White,
   },
   spacedParagraph: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     lineHeight: 28,
     marginLeft: 32,
@@ -43,7 +43,7 @@ const firstRunStyle = StyleSheet.create({
     color: Colors.White,
   },
   infoParagraph: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     lineHeight: 20,
     marginLeft: 32,
@@ -55,7 +55,7 @@ const firstRunStyle = StyleSheet.create({
     marginTop: 36,
   },
   rowParagraph: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     lineHeight: 24,
     color: Colors.White,
@@ -67,7 +67,7 @@ const firstRunStyle = StyleSheet.create({
     marginRight: 8,
   },
   emailInput: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 24,
     lineHeight: 24,
     marginLeft: 32,
@@ -76,7 +76,7 @@ const firstRunStyle = StyleSheet.create({
     textAlign: 'center',
   },
   passwordInput: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 24,
     lineHeight: 24,
     marginLeft: 32,
@@ -102,7 +102,7 @@ const firstRunStyle = StyleSheet.create({
   actionButton: {
     backgroundColor: Colors.White,
     alignSelf: 'center',
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     paddingLeft: 16,
     paddingRight: 16,
@@ -114,18 +114,18 @@ const firstRunStyle = StyleSheet.create({
     paddingRight: 32,
   },
   buttonText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     color: Colors.White,
   },
   smallButtonText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     color: Colors.White,
     marginBottom: -2,
   },
   smallLeftButtonText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     color: Colors.White,
     marginBottom: 6,
@@ -183,7 +183,7 @@ const firstRunStyle = StyleSheet.create({
   },
   passwordWarningText: {
     color: Colors.NextLbryGreen,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   centered: {

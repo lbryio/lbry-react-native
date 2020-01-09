@@ -7,7 +7,7 @@ const tagStyle = StyleSheet.create({
     marginBottom: 4,
   },
   tagSearchInput: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   content: {
@@ -22,7 +22,7 @@ const tagStyle = StyleSheet.create({
     marginRight: 8,
   },
   text: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     marginRight: 8,
   },
@@ -34,7 +34,7 @@ const tagStyle = StyleSheet.create({
     marginTop: 8,
   },
   nsfwTagsTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginBottom: 4,
   },

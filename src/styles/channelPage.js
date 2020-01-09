@@ -23,7 +23,7 @@ const channelPageStyle = StyleSheet.create({
   },
   title: {
     color: Colors.LbryGreen,
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 30,
     margin: 16,
   },
@@ -34,7 +34,7 @@ const channelPageStyle = StyleSheet.create({
     padding: 24,
   },
   infoText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 20,
     textAlign: 'center',
   },
@@ -62,7 +62,7 @@ const channelPageStyle = StyleSheet.create({
   },
   channelName: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     padding: 2,
     backgroundColor: '#000000aa',
@@ -98,7 +98,7 @@ const channelPageStyle = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   tabTitle: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     color: Colors.White,
   },
@@ -131,12 +131,12 @@ const channelPageStyle = StyleSheet.create({
     padding: 24,
   },
   aboutTitle: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 16,
     lineHeight: 24,
   },
   aboutText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     lineHeight: 24,
   },
@@ -182,7 +182,7 @@ const channelPageStyle = StyleSheet.create({
     marginRight: 8,
   },
   followerCount: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     color: Colors.White,
     marginTop: 2,

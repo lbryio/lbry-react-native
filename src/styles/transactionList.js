@@ -24,29 +24,29 @@ const transactionListStyle = StyleSheet.create({
     alignSelf: 'stretch',
   },
   text: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   link: {
     color: Colors.LbryGreen,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   amount: {
     textAlign: 'right',
   },
   smallText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     color: '#aaaaaa',
   },
   smallLink: {
     color: Colors.LbryGreen,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
   },
   noTransactions: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     textAlign: 'center',
     padding: 16,
     color: '#aaaaaa',

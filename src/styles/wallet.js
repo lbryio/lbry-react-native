@@ -26,7 +26,7 @@ const walletStyle = StyleSheet.create({
     flexDirection: 'row',
   },
   address: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     letterSpacing: 0.8,
     borderWidth: 1,
     borderRadius: 16,
@@ -69,12 +69,12 @@ const walletStyle = StyleSheet.create({
     margin: 16,
   },
   title: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 20,
     marginBottom: 24,
   },
   transactionsTitle: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 20,
   },
   transactionsHeader: {
@@ -86,16 +86,16 @@ const walletStyle = StyleSheet.create({
     borderBottomColor: '#eeeeee',
   },
   text: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   link: {
     color: Colors.LbryGreen,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   smallText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
   },
   balanceCard: {
@@ -111,14 +111,14 @@ const walletStyle = StyleSheet.create({
   },
   balanceTitle: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 20,
     marginLeft: 16,
     marginTop: 16,
   },
   balanceCaption: {
     color: '#caedB9',
-    fontFamily: 'Inter-UI-Medium',
+    fontFamily: 'Inter-Medium',
     fontSize: 14,
     marginLeft: 16,
     marginTop: 8,
@@ -126,7 +126,7 @@ const walletStyle = StyleSheet.create({
   },
   balance: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-Bold',
+    fontFamily: 'Inter-Bold',
     fontSize: 36,
     marginLeft: 16,
     marginBottom: 16,
@@ -137,19 +137,19 @@ const walletStyle = StyleSheet.create({
     marginLeft: 24,
   },
   balanceText: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     marginLeft: 4,
   },
   infoText: {
     color: '#aaaaaa',
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     padding: 16,
     textAlign: 'center',
   },
   input: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   amountInput: {
@@ -172,14 +172,14 @@ const walletStyle = StyleSheet.create({
   },
   warningParagraph: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     lineHeight: 24,
     marginBottom: 16,
   },
   warningText: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     lineHeight: 24,
     marginBottom: 8,
@@ -222,7 +222,7 @@ const walletStyle = StyleSheet.create({
   },
   rewardDriverText: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     lineHeight: 16,
   },
@@ -237,7 +237,7 @@ const walletStyle = StyleSheet.create({
     marginRight: 16,
   },
   syncDriverTitle: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 20,
     paddingLeft: 16,
     marginTop: 16,
@@ -247,7 +247,7 @@ const walletStyle = StyleSheet.create({
   },
   syncDriverLink: {
     color: Colors.LbryGreen,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   actionRow: {
@@ -291,11 +291,11 @@ const walletStyle = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   labelText: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 16,
   },
   valueText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   rightLink: {
@@ -316,7 +316,7 @@ const walletStyle = StyleSheet.create({
   },
   loadingText: {
     color: '#aaaaaa',
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginLeft: 8,
   },
@@ -331,11 +331,11 @@ const walletStyle = StyleSheet.create({
   },
   continueLink: {
     fontSize: 14,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     color: Colors.White,
   },
   learnMoreLink: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     color: Colors.NextLbryGreen,
   },
   signInButton: {
@@ -353,7 +353,7 @@ const walletStyle = StyleSheet.create({
     marginTop: 36,
   },
   onboardingText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     lineHeight: 28,
     color: Colors.White,
@@ -363,7 +363,7 @@ const walletStyle = StyleSheet.create({
   },
   signInTitle: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 28,
   },
 });

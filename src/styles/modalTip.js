@@ -6,7 +6,7 @@ const modalTipStyle = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 24,
   },
   row: {
@@ -19,7 +19,7 @@ const modalTipStyle = StyleSheet.create({
     marginRight: 24,
   },
   tipAmountInput: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     alignSelf: 'flex-start',
     textAlign: 'right',
@@ -27,7 +27,7 @@ const modalTipStyle = StyleSheet.create({
     letterSpacing: 1,
   },
   currency: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     marginLeft: 4,
   },
@@ -49,7 +49,7 @@ const modalTipStyle = StyleSheet.create({
     marginLeft: 24,
   },
   balanceText: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     marginLeft: 4,
   },
@@ -57,12 +57,12 @@ const modalTipStyle = StyleSheet.create({
     marginTop: 4,
   },
   infoText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     color: Colors.DescriptionGrey,
   },
   learnMoreLink: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     color: Colors.LbryGreen,
   },

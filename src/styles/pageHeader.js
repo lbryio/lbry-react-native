@@ -42,7 +42,7 @@ const pageHeaderStyle = StyleSheet.create({
     flexDirection: 'row',
   },
   titleText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: Platform.OS === 'ios' ? 17 : 20,
     fontWeight: Platform.OS === 'ios' ? '700' : '500',
     color: 'rgba(0, 0, 0, .9)',

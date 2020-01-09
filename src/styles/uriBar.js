@@ -29,7 +29,7 @@ const uriBarStyle = StyleSheet.create({
     borderRadius: 24,
     paddingLeft: 12,
     paddingRight: 12,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     height: 44,
     lineHeight: 18,
@@ -66,11 +66,11 @@ const uriBarStyle = StyleSheet.create({
     flex: 1,
   },
   itemText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   itemDesc: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     color: Colors.UriDescBlue,
   },
@@ -108,7 +108,7 @@ const uriBarStyle = StyleSheet.create({
     alignItems: 'center',
   },
   itemCount: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 20,
     marginLeft: 30,
   },

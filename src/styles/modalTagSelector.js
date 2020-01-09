@@ -42,7 +42,7 @@ const modalTagSelectorStyle = StyleSheet.create({
     marginBottom: 12,
   },
   title: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 24,
   },
   buttons: {

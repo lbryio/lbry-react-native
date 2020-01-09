@@ -12,7 +12,7 @@ const relatedContentStyle = StyleSheet.create({
     borderTopWidth: 1,
   },
   title: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
   },
   itemList: {

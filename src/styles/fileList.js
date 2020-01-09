@@ -22,12 +22,12 @@ const fileListStyle = StyleSheet.create({
     flex: 1,
   },
   featuredUri: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 24,
     color: Colors.White,
   },
   featuredTitle: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: screenWidthPixels <= 720 ? 12 : 16,
     color: Colors.White,
   },
@@ -50,16 +50,16 @@ const fileListStyle = StyleSheet.create({
     backgroundColor: '#000000aa',
   },
   title: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: screenWidthPixels <= 720 ? 12 : 14,
   },
   uri: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: screenWidthPixels <= 720 ? 12 : 14,
     marginBottom: 8,
   },
   publisher: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: screenWidthPixels <= 720 ? 11 : 12,
     marginTop: screenWidthPixels <= 720 ? 1 : 3,
     color: Colors.LbryGreen,
@@ -73,7 +73,7 @@ const fileListStyle = StyleSheet.create({
     justifyContent: 'space-between',
   },
   infoText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: screenWidthPixels <= 720 ? 11 : 12,
     color: Colors.ChannelGrey,
   },
@@ -134,7 +134,7 @@ const fileListStyle = StyleSheet.create({
     borderRadius: 4,
   },
   filePriceText: {
-    fontFamily: 'Inter-UI-Bold',
+    fontFamily: 'Inter-Bold',
     fontSize: 12,
     textAlign: 'center',
     color: '#0c604b',

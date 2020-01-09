@@ -30,7 +30,7 @@ const downloadsStyle = StyleSheet.create({
     paddingBottom: 16,
   },
   noDownloadsText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     lineHeight: 24,
     marginLeft: 16,

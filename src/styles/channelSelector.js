@@ -6,13 +6,13 @@ const channelSelectorStyle = StyleSheet.create({
     flex: 1,
   },
   channelPicker: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     height: 52,
     width: '100%',
   },
   channelPickerItem: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   bidRow: {
@@ -21,7 +21,7 @@ const channelSelectorStyle = StyleSheet.create({
     alignItems: 'center',
   },
   label: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   balance: {
@@ -30,24 +30,24 @@ const channelSelectorStyle = StyleSheet.create({
     marginLeft: 24,
   },
   balanceText: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     marginLeft: 4,
   },
   channelNameInput: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     paddingLeft: 20,
   },
   bidAmountInput: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginLeft: 16,
     textAlign: 'right',
     width: 80,
   },
   helpText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
   },
   createChannelContainer: {
@@ -59,7 +59,7 @@ const channelSelectorStyle = StyleSheet.create({
     position: 'absolute',
     left: 4,
     top: 13,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   buttonContainer: {
@@ -80,7 +80,7 @@ const channelSelectorStyle = StyleSheet.create({
     backgroundColor: Colors.NextLbryGreen,
   },
   inlineError: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     color: Colors.Red,
     marginTop: 2,

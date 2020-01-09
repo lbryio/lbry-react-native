@@ -38,23 +38,23 @@ const settingsStyle = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     lineHeight: 18,
   },
   description: {
     color: '#aaaaaa',
     fontSize: 12,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     lineHeight: 18,
   },
   sectionTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 20,
     marginBottom: 4,
   },
   sectionDescription: {
     color: '#aaaaaa',
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     lineHeight: 18,
     marginBottom: 8,
@@ -66,7 +66,7 @@ const settingsStyle = StyleSheet.create({
     width: '85%',
   },
   languagePickerItem: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   pickerRow: {

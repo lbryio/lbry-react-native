@@ -13,7 +13,7 @@ const claimListStyle = StyleSheet.create({
   },
   noContentText: {
     color: Colors.DescriptionGrey,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     margin: 16,
     textAlign: 'center',

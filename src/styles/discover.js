@@ -55,11 +55,11 @@ const discoverStyle = StyleSheet.create({
     alignItems: 'center',
   },
   pageTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 24,
   },
   customizeLink: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   trendingContainer: {
@@ -74,7 +74,7 @@ const discoverStyle = StyleSheet.create({
     flexDirection: 'row',
   },
   title: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 20,
     textAlign: 'center',
     marginLeft: 10,
@@ -95,7 +95,7 @@ const discoverStyle = StyleSheet.create({
     marginBottom: 56,
   },
   footerTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 20,
     marginBottom: 10,
   },
@@ -108,7 +108,7 @@ const discoverStyle = StyleSheet.create({
     marginBottom: 12,
   },
   categoryName: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 18,
     color: Colors.Black,
   },
@@ -127,7 +127,7 @@ const discoverStyle = StyleSheet.create({
     justifyContent: 'center',
   },
   moreText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     color: Colors.White,
     fontSize: 24,
   },
@@ -142,18 +142,18 @@ const discoverStyle = StyleSheet.create({
     justifyContent: 'center',
   },
   fileItemName: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     marginTop: 8,
     fontSize: 14,
   },
   channelName: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 12,
     marginTop: 4,
     color: Colors.LbryGreen,
   },
   anonChannelName: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 12,
     marginTop: 4,
     color: Colors.DescriptionGrey,
@@ -176,7 +176,7 @@ const discoverStyle = StyleSheet.create({
     borderRadius: 4,
   },
   filePriceText: {
-    fontFamily: 'Inter-UI-Bold',
+    fontFamily: 'Inter-Bold',
     fontSize: 12,
     textAlign: 'center',
     color: '#0c604b',
@@ -205,7 +205,7 @@ const discoverStyle = StyleSheet.create({
     color: Colors.White,
     fontSize: 14,
     textAlign: 'center',
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
   },
   rewardTitleContainer: {
     alignItems: 'center',
@@ -222,11 +222,11 @@ const discoverStyle = StyleSheet.create({
     flex: 0.9,
   },
   menuText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   titleText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
   },
   detailsRow: {
     flexDirection: 'row',
@@ -236,7 +236,7 @@ const discoverStyle = StyleSheet.create({
     marginTop: 2,
   },
   dateTimeText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     color: Colors.DescriptionGrey,
   },
@@ -259,7 +259,7 @@ const discoverStyle = StyleSheet.create({
     flex: 1,
   },
   tagPageTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 24,
   },
   tagPageClaimList: {
@@ -288,7 +288,7 @@ const discoverStyle = StyleSheet.create({
     alignItems: 'center',
   },
   tagSortText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     marginRight: 4,
   },
@@ -296,7 +296,7 @@ const discoverStyle = StyleSheet.create({
     marginTop: -6,
   },
   pickerLabel: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     color: Colors.DescriptionGrey,
     marginRight: 6,
@@ -307,7 +307,7 @@ const discoverStyle = StyleSheet.create({
     marginBottom: 8,
   },
   menuGroupName: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     color: Colors.DescriptionGrey,
     textTransform: 'uppercase',
@@ -337,7 +337,7 @@ const discoverStyle = StyleSheet.create({
   },
   menuItem: {
     marginLeft: 8,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   signInContainer: {
@@ -353,7 +353,7 @@ const discoverStyle = StyleSheet.create({
     left: 16,
   },
   signedInEmail: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 15,
     color: Colors.White,
   },
@@ -388,13 +388,13 @@ const discoverStyle = StyleSheet.create({
   },
   signInMenuItemText: {
     color: Colors.DescriptionGrey,
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     textAlign: 'center',
   },
   signInMenuItemButtonText: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     textAlign: 'center',
   },

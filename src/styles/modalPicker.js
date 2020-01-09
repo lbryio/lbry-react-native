@@ -29,7 +29,7 @@ const modalPickerStyle = StyleSheet.create({
     padding: 12,
   },
   title: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 12,
     marginTop: 4,
     textTransform: 'uppercase',
@@ -54,7 +54,7 @@ const modalPickerStyle = StyleSheet.create({
   itemLabel: {
     marginLeft: 8,
     alignSelf: 'flex-start',
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   itemSelected: {

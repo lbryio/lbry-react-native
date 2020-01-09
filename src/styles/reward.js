@@ -37,7 +37,7 @@ const rewardStyle = StyleSheet.create({
     marginTop: 36,
   },
   enrollDescText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     lineHeight: 28,
     color: Colors.White,
@@ -67,36 +67,36 @@ const rewardStyle = StyleSheet.create({
     paddingBottom: 16,
   },
   text: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     lineHeight: 24,
   },
   infoText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     marginLeft: 12,
   },
   title: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 22,
     marginBottom: 6,
     color: Colors.LbryGreen,
   },
   subtitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     marginBottom: 6,
     color: Colors.LbryGreen,
   },
   subcardText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 15,
     lineHeight: 20,
     marginLeft: 2,
     marginRight: 2,
   },
   subcardTextInput: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginTop: 2,
     marginBottom: 2,
@@ -122,7 +122,7 @@ const rewardStyle = StyleSheet.create({
   },
   link: {
     color: Colors.LbryGreen,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   textLink: {
@@ -148,21 +148,21 @@ const rewardStyle = StyleSheet.create({
     alignItems: 'center',
   },
   rewardAmount: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 26,
     textAlign: 'center',
   },
   rewardCurrency: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
   },
   rewardTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     color: Colors.LbryGreen,
     marginBottom: 4,
   },
   rewardDescription: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     lineHeight: 18,
     marginBottom: 4,
@@ -195,7 +195,7 @@ const rewardStyle = StyleSheet.create({
   },
   summaryText: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 28,
     marginLeft: 12,
   },
@@ -208,19 +208,19 @@ const rewardStyle = StyleSheet.create({
     marginRight: 32,
   },
   phoneInputText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     letterSpacing: 1.3,
     color: Colors.White,
   },
   verifyingText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     marginLeft: 12,
     alignSelf: 'flex-start',
   },
   verificationCodeInput: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     color: Colors.White,
     fontSize: 24,
     letterSpacing: 12,
@@ -244,11 +244,11 @@ const rewardStyle = StyleSheet.create({
   },
   notInterestedLink: {
     fontSize: 14,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     color: Colors.White,
   },
   learnMoreLink: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     color: Colors.White,
     textDecorationLine: 'underline',
   },
@@ -258,7 +258,7 @@ const rewardStyle = StyleSheet.create({
     paddingRight: 16,
   },
   customCodeInput: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     letterSpacing: 1.3,
     marginTop: -8,
@@ -285,7 +285,7 @@ const rewardStyle = StyleSheet.create({
   verificationTitle: {
     fontSize: 32,
     color: Colors.White,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     marginLeft: 32,
     marginRight: 32,
     marginBottom: 24,
@@ -300,7 +300,7 @@ const rewardStyle = StyleSheet.create({
     fontSize: 14,
   },
   paragraphText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     color: Colors.White,
     fontSize: 12,
     lineHeight: 16,

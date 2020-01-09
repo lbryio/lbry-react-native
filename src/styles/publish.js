@@ -23,7 +23,7 @@ const publishStyle = StyleSheet.create({
     height: 90,
   },
   inputText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   card: {
@@ -57,7 +57,7 @@ const publishStyle = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   cardTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 20,
     marginBottom: 8,
   },
@@ -84,7 +84,7 @@ const publishStyle = StyleSheet.create({
   },
   actionText: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     marginTop: 8,
   },
@@ -119,12 +119,12 @@ const publishStyle = StyleSheet.create({
   },
   priceInput: {
     width: 80,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     textAlign: 'right',
   },
   currency: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
   },
   cardRow: {
     flex: 1,
@@ -155,12 +155,12 @@ const publishStyle = StyleSheet.create({
   },
   loadingText: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginLeft: 8,
   },
   listEmptyText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   titleRow: {
@@ -168,7 +168,7 @@ const publishStyle = StyleSheet.create({
     justifyContent: 'space-between',
   },
   cardText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   cameraPreview: {
@@ -192,12 +192,12 @@ const publishStyle = StyleSheet.create({
     padding: 16,
   },
   successTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 28,
     marginBottom: 16,
   },
   successText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginBottom: 16,
     lineHeight: 20,
@@ -211,7 +211,7 @@ const publishStyle = StyleSheet.create({
   successUrl: {
     flex: 0.9,
     fontSize: 32,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     color: Colors.NextLbryGreen,
     marginRight: 16,
   },
@@ -305,7 +305,7 @@ const publishStyle = StyleSheet.create({
     paddingBottom: 12,
   },
   rewardDriverText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     color: Colors.White,
     fontSize: 14,
   },
@@ -325,7 +325,7 @@ const publishStyle = StyleSheet.create({
     marginBottom: 4,
   },
   textInputTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     marginBottom: -10,
     marginLeft: 4,
@@ -346,7 +346,7 @@ const publishStyle = StyleSheet.create({
   },
   thumbnailUploadText: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 12,
     marginLeft: 4,
   },
@@ -357,7 +357,7 @@ const publishStyle = StyleSheet.create({
     marginBottom: 16,
   },
   toggleText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     marginLeft: 8,
   },
@@ -398,7 +398,7 @@ const publishStyle = StyleSheet.create({
     padding: 16,
   },
   noPublishText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   publishNowButton: {
@@ -423,21 +423,21 @@ const publishStyle = StyleSheet.create({
   },
   noVideos: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   cameraInfo: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
   },
   warningText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     color: Colors.DescriptionGrey,
   },
   helpText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     color: Colors.DescriptionGrey,
   },
@@ -463,7 +463,7 @@ const publishStyle = StyleSheet.create({
   },
   editIcon: {
     color: Colors.White,
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 12,
   },
   balance: {
@@ -472,7 +472,7 @@ const publishStyle = StyleSheet.create({
     marginLeft: 24,
   },
   balanceText: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     marginLeft: 4,
   },

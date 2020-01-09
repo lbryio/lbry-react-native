@@ -38,7 +38,7 @@ const filePageStyle = StyleSheet.create({
     marginBottom: -17,
   },
   emptyClaimText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     textAlign: 'center',
     fontSize: 20,
     marginLeft: 24,
@@ -54,7 +54,7 @@ const filePageStyle = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontFamily: 'Inter-UI-Bold',
+    fontFamily: 'Inter-Bold',
     fontSize: 16,
     flex: 18,
     alignSelf: 'flex-start',
@@ -88,17 +88,17 @@ const filePageStyle = StyleSheet.create({
     marginTop: 6,
   },
   channelName: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     color: Colors.LbryGreen,
   },
   anonChannelName: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     color: Colors.DescriptionGrey,
   },
   publishDateText: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 12,
     color: Colors.DescriptionGrey,
   },
@@ -107,7 +107,7 @@ const filePageStyle = StyleSheet.create({
   },
   description: {
     color: Colors.DescriptionGrey,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 13,
     lineHeight: 18,
     marginTop: -8,
@@ -179,7 +179,7 @@ const filePageStyle = StyleSheet.create({
     borderRadius: 4,
   },
   filePriceText: {
-    fontFamily: 'Inter-UI-Bold',
+    fontFamily: 'Inter-Bold',
     fontSize: 12,
     textAlign: 'center',
     color: '#0c604b',
@@ -234,19 +234,19 @@ const filePageStyle = StyleSheet.create({
     paddingRight: 24,
   },
   dmcaText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     lineHeight: 24,
   },
   dmcaLink: {
     color: Colors.LbryGreen,
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 18,
     lineHeight: 24,
     marginTop: 24,
   },
   infoText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 20,
     textAlign: 'center',
     marginLeft: 10,
@@ -293,7 +293,7 @@ const filePageStyle = StyleSheet.create({
     marginBottom: 14,
   },
   input: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
   },
   tipAmountInput: {
@@ -315,7 +315,7 @@ const filePageStyle = StyleSheet.create({
     marginTop: -8,
   },
   text: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     lineHeight: 24,
   },
@@ -336,12 +336,12 @@ const filePageStyle = StyleSheet.create({
     flexDirection: 'row',
   },
   tagTitle: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     flex: 0.2,
     marginTop: 4,
   },
   tagList: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     flex: 0.8,
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -363,7 +363,7 @@ const filePageStyle = StyleSheet.create({
     marginRight: 8,
   },
   rewardDriverText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     color: Colors.White,
     fontSize: 14,
   },
@@ -402,7 +402,7 @@ const filePageStyle = StyleSheet.create({
     color: Colors.DescriptionGrey,
   },
   largeButtonText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 14,
     marginTop: 4,
   },
@@ -430,7 +430,7 @@ const filePageStyle = StyleSheet.create({
   },
   unsupportedContentFilename: {
     color: Colors.LbryGreen,
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 16,
   },
   unsupportedContentImage: {
@@ -439,11 +439,11 @@ const filePageStyle = StyleSheet.create({
     marginRight: 24,
   },
   unsupportedContentTitle: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 20,
   },
   unsupportedContentText: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginTop: 4,
   },
@@ -451,7 +451,7 @@ const filePageStyle = StyleSheet.create({
     marginTop: 16,
   },
   viewCount: {
-    fontFamily: 'Inter-UI-Regular',
+    fontFamily: 'Inter-Regular',
     fontSize: 12,
     color: Colors.DescriptionGrey,
     marginLeft: 12,
@@ -463,7 +463,7 @@ const filePageStyle = StyleSheet.create({
     marginLeft: 24,
   },
   balanceText: {
-    fontFamily: 'Inter-UI-SemiBold',
+    fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     marginLeft: 4,
   },

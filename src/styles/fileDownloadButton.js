@@ -11,7 +11,7 @@ const fileDownloadButtonStyle = StyleSheet.create({
     backgroundColor: Colors.LbryGreen,
   },
   text: {
-    fontFamily: 'Inter-UI-Medium',
+    fontFamily: 'Inter-Medium',
     color: Colors.White,
     fontSize: 14,
     textAlign: 'center',
