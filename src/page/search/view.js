@@ -20,9 +20,12 @@ import FloatingWalletBalance from 'component/floatingWalletBalance';
 import UriBar from 'component/uriBar';
 import searchStyle from 'styles/search';
 
+const softLimit = 500;
+
 class SearchPage extends React.PureComponent {
   state = {
     currentQuery: null,
+    currentFrom: 0,
     currentUri: null,
     showTagResult: false,
     claimSearchRun: false,
@@ -56,6 +59,7 @@ class SearchPage extends React.PureComponent {
       const searchQuery = query || this.getSearchQuery();
       if (searchQuery && searchQuery.trim().length > 0) {
         this.setState({
+          currentFrom: 0,
           currentQuery: searchQuery,
           currentUri: isURIValid(searchQuery) ? normalizeURI(searchQuery) : null,
           claimSearchOptions: null,
@@ -64,7 +68,7 @@ class SearchPage extends React.PureComponent {
           resultsResolved: false,
           tagResultDisplayed: false,
         });
-        search(searchQuery);
+        search(searchQuery, 0);
       }
     });
   };
@@ -83,12 +87,13 @@ class SearchPage extends React.PureComponent {
 
     if (query && query.trim().length > 0 && query !== this.state.currentQuery) {
       this.setState({
+        currentFrom: 0,
         currentQuery: query,
         currentUri: isURIValid(query) ? normalizeURI(query) : null,
         resultsResolved: false,
         tagResultDisplayed: false,
       });
-      search(query);
+      search(query, 0);
     }
   }
 
@@ -134,13 +139,15 @@ class SearchPage extends React.PureComponent {
     const { search } = this.props;
     this.setState({
       currentUri: isURIValid(keywords) ? normalizeURI(keywords) : null,
+      currentFrom: 0,
+      currentQuery: keywords,
       claimSearchOptions: null,
       claimSearchRun: false,
       showTagResult: false,
       resultsResolved: false,
       tagResultDisplayed: false,
     });
-    search(keywords);
+    search(keywords, 0);
   };
 
   listEmptyComponent = () => {
@@ -186,6 +193,21 @@ class SearchPage extends React.PureComponent {
     navigation.navigate({ routeName: Constants.DRAWER_ROUTE_TAG, key: `tagPage`, params: { tag: tag.toLowerCase() } });
   };
 
+  handleVerticalEndReached = () => {
+    // fetch more results
+    const { lastPageReached, results, search, isSearching } = this.props;
+    if (lastPageReached || (results && results.length > softLimit)) {
+      return;
+    }
+
+    if (!isSearching) {
+      const from = results ? results.length : 0;
+      this.setState({ currentFrom: from }, () => {
+        search(this.state.currentQuery, from);
+      });
+    }
+  };
+
   render() {
     const { isSearching, navigation, query, results } = this.props;
 
@@ -193,13 +215,13 @@ class SearchPage extends React.PureComponent {
       <View style={searchStyle.container}>
         <UriBar value={query} navigation={navigation} onSearchSubmitted={this.handleSearchSubmitted} />
 
-        {isSearching && (
+        {isSearching && this.state.currentFrom === 0 && (
           <View style={searchStyle.busyContainer}>
             <ActivityIndicator size="large" color={Colors.NextLbryGreen} style={searchStyle.loading} />
           </View>
         )}
 
-        {!isSearching && (
+        {(!isSearching || this.state.currentFrom > 0) && (
           <FlatList
             extraData={this.state}
             style={searchStyle.scrollContainer}
@@ -207,8 +229,10 @@ class SearchPage extends React.PureComponent {
             keyboardShouldPersistTaps={'handled'}
             data={results}
             keyExtractor={(item, index) => item.claimId}
-            initialNumToRender={8}
+            initialNumToRender={10}
             maxToRenderPerBatch={20}
+            onEndReached={this.handleVerticalEndReached}
+            onEndReachedThreshold={0.2}
             removeClippedSubviews
             ListEmptyComponent={!isSearching ? this.listEmptyComponent() : null}
             ListHeaderComponent={this.listHeaderComponent(this.state.showTagResult, this.state.currentQuery)}
@@ -216,6 +240,11 @@ class SearchPage extends React.PureComponent {
               <FileResultItem key={item.claimId} result={item} style={searchStyle.resultItem} navigation={navigation} />
             )}
           />
+        )}
+        {this.state.currentFrom > 0 && isSearching && (
+          <View style={searchStyle.moreLoading}>
+            <ActivityIndicator size="small" color={Colors.NextLbryGreen} />
+          </View>
         )}
         <FloatingWalletBalance navigation={navigation} />
       </View>

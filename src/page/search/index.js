@@ -5,6 +5,7 @@ import {
   doResolvedSearch,
   doUpdateSearchQuery,
   makeSelectResolvedSearchResults,
+  makeSelectResolvedSearchResultsLastPageReached,
   makeSelectSearchUris,
   selectClaimSearchByQuery,
   selectIsSearching,
@@ -17,20 +18,21 @@ import { selectCurrentRoute } from 'redux/selectors/drawer';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import SearchPage from './view';
 
-const numSearchResults = 25;
-
 const select = state => ({
   claimSearchByQuery: selectClaimSearchByQuery(state),
   currentRoute: selectCurrentRoute(state),
   isSearching: selectIsSearching(state),
   query: selectSearchValue(state),
   resolvingUris: selectResolvingUris(state),
-  uris: makeSelectSearchUris(makeSelectQueryWithOptions(null, numSearchResults)(state))(state),
-  results: makeSelectResolvedSearchResults(makeSelectQueryWithOptions(null, numSearchResults)(state))(state),
+  uris: makeSelectSearchUris(makeSelectQueryWithOptions(null, Constants.DEFAULT_PAGE_SIZE)(state))(state),
+  results: makeSelectResolvedSearchResults(makeSelectQueryWithOptions(null, Constants.DEFAULT_PAGE_SIZE)(state))(state),
+  lastPageReached: makeSelectResolvedSearchResultsLastPageReached(
+    makeSelectQueryWithOptions(null, Constants.DEFAULT_PAGE_SIZE)(state),
+  )(state),
 });
 
 const perform = dispatch => ({
-  search: query => dispatch(doResolvedSearch(query, numSearchResults, null, false, {})),
+  search: (query, from) => dispatch(doResolvedSearch(query, Constants.DEFAULT_PAGE_SIZE, from, false, {})),
   claimSearch: options => dispatch(doClaimSearch(options)),
   updateSearchQuery: query => dispatch(doUpdateSearchQuery(query)),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_SEARCH)),
