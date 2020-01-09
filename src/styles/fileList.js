@@ -39,6 +39,13 @@ const fileListStyle = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  channelThumbnailView: {
+    width: thumbnailWidth,
+    height: thumbnailHeight,
+    marginRight: screenWidthPixels <= 720 ? 10 : 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   channelThumbnailContainer: {
     width: thumbnailHeight, // maintain same width and height
     height: thumbnailHeight,

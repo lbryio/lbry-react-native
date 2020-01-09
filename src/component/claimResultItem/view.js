@@ -85,7 +85,7 @@ class ClaimResultItem extends React.PureComponent {
           )}
 
           {isChannel && (
-            <View style={fileListStyle.thumbnail}>
+            <View style={fileListStyle.channelThumbnailView}>
               <View style={[fileListStyle.channelThumbnailContainer, this.state.autoStyle]}>
                 {hasThumbnail && (
                   <FastImage
