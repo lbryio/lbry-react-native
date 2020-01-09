@@ -134,7 +134,7 @@ const Constants = {
 
   ORDER_BY_EFFECTIVE_AMOUNT: 'effective_amount',
 
-  DEFAULT_PAGE_SIZE: 10,
+  DEFAULT_PAGE_SIZE: 20,
 
   ALL_PLACEHOLDER: '_all',
 
