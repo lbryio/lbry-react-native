@@ -130,7 +130,6 @@ class SplashScreen extends React.PureComponent {
       authenticate,
       balanceSubscribe,
       blacklistedOutpointsSubscribe,
-      checkSubscriptionsInit,
       filteredOutpointsSubscribe,
       getSync,
       updateBlockHeight,
@@ -142,7 +141,6 @@ class SplashScreen extends React.PureComponent {
     balanceSubscribe();
     blacklistedOutpointsSubscribe();
     filteredOutpointsSubscribe();
-    checkSubscriptionsInit();
 
     if (user && user.id && user.has_verified_email) {
       // user already authenticated

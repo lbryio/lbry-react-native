@@ -4,7 +4,6 @@ import {
   doAuthenticate,
   doBlackListedOutpointsSubscribe,
   doFilteredOutpointsSubscribe,
-  doCheckSubscriptionsInit,
   doFetchMySubscriptions,
   doFetchRewardedContent,
   doGetSync,
@@ -27,7 +26,6 @@ const perform = dispatch => ({
   balanceSubscribe: () => dispatch(doBalanceSubscribe()),
   blacklistedOutpointsSubscribe: () => dispatch(doBlackListedOutpointsSubscribe()),
   filteredOutpointsSubscribe: () => dispatch(doFilteredOutpointsSubscribe()),
-  checkSubscriptionsInit: () => dispatch(doCheckSubscriptionsInit()),
   fetchRewardedContent: () => dispatch(doFetchRewardedContent()),
   fetchSubscriptions: callback => dispatch(doFetchMySubscriptions(callback)),
   getSync: (password, callback) => dispatch(doGetSync(password, callback)),
@@ -42,5 +40,5 @@ const perform = dispatch => ({
 
 export default connect(
   select,
-  perform
+  perform,
 )(SplashScreen);
