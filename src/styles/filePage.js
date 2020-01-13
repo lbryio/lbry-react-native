@@ -403,7 +403,7 @@ const filePageStyle = StyleSheet.create({
   },
   largeButtonText: {
     fontFamily: 'Inter-Regular',
-    fontSize: 14,
+    fontSize: 12,
     marginTop: 4,
   },
   largeButtonsRow: {

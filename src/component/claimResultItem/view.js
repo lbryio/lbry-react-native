@@ -141,7 +141,7 @@ class ClaimResultItem extends React.PureComponent {
 
             <View style={fileListStyle.info}>
               {fileInfo && !isNaN(fileInfo.written_bytes) && fileInfo.written_bytes > 0 && (
-                <Text>{getStorageForFileInfo(fileInfo)}</Text>
+                <Text style={fileListStyle.infoText}>{getStorageForFileInfo(fileInfo)}</Text>
               )}
               <DateTime
                 style={fileListStyle.publishInfo}

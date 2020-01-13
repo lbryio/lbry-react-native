@@ -94,6 +94,7 @@ class FilePage extends React.PureComponent {
       showImageViewer: false,
       showWebView: false,
       showTipView: false,
+      playbackStarted: false,
       playerBgHeight: 0,
       playerHeight: 0,
       uri: null,
@@ -231,6 +232,17 @@ class FilePage extends React.PureComponent {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    const { fileInfo: prevFileInfo } = this.props;
+    const { fileInfo } = nextProps;
+
+    if (this.state.playbackStarted && nextProps.position) {
+      return false;
+    }
+
+    if (prevFileInfo && fileInfo && prevFileInfo.download_path === fileInfo.download_path) {
+      return false;
+    }
+
     return (
       Object.keys(this.difference(nextProps, this.props)).length > 0 ||
       Object.keys(this.difference(nextState, this.state)).length > 0
@@ -368,12 +380,12 @@ class FilePage extends React.PureComponent {
     const { deletePurchasedUri, fileInfo, navigation, notify, stopDownload } = this.props;
 
     Alert.alert(
-      'Stop download',
-      'Are you sure you want to stop downloading this file?',
+      __('Stop download'),
+      __('Are you sure you want to stop downloading this file?'),
       [
-        { text: 'No' },
+        { text: __('No') },
         {
-          text: 'Yes',
+          text: __('Yes'),
           onPress: () => {
             const { uri } = navigation.state.params;
             stopDownload(uri, fileInfo);
@@ -391,7 +403,7 @@ class FilePage extends React.PureComponent {
             // there can be a bit of lag between the user pressing Yes and the UI being updated
             // after the file_set_status and file_delete operations, so let the user know
             notify({
-              message: 'The download will stop momentarily. You do not need to wait to discover something else.',
+              message: __('The download will stop momentarily. You do not need to wait to discover something else.'),
             });
           },
         },
@@ -416,8 +428,6 @@ class FilePage extends React.PureComponent {
     if (window.currentMediaInfo) {
       window.currentMediaInfo = null;
     }
-    window.player = null;
-
     DeviceEventEmitter.removeListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
     DeviceEventEmitter.removeListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
   }
@@ -434,7 +444,7 @@ class FilePage extends React.PureComponent {
       })
         .then(() => this.performDownload())
         .catch(() => {
-          notify({ message: 'The file could not be downloaded to the default download directory.', isError: true });
+          notify({ message: __('The file could not be downloaded to the default download directory.'), isError: true });
         });
     });
   };
@@ -452,12 +462,14 @@ class FilePage extends React.PureComponent {
     if (!fileInfo) {
       return null;
     }
-    return 'file:///' + fileInfo.download_path;
+    return 'file://' + fileInfo.download_path;
   };
 
   playerUriForFileInfo = fileInfo => {
     const { streamingUrl } = this.props;
-    if (fileInfo && fileInfo.download_path) {
+    if (!this.state.playbackStarted && fileInfo && fileInfo.download_path && fileInfo.completed) {
+      // take playbackStarted in the state into account because if the download completes while
+      // the media is already streaming, it will restart from the beginning
       return this.getEncodedDownloadPath(fileInfo);
     }
     if (streamingUrl) {
@@ -564,7 +576,7 @@ class FilePage extends React.PureComponent {
     NativeModules.Firebase.track('play', payload);
 
     // only fetch recommended content after playback has started
-    this.setState({ showRecommended: true });
+    this.setState({ playbackStarted: true, showRecommended: true });
   };
 
   onPlaybackFinished = () => {
@@ -1193,7 +1205,7 @@ class FilePage extends React.PureComponent {
                     <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
                   </TouchableOpacity>
 
-                  {!canEdit && !isPlayable && (
+                  {!canEdit && (
                     <View style={filePageStyle.sharedLargeButton}>
                       {(!fileInfo || (fileInfo.written_bytes <= 0 && !completed)) && (
                         <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onDownloadPressed}>
