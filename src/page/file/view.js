@@ -163,7 +163,6 @@ class FilePage extends React.PureComponent {
       notify,
       drawerStack: prevDrawerStack,
     } = this.props;
-    const { uri } = navigation.state.params;
     const {
       currentRoute: prevRoute,
       failedPurchaseUris,
@@ -174,6 +173,7 @@ class FilePage extends React.PureComponent {
       drawerStack,
       resolveUris,
     } = nextProps;
+    const uri = this.getPurchaseUrl();
 
     if (Constants.ROUTE_FILE === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
@@ -207,7 +207,7 @@ class FilePage extends React.PureComponent {
       NativeModules.UtilityModule.checkDownloads();
     }
 
-    if (!this.state.streamingMode && isPlayable) {
+    if ((!fileInfo || (fileInfo && !fileInfo.completed)) && !this.state.streamingMode && isPlayable) {
       if (streamingUrl) {
         this.setState({ streamingMode: true, currentStreamUrl: streamingUrl });
       } else if (fileInfo && fileInfo.streaming_url) {
@@ -234,14 +234,6 @@ class FilePage extends React.PureComponent {
   shouldComponentUpdate(nextProps, nextState) {
     const { fileInfo: prevFileInfo } = this.props;
     const { fileInfo } = nextProps;
-
-    if (this.state.playbackStarted && nextProps.position) {
-      return false;
-    }
-
-    if (prevFileInfo && fileInfo && prevFileInfo.download_path === fileInfo.download_path) {
-      return false;
-    }
 
     return (
       Object.keys(this.difference(nextProps, this.props)).length > 0 ||
@@ -467,8 +459,8 @@ class FilePage extends React.PureComponent {
 
   playerUriForFileInfo = fileInfo => {
     const { streamingUrl } = this.props;
-    if (!this.state.playbackStarted && fileInfo && fileInfo.download_path && fileInfo.completed) {
-      // take playbackStarted in the state into account because if the download completes while
+    if (!this.state.streamingMode && fileInfo && fileInfo.download_path && fileInfo.completed) {
+      // take streamingMode in the state into account because if the download completes while
       // the media is already streaming, it will restart from the beginning
       return this.getEncodedDownloadPath(fileInfo);
     }
@@ -741,8 +733,11 @@ class FilePage extends React.PureComponent {
     const localFileUri = this.localUriForFileInfo(fileInfo);
     const mediaType = Lbry.getMediaType(contentType);
     const isViewable = mediaType === 'image' || mediaType === 'text';
+    const isPlayable = mediaType === 'video' || mediaType === 'audio';
     if (isViewable) {
       this.openFile(localFileUri, mediaType, contentType);
+    } else if (isPlayable) {
+      notify({ message: __('Please press the Play button.') });
     } else {
       notify({ message: __('This file cannot be displayed in the LBRY app.') });
     }
@@ -1216,7 +1211,6 @@ class FilePage extends React.PureComponent {
 
                       {!completed &&
                         fileInfo &&
-                        !fileInfo.stopped &&
                         fileInfo.written_bytes > 0 &&
                         fileInfo.written_bytes < fileInfo.total_bytes &&
                         !this.state.stopDownloadConfirmed && (
