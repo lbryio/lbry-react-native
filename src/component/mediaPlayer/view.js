@@ -421,7 +421,7 @@ class MediaPlayer extends React.PureComponent {
     const seekerCircleStyle = [this.state.seeking ? mediaPlayerStyle.bigSeekerCircle : mediaPlayerStyle.seekerCircle];
     if (!this.state.seeking) {
       seekerCircleStyle.push(
-        this.state.fullscreenMode ? mediaPlayerStyle.seekerCircleTopFs : mediaPlayerStyle.seekerCircleTop
+        this.state.fullscreenMode ? mediaPlayerStyle.seekerCircleTopFs : mediaPlayerStyle.seekerCircleTop,
       );
     }
 
@@ -440,6 +440,7 @@ class MediaPlayer extends React.PureComponent {
           }}
           resizeMode={this.state.resizeMode}
           playInBackground={this.state.backgroundPlayEnabled}
+          playWhenInactive={this.state.backgroundPlayEnabled}
           style={mediaPlayerStyle.player}
           rate={this.state.rate}
           volume={this.state.volume}

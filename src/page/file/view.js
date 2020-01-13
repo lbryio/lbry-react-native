@@ -869,6 +869,7 @@ class FilePage extends React.PureComponent {
       contentType,
       tab,
       rewardedContentClaimIds,
+      isPlayerVisible,
       isResolvingUri,
       blackListedOutpoints,
       myClaimUris,
@@ -1124,7 +1125,9 @@ class FilePage extends React.PureComponent {
             {!innerContent &&
               (this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) &&
               this.state.fullscreenMode && <View style={fsPlayerBgStyle} />}
-            {!innerContent && (this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) && (
+            {isPlayerVisible &&
+              !innerContent &&
+              (this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) && (
               <MediaPlayer
                 claim={claim}
                 assignPlayer={ref => {

@@ -41,7 +41,7 @@ import {
 import { doDeleteFile, doStopDownloadingFile } from 'redux/actions/file';
 import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doToggleFullscreenMode } from 'redux/actions/settings';
-import { selectDrawerStack } from 'redux/selectors/drawer';
+import { selectDrawerStack, selectIsPlayerVisible } from 'redux/selectors/drawer';
 import FilePage from './view';
 
 const select = (state, props) => {
@@ -61,6 +61,7 @@ const select = (state, props) => {
     fileInfo: makeSelectFileInfoForUri(contentUri)(state),
     rewardedContentClaimIds: selectRewardContentClaimIds(state, selectProps),
     channelUri: makeSelectChannelForClaimUri(contentUri, true)(state),
+    isPlayerVisible: selectIsPlayerVisible(state),
     position: makeSelectContentPositionForUri(contentUri)(state),
     purchasedUris: selectPurchasedUris(state),
     failedPurchaseUris: selectFailedPurchaseUris(state),
