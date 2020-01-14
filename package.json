@@ -38,7 +38,7 @@
         "react-native-video": "lbryio/react-native-video#7992ff945872f9bd00a3736d9ff1318f343abf47",
         "react-native-webview": "^8.0.2",
         "react-navigation": "^4.0.10",
-        "react-navigation-drawer": "^1.4.0",
+        "react-navigation-drawer": "^2.3.3",
         "react-navigation-redux-helpers": "^3.0.2",
         "react-navigation-tabs": "^2.7.0",
         "react-navigation-stack": "^1.10.3",

@@ -64,14 +64,14 @@ export function dispatchNavigateToUri(dispatch, nav, uri, isNavigatingBack, full
       const fileRoute = discoverRoute.routes[discoverRoute.index];
       // Currently on a file page, so we can ignore (if the URI is the same) or replace (different URIs)
       if (uri !== fileRoute.params.uri) {
-        const stackAction = StackActions.replace({ routeName: 'File', newKey: uri, params });
+        const stackAction = StackActions.replace({ routeName: 'File', newKey: 'file', params });
         dispatch(stackAction);
         return;
       }
     }
   }
 
-  const navigateAction = NavigationActions.navigate({ routeName: 'File', key: uri, params });
+  const navigateAction = NavigationActions.navigate({ routeName: 'File', key: 'file', params });
   dispatch(navigateAction);
 }
 
@@ -138,7 +138,7 @@ export function navigateToUri(navigation, uri, additionalParams, isNavigatingBac
   const { store } = window;
   const params = Object.assign({ uri, uriVars, fullUri: fullUri }, additionalParams);
   if (navigation.state.routeName === 'File') {
-    const stackAction = StackActions.replace({ routeName: 'File', newKey: uri, params });
+    const stackAction = StackActions.replace({ routeName: 'File', newKey: 'file', params });
     navigation.dispatch(stackAction);
     if (store && store.dispatch && !isNavigatingBack) {
       store.dispatch(doPushDrawerStack(uri));
@@ -147,7 +147,7 @@ export function navigateToUri(navigation, uri, additionalParams, isNavigatingBac
     return;
   }
 
-  navigation.navigate({ routeName: 'File', key: uri, params });
+  navigation.navigate({ routeName: 'File', key: 'file', params });
   if (store && store.dispatch && !isNavigatingBack) {
     store.dispatch(doPushDrawerStack(uri));
     store.dispatch(doSetPlayerVisible(true));

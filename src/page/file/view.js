@@ -681,12 +681,15 @@ class FilePage extends React.PureComponent {
 
   getPurchaseUrl = () => {
     const { claim, navigation } = this.props;
-    const { permanent_url: permanentUrl } = claim;
+    const permanentUrl = claim ? claim.permanent_url : null;
 
     let purchaseUrl;
     if (navigation.state.params) {
       const { uri, fullUri } = navigation.state.params;
       purchaseUrl = fullUri || uri || permanentUrl;
+    }
+    if (!purchaseUrl && permanentUrl) {
+      purchaseUrl = permanentUrl;
     }
 
     return purchaseUrl;
@@ -876,6 +879,7 @@ class FilePage extends React.PureComponent {
       contentType,
       tab,
       rewardedContentClaimIds,
+      isPlayerVisible,
       isResolvingUri,
       blackListedOutpoints,
       myClaimUris,
@@ -1131,7 +1135,9 @@ class FilePage extends React.PureComponent {
             {!innerContent &&
               (this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) &&
               this.state.fullscreenMode && <View style={fsPlayerBgStyle} />}
-            {!innerContent && (this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) && (
+            {isPlayerVisible &&
+              !innerContent &&
+              (this.state.streamingMode || (canLoadMedia && fileInfo && isPlayable)) && (
               <MediaPlayer
                 claim={claim}
                 assignPlayer={ref => {
