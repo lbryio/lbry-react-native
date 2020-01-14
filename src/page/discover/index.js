@@ -11,7 +11,7 @@ import {
   selectSubscriptionClaims,
   selectUnreadSubscriptions,
 } from 'lbryinc';
-import { doPushDrawerStack } from 'redux/actions/drawer';
+import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doSetClientSetting, doSetSortByItem, doSetTimeItem } from 'redux/actions/settings';
 import { makeSelectClientSetting, selectSortByItem, selectTimeItem } from 'redux/selectors/settings';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -41,11 +41,12 @@ const perform = dispatch => ({
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_DISCOVER)),
   removeUnreadSubscriptions: () => dispatch(doRemoveUnreadSubscriptions()),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
+  setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
   setSortByItem: item => dispatch(doSetSortByItem(item)),
   setTimeItem: item => dispatch(doSetTimeItem(item)),
 });
 
 export default connect(
   select,
-  perform
+  perform,
 )(DiscoverPage);

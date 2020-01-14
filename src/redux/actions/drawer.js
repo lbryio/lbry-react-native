@@ -11,8 +11,8 @@ export const doPopDrawerStack = () => dispatch =>
     type: Constants.ACTION_POP_DRAWER_STACK,
   });
 
-export const doSetPlayerVisible = visible => dispatch =>
+export const doSetPlayerVisible = (visible, uri) => dispatch =>
   dispatch({
     type: Constants.ACTION_SET_PLAYER_VISIBLE,
-    data: { visible },
+    data: { visible, uri },
   });

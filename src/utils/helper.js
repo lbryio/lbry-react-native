@@ -1,7 +1,7 @@
 import { NavigationActions, StackActions } from 'react-navigation';
 import { buildURI, isURIValid, normalizeURI } from 'lbry-redux';
 import { Lbryio } from 'lbryinc';
-import { doPopDrawerStack, doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
+import { doPopDrawerStack, doPushDrawerStack } from 'redux/actions/drawer';
 import Constants, { DrawerRoutes, InnerDrawerRoutes } from 'constants'; // eslint-disable-line node/no-deprecated-api
 
 const tagNameLength = 10;
@@ -54,7 +54,6 @@ export function dispatchNavigateToUri(dispatch, nav, uri, isNavigatingBack, full
 
   if (!isNavigatingBack) {
     dispatch(doPushDrawerStack(uri));
-    dispatch(doSetPlayerVisible(true));
   }
 
   if (nav && nav.routes && nav.routes.length > 0 && nav.routes[0].routeName === 'Main') {
@@ -64,14 +63,14 @@ export function dispatchNavigateToUri(dispatch, nav, uri, isNavigatingBack, full
       const fileRoute = discoverRoute.routes[discoverRoute.index];
       // Currently on a file page, so we can ignore (if the URI is the same) or replace (different URIs)
       if (uri !== fileRoute.params.uri) {
-        const stackAction = StackActions.replace({ routeName: 'File', newKey: 'file', params });
+        const stackAction = StackActions.replace({ routeName: 'File', newKey: uri, params });
         dispatch(stackAction);
         return;
       }
     }
   }
 
-  const navigateAction = NavigationActions.navigate({ routeName: 'File', key: 'file', params });
+  const navigateAction = NavigationActions.navigate({ routeName: 'File', key: uri, params });
   dispatch(navigateAction);
 }
 
@@ -138,19 +137,17 @@ export function navigateToUri(navigation, uri, additionalParams, isNavigatingBac
   const { store } = window;
   const params = Object.assign({ uri, uriVars, fullUri: fullUri }, additionalParams);
   if (navigation.state.routeName === 'File') {
-    const stackAction = StackActions.replace({ routeName: 'File', newKey: 'file', params });
+    const stackAction = StackActions.replace({ routeName: 'File', newKey: uri, params });
     navigation.dispatch(stackAction);
     if (store && store.dispatch && !isNavigatingBack) {
       store.dispatch(doPushDrawerStack(uri));
-      store.dispatch(doSetPlayerVisible(true));
     }
     return;
   }
 
-  navigation.navigate({ routeName: 'File', key: 'file', params });
+  navigation.navigate({ routeName: 'File', key: uri, params });
   if (store && store.dispatch && !isNavigatingBack) {
     store.dispatch(doPushDrawerStack(uri));
-    store.dispatch(doSetPlayerVisible(true));
   }
 }
 
