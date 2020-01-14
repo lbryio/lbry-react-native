@@ -1,7 +1,7 @@
 import { NavigationActions, StackActions } from 'react-navigation';
 import { buildURI, isURIValid, normalizeURI } from 'lbry-redux';
 import { Lbryio } from 'lbryinc';
-import { doPopDrawerStack, doPushDrawerStack } from 'redux/actions/drawer';
+import { doPopDrawerStack, doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import Constants, { DrawerRoutes, InnerDrawerRoutes } from 'constants'; // eslint-disable-line node/no-deprecated-api
 
 const tagNameLength = 10;
@@ -151,7 +151,7 @@ export function navigateToUri(navigation, uri, additionalParams, isNavigatingBac
   }
 }
 
-export function navigateBack(navigation, drawerStack, popDrawerStack) {
+export function navigateBack(navigation, drawerStack, popDrawerStack, setPlayerVisible) {
   if (drawerStack[drawerStack.length - 1].route === Constants.DRAWER_ROUTE_FILE_VIEW) {
     // inner file_view (web / image view) is handled differently
     if (popDrawerStack) {
@@ -162,6 +162,9 @@ export function navigateBack(navigation, drawerStack, popDrawerStack) {
 
   if (popDrawerStack) {
     popDrawerStack();
+  }
+  if (setPlayerVisible) {
+    setPlayerVisible(false);
   }
 
   const target = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];
@@ -198,6 +201,7 @@ export function dispatchNavigateBack(dispatch, nav, drawerStack) {
   }
 
   dispatch(doPopDrawerStack());
+  dispatch(doSetPlayerVisible(false));
 
   const target = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];
   const { route } = target;

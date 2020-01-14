@@ -737,8 +737,8 @@ class FilePage extends React.PureComponent {
   };
 
   onBackButtonPressed = () => {
-    const { navigation, drawerStack, popDrawerStack } = this.props;
-    navigateBack(navigation, drawerStack, popDrawerStack);
+    const { navigation, drawerStack, popDrawerStack, setPlayerVisible } = this.props;
+    navigateBack(navigation, drawerStack, popDrawerStack, setPlayerVisible);
   };
 
   onOpenFilePressed = () => {
