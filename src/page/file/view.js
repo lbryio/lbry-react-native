@@ -677,12 +677,15 @@ class FilePage extends React.PureComponent {
 
   getPurchaseUrl = () => {
     const { claim, navigation } = this.props;
-    const { permanent_url: permanentUrl } = claim;
+    const permanentUrl = claim ? claim.permanent_url : null;
 
     let purchaseUrl;
     if (navigation.state.params) {
       const { uri, fullUri } = navigation.state.params;
       purchaseUrl = fullUri || uri || permanentUrl;
+    }
+    if (!purchaseUrl && permanentUrl) {
+      purchaseUrl = permanentUrl;
     }
 
     return purchaseUrl;
