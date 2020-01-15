@@ -10,6 +10,7 @@ import {
   makeSelectTitleForUri,
   makeSelectThumbnailForUri,
 } from 'lbry-redux';
+import { doSetPlayerVisible } from 'redux/actions/drawer';
 import { selectBlackListedOutpoints, selectFilteredOutpoints, selectRewardContentClaimIds } from 'lbryinc';
 import { selectShowNsfw } from 'redux/selectors/settings';
 import FileListItem from './view';
@@ -32,6 +33,7 @@ const select = (state, props) => ({
 
 const perform = dispatch => ({
   resolveUri: uri => dispatch(doResolveUri(uri)),
+  setPlayerVisible: (visible, uri) => dispatch(doSetPlayerVisible(visible, uri)),
 });
 
 export default connect(

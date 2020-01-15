@@ -56,6 +56,8 @@ export function dispatchNavigateToUri(dispatch, nav, uri, isNavigatingBack, full
     dispatch(doPushDrawerStack(uri));
   }
 
+  dispatch(doSetPlayerVisible(false));
+
   if (nav && nav.routes && nav.routes.length > 0 && nav.routes[0].routeName === 'Main') {
     const mainRoute = nav.routes[0];
     const discoverRoute = mainRoute.routes[0];
@@ -112,7 +114,7 @@ function parseUriVars(vars) {
   return uriVars;
 }
 
-export function navigateToUri(navigation, uri, additionalParams, isNavigatingBack, fullUri) {
+export function navigateToUri(navigation, uri, additionalParams, isNavigatingBack, fullUri, setPlayerVisible) {
   if (!navigation) {
     return;
   }
@@ -132,6 +134,10 @@ export function navigateToUri(navigation, uri, additionalParams, isNavigatingBac
     uriVarsStr = uri.substring(uri.indexOf('?') + 1);
     uri = uri.substring(0, uri.indexOf('?'));
     uriVars = parseUriVars(uriVarsStr);
+  }
+
+  if (setPlayerVisible) {
+    setPlayerVisible(false);
   }
 
   const { store } = window;
@@ -171,7 +177,7 @@ export function navigateBack(navigation, drawerStack, popDrawerStack, setPlayerV
   const { route, params } = target;
   navigation.goBack(navigation.state.key);
   if (!DrawerRoutes.includes(route) && !InnerDrawerRoutes.includes(route) && isURIValid(route)) {
-    navigateToUri(navigation, route, null, true);
+    navigateToUri(navigation, route, null, true, null, setPlayerVisible);
   } else {
     let targetRoute = route;
     let targetParams = params;

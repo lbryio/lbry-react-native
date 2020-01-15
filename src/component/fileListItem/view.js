@@ -80,6 +80,7 @@ class FileListItem extends React.PureComponent {
       onPress,
       navigation,
       rewardedContentClaimIds,
+      setPlayerVisible,
       thumbnail,
       hideChannel,
       onLongPress,
@@ -236,6 +237,7 @@ class FileListItem extends React.PureComponent {
                     null,
                     false,
                     isChannel ? claim && claim.permanent_url : fullChannelUri,
+                    setPlayerVisible,
                   );
                 }}
               />

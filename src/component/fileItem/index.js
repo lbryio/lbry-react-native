@@ -10,6 +10,7 @@ import {
   makeSelectClaimIsNsfw,
   makeSelectShortUrlForUri,
 } from 'lbry-redux';
+import { doSetPlayerVisible } from 'redux/actions/drawer';
 import { selectBlackListedOutpoints, selectFilteredOutpoints, selectRewardContentClaimIds } from 'lbryinc';
 import { selectShowNsfw } from 'redux/selectors/settings';
 import FileItem from './view';
@@ -31,9 +32,10 @@ const select = (state, props) => ({
 
 const perform = dispatch => ({
   resolveUri: uri => dispatch(doResolveUri(uri)),
+  setPlayerVisible: (visible, uri) => dispatch(doSetPlayerVisible(visible, uri)),
 });
 
 export default connect(
   select,
-  perform
+  perform,
 )(FileItem);

@@ -117,7 +117,6 @@ class FilePage extends React.PureComponent {
     StatusBar.setHidden(false);
     NativeModules.Firebase.setCurrentScreen('File').then(result => {
       const { setPlayerVisible } = this.props;
-      setPlayerVisible(false); // reset visible state for all other file pages that may be active
 
       DeviceEventEmitter.addListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
       DeviceEventEmitter.addListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
@@ -885,6 +884,7 @@ class FilePage extends React.PureComponent {
       position,
       purchaseUri,
       pushDrawerStack,
+      setPlayerVisible,
       thumbnail,
       title,
       viewCount,
@@ -1274,6 +1274,7 @@ class FilePage extends React.PureComponent {
                             null,
                             false,
                             fullChannelUri,
+                            setPlayerVisible,
                           );
                         }}
                       />

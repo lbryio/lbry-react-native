@@ -56,6 +56,7 @@ class FileItem extends React.PureComponent {
       obscureNsfw,
       showDetails,
       compactView,
+      setPlayerVisible,
       titleBeforeThumbnail,
     } = this.props;
 
@@ -135,6 +136,7 @@ class FileItem extends React.PureComponent {
                       null,
                       false,
                       fullChannelUri,
+                      setPlayerVisible,
                     );
                   }}
                 />
