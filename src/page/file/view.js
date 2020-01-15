@@ -382,7 +382,7 @@ class FilePage extends React.PureComponent {
         {
           text: __('Yes'),
           onPress: () => {
-            const { uri } = navigation.state.params;
+            const uri = this.getPurchaseUrl();
             stopDownload(uri, fileInfo);
             deletePurchasedUri(uri);
             if (NativeModules.UtilityModule) {
