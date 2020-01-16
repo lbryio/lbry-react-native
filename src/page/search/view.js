@@ -239,6 +239,7 @@ class SearchPage extends React.PureComponent {
             renderItem={({ item }) => (
               <ClaimResultItem
                 key={item.claimId}
+                uri={item ? normalizeURI(`${item.name}#${item.claimId}`) : null}
                 result={item}
                 style={searchStyle.resultItem}
                 navigation={navigation}

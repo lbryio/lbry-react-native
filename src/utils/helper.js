@@ -54,8 +54,9 @@ export function dispatchNavigateToUri(dispatch, nav, uri, isNavigatingBack, full
 
   if (!isNavigatingBack) {
     dispatch(doPushDrawerStack(uri));
-    dispatch(doSetPlayerVisible(true));
   }
+
+  dispatch(doSetPlayerVisible(false));
 
   if (nav && nav.routes && nav.routes.length > 0 && nav.routes[0].routeName === 'Main') {
     const mainRoute = nav.routes[0];
@@ -64,14 +65,14 @@ export function dispatchNavigateToUri(dispatch, nav, uri, isNavigatingBack, full
       const fileRoute = discoverRoute.routes[discoverRoute.index];
       // Currently on a file page, so we can ignore (if the URI is the same) or replace (different URIs)
       if (uri !== fileRoute.params.uri) {
-        const stackAction = StackActions.replace({ routeName: 'File', newKey: 'file', params });
+        const stackAction = StackActions.replace({ routeName: 'File', newKey: uri, params });
         dispatch(stackAction);
         return;
       }
     }
   }
 
-  const navigateAction = NavigationActions.navigate({ routeName: 'File', key: 'file', params });
+  const navigateAction = NavigationActions.navigate({ routeName: 'File', key: uri, params });
   dispatch(navigateAction);
 }
 
@@ -113,7 +114,7 @@ function parseUriVars(vars) {
   return uriVars;
 }
 
-export function navigateToUri(navigation, uri, additionalParams, isNavigatingBack, fullUri) {
+export function navigateToUri(navigation, uri, additionalParams, isNavigatingBack, fullUri, setPlayerVisible) {
   if (!navigation) {
     return;
   }
@@ -135,26 +136,28 @@ export function navigateToUri(navigation, uri, additionalParams, isNavigatingBac
     uriVars = parseUriVars(uriVarsStr);
   }
 
+  if (setPlayerVisible) {
+    setPlayerVisible(false);
+  }
+
   const { store } = window;
   const params = Object.assign({ uri, uriVars, fullUri: fullUri }, additionalParams);
   if (navigation.state.routeName === 'File') {
-    const stackAction = StackActions.replace({ routeName: 'File', newKey: 'file', params });
+    const stackAction = StackActions.replace({ routeName: 'File', newKey: uri, params });
     navigation.dispatch(stackAction);
     if (store && store.dispatch && !isNavigatingBack) {
       store.dispatch(doPushDrawerStack(uri));
-      store.dispatch(doSetPlayerVisible(true));
     }
     return;
   }
 
-  navigation.navigate({ routeName: 'File', key: 'file', params });
+  navigation.navigate({ routeName: 'File', key: uri, params });
   if (store && store.dispatch && !isNavigatingBack) {
     store.dispatch(doPushDrawerStack(uri));
-    store.dispatch(doSetPlayerVisible(true));
   }
 }
 
-export function navigateBack(navigation, drawerStack, popDrawerStack) {
+export function navigateBack(navigation, drawerStack, popDrawerStack, setPlayerVisible) {
   if (drawerStack[drawerStack.length - 1].route === Constants.DRAWER_ROUTE_FILE_VIEW) {
     // inner file_view (web / image view) is handled differently
     if (popDrawerStack) {
@@ -166,12 +169,15 @@ export function navigateBack(navigation, drawerStack, popDrawerStack) {
   if (popDrawerStack) {
     popDrawerStack();
   }
+  if (setPlayerVisible) {
+    setPlayerVisible(false);
+  }
 
   const target = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];
   const { route, params } = target;
   navigation.goBack(navigation.state.key);
   if (!DrawerRoutes.includes(route) && !InnerDrawerRoutes.includes(route) && isURIValid(route)) {
-    navigateToUri(navigation, route, null, true);
+    navigateToUri(navigation, route, null, true, null, setPlayerVisible);
   } else {
     let targetRoute = route;
     let targetParams = params;
@@ -201,6 +207,7 @@ export function dispatchNavigateBack(dispatch, nav, drawerStack) {
   }
 
   dispatch(doPopDrawerStack());
+  dispatch(doSetPlayerVisible(false));
 
   const target = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];
   const { route } = target;

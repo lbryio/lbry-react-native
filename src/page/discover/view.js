@@ -86,9 +86,11 @@ class DiscoverPage extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const { pushDrawerStack } = this.props;
+    const { pushDrawerStack, setPlayerVisible } = this.props;
     // pushDrawerStack();
+
     NativeModules.Firebase.setCurrentScreen('Your tags');
+    setPlayerVisible();
   };
 
   handleSortByItemSelected = item => {
@@ -135,7 +137,7 @@ class DiscoverPage extends React.PureComponent {
             Alert.alert(
               __('Enjoying LBRY?'),
               __(
-                'Are you enjoying your experience with the LBRY app? You can leave a review for us on the Play Store.'
+                'Are you enjoying your experience with the LBRY app? You can leave a review for us on the Play Store.',
               ),
               [
                 {
@@ -151,7 +153,7 @@ class DiscoverPage extends React.PureComponent {
                   },
                 },
               ],
-              { cancelable: false }
+              { cancelable: false },
             );
           }
         }

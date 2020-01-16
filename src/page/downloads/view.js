@@ -79,7 +79,7 @@ class DownloadsPage extends React.PureComponent {
     const { claims, fileInfos } = this.props;
     const claimUris = claims.map(claim => normalizeURI(`${claim.name}#${claim.claim_id}`));
     return fileInfos.filter(
-      fileInfo => !claimUris.includes(normalizeURI(`${fileInfo.claim_name}#${fileInfo.claim_id}`))
+      fileInfo => !claimUris.includes(normalizeURI(`${fileInfo.claim_name}#${fileInfo.claim_id}`)),
     );
   };
 
@@ -135,7 +135,7 @@ class DownloadsPage extends React.PureComponent {
       ],
       {
         cancelable: true,
-      }
+      },
     );
   };
 
@@ -184,7 +184,7 @@ class DownloadsPage extends React.PureComponent {
                       this.handleSelectItem(item, claim);
                     } else {
                       // TODO: when shortUrl is available for my claims, navigate to that URL instead
-                      navigateToUri(navigation, item, { autoplay: true });
+                      navigateToUri(navigation, item, { autoplay: true }, false, null);
                     }
                   }}
                   onLongPress={claim => this.handleItemLongPress(item, claim)}

@@ -94,6 +94,7 @@ class FilePage extends React.PureComponent {
       showImageViewer: false,
       showWebView: false,
       showTipView: false,
+      playbackStarted: false,
       playerBgHeight: 0,
       playerHeight: 0,
       uri: null,
@@ -115,6 +116,8 @@ class FilePage extends React.PureComponent {
   onComponentFocused = () => {
     StatusBar.setHidden(false);
     NativeModules.Firebase.setCurrentScreen('File').then(result => {
+      const { setPlayerVisible } = this.props;
+
       DeviceEventEmitter.addListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
       DeviceEventEmitter.addListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
 
@@ -122,6 +125,7 @@ class FilePage extends React.PureComponent {
       const { uri, uriVars } = navigation.state.params;
       this.setState({ uri, uriVars });
 
+      setPlayerVisible(true, uri);
       if (!isResolvingUri && !claim) resolveUri(uri);
 
       this.fetchFileInfo(uri, this.props);
@@ -162,7 +166,6 @@ class FilePage extends React.PureComponent {
       notify,
       drawerStack: prevDrawerStack,
     } = this.props;
-    const { uri } = navigation.state.params;
     const {
       currentRoute: prevRoute,
       failedPurchaseUris,
@@ -173,6 +176,7 @@ class FilePage extends React.PureComponent {
       drawerStack,
       resolveUris,
     } = nextProps;
+    const uri = this.getPurchaseUrl();
 
     if (Constants.ROUTE_FILE === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
@@ -206,7 +210,7 @@ class FilePage extends React.PureComponent {
       NativeModules.UtilityModule.checkDownloads();
     }
 
-    if (!this.state.streamingMode && isPlayable) {
+    if ((!fileInfo || (fileInfo && !fileInfo.completed)) && !this.state.streamingMode && isPlayable) {
       if (streamingUrl) {
         this.setState({ streamingMode: true, currentStreamUrl: streamingUrl });
       } else if (fileInfo && fileInfo.streaming_url) {
@@ -231,6 +235,9 @@ class FilePage extends React.PureComponent {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    const { fileInfo: prevFileInfo } = this.props;
+    const { fileInfo } = nextProps;
+
     return (
       Object.keys(this.difference(nextProps, this.props)).length > 0 ||
       Object.keys(this.difference(nextState, this.state)).length > 0
@@ -368,14 +375,14 @@ class FilePage extends React.PureComponent {
     const { deletePurchasedUri, fileInfo, navigation, notify, stopDownload } = this.props;
 
     Alert.alert(
-      'Stop download',
-      'Are you sure you want to stop downloading this file?',
+      __('Stop download'),
+      __('Are you sure you want to stop downloading this file?'),
       [
-        { text: 'No' },
+        { text: __('No') },
         {
-          text: 'Yes',
+          text: __('Yes'),
           onPress: () => {
-            const { uri } = navigation.state.params;
+            const uri = this.getPurchaseUrl();
             stopDownload(uri, fileInfo);
             deletePurchasedUri(uri);
             if (NativeModules.UtilityModule) {
@@ -391,7 +398,7 @@ class FilePage extends React.PureComponent {
             // there can be a bit of lag between the user pressing Yes and the UI being updated
             // after the file_set_status and file_delete operations, so let the user know
             notify({
-              message: 'The download will stop momentarily. You do not need to wait to discover something else.',
+              message: __('The download will stop momentarily. You do not need to wait to discover something else.'),
             });
           },
         },
@@ -416,8 +423,6 @@ class FilePage extends React.PureComponent {
     if (window.currentMediaInfo) {
       window.currentMediaInfo = null;
     }
-    window.player = null;
-
     DeviceEventEmitter.removeListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
     DeviceEventEmitter.removeListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
   }
@@ -434,7 +439,7 @@ class FilePage extends React.PureComponent {
       })
         .then(() => this.performDownload())
         .catch(() => {
-          notify({ message: 'The file could not be downloaded to the default download directory.', isError: true });
+          notify({ message: __('The file could not be downloaded to the default download directory.'), isError: true });
         });
     });
   };
@@ -452,12 +457,14 @@ class FilePage extends React.PureComponent {
     if (!fileInfo) {
       return null;
     }
-    return 'file:///' + fileInfo.download_path;
+    return 'file://' + fileInfo.download_path;
   };
 
   playerUriForFileInfo = fileInfo => {
     const { streamingUrl } = this.props;
-    if (fileInfo && fileInfo.download_path) {
+    if (!this.state.streamingMode && fileInfo && fileInfo.download_path && fileInfo.completed) {
+      // take streamingMode in the state into account because if the download completes while
+      // the media is already streaming, it will restart from the beginning
       return this.getEncodedDownloadPath(fileInfo);
     }
     if (streamingUrl) {
@@ -564,7 +571,7 @@ class FilePage extends React.PureComponent {
     NativeModules.Firebase.track('play', payload);
 
     // only fetch recommended content after playback has started
-    this.setState({ showRecommended: true });
+    this.setState({ playbackStarted: true, showRecommended: true });
   };
 
   onPlaybackFinished = () => {
@@ -668,7 +675,7 @@ class FilePage extends React.PureComponent {
     if (isPlayable) {
       this.startTime = Date.now();
       this.setState({ downloadPressed: true, autoPlayMedia: true, stopDownloadConfirmed: false });
-      setPlayerVisible();
+      // setPlayerVisible(purchaseUrl);
     }
     if (isViewable) {
       this.setState({ downloadPressed: true });
@@ -682,7 +689,7 @@ class FilePage extends React.PureComponent {
     let purchaseUrl;
     if (navigation.state.params) {
       const { uri, fullUri } = navigation.state.params;
-      purchaseUrl = fullUri || uri || permanentUrl;
+      purchaseUrl = fullUri || permanentUrl || uri;
     }
     if (!purchaseUrl && permanentUrl) {
       purchaseUrl = permanentUrl;
@@ -708,7 +715,7 @@ class FilePage extends React.PureComponent {
   };
 
   performDownload = () => {
-    const { claim, costInfo, purchaseUri } = this.props;
+    const { claim, costInfo, fileGet, fileInfo, purchasedUris } = this.props;
     this.setState(
       {
         downloadPressed: true,
@@ -716,15 +723,21 @@ class FilePage extends React.PureComponent {
         stopDownloadConfirmed: false,
       },
       () => {
-        this.confirmPurchaseUri(claim.permanent_url, costInfo, true);
+        const url = this.getPurchaseUrl();
+        if (fileInfo || purchasedUris.includes(url)) {
+          // file already in library or URI already purchased, use fileGet directly
+          this.setState({ fileGetStarted: true }, () => fileGet(url, true));
+        } else {
+          this.confirmPurchaseUri(url, costInfo, true);
+        }
         NativeModules.UtilityModule.checkDownloads();
       },
     );
   };
 
   onBackButtonPressed = () => {
-    const { navigation, drawerStack, popDrawerStack } = this.props;
-    navigateBack(navigation, drawerStack, popDrawerStack);
+    const { navigation, drawerStack, popDrawerStack, setPlayerVisible } = this.props;
+    navigateBack(navigation, drawerStack, popDrawerStack, setPlayerVisible);
   };
 
   onOpenFilePressed = () => {
@@ -732,22 +745,13 @@ class FilePage extends React.PureComponent {
     const localFileUri = this.localUriForFileInfo(fileInfo);
     const mediaType = Lbry.getMediaType(contentType);
     const isViewable = mediaType === 'image' || mediaType === 'text';
+    const isPlayable = mediaType === 'video' || mediaType === 'audio';
     if (isViewable) {
       this.openFile(localFileUri, mediaType, contentType);
+    } else if (isPlayable) {
+      notify({ message: __('Please press the Play button.') });
     } else {
       notify({ message: __('This file cannot be displayed in the LBRY app.') });
-    }
-  };
-
-  onSaveFilePressed = () => {
-    const { costInfo, fileGet, fileInfo, navigation, purchasedUris, purchaseUri } = this.props;
-    const { uri } = navigation.state.params;
-
-    if (fileInfo || purchasedUris.includes(uri)) {
-      // file already in library or URI already purchased, use fileGet directly
-      this.setState({ fileGetStarted: true }, () => fileGet(uri, true));
-    } else {
-      this.checkStoragePermissionForDownload();
     }
   };
 
@@ -880,6 +884,7 @@ class FilePage extends React.PureComponent {
       position,
       purchaseUri,
       pushDrawerStack,
+      setPlayerVisible,
       thumbnail,
       title,
       viewCount,
@@ -1199,7 +1204,7 @@ class FilePage extends React.PureComponent {
                     <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
                   </TouchableOpacity>
 
-                  {!canEdit && !isPlayable && (
+                  {!canEdit && (
                     <View style={filePageStyle.sharedLargeButton}>
                       {(!fileInfo || (fileInfo.written_bytes <= 0 && !completed)) && (
                         <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onDownloadPressed}>
@@ -1210,7 +1215,6 @@ class FilePage extends React.PureComponent {
 
                       {!completed &&
                         fileInfo &&
-                        !fileInfo.stopped &&
                         fileInfo.written_bytes > 0 &&
                         fileInfo.written_bytes < fileInfo.total_bytes &&
                         !this.state.stopDownloadConfirmed && (
@@ -1270,6 +1274,7 @@ class FilePage extends React.PureComponent {
                             null,
                             false,
                             fullChannelUri,
+                            setPlayerVisible,
                           );
                         }}
                       />
@@ -1288,14 +1293,6 @@ class FilePage extends React.PureComponent {
                     />
                   </View>
                   <View style={filePageStyle.subscriptionRow}>
-                    {false && ((isPlayable && !fileInfo) || (isPlayable && fileInfo && !fileInfo.download_path)) && (
-                      <Button
-                        style={[filePageStyle.actionButton, filePageStyle.saveFileButton]}
-                        theme={'light'}
-                        icon={'download'}
-                        onPress={this.onSaveFilePressed}
-                      />
-                    )}
                     {channelName && (
                       <SubscribeButton
                         style={filePageStyle.actionButton}

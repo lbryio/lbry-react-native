@@ -4,13 +4,27 @@ const reducers = {};
 const defaultState = {
   stack: [{ route: Constants.DRAWER_ROUTE_DISCOVER, params: {} }], // Discover is always the first drawer route
   playerVisible: false,
+  playerVisibleByUri: {},
   currentRoute: null,
 };
 
-reducers[Constants.ACTION_SET_PLAYER_VISIBLE] = (state, action) =>
-  Object.assign({}, state, {
+reducers[Constants.ACTION_SET_PLAYER_VISIBLE] = (state, action) => {
+  const { visible, uri } = action.data;
+  const playerVisibleByUri = Object.assign({}, state.playerVisibleByUri);
+
+  if (!uri) {
+    Object.keys(playerVisibleByUri).forEach(playerUri => {
+      playerVisibleByUri[playerUri] = visible;
+    });
+  } else {
+    playerVisibleByUri[uri] = visible;
+  }
+
+  return Object.assign({}, state, {
     playerVisible: action.data.visible,
+    playerVisibleByUri,
   });
+};
 
 reducers[Constants.ACTION_PUSH_DRAWER_STACK] = (state, action) => {
   const { routeName, params } = action.data;

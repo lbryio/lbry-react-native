@@ -32,6 +32,7 @@ export default class RelatedContent extends React.PureComponent {
           recommendedContent.map(result => (
             <ClaimResultItem
               style={fileListStyle.item}
+              uri={result ? normalizeURI(`${result.name}#${result.claimId}`) : null}
               key={result.claimId}
               result={result}
               navigation={navigation}

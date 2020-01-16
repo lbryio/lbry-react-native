@@ -83,7 +83,7 @@ class UriBar extends React.PureComponent {
   };
 
   handleItemPress = item => {
-    const { navigation, onSearchSubmitted, updateSearchQuery } = this.props;
+    const { navigation, onSearchSubmitted, setPlayerVisible, updateSearchQuery } = this.props;
     const { type, value } = item;
 
     Keyboard.dismiss();
@@ -112,7 +112,7 @@ class UriBar extends React.PureComponent {
       });
     } else {
       const uri = normalizeURI(value);
-      navigateToUri(navigation, uri);
+      navigateToUri(navigation, uri, null, false, null, setPlayerVisible);
     }
   };
 
@@ -128,7 +128,7 @@ class UriBar extends React.PureComponent {
   };
 
   handleSubmitEditing = () => {
-    const { navigation, onSearchSubmitted, updateSearchQuery } = this.props;
+    const { navigation, onSearchSubmitted, setPlayerVisible, updateSearchQuery } = this.props;
     if (this.state.inputText) {
       let inputText = this.state.inputText,
         inputTextIsUrl = false;
@@ -137,7 +137,7 @@ class UriBar extends React.PureComponent {
         // if it's a URI (lbry://...), open the file page
         if (transformedUrl && isURIValid(transformedUrl)) {
           inputTextIsUrl = true;
-          navigateToUri(navigation, transformedUrl);
+          navigateToUri(navigation, transformedUrl, null, false, null, setPlayerVisible);
         }
       }
 

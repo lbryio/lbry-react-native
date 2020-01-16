@@ -39,14 +39,14 @@ class ClaimResultItem extends React.PureComponent {
   }
 
   onPressHandler = () => {
-    const { autoplay, navigation, result } = this.props;
+    const { autoplay, navigation, result, setPlayerVisible } = this.props;
     const { claimId, name } = result;
     const url = normalizeURI(`${name}#${claimId}`);
-    navigateToUri(navigation, url, { autoplay }, false, url);
+    navigateToUri(navigation, url, { autoplay }, false, url, setPlayerVisible);
   };
 
   render() {
-    const { fileInfo, navigation, obscureNsfw, result, rewardedContentClaimIds, style } = this.props;
+    const { fileInfo, navigation, obscureNsfw, result, rewardedContentClaimIds, setPlayerVisible, style } = this.props;
     const {
       channel,
       channel_claim_id: channelClaimId,
@@ -134,6 +134,7 @@ class ClaimResultItem extends React.PureComponent {
                     null,
                     false,
                     isChannel ? url : channelUrl,
+                    setPlayerVisible,
                   );
                 }}
               />
@@ -141,7 +142,7 @@ class ClaimResultItem extends React.PureComponent {
 
             <View style={fileListStyle.info}>
               {fileInfo && !isNaN(fileInfo.written_bytes) && fileInfo.written_bytes > 0 && (
-                <Text>{getStorageForFileInfo(fileInfo)}</Text>
+                <Text style={fileListStyle.infoText}>{getStorageForFileInfo(fileInfo)}</Text>
               )}
               <DateTime
                 style={fileListStyle.publishInfo}

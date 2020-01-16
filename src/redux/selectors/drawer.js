@@ -4,13 +4,24 @@ export const selectState = state => state.drawer || {};
 
 export const selectDrawerStack = createSelector(
   selectState,
-  state => state.stack
+  state => state.stack,
 );
 
 export const selectIsPlayerVisible = createSelector(
   selectState,
-  state => state.playerVisible
+  state => state.playerVisible,
 );
+
+export const selectPlayerVisibleByUri = createSelector(
+  selectState,
+  state => state.playerVisibleByUri,
+);
+
+export const makeSelectPlayerVisible = uri =>
+  createSelector(
+    selectPlayerVisibleByUri,
+    byUri => (byUri ? byUri[uri] : false),
+  );
 
 export const selectLastDrawerRoute = createSelector(
   selectState,
@@ -20,10 +31,10 @@ export const selectLastDrawerRoute = createSelector(
     }
 
     return null;
-  }
+  },
 );
 
 export const selectCurrentRoute = createSelector(
   selectState,
-  state => state.currentRoute
+  state => state.currentRoute,
 );
