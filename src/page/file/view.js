@@ -196,16 +196,18 @@ class FilePage extends React.PureComponent {
     const mediaType = Lbry.getMediaType(contentType);
     const isPlayable = mediaType === 'video' || mediaType === 'audio';
     if (this.state.fileGetStarted || prevPurchasedUris.length !== purchasedUris.length) {
-      const { permanent_url: permanentUrl } = claim;
-      if (purchasedUris.includes(uri) || purchasedUris.includes(permanentUrl)) {
-        const { nout, txid } = claim;
-        const outpoint = `${txid}:${nout}`;
+      const { permanent_url: permanentUrl, nout, txid } = claim;
+      const outpoint = `${txid}:${nout}`;
+      if (this.state.fileGetStarted) {
         NativeModules.UtilityModule.queueDownload(outpoint);
+        this.setState({ fileGetStarted: false });
+      }
+
+      if (purchasedUris.includes(uri) || purchasedUris.includes(permanentUrl)) {
         // If the media is playable, file/view will be done in onPlaybackStarted
         if (!isPlayable && !this.state.fileViewLogged) {
           this.logFileView(uri, claim);
         }
-        this.setState({ fileGetStarted: false });
       }
       NativeModules.UtilityModule.checkDownloads();
     }
