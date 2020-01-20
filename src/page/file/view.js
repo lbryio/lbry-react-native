@@ -21,7 +21,7 @@ import {
 } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { NavigationEvents } from 'react-navigation';
-import { navigateBack, navigateToUri, formatLbryUrlForWeb } from 'utils/helper';
+import { navigateBack, navigateToUri, formatBytes, formatLbryUrlForWeb } from 'utils/helper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Button from 'component/button';
@@ -648,6 +648,7 @@ class FilePage extends React.PureComponent {
     const { notify, purchaseUri, title } = this.props;
     if (!costInfo) {
       notify({ message: __('This content cannot be viewed at this time. Please try again in a bit.'), isError: true });
+      this.setState({ downloadPressed: false });
       this.fetchCostInfo(uri, this.props);
       return;
     }
@@ -686,7 +687,7 @@ class FilePage extends React.PureComponent {
     NativeModules.Firebase.track('purchase_uri', { uri: purchaseUrl });
 
     if (!isPlayable) {
-      this.checkStoragePermissionForDownload();
+      this.onDownloadPressed();
     } else {
       this.confirmPurchaseUri(purchaseUrl, costInfo, !isPlayable);
     }
@@ -694,7 +695,6 @@ class FilePage extends React.PureComponent {
     if (isPlayable) {
       this.startTime = Date.now();
       this.setState({ downloadPressed: true, autoPlayMedia: true, stopDownloadConfirmed: false });
-      // setPlayerVisible(purchaseUrl);
     }
     if (isViewable) {
       this.setState({ downloadPressed: true });
@@ -718,7 +718,24 @@ class FilePage extends React.PureComponent {
   };
 
   onDownloadPressed = () => {
-    this.checkStoragePermissionForDownload();
+    const { claim, title } = this.props;
+    const fileSize = claim && claim.value && claim.value.source ? claim.value.source.size : 0;
+    Alert.alert(
+      __('Download file'),
+      fileSize > 0
+        ? __('Save "%title%" (%size%) to your device', { title, size: formatBytes(fileSize, 0) })
+        : __('Save "%title%" to your device', { title }),
+      [
+        { text: __('No') },
+        {
+          text: __('Yes'),
+          onPress: () => {
+            this.checkStoragePermissionForDownload();
+          },
+        },
+      ],
+      { cancelable: true },
+    );
   };
 
   checkStoragePermissionForDownload = () => {
