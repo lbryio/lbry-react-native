@@ -125,7 +125,11 @@ class DownloadsPage extends React.PureComponent {
           onPress: () => {
             const uris = Object.keys(selectedClaimsMap);
             uris.forEach(uri => {
-              const { txid, nout } = selectedClaimsMap[uri];
+              const { txid, nout, name, claim_id: claimId } = selectedClaimsMap[uri];
+              if (name && claimId) {
+                NativeModules.UtilityModule.deleteDownload(normalizeURI(`${name}#${claimId}`));
+              }
+
               deleteFile(`${txid}:${nout}`, true);
             });
             this.onExitSelectionMode();

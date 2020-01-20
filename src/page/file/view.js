@@ -345,11 +345,12 @@ class FilePage extends React.PureComponent {
           text: __('Yes'),
           onPress: () => {
             const { uri } = navigation.state.params;
+            const purchaseUrl = this.getPurchaseUrl();
 
             deleteFile(`${claim.txid}:${claim.nout}`, true);
             deletePurchasedUri(uri);
 
-            NativeModules.UtilityModule.deleteDownload(uri);
+            NativeModules.UtilityModule.deleteDownload(normalizeURI(purchaseUrl));
             this.setState({
               downloadPressed: false,
               fileViewLogged: false,
@@ -387,9 +388,8 @@ class FilePage extends React.PureComponent {
             const uri = this.getPurchaseUrl();
             stopDownload(uri, fileInfo);
             deletePurchasedUri(uri);
-            if (NativeModules.UtilityModule) {
-              NativeModules.UtilityModule.deleteDownload(uri);
-            }
+            NativeModules.UtilityModule.deleteDownload(normalizeURI(uri));
+
             this.setState({
               downloadPressed: false,
               fileViewLogged: false,
