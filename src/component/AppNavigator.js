@@ -38,7 +38,15 @@ import {
   ToastAndroid,
 } from 'react-native';
 import { selectDrawerStack } from 'redux/selectors/drawer';
-import { SETTINGS, doDismissToast, doPopulateSharedUserState, doPreferenceGet, doToast, selectToast } from 'lbry-redux';
+import {
+  ACTIONS,
+  SETTINGS,
+  doDismissToast,
+  doPopulateSharedUserState,
+  doPreferenceGet,
+  doToast,
+  selectToast,
+} from 'lbry-redux';
 import {
   Lbryio,
   doGetSync,
@@ -313,6 +321,7 @@ class AppWithNavigationState extends React.Component {
     this.emailVerifyCheckInterval = setInterval(() => this.checkEmailVerification(), 5000);
     Linking.addEventListener('url', this._handleUrl);
 
+    DeviceEventEmitter.addListener('onDownloadAborted', this.handleDownloadAborted);
     DeviceEventEmitter.addListener('onDownloadStarted', this.handleDownloadStarted);
     DeviceEventEmitter.addListener('onDownloadUpdated', this.handleDownloadUpdated);
     DeviceEventEmitter.addListener('onDownloadCompleted', this.handleDownloadCompleted);
@@ -369,7 +378,24 @@ class AppWithNavigationState extends React.Component {
     dispatch(doCompleteDownload(uri, outpoint, fileInfo));
   };
 
+  handleDownloadAborted = evt => {
+    const { dispatch } = this.props;
+    const { uri, outpoint } = evt;
+    dispatch({
+      type: ACTIONS.DOWNLOADING_CANCELED,
+      data: { uri, outpoint },
+    });
+
+    dispatch({
+      type: ACTIONS.FILE_DELETE,
+      data: {
+        outpoint,
+      },
+    });
+  };
+
   componentWillUnmount() {
+    DeviceEventEmitter.removeListener('onDownloadAborted', this.handleDownloadAborted);
     DeviceEventEmitter.removeListener('onDownloadStarted', this.handleDownloadStarted);
     DeviceEventEmitter.removeListener('onDownloadUpdated', this.handleDownloadUpdated);
     DeviceEventEmitter.removeListener('onDownloadCompleted', this.handleDownloadCompleted);
