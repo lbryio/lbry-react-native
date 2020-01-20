@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry, doPreferenceGet } from 'lbry-redux';
+import { Lbry, doPreferenceGet, isURIValid } from 'lbry-redux';
 import { Lbryio } from 'lbryinc';
 import { ActivityIndicator, DeviceEventEmitter, Linking, NativeModules, Platform, Text, View } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
@@ -11,7 +11,7 @@ import Button from 'component/button';
 import ProgressBar from 'component/progressBar';
 import PropTypes from 'prop-types';
 import Colors from 'styles/colors';
-import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
+import Constants, { DrawerRoutes } from 'constants'; // eslint-disable-line node/no-deprecated-api
 import splashStyle from 'styles/splash';
 import RNFS from 'react-native-fs';
 
@@ -43,7 +43,7 @@ class SplashScreen extends React.PureComponent {
   }
 
   navigateToMain = () => {
-    const { navigation, notify, verifyUserEmail, verifyUserEmailFailure } = this.props;
+    const { lastRouteInStack, navigation, notify, verifyUserEmail, verifyUserEmailFailure } = this.props;
     const resetAction = StackActions.reset({
       index: 0,
       actions: [NavigationActions.navigate({ routeName: 'Main' })],
@@ -55,29 +55,14 @@ class SplashScreen extends React.PureComponent {
         ? navigation.state.params.launchUrl
         : this.state.launchUrl;
     if (launchUrl) {
-      if (launchUrl.startsWith('lbry://?verify=')) {
-        let verification = {};
-        try {
-          verification = JSON.parse(atob(launchUrl.substring(15)));
-        } catch (error) {
-          console.log(error);
-        }
-        if (verification.token && verification.recaptcha) {
-          AsyncStorage.setItem(Constants.KEY_SHOULD_VERIFY_EMAIL, 'true');
-          try {
-            verifyUserEmail(verification.token, verification.recaptcha);
-          } catch (error) {
-            const message = __('Invalid Verification Token');
-            verifyUserEmailFailure(message);
-            notify({ message });
-          }
-        } else {
-          notify({
-            message: __('Invalid Verification URI'),
-          });
-        }
+      navigateToUri(navigation, transformUrl(launchUrl));
+    } else if (lastRouteInStack) {
+      // no launch url, check if there's a last route in stack to navigate to.
+      const { route, params } = lastRouteInStack;
+      if (!DrawerRoutes.includes(route) && isURIValid(route)) {
+        navigateToUri(navigation, route);
       } else {
-        navigateToUri(navigation, transformUrl(launchUrl));
+        navigation.navigate({ routeName: route, params });
       }
     }
   };

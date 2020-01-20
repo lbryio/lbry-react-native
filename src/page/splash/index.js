@@ -14,11 +14,13 @@ import {
   selectEmailToVerify,
 } from 'lbryinc';
 import { doSetClientSetting } from 'redux/actions/settings';
+import { selectLastRouteInStack } from 'redux/selectors/drawer';
 import SplashScreen from './view';
 
 const select = state => ({
   user: selectUser(state),
   emailToVerify: selectEmailToVerify(state),
+  lastRouteInStack: selectLastRouteInStack(state),
 });
 
 const perform = dispatch => ({

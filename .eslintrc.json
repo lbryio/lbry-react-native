@@ -10,6 +10,7 @@
     "__": true
   },
   "rules": {
+    "no-console": 2,
     "no-multi-spaces": 0,
     "new-cap": 0,
     "prefer-promise-reject-errors": 0,

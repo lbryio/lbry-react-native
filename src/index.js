@@ -95,6 +95,7 @@ const compressor = createCompressor();
 const authFilter = createFilter('auth', ['authToken']);
 const blockedFilter = createFilter('blocked', ['blockedChannels']);
 const contentFilter = createFilter('content', ['positions']);
+const drawerFilter = createFilter('drawer', ['lastRouteInStack']);
 const saveClaimsFilter = createFilter('claims', ['claimsByUri']);
 const subscriptionsFilter = createFilter('subscriptions', ['enabledChannelNotifications', 'subscriptions', 'latest']);
 const settingsFilter = createFilter('settings', ['clientSettings']);
@@ -102,12 +103,13 @@ const tagsFilter = createFilter('tags', ['followedTags']);
 const walletFilter = createFilter('wallet', ['receiveAddress']);
 
 const v4PersistOptions = {
-  whitelist: ['auth', 'blocked', 'claims', 'content', 'subscriptions', 'settings', 'tags', 'wallet'],
+  whitelist: ['auth', 'blocked', 'claims', 'drawer', 'content', 'subscriptions', 'settings', 'tags', 'wallet'],
   // Order is important. Needs to be compressed last or other transforms can't
   // read the data
   transforms: [
     authFilter,
     blockedFilter,
+    drawerFilter,
     saveClaimsFilter,
     subscriptionsFilter,
     settingsFilter,

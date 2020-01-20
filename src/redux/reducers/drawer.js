@@ -3,6 +3,7 @@ import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 const reducers = {};
 const defaultState = {
   stack: [{ route: Constants.DRAWER_ROUTE_DISCOVER, params: {} }], // Discover is always the first drawer route
+  lastRouteInStack: {},
   playerVisible: false,
   playerVisibleByUri: {},
   currentRoute: null,
@@ -42,23 +43,30 @@ reducers[Constants.ACTION_PUSH_DRAWER_STACK] = (state, action) => {
     canPushStack = false;
   }
 
+  let lastRouteInStack;
   if (canPushStack) {
     newStack.push({ route: routeName, params });
+
+    // save the route
+    lastRouteInStack = { route: routeName, params };
   }
 
   return {
     ...state,
     stack: newStack,
+    lastRouteInStack,
   };
 };
 
 reducers[Constants.ACTION_POP_DRAWER_STACK] = (state, action) => {
   // We don't want to pop the Discover route, since it's always expected to be the first
   const newStack = state.stack.length === 1 ? state.stack.slice() : state.stack.slice(0, state.stack.length - 1);
+  const lastRouteInStack = newStack && newStack.length > 0 ? newStack[newStack.length - 1] : null;
 
   return {
     ...state,
     stack: newStack,
+    lastRouteInStack,
   };
 };
 
