@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import {
   doPublish,
+  doFetchClaimListMine,
   doResolveUri,
   doToast,
   doUpdatePublishForm,
@@ -27,6 +28,7 @@ const select = state => ({
 const perform = dispatch => ({
   notify: data => dispatch(doToast(data)),
   clearPublishFormState: () => dispatch(doClearPublishFormState()),
+  fetchMyClaims: () => dispatch(doFetchClaimListMine()),
   pendingPublishSuccess: pendingClaim => dispatch(doPendingPublishSuccess(pendingClaim)),
   updatePublishForm: value => dispatch(doUpdatePublishForm(value)),
   updatePublishFormState: data => dispatch(doUpdatePublishFormState(data)),
@@ -39,5 +41,5 @@ const perform = dispatch => ({
 
 export default connect(
   select,
-  perform
+  perform,
 )(PublishPage);

@@ -209,7 +209,7 @@ class PublishPage extends React.PureComponent {
   };
 
   onComponentFocused = () => {
-    const { balance, hasFormState, pushDrawerStack, setPlayerVisible, navigation } = this.props;
+    const { balance, fetchMyClaims, hasFormState, pushDrawerStack, setPlayerVisible, navigation } = this.props;
     NativeModules.Firebase.setCurrentScreen('Publish').then(result => {
       pushDrawerStack(Constants.DRAWER_ROUTE_PUBLISH, navigation.state.params ? navigation.state.params : null);
       setPlayerVisible();
@@ -219,6 +219,7 @@ class PublishPage extends React.PureComponent {
 
       NativeModules.Gallery.canUseCamera().then(canUseCamera => this.setState({ canUseCamera }));
       NativeModules.Gallery.getThumbnailPath().then(thumbnailPath => this.setState({ thumbnailPath }));
+      fetchMyClaims();
 
       NativeModules.UtilityModule.canReadWriteStorage().then(canReadWrite => {
         if (!canReadWrite) {
@@ -356,7 +357,7 @@ class PublishPage extends React.PureComponent {
   };
 
   handlePublishPressed = () => {
-    const { balance, notify, publish, updatePublishForm } = this.props;
+    const { balance, myClaims, notify, publish, updatePublishForm } = this.props;
     const {
       editMode,
       bid,
@@ -400,6 +401,14 @@ class PublishPage extends React.PureComponent {
     if (!isNameValid(name, false)) {
       notify({ message: __('Your content address contains invalid characters.'), isError: true });
       return;
+    } else if (myClaims && myClaims.length > 0) {
+      if (myClaims.some(claim => claim.name.toLowerCase() === name.trim().toLowerCase())) {
+        notify({
+          message: __('You have already published to the specified content address. Please enter a new address.'),
+          isError: true,
+        });
+        return;
+      }
     }
 
     if (!currentMedia && !editMode) {
@@ -628,7 +637,7 @@ class PublishPage extends React.PureComponent {
       }
     } else {
       // could not determine the file path
-      notify({ message: __('The path could not be determined. Please try a different file.') });
+      notify({ message: __('The path could not be determined. Please try a different file.'), isError: true });
     }
   };
 

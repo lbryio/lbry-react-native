@@ -59,10 +59,12 @@ class SplashScreen extends React.PureComponent {
     } else if (lastRouteInStack) {
       // no launch url, check if there's a last route in stack to navigate to.
       const { route, params } = lastRouteInStack;
-      if (!DrawerRoutes.includes(route) && isURIValid(route)) {
-        navigateToUri(navigation, route);
-      } else {
-        navigation.navigate({ routeName: route, params });
+      if (route) {
+        if (!DrawerRoutes.includes(route) && isURIValid(route)) {
+          navigateToUri(navigation, route);
+        } else {
+          navigation.navigate({ routeName: route, params });
+        }
       }
     }
   };
