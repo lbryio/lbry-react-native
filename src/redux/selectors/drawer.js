@@ -34,6 +34,11 @@ export const selectLastDrawerRoute = createSelector(
   },
 );
 
+export const selectLastRouteInStack = createSelector(
+  selectState,
+  state => state.lastRouteInStack,
+);
+
 export const selectCurrentRoute = createSelector(
   selectState,
   state => state.currentRoute,
