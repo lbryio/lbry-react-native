@@ -204,7 +204,7 @@ window.store = store;
 
 const persistor = persistStore(store, null, err => {
   if (err) {
-    console.log('Unable to load saved SETTINGS');
+    // console.log('Unable to load saved SETTINGS');
   }
 });
 window.persistor = persistor;

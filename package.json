@@ -30,6 +30,7 @@
         "react-native-image-zoom-viewer": "^2.2.5",
         "react-native-password-strength-meter": "^0.0.2",
         "react-native-phone-input": "lbryio/react-native-phone-input",
+        "react-native-progress-circle": "2.1.0",
         "react-native-reanimated": "1.4.0",
         "react-native-safe-area-context": "^0.6.2",
         "react-native-snackbar": "2.0.4",

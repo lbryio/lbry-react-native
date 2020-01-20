@@ -12,6 +12,7 @@ const Colors = {
   TagGreen: '#e3f6f1',
   TagGrape: '#da77f255',
   LightGrey: '#cccccc',
+  ActionGrey: '#aaaaaa',
   LighterGrey: '#e5e5e5',
   Orange: '#ffbb00',
   Red: '#ff0000',

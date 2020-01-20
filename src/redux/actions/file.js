@@ -59,22 +59,24 @@ export function doCompleteDownload(uri, outpoint, fileInfo) {
 export function doStopDownloadingFile(uri, fileInfo) {
   return dispatch => {
     let params = { status: 'stop' };
-    if (fileInfo.sd_hash) {
-      params.sd_hash = fileInfo.sd_hash;
-    }
-    if (fileInfo.stream_hash) {
-      params.stream_hash = fileInfo.stream_hash;
-    }
+    if (fileInfo) {
+      if (fileInfo.sd_hash) {
+        params.sd_hash = fileInfo.sd_hash;
+      }
+      if (fileInfo.stream_hash) {
+        params.stream_hash = fileInfo.stream_hash;
+      }
 
-    Lbry.file_set_status(params).then(() => {
-      dispatch({
-        type: ACTIONS.DOWNLOADING_CANCELED,
-        data: { uri, outpoint: fileInfo.outpoint },
+      Lbry.file_set_status(params).then(() => {
+        dispatch({
+          type: ACTIONS.DOWNLOADING_CANCELED,
+          data: { uri, outpoint: fileInfo.outpoint },
+        });
+
+        // Should also delete the file after the user stops downloading
+        dispatch(doDeleteFile(fileInfo.outpoint, uri));
       });
-
-      // Should also delete the file after the user stops downloading
-      dispatch(doDeleteFile(fileInfo.outpoint, uri));
-    });
+    }
   };
 }
 
@@ -95,7 +97,7 @@ export function doDeleteFile(outpoint, deleteFromComputer, abandonClaim) {
     });
 
     // If the file is for a claim we published then also abandon the claim
-    /*const myClaimsOutpoints = selectMyClaimsOutpoints(state);
+    /* const myClaimsOutpoints = selectMyClaimsOutpoints(state);
     if (abandonClaim && myClaimsOutpoints.indexOf(outpoint) !== -1) {
       const byOutpoint = selectFileInfosByOutpoint(state);
       const fileInfo = byOutpoint[outpoint];
@@ -106,7 +108,7 @@ export function doDeleteFile(outpoint, deleteFromComputer, abandonClaim) {
 
         dispatch(doAbandonClaim(txid, nout));
       }
-    }*/
+    } */
 
     dispatch({
       type: ACTIONS.FILE_DELETE,

@@ -38,6 +38,7 @@ import FloatingWalletBalance from 'component/floatingWalletBalance';
 import Link from 'component/link';
 import MediaPlayer from 'component/mediaPlayer';
 import ModalTipView from 'component/modalTipView';
+import ProgressCircle from 'react-native-progress-circle';
 import RelatedContent from 'component/relatedContent';
 import SubscribeButton from 'component/subscribeButton';
 import SubscribeNotificationButton from 'component/subscribeNotificationButton';
@@ -118,6 +119,7 @@ class FilePage extends React.PureComponent {
     NativeModules.Firebase.setCurrentScreen('File').then(result => {
       const { setPlayerVisible } = this.props;
 
+      DeviceEventEmitter.addListener('onDownloadAborted', this.handleDownloadAborted);
       DeviceEventEmitter.addListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
       DeviceEventEmitter.addListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
 
@@ -182,11 +184,7 @@ class FilePage extends React.PureComponent {
       this.onComponentFocused();
     }
 
-    if (
-      failedPurchaseUris.includes(uri) &&
-      !purchasedUris.includes(uri) &&
-      prevPurchaseUriErrorMessage !== purchaseUriErrorMessage
-    ) {
+    if (failedPurchaseUris.includes(uri) && prevPurchaseUriErrorMessage !== purchaseUriErrorMessage) {
       if (purchaseUriErrorMessage && purchaseUriErrorMessage.trim().length > 0) {
         notify({ message: purchaseUriErrorMessage, isError: true });
       }
@@ -425,9 +423,28 @@ class FilePage extends React.PureComponent {
     if (window.currentMediaInfo) {
       window.currentMediaInfo = null;
     }
+    DeviceEventEmitter.removeListener('onDownloadAborted', this.handleDownloadAborted);
     DeviceEventEmitter.removeListener('onStoragePermissionGranted', this.handleStoragePermissionGranted);
     DeviceEventEmitter.removeListener('onStoragePermissionRefused', this.handleStoragePermissionRefused);
   }
+
+  handleDownloadAborted = evt => {
+    const { deletePurchasedUri, fileInfo, stopDownload } = this.props;
+    const { uri, outpoint } = evt;
+    const purchaseUrl = normalizeURI(this.getPurchaseUrl());
+    if (purchaseUrl === uri) {
+      stopDownload(uri, fileInfo);
+      deletePurchasedUri(uri);
+      NativeModules.UtilityModule.deleteDownload(normalizeURI(uri));
+
+      this.setState({
+        downloadPressed: false,
+        fileViewLogged: false,
+        mediaLoaded: false,
+        stopDownloadConfirmed: true,
+      });
+    }
+  };
 
   handleStoragePermissionGranted = () => {
     // permission was allowed. proceed to download
@@ -1208,11 +1225,16 @@ class FilePage extends React.PureComponent {
 
                   {!canEdit && (
                     <View style={filePageStyle.sharedLargeButton}>
-                      {(!fileInfo || (fileInfo.written_bytes <= 0 && !completed)) && (
+                      {!this.state.downloadPressed &&
+                        (!fileInfo || !fileInfo.download_path || (fileInfo.written_bytes <= 0 && !completed)) && (
                         <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onDownloadPressed}>
                           <Icon name={'download'} size={16} style={filePageStyle.largeButtonIcon} />
                           <Text style={filePageStyle.largeButtonText}>{__('Download')}</Text>
                         </TouchableOpacity>
+                      )}
+
+                      {this.state.downloadPressed && (!fileInfo || fileInfo.written_bytes === 0) && (
+                        <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
                       )}
 
                       {!completed &&
@@ -1221,7 +1243,15 @@ class FilePage extends React.PureComponent {
                         fileInfo.written_bytes < fileInfo.total_bytes &&
                         !this.state.stopDownloadConfirmed && (
                         <TouchableOpacity style={filePageStyle.innerLargeButton} onPress={this.onStopDownloadPressed}>
-                          <Icon name={'stop'} size={16} style={filePageStyle.largeButtonIcon} />
+                          <ProgressCircle
+                            percent={(fileInfo.written_bytes / fileInfo.total_bytes) * 100}
+                            radius={9}
+                            borderWidth={2}
+                            shadowColor={Colors.ActionGrey}
+                            color={Colors.NextLbryGreen}
+                          >
+                            <Icon name={'stop'} size={6} style={filePageStyle.largeButtonIcon} />
+                          </ProgressCircle>
                           <Text style={filePageStyle.largeButtonText}>{__('Stop')}</Text>
                         </TouchableOpacity>
                       )}

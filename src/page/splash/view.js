@@ -11,7 +11,7 @@ import Button from 'component/button';
 import ProgressBar from 'component/progressBar';
 import PropTypes from 'prop-types';
 import Colors from 'styles/colors';
-import Constants, { DrawerRoutes } from 'constants'; // eslint-disable-line node/no-deprecated-api
+import Constants, { DrawerRoutes, InnerDrawerRoutes } from 'constants'; // eslint-disable-line node/no-deprecated-api
 import splashStyle from 'styles/splash';
 import RNFS from 'react-native-fs';
 
@@ -60,10 +60,10 @@ class SplashScreen extends React.PureComponent {
       // no launch url, check if there's a last route in stack to navigate to.
       const { route, params } = lastRouteInStack;
       if (route) {
-        if (!DrawerRoutes.includes(route) && isURIValid(route)) {
-          navigateToUri(navigation, route);
-        } else {
+        if (DrawerRoutes.includes(route)) {
           navigation.navigate({ routeName: route, params });
+        } else if (!InnerDrawerRoutes.includes(route) && isURIValid(route)) {
+          navigateToUri(navigation, route);
         }
       }
     }

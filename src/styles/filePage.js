@@ -399,9 +399,10 @@ const filePageStyle = StyleSheet.create({
     flex: 0.2,
   },
   largeButtonIcon: {
-    color: Colors.DescriptionGrey,
+    color: Colors.ActionGrey,
   },
   largeButtonText: {
+    color: Colors.ActionGrey,
     fontFamily: 'Inter-Regular',
     fontSize: 12,
     marginTop: 4,
