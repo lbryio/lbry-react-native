@@ -341,6 +341,12 @@ class MediaPlayer extends React.PureComponent {
     this.setState({ paused: true }, this.updateBackgroundMediaNotification);
   };
 
+  handleSeek = time => {
+    const { currentTime } = this.state;
+    const newTime = currentTime + time;
+    this.seekTo(newTime);
+  };
+
   updateBackgroundMediaNotification = () => {
     this.handlePausedState();
     const { backgroundPlayEnabled } = this.props;
@@ -362,14 +368,26 @@ class MediaPlayer extends React.PureComponent {
             <Icon name={'arrow-left'} size={18} style={mediaPlayerStyle.backButtonIcon} />
           </TouchableOpacity>
 
-          <TouchableOpacity style={mediaPlayerStyle.playPauseButton} onPress={this.togglePlay}>
-            {this.state.paused && <Icon name="play" size={40} color="#ffffff" />}
-            {!this.state.paused && <Icon name="pause" size={40} color="#ffffff" />}
-          </TouchableOpacity>
+          <View style={mediaPlayerStyle.midControls}>
+            <TouchableOpacity style={mediaPlayerStyle.rewind10} onPress={() => this.handleSeek(-10)}>
+              <Icon name="undo" size={24} color={Colors.White} />
+              <Text style={[mediaPlayerStyle.midControlText, mediaPlayerStyle.leftMidControlText]}>10</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={mediaPlayerStyle.playPauseButton} onPress={this.togglePlay}>
+              {this.state.paused && <Icon name="play" size={40} color={Colors.White} />}
+              {!this.state.paused && <Icon name="pause" size={40} color={Colors.White} />}
+            </TouchableOpacity>
+
+            <TouchableOpacity style={mediaPlayerStyle.forward10} onPress={() => this.handleSeek(10)}>
+              <Icon name="redo" size={24} color={Colors.White} />
+              <Text style={[mediaPlayerStyle.midControlText, mediaPlayerStyle.rightMidControlText]}>10</Text>
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity style={mediaPlayerStyle.toggleFullscreenButton} onPress={this.toggleFullscreenMode}>
-            {this.state.fullscreenMode && <Icon name="compress" size={16} color="#ffffff" />}
-            {!this.state.fullscreenMode && <Icon name="expand" size={16} color="#ffffff" />}
+            {this.state.fullscreenMode && <Icon name="compress" size={16} color={Colors.White} />}
+            {!this.state.fullscreenMode && <Icon name="expand" size={16} color={Colors.White} />}
           </TouchableOpacity>
 
           <Text style={mediaPlayerStyle.elapsedDuration}>{this.formatTime(this.state.currentTime)}</Text>

@@ -56,13 +56,41 @@ const mediaPlayerStyle = StyleSheet.create({
     height: '100%',
   },
   playerControlsContainer: {
-    backgroundColor: '#00000020',
+    backgroundColor: '#00000040',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  playPauseButton: {
+  midControls: {
+    flex: 1,
+    flexDirection: 'row',
+    height: 64,
     position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  midControlText: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 10,
+    position: 'absolute',
+    top: 10,
+    color: Colors.White,
+  },
+  leftMidControlText: {
+    left: -6,
+  },
+  rightMidControlText: {
+    right: -6,
+  },
+  rewind10: {
+    marginRight: 48,
+    alignItems: 'center',
+  },
+  forward10: {
+    marginLeft: 48,
+    alignItems: 'center',
+  },
+  playPauseButton: {
     width: 64,
     height: 64,
     alignItems: 'center',
