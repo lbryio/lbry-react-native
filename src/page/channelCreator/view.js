@@ -905,7 +905,7 @@ export default class ChannelCreator extends React.PureComponent {
                   style={channelCreatorStyle.coverImage}
                   resizeMode={'cover'}
                   source={
-                    coverImageUrl && coverImageUrl.trim().length > 0
+                    !!coverImageUrl && coverImageUrl.trim().length > 0
                       ? { uri: coverImageUrl }
                       : require('../../assets/default_channel_cover.png')
                   }
@@ -924,7 +924,7 @@ export default class ChannelCreator extends React.PureComponent {
 
               <View style={[channelCreatorStyle.avatarImageContainer, autoStyle]}>
                 <TouchableOpacity style={channelCreatorStyle.avatarTouchArea} onPress={this.onAvatarImagePress}>
-                  {thumbnailUrl !== null && thumbnailUrl.trim().length > 0 && (
+                  {!!thumbnailUrl && thumbnailUrl.trim().length > 0 && (
                     <Image
                       style={channelCreatorStyle.avatarImage}
                       resizeMode={'cover'}
