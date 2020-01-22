@@ -401,7 +401,7 @@ class PublishPage extends React.PureComponent {
     if (!isNameValid(name, false)) {
       notify({ message: __('Your content address contains invalid characters.'), isError: true });
       return;
-    } else if (myClaims && myClaims.length > 0) {
+    } else if (!editMode && myClaims && myClaims.length > 0) {
       if (myClaims.some(claim => claim.name.toLowerCase() === name.trim().toLowerCase())) {
         notify({
           message: __('You have already published to the specified content address. Please enter a new address.'),
