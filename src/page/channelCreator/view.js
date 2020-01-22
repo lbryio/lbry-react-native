@@ -905,7 +905,7 @@ export default class ChannelCreator extends React.PureComponent {
                   style={channelCreatorStyle.coverImage}
                   resizeMode={'cover'}
                   source={
-                    coverImageUrl !== null && coverImageUrl.trim().length > 0
+                    coverImageUrl && coverImageUrl.trim().length > 0
                       ? { uri: coverImageUrl }
                       : require('../../assets/default_channel_cover.png')
                   }
