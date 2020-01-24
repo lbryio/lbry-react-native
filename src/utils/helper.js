@@ -169,6 +169,7 @@ export function navigateBack(navigation, drawerStack, popDrawerStack, setPlayerV
   if (popDrawerStack) {
     popDrawerStack();
   }
+
   if (setPlayerVisible) {
     setPlayerVisible(false);
   }
@@ -176,6 +177,7 @@ export function navigateBack(navigation, drawerStack, popDrawerStack, setPlayerV
   const target = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];
   const { route, params } = target;
   navigation.goBack(navigation.state.key);
+
   if (!DrawerRoutes.includes(route) && !InnerDrawerRoutes.includes(route) && isURIValid(route)) {
     navigateToUri(navigation, route, null, true, null, setPlayerVisible);
   } else {

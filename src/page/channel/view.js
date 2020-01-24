@@ -173,7 +173,7 @@ class ChannelPage extends React.PureComponent {
       const { permanent_url: permanentUrl } = claim;
       navigation.navigate({
         routeName: Constants.DRAWER_ROUTE_CHANNEL_CREATOR,
-        params: { editChannelUrl: permanentUrl },
+        params: { editChannelUrl: permanentUrl, returnUrl: permanentUrl },
       });
     }
   };
@@ -210,7 +210,7 @@ class ChannelPage extends React.PureComponent {
             },
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     }
   };

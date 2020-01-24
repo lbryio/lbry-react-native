@@ -328,7 +328,11 @@ class FilePage extends React.PureComponent {
 
   onEditPressed = () => {
     const { claim, navigation } = this.props;
-    navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISH, params: { editMode: true, claimToEdit: claim } });
+    const uri = this.state.uri || this.getPurchaseUrl();
+    navigation.navigate({
+      routeName: Constants.DRAWER_ROUTE_PUBLISH,
+      params: { editMode: true, claimToEdit: claim, returnUrl: uri },
+    });
   };
 
   onDeletePressed = () => {
