@@ -6,6 +6,7 @@ import DownloadsPage from 'page/downloads';
 import DrawerContent from 'component/drawerContent';
 import FilePage from 'page/file';
 import FirstRunScreen from 'page/firstRun';
+import InvitesPage from 'page/invites';
 import PublishPage from 'page/publish';
 import PublishesPage from 'page/publishes';
 import RewardsPage from 'page/rewards';
@@ -208,6 +209,12 @@ const drawer = createDrawerNavigator(
       screen: RewardsPage,
       navigationOptions: {
         drawerIcon: ({ tintColor }) => <Icon name="award" size={drawerIconSize} style={{ color: tintColor }} />,
+      },
+    },
+    Invites: {
+      screen: InvitesPage,
+      navigationOptions: {
+        drawerIcon: ({ tintColor }) => <Icon name="user-friends" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
     Downloads: {
@@ -530,7 +537,7 @@ class AppWithNavigationState extends React.Component {
         try {
           verification = JSON.parse(atob(evt.url.substring(15)));
         } catch (error) {
-          console.log(error);
+          // console.log(error);
         }
 
         if (verification.token && verification.recaptcha) {

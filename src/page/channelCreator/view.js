@@ -931,7 +931,8 @@ export default class ChannelCreator extends React.PureComponent {
                       source={{ uri: thumbnailUrl }}
                     />
                   )}
-                  {(!!thumbnailUrl || thumbnailUrl.trim().length === 0) && newChannelName.length > 0 && (
+                  {(!!thumbnailUrl || (!!thumbnailUrl && thumbnailUrl.trim().length === 0)) &&
+                    newChannelName.length > 0 && (
                     <Text style={channelIconStyle.autothumbCharacter}>
                       {newChannelName.substring(0, 1).toUpperCase()}
                     </Text>

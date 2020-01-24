@@ -90,6 +90,7 @@ const Constants = {
   DRAWER_ROUTE_TAG: 'Tag',
   DRAWER_ROUTE_CHANNEL_CREATOR: 'ChannelCreator',
   DRAWER_ROUTE_CHANNEL_CREATOR_FORM: 'ChannnelCreatorForm',
+  DRAWER_ROUTE_INVITES: 'Invites',
 
   FULL_ROUTE_NAME_DISCOVER: 'DiscoverStack',
   FULL_ROUTE_NAME_WALLET: 'WalletStack',
@@ -165,6 +166,7 @@ export const DrawerRoutes = [
   Constants.DRAWER_ROUTE_SEARCH,
   Constants.DRAWER_ROUTE_TRANSACTION_HISTORY,
   Constants.DRAWER_ROUTE_CHANNEL_CREATOR,
+  Constants.DRAWER_ROUTE_INVITES,
 ];
 
 // sub-pages for main routes

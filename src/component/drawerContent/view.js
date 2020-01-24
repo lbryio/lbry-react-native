@@ -22,6 +22,7 @@ const groupedMenuItems = {
   Wallet: [
     { icon: 'wallet', label: 'Wallet', route: Constants.DRAWER_ROUTE_WALLET },
     { icon: 'award', label: 'Rewards', route: Constants.DRAWER_ROUTE_REWARDS },
+    { icon: 'user-friends', label: 'Invites', route: Constants.DRAWER_ROUTE_INVITES },
   ],
   Settings: [
     { icon: 'cog', label: 'Settings', route: Constants.DRAWER_ROUTE_SETTINGS },
