@@ -27,7 +27,6 @@ import {
   selectPurchasedUris,
   selectFailedPurchaseUris,
   selectPurchaseUriErrorMessage,
-  selectIsSearching,
 } from 'lbry-redux';
 import {
   doClaimEligiblePurchaseRewards,
@@ -70,7 +69,6 @@ const select = (state, props) => {
     streamingUrl: makeSelectStreamingUrlForUri(contentUri)(state),
     thumbnail: makeSelectThumbnailForUri(contentUri)(state),
     title: makeSelectTitleForUri(contentUri)(state),
-    isSearchingRecommendContent: selectIsSearching(state),
     viewCount: makeSelectViewCountForUri(contentUri)(state),
   };
 };
