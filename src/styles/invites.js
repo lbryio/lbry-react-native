@@ -30,6 +30,16 @@ const walletStyle = StyleSheet.create({
     fontSize: 20,
     marginBottom: 8,
   },
+  titleRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginBottom: 8,
+    justifyContent: 'space-between',
+  },
+  titleCol: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 20,
+  },
   text: {
     fontFamily: 'Inter-Regular',
     fontSize: 14,
@@ -63,13 +73,13 @@ const walletStyle = StyleSheet.create({
   },
   subTitle: {
     fontFamily: 'Inter-Regular',
-    fontSize: 16,
+    fontSize: 14,
     marginTop: 12,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   customizeTitle: {
     fontFamily: 'Inter-Regular',
-    fontSize: 16,
+    fontSize: 14,
     marginTop: 12,
   },
   inviteLink: {
@@ -112,17 +122,12 @@ const walletStyle = StyleSheet.create({
   emailHeader: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    width: '50%',
-  },
-  statusHeader: {
-    fontFamily: 'Inter-SemiBold',
-    fontSize: 14,
-    width: '30%',
+    width: '65%',
   },
   rewardHeader: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
-    width: '20%',
+    width: '35%',
   },
   inviteeItem: {
     flex: 1,
@@ -133,17 +138,12 @@ const walletStyle = StyleSheet.create({
   inviteeEmail: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
-    width: '50%',
-  },
-  inviteStatus: {
-    fontFamily: 'Inter-Regular',
-    fontSize: 12,
-    width: '30%',
+    width: '65%',
   },
   rewardStatus: {
     fontFamily: 'Inter-Regular',
     fontSize: 12,
-    width: '20%',
+    width: '35%',
   },
 });
 

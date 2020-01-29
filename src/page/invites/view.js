@@ -101,18 +101,26 @@ class InvitesPage extends React.PureComponent {
 
     if (prevPending && !isPending) {
       if (errorMessage && errorMessage.trim().length > 0) {
-        notify({ message: __(errorMessage), isError: true });
+        notify({ message: errorMessage, isError: true });
       } else {
-        notify({ message: __(`An invite was successfully sent to ${email}`) });
+        notify({ message: __(`${email} was invited to the LBRY party!`) });
         this.setState({ email: null });
       }
     }
   }
 
+  handleInviteLinkPress = () => {
+    const { notify } = this.props;
+    Clipboard.setString(this.state.inviteLink);
+    notify({
+      message: __('Invite link copied'),
+    });
+  };
+
   render() {
     const { fetchingInvitees, user, navigation, notify, isPending, invitees } = this.props;
     const { email, inviteLink } = this.state;
-    const hasInvitees = !fetchingInvitees && invitees && invitees.length > 0;
+    const hasInvitees = invitees && invitees.length > 0;
 
     return (
       <View style={invitesStyle.container}>
@@ -132,19 +140,10 @@ class InvitesPage extends React.PureComponent {
 
             <Text style={invitesStyle.subTitle}>{__('Your invite link')}</Text>
             <View style={invitesStyle.row}>
-              <Text selectable numberOfLines={1} style={invitesStyle.inviteLink}>
+              <Text selectable numberOfLines={1} style={invitesStyle.inviteLink} onPress={this.handleInviteLinkPress}>
                 {this.state.inviteLink}
               </Text>
-              <Button
-                icon={'clipboard'}
-                style={invitesStyle.button}
-                onPress={() => {
-                  Clipboard.setString(inviteLink);
-                  notify({
-                    message: __('Invite link copied'),
-                  });
-                }}
-              />
+              <Button icon={'clipboard'} style={invitesStyle.button} onPress={this.handleInviteLinkPress} />
             </View>
 
             <Text style={invitesStyle.customizeTitle}>{__('Customize invite link')}</Text>
@@ -166,7 +165,7 @@ class InvitesPage extends React.PureComponent {
               editable={!isPending}
               value={this.state.email}
               onChangeText={this.handleInviteEmailChange}
-              placeholder={__('myfriend@example.com')}
+              placeholder={__('imaginary@friend.com')}
               underlineColorAndroid={Colors.NextLbryGreen}
             />
             <View style={invitesStyle.rightRow}>
@@ -176,14 +175,18 @@ class InvitesPage extends React.PureComponent {
               <Button
                 disabled={!email || email.indexOf('@') === -1 || isPending}
                 style={invitesStyle.button}
-                text={'Invite'}
+                text={__('Invite')}
                 onPress={this.handleInvitePress}
               />
             </View>
           </View>
 
           <View style={[invitesStyle.card, invitesStyle.lastCard]}>
-            <Text style={invitesStyle.title}>{__('Invite History')}</Text>
+            <View style={invitesStyle.titleRow}>
+              <Text style={invitesStyle.titleCol}>{__('Invite History')}</Text>
+              {fetchingInvitees && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
+            </View>
+
             <Text style={invitesStyle.text}>
               {__(
                 'Earn 20 LBC for inviting a friend, an enemy, a frenemy, or an enefriend. Everyone needs content freedom.',
@@ -191,18 +194,13 @@ class InvitesPage extends React.PureComponent {
             </Text>
 
             <View style={invitesStyle.invitees}>
-              {fetchingInvitees && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
-
               {hasInvitees && (
                 <View style={invitesStyle.inviteesHeader}>
                   <Text style={invitesStyle.emailHeader} numberOfLines={1}>
-                    Email
-                  </Text>
-                  <Text style={invitesStyle.statusHeader} numberOfLines={1}>
-                    Status
+                    {__('Email')}
                   </Text>
                   <Text style={invitesStyle.rewardHeader} numberOfLines={1}>
-                    Reward
+                    {__('Reward')}
                   </Text>
                 </View>
               )}
@@ -211,9 +209,6 @@ class InvitesPage extends React.PureComponent {
                   <View key={invitee.email} style={invitesStyle.inviteeItem}>
                     <Text style={invitesStyle.inviteeEmail} numberOfLines={1}>
                       {invitee.email}
-                    </Text>
-                    <Text style={invitesStyle.inviteStatus} numberOfLines={1}>
-                      {invitee.accepted ? __('Accepted') : __('Not Accepted')}
                     </Text>
                     <Text style={invitesStyle.rewardStatus} numberOfLines={1}>
                       {invitee.invite_reward_claimed && __('Claimed')}

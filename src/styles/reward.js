@@ -305,6 +305,23 @@ const rewardStyle = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
   },
+  filterHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+    marginLeft: 16,
+    marginRight: 16,
+    padding: 16,
+    backgroundColor: Colors.White,
+  },
+  filterLink: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+    marginRight: 24,
+  },
+  activeFilterLink: {
+    fontFamily: 'Inter-SemiBold',
+  },
 });
 
 export default rewardStyle;
