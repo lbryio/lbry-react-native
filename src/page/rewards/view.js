@@ -11,6 +11,10 @@ import RewardEnrolment from 'component/rewardEnrolment';
 import UriBar from 'component/uriBar';
 import rewardStyle from 'styles/reward';
 
+const FILTER_ALL = 'all';
+const FILTER_AVAILABLE = 'available';
+const FILTER_CLAIMED = 'claimed';
+
 class RewardsPage extends React.PureComponent {
   state = {
     isEmailVerified: false,
@@ -19,6 +23,7 @@ class RewardsPage extends React.PureComponent {
     verifyRequestStarted: false,
     revealVerification: true,
     firstRewardClaimed: false,
+    currentFilter: FILTER_AVAILABLE,
   };
 
   scrollView = null;
@@ -182,8 +187,13 @@ class RewardsPage extends React.PureComponent {
     });
   };
 
+  setFilter = filter => {
+    this.setState({ currentFilter: filter });
+  };
+
   render() {
     const { user, navigation } = this.props;
+    const { currentFilter } = this.state;
 
     return (
       <View style={rewardStyle.container}>
@@ -197,8 +207,29 @@ class RewardsPage extends React.PureComponent {
             style={rewardStyle.scrollContainer}
             contentContainerStyle={rewardStyle.scrollContentContainer}
           >
-            {this.renderUnclaimedRewards()}
-            {this.renderClaimedRewards()}
+            <View style={rewardStyle.filterHeader}>
+              <Link
+                style={[rewardStyle.filterLink, currentFilter === FILTER_ALL ? rewardStyle.activeFilterLink : null]}
+                text={__('All')}
+                onPress={() => this.setFilter(FILTER_ALL)}
+              />
+              <Link
+                style={[
+                  rewardStyle.filterLink,
+                  currentFilter === FILTER_AVAILABLE ? rewardStyle.activeFilterLink : null,
+                ]}
+                text={__('Available')}
+                onPress={() => this.setFilter(FILTER_AVAILABLE)}
+              />
+              <Link
+                style={[rewardStyle.filterLink, currentFilter === FILTER_CLAIMED ? rewardStyle.activeFilterLink : null]}
+                text={__('Claimed')}
+                onPress={() => this.setFilter(FILTER_CLAIMED)}
+              />
+            </View>
+
+            {(currentFilter === FILTER_AVAILABLE || currentFilter === FILTER_ALL) && this.renderUnclaimedRewards()}
+            {(currentFilter === FILTER_CLAIMED || currentFilter === FILTER_ALL) && this.renderClaimedRewards()}
           </ScrollView>
         )}
       </View>

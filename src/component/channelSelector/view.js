@@ -36,10 +36,14 @@ export default class ChannelSelector extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { channels: prevChannels = [], channelName } = this.props;
-    const { channels = [] } = nextProps;
+    const { channels: prevChannels = [], channelName: prevChannelName } = this.props;
+    const { channels = [], channelName } = nextProps;
 
     if (channels && channels.length !== prevChannels.length && channelName !== this.state.currentSelectedValue) {
+      this.setState({ currentSelectedValue: prevChannelName });
+    }
+
+    if (channelName !== prevChannelName) {
       this.setState({ currentSelectedValue: channelName });
     }
   }
@@ -189,10 +193,11 @@ export default class ChannelSelector extends React.PureComponent {
 
   render() {
     const channel = this.state.addingChannel ? 'new' : this.props.channel;
-    const { balance, enabled, fetchingChannels, channels = [] } = this.props;
-    const pickerItems = [Constants.ITEM_ANONYMOUS, Constants.ITEM_CREATE_A_CHANNEL].concat(
-      channels ? channels.map(ch => ch.name) : [],
-    );
+    const { balance, enabled, fetchingChannels, channels = [], showAnonymous } = this.props;
+    const pickerItems = (showAnonymous
+      ? [Constants.ITEM_ANONYMOUS, Constants.ITEM_CREATE_A_CHANNEL]
+      : [Constants.ITEM_CREATE_A_CHANNEL]
+    ).concat(channels ? channels.map(ch => ch.name) : []);
 
     const {
       newChannelName,
