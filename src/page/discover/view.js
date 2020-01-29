@@ -291,25 +291,27 @@ class DiscoverPage extends React.PureComponent {
   );
 
   render() {
-    const { navigation, sortByItem, timeItem } = this.props;
+    const { currentRoute, navigation, sortByItem, timeItem } = this.props;
     const { orderBy, showModalTagSelector, showSortPicker, showTimePicker } = this.state;
 
     return (
       <View style={discoverStyle.container}>
         <UriBar navigation={navigation} belowOverlay={showModalTagSelector} />
-        <SectionList
-          ListHeaderComponent={this.sectionListHeader}
-          ListFooterComponent={this.sectionListFooter}
-          style={discoverStyle.scrollContainer}
-          contentContainerStyle={discoverStyle.scrollPadding}
-          initialNumToRender={4}
-          maxToRenderPerBatch={4}
-          removeClippedSubviews
-          renderItem={this.renderSectionListItem}
-          renderSectionHeader={this.renderSectionHeader}
-          sections={this.buildSections()}
-          keyExtractor={(item, index) => item}
-        />
+        {currentRoute !== Constants.ROUTE_FILE && currentRoute !== Constants.DRAWER_ROUTE_FILE_VIEW && (
+          <SectionList
+            ListHeaderComponent={this.sectionListHeader}
+            ListFooterComponent={this.sectionListFooter}
+            style={discoverStyle.scrollContainer}
+            contentContainerStyle={discoverStyle.scrollPadding}
+            initialNumToRender={4}
+            maxToRenderPerBatch={4}
+            removeClippedSubviews
+            renderItem={this.renderSectionListItem}
+            renderSectionHeader={this.renderSectionHeader}
+            sections={this.buildSections()}
+            keyExtractor={(item, index) => item}
+          />
+        )}
         {!showModalTagSelector && !showSortPicker && !showTimePicker && (
           <FloatingWalletBalance navigation={navigation} />
         )}

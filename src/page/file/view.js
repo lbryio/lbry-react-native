@@ -238,10 +238,42 @@ class FilePage extends React.PureComponent {
     const { fileInfo: prevFileInfo } = this.props;
     const { fileInfo } = nextProps;
 
-    return (
-      Object.keys(this.difference(nextProps, this.props)).length > 0 ||
-      Object.keys(this.difference(nextState, this.state)).length > 0
-    );
+    const propKeyTriggers = ['balance', 'viewCount', 'isResolvingUri'];
+    const stateKeyTriggers = [
+      'downloadPressed',
+      'fullscreenMode',
+      'mediaLoaded',
+      'playerBgHeighht',
+      'playerHeight',
+      'relatedY',
+      'showTipView',
+      'showImageViewer',
+      'showWebView',
+      'showDescription',
+      'showRecommended',
+      'uri',
+    ];
+    for (let i = 0; i < propKeyTriggers.length; i++) {
+      const key = propKeyTriggers[i];
+      if (this.props[key] !== nextProps[key]) {
+        return true;
+      }
+    }
+    for (let i = 0; i < stateKeyTriggers.length; i++) {
+      const key = stateKeyTriggers[i];
+      if (this.state[key] !== nextState[key]) {
+        return true;
+      }
+    }
+
+    if (!prevFileInfo && fileInfo) {
+      return true;
+    }
+    if (prevFileInfo && fileInfo && Object.keys(this.difference(fileInfo, prevFileInfo)).length > 0) {
+      return true;
+    }
+
+    return false;
   }
 
   componentDidUpdate(prevProps, prevState) {
