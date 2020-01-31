@@ -106,7 +106,7 @@ class MediaPlayer extends React.PureComponent {
     const { savePosition, claim } = this.props;
 
     this.setState({ buffering: false, currentTime: data.currentTime });
-    if (data.currentTime > 0 && Math.floor(data.currentTime) % positionSaveInterval === 0) {
+    if (claim && data.currentTime > 0 && Math.floor(data.currentTime) % positionSaveInterval === 0) {
       const { claim_id: claimId, txid, nout } = claim;
       savePosition(claimId, `${txid}:${nout}`, data.currentTime);
     }

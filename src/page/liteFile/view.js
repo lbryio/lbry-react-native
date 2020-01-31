@@ -59,12 +59,11 @@ class LiteFilePage extends React.PureComponent {
           onLayout={this.checkOrientation}
         >
           <MediaPlayer
-            claim={claim}
             assignPlayer={ref => {
               this.player = ref;
             }}
             uri={uri}
-            source={this.playerUriForFileInfo(fileInfo)}
+            source={this.getStreamUrl(uri)}
             style={playerStyle}
             autoPlay
             onFullscreenToggled={this.handleFullscreenToggle}
@@ -73,12 +72,6 @@ class LiteFilePage extends React.PureComponent {
                 this.setState({ playerHeight: evt.nativeEvent.layout.height });
               }
             }}
-            onMediaLoaded={() => this.onMediaLoaded(channelName, title, uri)}
-            onBackButtonPressed={this.onBackButtonPressed}
-            onPlaybackStarted={this.onPlaybackStarted}
-            onPlaybackFinished={this.onPlaybackFinished}
-            thumbnail={thumbnail}
-            position={position}
           />
         </View>
       </View>

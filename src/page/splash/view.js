@@ -34,12 +34,28 @@ class SplashScreen extends React.PureComponent {
     headersDownloadProgress: 0,
     shouldAuthenticate: false,
     subscriptionsFetched: false,
+    liteMode: false,
   };
 
   updateStatus() {
-    Lbry.status().then(status => {
-      this._updateStatusCallback(status);
-    });
+    const { authenticate } = this.props;
+
+    if (this.state.liteMode) {
+      // authenticate immediately
+      NativeModules.VersionInfo.getAppVersion().then(appVersion => {
+        this.setState({ shouldAuthenticate: true });
+        NativeModules.Firebase.getMessagingToken()
+          .then(firebaseToken => {
+            console.log(firebaseToken);
+            authenticate(appVersion, Platform.OS, firebaseToken);
+          })
+          .catch(() => authenticate(appVersion, Platform.OS));
+      });
+    } else {
+      Lbry.status().then(status => {
+        this._updateStatusCallback(status);
+      });
+    }
   }
 
   navigateToMain = () => {
@@ -71,10 +87,12 @@ class SplashScreen extends React.PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { emailToVerify, getSync, setEmailToVerify, verifyUserEmail, verifyUserEmailFailure } = this.props;
-    const { daemonReady, shouldAuthenticate } = this.state;
+    const { daemonReady, shouldAuthenticate, liteMode } = this.state;
     const { user } = nextProps;
 
-    if (daemonReady && shouldAuthenticate && user && user.id) {
+    if (liteMode && user && user.id) {
+      this.navigateToLiteMode();
+    } else if (daemonReady && shouldAuthenticate && user && user.id) {
       this.setState({ shouldAuthenticate: false }, () => {
         // user is authenticated, navigate to the main view
         if (user.has_verified_email) {
@@ -91,6 +109,14 @@ class SplashScreen extends React.PureComponent {
       });
     }
   }
+
+  navigateToLiteMode = () => {
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'LiteFile', params: { url: this.state.launchUrl } })],
+    });
+    navigation.dispatch(resetAction);
+  };
 
   getUserSettings = () => {
     const { populateSharedUserState } = this.props;
@@ -142,6 +168,7 @@ class SplashScreen extends React.PureComponent {
         this.setState({ shouldAuthenticate: true });
         NativeModules.Firebase.getMessagingToken()
           .then(firebaseToken => {
+            console.log(firebaseToken);
             authenticate(appVersion, Platform.OS, firebaseToken);
           })
           .catch(() => authenticate(appVersion, Platform.OS));
@@ -265,7 +292,9 @@ class SplashScreen extends React.PureComponent {
 
       NativeModules.UtilityModule.getNotificationLaunchTarget().then(target => {
         if (target) {
-          this.setState({ launchUrl: target });
+          const liteMode = target.indexOf('liteMode=1') > -1;
+          android.util.Log.d('setting liteMode=' + liteModoe);
+          this.setState({ launchUrl: target, liteMode });
         }
 
         // Only connect after checking initial launch url / notification launch target
