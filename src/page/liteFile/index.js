@@ -1,14 +1,10 @@
 import { connect } from 'react-redux';
-import {
-  makeSelectContentPositionForUri,
-  selectBalance,
-  from 'lbry-redux';
-import {
-  doClaimEligiblePurchaseRewards,
-  makeSelectViewCountForUri,
-} from 'lbryinc';
+import { makeSelectContentPositionForUri, selectBalance } from 'lbry-redux';
+import { doClaimEligiblePurchaseRewards, makeSelectViewCountForUri } from 'lbryinc';
+import { doSetPlayerVisible } from 'redux/actions/drawer';
+import { makeSelectPlayerVisible } from 'redux/selectors/drawer';
 import { doToggleFullscreenMode } from 'redux/actions/settings';
-import FilePage from './view';
+import LiteFilePage from './view';
 
 const select = (state, props) => {
   const { uri, fullUri } = props.navigation.state.params;

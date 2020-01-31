@@ -19,6 +19,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import UriBar from 'component/uriBar';
 import MediaPlayer from 'component/mediaPlayer';
 import filePageStyle from 'styles/filePage';
 import uriBarStyle from 'styles/uriBar';
@@ -34,12 +35,63 @@ class LiteFilePage extends React.PureComponent {
   state = {
     fullscreenMode: false,
     playerHeight: null,
+    isLandscape: false,
   };
 
-  getStreamUrl = uri => {};
+  checkOrientation = () => {
+    if (this.state.fullscreenMode) {
+      return;
+    }
+
+    const screenDimension = Dimensions.get('window');
+    const screenWidth = screenDimension.width;
+    const screenHeight = screenDimension.height;
+    const isLandscape = screenWidth > screenHeight;
+    this.setState({ isLandscape });
+
+    if (!this.playerBackground) {
+      return;
+    }
+
+    if (isLandscape) {
+      this.playerBackground.setNativeProps({
+        height: screenHeight - StyleSheet.flatten(uriBarStyle.uriContainer).height,
+      });
+    } else if (this.state.playerBgHeight > 0) {
+      this.playerBackground.setNativeProps({ height: this.state.playerBgHeight });
+    }
+  };
+
+  handleFullscreenToggle = isFullscreen => {
+    const { toggleFullscreenMode } = this.props;
+    toggleFullscreenMode(isFullscreen);
+
+    if (isFullscreen) {
+      // fullscreen, so change orientation to landscape mode
+      NativeModules.ScreenOrientation.lockOrientationLandscape();
+
+      // hide the navigation bar (on devices that have the soft navigation bar)
+      NativeModules.UtilityModule.hideNavigationBar();
+    } else {
+      // Switch back to portrait mode when the media is not fullscreen
+      NativeModules.ScreenOrientation.lockOrientationPortrait();
+
+      // show the navigation bar (on devices that have the soft navigation bar)
+      NativeModules.UtilityModule.showNavigationBar();
+    }
+
+    this.setState({ fullscreenMode: isFullscreen });
+    StatusBar.setHidden(isFullscreen);
+  };
+
+  getStreamUrl = uri => {
+    const { claimName, claimId } = parseURI(uri);
+    return `https://player.lbry.tv/content/claims/${claimName}/${claimId}/stream`;
+  };
 
   render() {
-    const { contentUri } = this.props;
+    const { navigation } = this.props;
+    const { uri } = navigation.state.params;
 
     const playerStyle = [
       filePageStyle.player,

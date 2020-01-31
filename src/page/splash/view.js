@@ -46,7 +46,6 @@ class SplashScreen extends React.PureComponent {
         this.setState({ shouldAuthenticate: true });
         NativeModules.Firebase.getMessagingToken()
           .then(firebaseToken => {
-            console.log(firebaseToken);
             authenticate(appVersion, Platform.OS, firebaseToken);
           })
           .catch(() => authenticate(appVersion, Platform.OS));
@@ -111,9 +110,10 @@ class SplashScreen extends React.PureComponent {
   }
 
   navigateToLiteMode = () => {
+    const { navigation } = this.props;
     const resetAction = StackActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'LiteFile', params: { url: this.state.launchUrl } })],
+      actions: [NavigationActions.navigate({ routeName: 'LiteFile', params: { uri: this.state.launchUrl } })],
     });
     navigation.dispatch(resetAction);
   };
@@ -168,7 +168,6 @@ class SplashScreen extends React.PureComponent {
         this.setState({ shouldAuthenticate: true });
         NativeModules.Firebase.getMessagingToken()
           .then(firebaseToken => {
-            console.log(firebaseToken);
             authenticate(appVersion, Platform.OS, firebaseToken);
           })
           .catch(() => authenticate(appVersion, Platform.OS));
@@ -287,13 +286,13 @@ class SplashScreen extends React.PureComponent {
     this.props.fetchRewardedContent();
     Linking.getInitialURL().then(url => {
       if (url) {
-        this.setState({ launchUrl: url });
+        const liteMode = url.indexOf('liteMode=1') > -1;
+        this.setState({ launchUrl: url, liteMode });
       }
 
       NativeModules.UtilityModule.getNotificationLaunchTarget().then(target => {
         if (target) {
           const liteMode = target.indexOf('liteMode=1') > -1;
-          android.util.Log.d('setting liteMode=' + liteModoe);
           this.setState({ launchUrl: target, liteMode });
         }
 
