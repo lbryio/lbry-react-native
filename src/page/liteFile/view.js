@@ -25,7 +25,6 @@ import uriBarStyle from 'styles/uriBar';
 
 // This page will only be used for playing audio / video content from a remote stream URL
 class LiteFilePage extends React.PureComponent {
-
   playerBackground = null;
 
   scrollView = null;
@@ -35,11 +34,9 @@ class LiteFilePage extends React.PureComponent {
   state = {
     fullscreenMode: false,
     playerHeight: null,
-  }
+  };
 
-  getStreamUrl = (uri) => {
-
-  }
+  getStreamUrl = uri => {};
 
   render() {
     const { contentUri } = this.props;
@@ -58,33 +55,31 @@ class LiteFilePage extends React.PureComponent {
         {!this.state.fullscreenMode && <UriBar value={uri} navigation={navigation} />}
 
         <View
-            style={
-              this.state.fullscreenMode ? filePageStyle.innerPageContainerFsMode : filePageStyle.innerPageContainer
-            }
-            onLayout={this.checkOrientation}
-          >
+          style={this.state.fullscreenMode ? filePageStyle.innerPageContainerFsMode : filePageStyle.innerPageContainer}
+          onLayout={this.checkOrientation}
+        >
           <MediaPlayer
-              claim={claim}
-              assignPlayer={ref => {
-                this.player = ref;
-              }}
-              uri={uri}
-              source={this.playerUriForFileInfo(fileInfo)}
-              style={playerStyle}
-              autoPlay
-              onFullscreenToggled={this.handleFullscreenToggle}
-              onLayout={evt => {
-                if (!this.state.playerHeight) {
-                  this.setState({ playerHeight: evt.nativeEvent.layout.height });
-                }
-              }}
-              onMediaLoaded={() => this.onMediaLoaded(channelName, title, uri)}
-              onBackButtonPressed={this.onBackButtonPressed}
-              onPlaybackStarted={this.onPlaybackStarted}
-              onPlaybackFinished={this.onPlaybackFinished}
-              thumbnail={thumbnail}
-              position={position}
-            />
+            claim={claim}
+            assignPlayer={ref => {
+              this.player = ref;
+            }}
+            uri={uri}
+            source={this.playerUriForFileInfo(fileInfo)}
+            style={playerStyle}
+            autoPlay
+            onFullscreenToggled={this.handleFullscreenToggle}
+            onLayout={evt => {
+              if (!this.state.playerHeight) {
+                this.setState({ playerHeight: evt.nativeEvent.layout.height });
+              }
+            }}
+            onMediaLoaded={() => this.onMediaLoaded(channelName, title, uri)}
+            onBackButtonPressed={this.onBackButtonPressed}
+            onPlaybackStarted={this.onPlaybackStarted}
+            onPlaybackFinished={this.onPlaybackFinished}
+            thumbnail={thumbnail}
+            position={position}
+          />
         </View>
       </View>
     );
