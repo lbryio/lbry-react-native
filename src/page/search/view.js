@@ -52,9 +52,9 @@ class SearchPage extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const { pushDrawerStack, setPlayerVisible, query, search } = this.props;
-    pushDrawerStack();
+    const { pushDrawerStack, setPlayerVisible, navigation, query, search } = this.props;
     setPlayerVisible();
+    pushDrawerStack(Constants.DRAWER_ROUTE_SEARCH, navigation.state.params ? navigation.state.params : null);
     NativeModules.Firebase.setCurrentScreen('Search').then(result => {
       const searchQuery = query || this.getSearchQuery();
       if (searchQuery && searchQuery.trim().length > 0) {
@@ -221,32 +221,31 @@ class SearchPage extends React.PureComponent {
           </View>
         )}
 
-        {(!isSearching || this.state.currentFrom > 0) && (
-          <FlatList
-            extraData={this.state}
-            style={searchStyle.scrollContainer}
-            contentContainerStyle={searchStyle.scrollPadding}
-            keyboardShouldPersistTaps={'handled'}
-            data={results}
-            keyExtractor={(item, index) => item.claimId}
-            initialNumToRender={10}
-            maxToRenderPerBatch={20}
-            onEndReached={this.handleVerticalEndReached}
-            onEndReachedThreshold={0.2}
-            removeClippedSubviews
-            ListEmptyComponent={!isSearching ? this.listEmptyComponent() : null}
-            ListHeaderComponent={this.listHeaderComponent(this.state.showTagResult, this.state.currentQuery)}
-            renderItem={({ item }) => (
-              <ClaimResultItem
-                key={item.claimId}
-                uri={item ? normalizeURI(`${item.name}#${item.claimId}`) : null}
-                result={item}
-                style={searchStyle.resultItem}
-                navigation={navigation}
-              />
-            )}
-          />
-        )}
+        <FlatList
+          extraData={this.state}
+          style={searchStyle.scrollContainer}
+          contentContainerStyle={searchStyle.scrollPadding}
+          keyboardShouldPersistTaps={'handled'}
+          data={results}
+          keyExtractor={(item, index) => item.claimId}
+          initialNumToRender={10}
+          maxToRenderPerBatch={20}
+          onEndReached={this.handleVerticalEndReached}
+          onEndReachedThreshold={0.2}
+          removeClippedSubviews
+          ListEmptyComponent={!isSearching ? this.listEmptyComponent() : null}
+          ListHeaderComponent={this.listHeaderComponent(this.state.showTagResult, this.state.currentQuery)}
+          renderItem={({ item }) => (
+            <ClaimResultItem
+              key={item.claimId}
+              uri={item ? normalizeURI(`${item.name}#${item.claimId}`) : null}
+              result={item}
+              style={searchStyle.resultItem}
+              navigation={navigation}
+            />
+          )}
+        />
+
         {this.state.currentFrom > 0 && isSearching && (
           <View style={searchStyle.moreLoading}>
             <ActivityIndicator size="small" color={Colors.NextLbryGreen} />

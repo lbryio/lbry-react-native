@@ -35,7 +35,7 @@ const perform = dispatch => ({
   search: (query, from) => dispatch(doResolvedSearch(query, Constants.DEFAULT_PAGE_SIZE, from, false, {})),
   claimSearch: options => dispatch(doClaimSearch(options)),
   updateSearchQuery: query => dispatch(doUpdateSearchQuery(query)),
-  pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_SEARCH)),
+  pushDrawerStack: (routeName, params) => dispatch(doPushDrawerStack(routeName, params)),
   resolveUris: uris => dispatch(doResolveUris(uris)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
 });
