@@ -5,6 +5,7 @@ import DiscoverPage from 'page/discover';
 import DownloadsPage from 'page/downloads';
 import DrawerContent from 'component/drawerContent';
 import FilePage from 'page/file';
+import LiteFilePage from 'page/liteFile';
 import FirstRunScreen from 'page/firstRun';
 import InvitesPage from 'page/invites';
 import PublishPage from 'page/publish';
@@ -273,6 +274,12 @@ const mainStackNavigator = new createStackNavigator(
     },
     Verification: {
       screen: VerificationScreen,
+      navigationOptions: {
+        drawerLockMode: 'locked-closed',
+      },
+    },
+    LiteFile: {
+      screen: LiteFilePage,
       navigationOptions: {
         drawerLockMode: 'locked-closed',
       },
