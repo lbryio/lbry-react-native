@@ -52,7 +52,7 @@ class SearchPage extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const { pushDrawerStack, setPlayerVisible, navigation, query, search } = this.props;
+    const { pushDrawerStack, setPlayerVisible, navigation, query, search, showNsfwContent } = this.props;
     setPlayerVisible();
     pushDrawerStack(Constants.DRAWER_ROUTE_SEARCH, navigation.state.params ? navigation.state.params : null);
     NativeModules.Firebase.setCurrentScreen('Search').then(result => {
@@ -68,7 +68,7 @@ class SearchPage extends React.PureComponent {
           resultsResolved: false,
           tagResultDisplayed: false,
         });
-        search(searchQuery, 0);
+        search(searchQuery, 0, showNsfwContent);
       }
     });
   };
@@ -79,7 +79,7 @@ class SearchPage extends React.PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { currentRoute, query, isSearching } = nextProps;
-    const { currentRoute: prevRoute, search, isSearching: prevIsSearching } = this.props;
+    const { currentRoute: prevRoute, search, isSearching: prevIsSearching, showNsfwContent } = this.props;
 
     if (Constants.DRAWER_ROUTE_SEARCH === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
@@ -93,7 +93,7 @@ class SearchPage extends React.PureComponent {
         resultsResolved: false,
         tagResultDisplayed: false,
       });
-      search(query, 0);
+      search(query, 0, showNsfwContent);
     }
   }
 
@@ -136,7 +136,7 @@ class SearchPage extends React.PureComponent {
   }
 
   handleSearchSubmitted = keywords => {
-    const { search } = this.props;
+    const { search, showNsfwContent } = this.props;
     this.setState({
       currentUri: isURIValid(keywords) ? normalizeURI(keywords) : null,
       currentFrom: 0,
@@ -147,7 +147,7 @@ class SearchPage extends React.PureComponent {
       resultsResolved: false,
       tagResultDisplayed: false,
     });
-    search(keywords, 0);
+    search(keywords, 0, showNsfwContent);
   };
 
   listEmptyComponent = () => {
@@ -195,7 +195,7 @@ class SearchPage extends React.PureComponent {
 
   handleVerticalEndReached = () => {
     // fetch more results
-    const { lastPageReached, results, search, isSearching } = this.props;
+    const { lastPageReached, results, search, showNsfwContent, isSearching } = this.props;
     if (lastPageReached || (results && results.length > softLimit)) {
       return;
     }
@@ -203,7 +203,7 @@ class SearchPage extends React.PureComponent {
     if (!isSearching) {
       const from = results ? results.length : 0;
       this.setState({ currentFrom: from }, () => {
-        search(this.state.currentQuery, from);
+        search(this.state.currentQuery, from, showNsfwContent);
       });
     }
   };

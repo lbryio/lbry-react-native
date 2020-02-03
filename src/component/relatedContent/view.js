@@ -10,9 +10,9 @@ import relatedContentStyle from 'styles/relatedContent';
 
 export default class RelatedContent extends React.PureComponent {
   componentDidMount() {
-    const { title, claimId, searchRecommended } = this.props;
+    const { title, claimId, searchRecommended, showNsfwContent } = this.props;
     if (title && claimId) {
-      searchRecommended(title, claimId);
+      searchRecommended(title, claimId, showNsfwContent);
     }
   }
 
