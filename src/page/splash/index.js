@@ -10,6 +10,7 @@ import {
   doUserEmailToVerify,
   doUserEmailVerify,
   doUserEmailVerifyFailure,
+  selectAuthenticationIsPending,
   selectUser,
   selectEmailToVerify,
 } from 'lbryinc';
@@ -18,6 +19,7 @@ import { selectLastRouteInStack } from 'redux/selectors/drawer';
 import SplashScreen from './view';
 
 const select = state => ({
+  authIsPending: selectAuthenticationIsPending(state),
   user: selectUser(state),
   emailToVerify: selectEmailToVerify(state),
   lastRouteInStack: selectLastRouteInStack(state),
