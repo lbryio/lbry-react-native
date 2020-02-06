@@ -152,9 +152,9 @@ export default class ChannelCreator extends React.PureComponent {
       // navigated back from the form
       this.setState({ currentPhase: Constants.PHASE_LIST });
       if (!this.state.hasReturnedBack && this.state.returnUrl) {
-        this.setState({ hasReturnedBack: true }, () =>
-          navigateBack(navigation, drawerStack, popDrawerStack, setPlayerVisible),
-        );
+        this.setState({ hasReturnedBack: true }, () => {
+          navigateBack(navigation, drawerStack, popDrawerStack, setPlayerVisible);
+        });
       }
     }
   }

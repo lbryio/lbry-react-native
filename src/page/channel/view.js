@@ -176,6 +176,7 @@ class ChannelPage extends React.PureComponent {
         params: { editChannelUrl: permanentUrl, returnUrl: permanentUrl },
       });
     }
+    this.onEditPressed = null;
   };
 
   onTipPressed = () => {
