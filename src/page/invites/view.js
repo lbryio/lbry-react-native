@@ -21,7 +21,7 @@ import RewardCard from 'component/rewardCard';
 import RewardEnrolment from 'component/rewardEnrolment';
 import UriBar from 'component/uriBar';
 import invitesStyle from 'styles/invites';
-import { logPublish } from 'utils/helper';
+import { fetchReferralCode, logPublish } from 'utils/helper';
 
 class InvitesPage extends React.PureComponent {
   state = {
@@ -48,7 +48,19 @@ class InvitesPage extends React.PureComponent {
     pushDrawerStack();
     setPlayerVisible();
     NativeModules.Firebase.setCurrentScreen('Invites').then(result => {
-      fetchChannelListMine();
+      fetchReferralCode(
+        response => {
+          if (response && response.length > 0) {
+            // only need to use the first referral code.
+            // inviteLink will be updated after channels are loaded (if the user has created at least one channel)
+            this.setState({ inviteLink: `https://lbry.tv/$/invite/${response[0]}` });
+          }
+          fetchChannelListMine();
+        },
+        error => {
+          fetchChannelListMine();
+        },
+      );
       fetchInviteStatus();
     });
   };

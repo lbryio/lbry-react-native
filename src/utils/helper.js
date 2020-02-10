@@ -400,3 +400,17 @@ export function formatTitle(title) {
 
   return title.length > 80 ? title.substring(0, 77).trim() + '...' : title;
 }
+
+export function fetchReferralCode(successCallback, errorCallback) {
+  Lbryio.call('user_referral_code', 'list')
+    .then(response => {
+      if (successCallback) {
+        successCallback(response);
+      }
+    })
+    .catch(err => {
+      if (errorCallback) {
+        errorCallback(err);
+      }
+    });
+}
