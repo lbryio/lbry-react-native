@@ -68,7 +68,8 @@ class InvitesPage extends React.PureComponent {
   };
 
   getLinkForChannel = channel => {
-    const { claimId, claimName } = parseURI(channel.permanent_url);
+    const parsedUrl = channel.canonical_url ? parseURI(channel.canonical_url) : parseURI(channel.permanent_url);
+    const { claimId, claimName } = parsedUrl;
     return `https://lbry.tv/$/invite/${claimName}:${claimId}`;
   };
 

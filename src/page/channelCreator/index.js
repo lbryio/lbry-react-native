@@ -37,7 +37,7 @@ const perform = dispatch => ({
   notify: data => dispatch(doToast(data)),
   clearChannelFormState: () => dispatch(doClearChannelFormState()),
   createChannel: (name, amount, optionalParams) => dispatch(doCreateChannel(name, amount, optionalParams)),
-  fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
+  fetchChannelListMine: () => dispatch(doFetchChannelListMine(1, 99999, true)),
   getSync: (password, callback) => dispatch(doGetSync(password, callback)),
   updateChannel: params => dispatch(doUpdateChannel(params)),
   updateChannelFormState: data => dispatch(doUpdateChannelFormState(data)),
@@ -48,5 +48,5 @@ const perform = dispatch => ({
 
 export default connect(
   select,
-  perform
+  perform,
 )(ChannelCreator);

@@ -9,10 +9,10 @@ const select = state => ({
 });
 
 const perform = dispatch => ({
-  fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
+  fetchChannelListMine: () => dispatch(doFetchChannelListMine(1, 99999, true)),
 });
 
 export default connect(
   select,
-  perform
+  perform,
 )(DrawerContent);
