@@ -21,6 +21,7 @@ import RewardCard from 'component/rewardCard';
 import RewardEnrolment from 'component/rewardEnrolment';
 import UriBar from 'component/uriBar';
 import invitesStyle from 'styles/invites';
+import { logPublish } from 'utils/helper';
 
 class InvitesPage extends React.PureComponent {
   state = {
@@ -62,6 +63,7 @@ class InvitesPage extends React.PureComponent {
       const filtered = channels.filter(c => c.name === channelName);
       if (filtered.length > 0) {
         const channel = filtered[0];
+        logPublish(channel);
         this.setState({ channelName, inviteLink: this.getLinkForChannel(channel) });
       }
     }
@@ -96,6 +98,7 @@ class InvitesPage extends React.PureComponent {
 
     if (!this.state.channelName && channels && channels.length > 0) {
       const firstChannel = channels[0];
+      logPublish(firstChannel);
       this.setState({ channelName: firstChannel.name, inviteLink: this.getLinkForChannel(firstChannel) });
     }
 
