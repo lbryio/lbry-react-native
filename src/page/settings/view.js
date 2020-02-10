@@ -140,6 +140,7 @@ class SettingsPage extends React.PureComponent {
   render() {
     const {
       backgroundPlayEnabled,
+      enableDht,
       keepDaemonRunning,
       receiveSubscriptionNotifications,
       receiveRewardNotifications,
@@ -157,6 +158,7 @@ class SettingsPage extends React.PureComponent {
     const actualReceiveRewardNotifications = this.getBooleanSetting(receiveRewardNotifications, true);
     const actualReceiveInterestsNotifications = this.getBooleanSetting(receiveInterestsNotifications, true);
     const actualReceiveCreatorNotifications = this.getBooleanSetting(receiveCreatorNotifications, true);
+    const actualEnableDht = this.getBooleanSetting(enableDht, true);
 
     return (
       <View style={settingsStyle.container}>
@@ -294,7 +296,7 @@ class SettingsPage extends React.PureComponent {
               </Text>
               <Text style={settingsStyle.description}>
                 {__(
-                  'Enable this option for quicker app launch and to keep the synchronisation with the blockchain up to date.'
+                  'Enable this option for quicker app launch and to keep the synchronisation with the blockchain up to date.',
                 )}
               </Text>
             </View>
@@ -306,6 +308,23 @@ class SettingsPage extends React.PureComponent {
                   if (NativeModules.DaemonServiceControl) {
                     NativeModules.DaemonServiceControl.setKeepDaemonRunning(value);
                   }
+                }}
+              />
+            </View>
+          </View>
+
+          <View style={settingsStyle.row}>
+            <View style={settingsStyle.switchText}>
+              <Text style={settingsStyle.label}>{__('Enable DHT')}</Text>
+              <Text style={settingsStyle.description}>
+                {__('Participate in the data network (requires app and service restart)')}
+              </Text>
+            </View>
+            <View style={settingsStyle.switchContainer}>
+              <Switch
+                value={actualKeepDaemonRunning}
+                onValueChange={value => {
+                  this.setNativeBooleanSetting(SETTINGS.SETTING_DHT_ENABLED, value);
                 }}
               />
             </View>

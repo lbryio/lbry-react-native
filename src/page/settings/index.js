@@ -11,6 +11,7 @@ const select = state => ({
   backgroundPlayEnabled: makeSelectClientSetting(SETTINGS.BACKGROUND_PLAY_ENABLED)(state),
   currentRoute: selectCurrentRoute(state),
   drawerStack: selectDrawerStack(state),
+  enableDht: makeSelectClientSetting(SETTINGS.SETTING_DHT_ENABLED)(state),
   keepDaemonRunning: makeSelectClientSetting(SETTINGS.KEEP_DAEMON_RUNNING)(state),
   language: makeSelectClientSetting(SETTINGS.LANGUAGE)(state),
   showNsfw: makeSelectClientSetting(SETTINGS.SHOW_NSFW)(state),
@@ -31,5 +32,5 @@ const perform = dispatch => ({
 
 export default connect(
   select,
-  perform
+  perform,
 )(SettingsPage);
