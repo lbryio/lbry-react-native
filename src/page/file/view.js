@@ -610,7 +610,7 @@ class FilePage extends React.PureComponent {
     let timeToStartMillis, timeToStart;
     if (this.startTime) {
       timeToStartMillis = Date.now() - this.startTime;
-      timeToStart = Math.ceil(timeToStartMillis / 1000);
+      timeToStart = Math.ceil(timeToStartMillis / 1000.0);
       this.startTime = null;
     }
 
@@ -702,19 +702,24 @@ class FilePage extends React.PureComponent {
         [
           {
             text: __('OK'),
-            onPress: () => purchaseUri(uri, costInfo, download),
+            onPress: () => {
+              this.startTime = Date.now();
+              purchaseUri(uri, costInfo, download);
+            },
           },
           { text: __('Cancel') },
         ],
       );
     } else {
       // Free content. Just call purchaseUri directly.
+      this.startTime = Date.now();
       purchaseUri(uri, costInfo, download);
     }
   };
 
   onFileDownloadButtonPressed = () => {
-    const { claim, costInfo, contentType, purchaseUri, setPlayerVisible } = this.props;
+    this.startTime = Date.now();
+    const { claim, costInfo, contentType, setPlayerVisible } = this.props;
     const mediaType = Lbry.getMediaType(contentType);
     const isPlayable = mediaType === 'video' || mediaType === 'audio';
     const isViewable = mediaType === 'image' || mediaType === 'text';
@@ -729,7 +734,6 @@ class FilePage extends React.PureComponent {
     }
 
     if (isPlayable) {
-      this.startTime = Date.now();
       this.setState({ downloadPressed: true, autoPlayMedia: true, stopDownloadConfirmed: false });
     }
     if (isViewable) {
