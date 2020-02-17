@@ -170,6 +170,7 @@ export function navigateBack(navigation, drawerStack, popDrawerStack, setPlayerV
   if (popDrawerStack) {
     popDrawerStack();
   }
+
   if (setPlayerVisible) {
     setPlayerVisible(false);
   }
@@ -177,6 +178,7 @@ export function navigateBack(navigation, drawerStack, popDrawerStack, setPlayerV
   const target = drawerStack[drawerStack.length > 1 ? drawerStack.length - 2 : 0];
   const { route, params } = target;
   navigation.goBack(navigation.state.key);
+
   if (!DrawerRoutes.includes(route) && !InnerDrawerRoutes.includes(route) && isURIValid(route)) {
     navigateToUri(navigation, route, null, true, null, setPlayerVisible);
   } else {
@@ -186,7 +188,7 @@ export function navigateBack(navigation, drawerStack, popDrawerStack, setPlayerV
       if (Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM === route) {
         targetRoute = Constants.DRAWER_ROUTE_CHANNEL_CREATOR;
       } else if (Constants.DRAWER_ROUTE_PUBLISH_FORM === route) {
-        targetRoute = Constants.DRAWER_ROUTE_PUBLISH_FORM;
+        targetRoute = Constants.DRAWER_ROUTE_PUBLISH;
       }
 
       if (targetParams) {
@@ -201,8 +203,15 @@ export function navigateBack(navigation, drawerStack, popDrawerStack, setPlayerV
 }
 
 export function dispatchNavigateBack(dispatch, nav, drawerStack) {
-  if (drawerStack[drawerStack.length - 1].route === Constants.DRAWER_ROUTE_FILE_VIEW) {
-    // inner file_view (web / image view) is handled differently
+  const currentRoute = drawerStack[drawerStack.length - 1].route;
+  if (
+    [
+      Constants.DRAWER_ROUTE_FILE_VIEW,
+      Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM,
+      Constants.DRAWER_ROUTE_PUBLISH_FORM,
+    ].includes(currentRoute)
+  ) {
+    // inner routes are handled a little differently
     dispatch(doPopDrawerStack());
     return;
   }
@@ -223,7 +232,7 @@ export function dispatchNavigateBack(dispatch, nav, drawerStack) {
       if (Constants.DRAWER_ROUTE_CHANNEL_CREATOR_FORM === route) {
         targetRoute = Constants.DRAWER_ROUTE_CHANNEL_CREATOR;
       } else if (Constants.DRAWER_ROUTE_PUBLISH_FORM === route) {
-        targetRoute = Constants.DRAWER_ROUTE_PUBLISH_FORM;
+        targetRoute = Constants.DRAWER_ROUTE_PUBLISH;
       }
 
       if (targetParams) {

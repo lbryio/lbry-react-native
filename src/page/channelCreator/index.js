@@ -13,7 +13,12 @@ import {
   doToast,
 } from 'lbry-redux';
 import { doGetSync } from 'lbryinc';
-import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
+import {
+  doPushDrawerStack,
+  doPopDrawerStack,
+  doSetPlayerVisible,
+  doSetExplicitNavigateBack,
+} from 'redux/actions/drawer';
 import { doUpdateChannelFormState, doClearChannelFormState } from 'redux/actions/form';
 import { selectDrawerStack } from 'redux/selectors/drawer';
 import { selectChannelFormState, selectHasChannelFormState } from 'redux/selectors/form';
@@ -44,9 +49,10 @@ const perform = dispatch => ({
   pushDrawerStack: (routeName, params) => dispatch(doPushDrawerStack(routeName, params)),
   popDrawerStack: () => dispatch(doPopDrawerStack()),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
+  setExplicitNavigateBack: flag => dispatch(doSetExplicitNavigateBack(flag)),
 });
 
 export default connect(
   select,
-  perform
+  perform,
 )(ChannelCreator);

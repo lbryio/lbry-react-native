@@ -42,6 +42,9 @@ reducers[Constants.ACTION_PUSH_DRAWER_STACK] = (state, action) => {
   if (lastRoute === Constants.DRAWER_ROUTE_PUBLISH_FORM && routeName === Constants.DRAWER_ROUTE_PUBLISH) {
     canPushStack = false;
   }
+  if (routeName === Constants.DRAWER_ROUTE_DISCOVER && newStack.length === 1) {
+    canPushStack = false;
+  }
 
   let lastRouteInStack;
   if (canPushStack) {
