@@ -18,7 +18,7 @@ const select = (state, props) => ({
 
 const perform = dispatch => ({
   abandonClaim: (txid, nout) => dispatch(doAbandonClaim(txid, nout)),
-  fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
+  fetchChannelListMine: () => dispatch(doFetchChannelListMine(1, 99999, true)),
   fetchSubCount: claimId => dispatch(doFetchSubCount(claimId)),
   popDrawerStack: () => dispatch(doPopDrawerStack()),
   setSortByItem: item => dispatch(doSetSortByItem(item)),
@@ -27,5 +27,5 @@ const perform = dispatch => ({
 
 export default connect(
   select,
-  perform
+  perform,
 )(ChannelPage);

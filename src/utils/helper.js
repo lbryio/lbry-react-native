@@ -10,6 +10,7 @@ const specialRouteMap = {
   about: Constants.DRAWER_ROUTE_ABOUT,
   allContent: Constants.DRAWER_ROUTE_TRENDING,
   channels: Constants.DRAWER_ROUTE_CHANNEL_CREATOR,
+  invite: Constants.DRAWER_ROUTE_INVITES,
   invites: Constants.DRAWER_ROUTE_INVITES,
   library: Constants.DRAWER_ROUTE_MY_LBRY,
   publish: Constants.DRAWER_ROUTE_PUBLISH,
