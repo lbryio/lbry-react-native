@@ -620,8 +620,8 @@ class FilePage extends React.PureComponent {
 
     let payload = { uri: uri };
     if (!isNaN(timeToStart)) {
-      payload['time_to_start_seconds'] = timeToStart;
-      payload['time_to_start_ms'] = timeToStartMillis;
+      payload['time_to_start_seconds'] = parseInt(timeToStart, 10);
+      payload['time_to_start_ms'] = parseInt(timeToStartMillis, 10);
     }
     NativeModules.Firebase.track('play', payload);
 
