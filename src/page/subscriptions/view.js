@@ -28,6 +28,7 @@ import ModalPicker from 'component/modalPicker';
 import ModalSuggestedSubscriptions from 'component/modalSuggestedSubscriptions';
 import SubscribedChannelList from 'component/subscribedChannelList';
 import SuggestedSubscriptions from 'component/suggestedSubscriptions';
+import SuggestedSubscriptionsGrid from 'component/suggestedSubscriptionsGrid';
 import UriBar from 'component/uriBar';
 
 class SubscriptionsPage extends React.PureComponent {
@@ -56,6 +57,7 @@ class SubscriptionsPage extends React.PureComponent {
 
   onComponentFocused = () => {
     const {
+      currentRoute,
       doFetchMySubscriptions,
       doFetchRecommendedSubscriptions,
       doSetViewMode,
@@ -64,12 +66,13 @@ class SubscriptionsPage extends React.PureComponent {
       subscriptionsViewMode,
     } = this.props;
 
-    pushDrawerStack();
+    if (currentRoute === Constants.DRAWER_ROUTE_SUBSCRIPTIONS) {
+      pushDrawerStack();
+    }
     setPlayerVisible();
     NativeModules.Firebase.setCurrentScreen('Subscriptions');
 
     doFetchMySubscriptions();
-    doFetchRecommendedSubscriptions();
   };
 
   componentDidMount() {
@@ -89,6 +92,15 @@ class SubscriptionsPage extends React.PureComponent {
   handleSortByItemSelected = item => {
     this.setState({ currentSortByItem: item, orderBy: getOrderBy(item), showSortPicker: false });
   };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const { showModalSuggestedSubs: prevShowModalSuggestedSubs } = this.state;
+    const { showModalSuggestedSubs } = this.state;
+    if (prevShowModalSuggestedSubs && showModalSuggestedSubs) {
+      return false;
+    }
+    return true;
+  }
 
   handleTimeItemSelected = item => {
     const { setTimeItem } = this.props;
@@ -138,6 +150,7 @@ class SubscriptionsPage extends React.PureComponent {
       timeItem,
       unreadSubscriptions,
       navigation,
+      notify,
     } = this.props;
     const { currentSortByItem, filteredChannels, showModalSuggestedSubs, showSortPicker, showTimePicker } = this.state;
 
@@ -164,7 +177,9 @@ class SubscriptionsPage extends React.PureComponent {
       <View style={subscriptionsStyle.container}>
         <UriBar navigation={navigation} belowOverlay={this.state.showSortPicker} />
         <View style={subscriptionsStyle.titleRow}>
-          <Text style={subscriptionsStyle.pageTitle}>{__('Channels you follow')}</Text>
+          <Text style={subscriptionsStyle.pageTitle}>
+            {hasSubscriptions ? __('Channels you follow') : __('Find Channels to follow')}
+          </Text>
         </View>
         {!this.state.showingSuggestedSubs && hasSubscriptions && (
           <View style={subscriptionsStyle.pickerRow}>
@@ -220,37 +235,37 @@ class SubscriptionsPage extends React.PureComponent {
 
         {this.state.showingSuggestedSubs && (
           <View style={subscriptionsStyle.suggestedSubsContainer}>
-            {!hasSubscriptions && (
-              <View style={subscriptionsStyle.infoArea}>
-                <Text style={subscriptionsStyle.infoText}>
-                  {__('You are not subscribed to any channels at the moment.')}
-                </Text>
-              </View>
-            )}
-
-            {hasSubscriptions && (
-              <View style={subscriptionsStyle.infoArea}>
-                <Text style={subscriptionsStyle.infoText}>
-                  You are currently subscribed to {numberOfSubscriptions} channel{numberOfSubscriptions > 1 ? 's' : ''}.
-                </Text>
-                <Button
-                  style={subscriptionsStyle.button}
-                  text={__('View my subscriptions')}
-                  onPress={() => this.setState({ showingSuggestedSubs: false })}
-                />
-              </View>
-            )}
+            <View style={subscriptionsStyle.infoArea}>
+              <Text style={subscriptionsStyle.infoText}>
+                {__('LBRY works better if you find and follow at least 5 creators you like.')}
+              </Text>
+              <Button
+                style={subscriptionsStyle.suggestedDoneButton}
+                text={
+                  numberOfSubscriptions < 5
+                    ? __('%remaining% more...', { remaining: 5 - numberOfSubscriptions })
+                    : __('Done')
+                }
+                onPress={() => {
+                  if (!hasSubscriptions) {
+                    notify({ message: __('Tap on any channel to follow') });
+                  } else {
+                    this.setState({ showingSuggestedSubs: false });
+                  }
+                }}
+              />
+            </View>
 
             {loadingSuggested && (
               <View style={subscriptionsStyle.centered}>
                 <ActivityIndicator size="large" colors={Colors.NextLbryGreen} style={subscriptionsStyle.loading} />
               </View>
             )}
-            {!loadingSuggested && <SuggestedSubscriptions navigation={navigation} />}
+            {!loadingSuggested && <SuggestedSubscriptionsGrid navigation={navigation} />}
           </View>
         )}
 
-        {!showSortPicker && !showTimePicker && !showModalSuggestedSubs && (
+        {false && !showSortPicker && !showTimePicker && !showModalSuggestedSubs && (
           <FloatingWalletBalance navigation={navigation} />
         )}
         {showSortPicker && (

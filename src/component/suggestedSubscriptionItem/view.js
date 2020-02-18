@@ -1,13 +1,13 @@
 import React from 'react';
 import { buildURI, normalizeURI } from 'lbry-redux';
-import { ActivityIndicator, FlatList, Image, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Text, TouchableOpacity, View } from 'react-native';
 import { navigateToUri } from 'utils/helper';
 import Colors from 'styles/colors';
 import ChannelIconItem from 'component/channelIconItem';
 import channelIconStyle from 'styles/channelIcon';
 import discoverStyle from 'styles/discover';
 import FileItem from 'component/fileItem';
-import SubscribeButton from 'component/subscribeButton';
+import SubscribeButtonOverlay from 'component/subscribeButtonOverlay';
 import subscriptionsStyle from 'styles/subscriptions';
 import Link from 'component/link';
 import Tag from 'component/tag';
@@ -31,6 +31,7 @@ class SuggestedSubscriptionItem extends React.PureComponent {
 
   render() {
     const { claim, isResolvingUri, navigation, thumbnail, title, uri } = this.props;
+
     let shortUrl, tags;
     if (claim) {
       shortUrl = claim.short_url;
@@ -49,7 +50,7 @@ class SuggestedSubscriptionItem extends React.PureComponent {
     }
 
     return (
-      <View style={subscriptionsStyle.suggestedItem}>
+      <TouchableOpacity style={subscriptionsStyle.suggestedItem}>
         <View style={[subscriptionsStyle.suggestedItemThumbnailContainer, this.state.autoStyle]}>
           {hasThumbnail && (
             <Image style={subscriptionsStyle.suggestedItemThumbnail} resizeMode={'cover'} source={{ uri: thumbnail }} />
@@ -62,24 +63,14 @@ class SuggestedSubscriptionItem extends React.PureComponent {
         </View>
 
         <View style={subscriptionsStyle.suggestedItemDetails}>
-          {title && (
-            <Text style={subscriptionsStyle.suggestedItemTitle} numberOfLines={1}>
-              {title}
-            </Text>
-          )}
-          {claim && (
-            <Link
-              style={subscriptionsStyle.suggestedItemName}
-              numberOfLines={1}
-              text={claim.name}
-              onPress={() => navigateToUri(navigation, normalizeURI(shortUrl || uri), null, false, claim.permanent_url)}
-            />
-          )}
+          <Text style={subscriptionsStyle.suggestedItemTitle} numberOfLines={1}>
+            {title || claim.name}
+          </Text>
           {tags && (
             <View style={subscriptionsStyle.suggestedItemTagList}>
               {tags &&
                 tags
-                  .slice(0, 3)
+                  .slice(0, 1)
                   .map(tag => (
                     <Tag style={subscriptionsStyle.tag} key={tag} name={tag} navigation={navigation} truncate />
                   ))}
@@ -88,9 +79,13 @@ class SuggestedSubscriptionItem extends React.PureComponent {
         </View>
 
         {claim && (
-          <SubscribeButton style={subscriptionsStyle.suggestedItemSubscribe} uri={normalizeURI(claim.permanent_url)} />
+          <SubscribeButtonOverlay
+            claim={claim}
+            style={subscriptionsStyle.suggestedItemSubscribeOverlay}
+            uri={normalizeURI(claim.permanent_url)}
+          />
         )}
-      </View>
+      </TouchableOpacity>
     );
   }
 }

@@ -14,6 +14,7 @@ import {
   selectFirstRunCompleted,
   selectShowSuggestedSubs,
 } from 'lbryinc';
+import { doToast } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doSetClientSetting, doSetTimeItem } from 'redux/actions/settings';
 import { makeSelectClientSetting, selectTimeItem } from 'redux/selectors/settings';
@@ -41,6 +42,7 @@ const perform = dispatch => ({
   doFetchMySubscriptions: () => dispatch(doFetchMySubscriptions()),
   doFetchRecommendedSubscriptions: () => dispatch(doFetchRecommendedSubscriptions()),
   doSetViewMode: viewMode => dispatch(doSetViewMode(viewMode)),
+  notify: data => dispatch(doToast(data)),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_SUBSCRIPTIONS)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
@@ -49,5 +51,5 @@ const perform = dispatch => ({
 
 export default connect(
   select,
-  perform
+  perform,
 )(SubscriptionsPage);

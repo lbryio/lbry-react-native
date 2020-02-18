@@ -64,9 +64,7 @@ class DiscoverPage extends React.PureComponent {
 
   onComponentFocused = () => {
     const { pushDrawerStack, setPlayerVisible, currentRoute } = this.props;
-    if (currentRoute === Constants.DRAWER_ROUTE_DISCOVER) {
-      pushDrawerStack();
-    }
+    pushDrawerStack();
 
     NativeModules.Firebase.setCurrentScreen('Your tags');
     setPlayerVisible();

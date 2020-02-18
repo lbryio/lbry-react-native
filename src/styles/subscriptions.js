@@ -41,8 +41,11 @@ const subscriptionsStyle = StyleSheet.create({
     fontSize: 16,
     marginTop: 8,
     marginBottom: 8,
+    flex: 0.7,
   },
   infoArea: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginLeft: 16,
     marginRight: 16,
     paddingBottom: 4,
@@ -188,11 +191,11 @@ const subscriptionsStyle = StyleSheet.create({
     justifyContent: 'center',
   },
   suggestedItem: {
-    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
     marginLeft: 16,
     marginRight: 16,
+    width: 120,
   },
   suggestedItemThumbnailContainer: {
     width: 70,
@@ -209,30 +212,34 @@ const subscriptionsStyle = StyleSheet.create({
   suggestedItemDetails: {
     marginLeft: 16,
     marginRight: 16,
-    flex: 0.8,
   },
   suggestedItemSubscribe: {
     backgroundColor: Colors.White,
+  },
+  suggestedItemSubscribeOverlay: {
     position: 'absolute',
+    left: 0,
     right: 0,
     top: 0,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingBottom: 4,
+    height: 70,
   },
   suggestedItemTitle: {
     fontFamily: 'Inter-Regular',
     fontSize: 16,
     marginBottom: 4,
-    width: '85%',
   },
   suggestedItemName: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     marginBottom: 4,
     color: Colors.LbryGreen,
-    width: '95%',
   },
   suggestedItemTagList: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
   suggestedSubTitle: {
     fontFamily: 'Inter-Regular',
@@ -265,6 +272,13 @@ const subscriptionsStyle = StyleSheet.create({
   },
   modalSuggestedScrollContent: {
     paddingTop: 16,
+  },
+  suggestedDoneButton: {
+    backgroundColor: Colors.LbryGreen,
+    position: 'absolute',
+    right: 8,
+    top: 8,
+    zIndex: 100,
   },
 });
 
