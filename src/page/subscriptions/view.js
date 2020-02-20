@@ -178,7 +178,9 @@ class SubscriptionsPage extends React.PureComponent {
         <UriBar navigation={navigation} belowOverlay={this.state.showSortPicker} />
         <View style={subscriptionsStyle.titleRow}>
           <Text style={subscriptionsStyle.pageTitle}>
-            {hasSubscriptions ? __('Channels you follow') : __('Find Channels to follow')}
+            {hasSubscriptions && !this.state.showingSuggestedSubs
+              ? __('Channels you follow')
+              : __('Find Channels to follow')}
           </Text>
         </View>
         {!this.state.showingSuggestedSubs && hasSubscriptions && (
@@ -239,29 +241,31 @@ class SubscriptionsPage extends React.PureComponent {
               <Text style={subscriptionsStyle.infoText}>
                 {__('LBRY works better if you find and follow at least 5 creators you like.')}
               </Text>
-              <Button
-                style={subscriptionsStyle.suggestedDoneButton}
-                text={
-                  numberOfSubscriptions < 5
-                    ? __('%remaining% more...', { remaining: 5 - numberOfSubscriptions })
-                    : __('Done')
-                }
-                onPress={() => {
-                  if (!hasSubscriptions) {
-                    notify({ message: __('Tap on any channel to follow') });
-                  } else {
-                    this.setState({ showingSuggestedSubs: false });
-                  }
-                }}
-              />
             </View>
 
+            <View style={subscriptionsStyle.mainSuggested}>
+              <SuggestedSubscriptionsGrid navigation={navigation} />
+            </View>
+
+            <Button
+              style={subscriptionsStyle.suggestedDoneButton}
+              text={
+                numberOfSubscriptions < 5
+                  ? __('%remaining% more...', { remaining: 5 - numberOfSubscriptions })
+                  : __('Done')
+              }
+              onPress={() => {
+                if (!hasSubscriptions) {
+                  notify({ message: __('Tap on any channel to follow') });
+                } else {
+                  this.setState({ showingSuggestedSubs: false });
+                }
+              }}
+            />
+
             {loadingSuggested && (
-              <View style={subscriptionsStyle.centered}>
-                <ActivityIndicator size="large" colors={Colors.NextLbryGreen} style={subscriptionsStyle.loading} />
-              </View>
+              <ActivityIndicator size="small" color={Colors.White} style={subscriptionsStyle.suggestedLoading} />
             )}
-            {!loadingSuggested && <SuggestedSubscriptionsGrid navigation={navigation} />}
           </View>
         )}
 

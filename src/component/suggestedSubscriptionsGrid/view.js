@@ -6,50 +6,76 @@ import { FlatGrid } from 'react-native-super-grid';
 import SubscribeButton from 'component/subscribeButton';
 import SuggestedSubscriptionItem from 'component/suggestedSubscriptionItem';
 import Colors from 'styles/colors';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import discoverStyle from 'styles/discover';
 import subscriptionsStyle from 'styles/subscriptions';
 import Link from 'component/link';
 import _ from 'lodash';
 
+const suggestedPageSize = 24;
+const softLimit = 2400;
 class SuggestedSubscriptionsGrid extends React.PureComponent {
   state = {
+    currentPage: 1,
     options: {},
   };
 
-  componentDidMount() {
-    const { claimSearch, followedTags, showNsfwContent } = this.props;
+  buildClaimSearchOptions() {
+    const { showNsfwContent } = this.props;
+    const { currentPage } = this.state;
+
     const options = {
-      page: 1,
-      page_size: 99,
       no_totals: true,
+      page: currentPage,
+      page_size: suggestedPageSize,
       claim_type: 'channel',
-      order_by: ['trending_global', 'trending_mixed'],
+      order_by: [Constants.ORDER_BY_EFFECTIVE_AMOUNT],
     };
     if (!showNsfwContent) {
       options.not_tags = MATURE_TAGS;
     }
-    this.setState({ options });
+
+    return options;
+  }
+
+  doClaimSearch() {
+    const { claimSearch } = this.props;
+    const options = this.buildClaimSearchOptions();
     claimSearch(options);
   }
 
-  render() {
-    const { claimSearchByQuery, suggested, inModal, loading, navigation } = this.props;
-    const claimSearchKey = createNormalizedClaimSearchKey(this.state.options);
-    const claimSearchUris = claimSearchByQuery[claimSearchKey];
+  handleVerticalEndReached = () => {
+    // fetch more content
+    const { claimSearchByQuery, lastPageReached } = this.props;
 
-    if (loading) {
-      return (
-        <View style={subscriptionsStyle.centered}>
-          <ActivityIndicator size="large" color={Colors.NextLbryGreen} />
-        </View>
-      );
+    const options = this.buildClaimSearchOptions();
+    const claimSearchKey = createNormalizedClaimSearchKey(options);
+    const uris = claimSearchByQuery[claimSearchKey];
+    if (
+      lastPageReached[claimSearchKey] ||
+      ((uris.length > 0 && uris.length < suggestedPageSize) || uris.length >= softLimit)
+    ) {
+      return;
     }
+
+    this.setState({ currentPage: this.state.currentPage + 1 }, () => this.doClaimSearch());
+  };
+
+  componentDidMount() {
+    const { claimSearch, followedTags, showNsfwContent } = this.props;
+    this.doClaimSearch();
+  }
+
+  render() {
+    const { claimSearchByQuery, suggested, inModal, navigation } = this.props;
+    const options = this.buildClaimSearchOptions();
+    const claimSearchKey = createNormalizedClaimSearchKey(options);
+    const claimSearchUris = claimSearchByQuery[claimSearchKey];
 
     return (
       <FlatGrid
-        horizontal
-        initialNumToRender={18}
-        maxToRenderPerBatch={24}
+        initialNumToRender={24}
+        maxToRenderPerBatch={48}
         removeClippedSubviews
         itemDimension={120}
         spacing={2}
@@ -61,6 +87,8 @@ class SuggestedSubscriptionsGrid extends React.PureComponent {
         renderItem={({ item, index }) => (
           <SuggestedSubscriptionItem key={item} uri={normalizeURI(item)} navigation={navigation} />
         )}
+        onEndReached={this.handleVerticalEndReached}
+        onEndReachedThreshold={0.2}
       />
     );
   }

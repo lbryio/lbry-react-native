@@ -41,7 +41,6 @@ const subscriptionsStyle = StyleSheet.create({
     fontSize: 16,
     marginTop: 8,
     marginBottom: 8,
-    flex: 0.7,
   },
   infoArea: {
     flexDirection: 'row',
@@ -195,7 +194,7 @@ const subscriptionsStyle = StyleSheet.create({
     marginBottom: 16,
     marginLeft: 16,
     marginRight: 16,
-    width: 120,
+    height: 120,
   },
   suggestedItemThumbnailContainer: {
     width: 70,
@@ -275,10 +274,15 @@ const subscriptionsStyle = StyleSheet.create({
   },
   suggestedDoneButton: {
     backgroundColor: Colors.LbryGreen,
+    margin: 16,
+  },
+  mainSuggested: {
+    flex: 1,
+  },
+  suggestedLoading: {
     position: 'absolute',
-    right: 8,
-    top: 8,
-    zIndex: 100,
+    right: 24,
+    bottom: 22,
   },
 });
 

@@ -72,7 +72,15 @@ class SuggestedSubscriptionItem extends React.PureComponent {
                 tags
                   .slice(0, 1)
                   .map(tag => (
-                    <Tag style={subscriptionsStyle.tag} key={tag} name={tag} navigation={navigation} truncate />
+                    <Tag
+                      numberOfLines={1}
+                      onPress={this.handleItemPress}
+                      style={subscriptionsStyle.tag}
+                      key={tag}
+                      name={tag}
+                      navigation={navigation}
+                      truncate
+                    />
                   ))}
             </View>
           )}

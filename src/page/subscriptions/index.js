@@ -7,14 +7,13 @@ import {
   selectSubscriptionClaims,
   selectSubscriptions,
   selectIsFetchingSubscriptions,
-  selectIsFetchingSuggested,
   selectSuggestedChannels,
   selectUnreadSubscriptions,
   selectViewMode,
   selectFirstRunCompleted,
   selectShowSuggestedSubs,
 } from 'lbryinc';
-import { doToast } from 'lbry-redux';
+import { doToast, selectFetchingClaimSearch } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doSetClientSetting, doSetTimeItem } from 'redux/actions/settings';
 import { makeSelectClientSetting, selectTimeItem } from 'redux/selectors/settings';
@@ -25,7 +24,7 @@ import SubscriptionsPage from './view';
 const select = state => ({
   currentRoute: selectCurrentRoute(state),
   loading: selectIsFetchingSubscriptions(state),
-  loadingSuggested: selectIsFetchingSuggested(state),
+  loadingSuggested: selectFetchingClaimSearch(state),
   subscribedChannels: selectSubscriptions(state),
   suggestedChannels: selectSuggestedChannels(state),
   subscriptionsViewMode: makeSelectClientSetting(Constants.SETTING_SUBSCRIPTIONS_VIEW_MODE)(state),
