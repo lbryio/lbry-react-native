@@ -26,10 +26,14 @@ const select = state => ({
   query: selectSearchValue(state),
   resolvingUris: selectResolvingUris(state),
   showNsfwContent: selectShowNsfw(state),
-  uris: makeSelectSearchUris(makeSelectQueryWithOptions(null, Constants.DEFAULT_PAGE_SIZE)(state))(state),
-  results: makeSelectResolvedSearchResults(makeSelectQueryWithOptions(null, Constants.DEFAULT_PAGE_SIZE)(state))(state),
+  uris: makeSelectSearchUris(
+    makeSelectQueryWithOptions(null, { size: Constants.DEFAULT_PAGE_SIZE, isBackgroundSearch: false })(state),
+  )(state),
+  results: makeSelectResolvedSearchResults(
+    makeSelectQueryWithOptions(null, { size: Constants.DEFAULT_PAGE_SIZE, isBackgroundSearch: false })(state),
+  )(state),
   lastPageReached: makeSelectResolvedSearchResultsLastPageReached(
-    makeSelectQueryWithOptions(null, Constants.DEFAULT_PAGE_SIZE)(state),
+    makeSelectQueryWithOptions(null, { size: Constants.DEFAULT_PAGE_SIZE, isBackgroundSearch: false })(state),
   )(state),
 });
 
