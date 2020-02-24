@@ -104,6 +104,8 @@ class FilePage extends React.PureComponent {
       stopDownloadConfirmed: false,
       streamingMode: false,
       viewCountFetched: false,
+      isRepost: false,
+      uriPushedToDrawerStack: false,
     };
   }
 
@@ -113,6 +115,22 @@ class FilePage extends React.PureComponent {
     const { navigation } = this.props;
     // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
   }
+
+  checkRepost = () => {
+    const { claim, isResolvingUri, navigation, pushDrawerStack } = this.props;
+    const { uri } = this.state;
+    if (!isResolvingUri) {
+      if (claim && claim.repost_url) {
+        // redirect to canonical url
+        this.setState({ isRepost: true });
+        navigateToUri(navigation, claim.canonical_url, null, false, claim.permanent_url, false, true);
+      } else {
+        this.setState({ uriPushedToDrawerStack: true }, () => {
+          pushDrawerStack(uri);
+        });
+      }
+    }
+  };
 
   onComponentFocused = () => {
     StatusBar.setHidden(false);
@@ -129,6 +147,8 @@ class FilePage extends React.PureComponent {
 
       setPlayerVisible(true, uri);
       if (!isResolvingUri && !claim) resolveUri(uri);
+
+      this.checkRepost();
 
       this.fetchFileInfo(uri, this.props);
       this.fetchCostInfo(uri, this.props);
@@ -281,6 +301,11 @@ class FilePage extends React.PureComponent {
     const { uri } = this.state;
     if (!isResolvingUri && claim === undefined && uri) {
       resolveUri(uri);
+    }
+
+    if (!prevProps.claim && claim) {
+      this.checkRepost();
+      return;
     }
 
     // Returned to the page. If mediaLoaded, and currentMediaInfo is different, update
@@ -973,6 +998,12 @@ class FilePage extends React.PureComponent {
 
     let innerContent = null;
     if ((isResolvingUri && !claim) || !claim) {
+      if (!isResolvingUri && !claim && !this.state.uriPushedToDrawerStack) {
+        this.setState({ uriPushedToDrawerStack: true }, () => {
+          pushDrawerStack(uri);
+        });
+      }
+
       return (
         <View style={filePageStyle.pageContainer}>
           <UriBar value={uri} navigation={navigation} />
@@ -1039,6 +1070,17 @@ class FilePage extends React.PureComponent {
     let tags = [];
     if (claim && claim.value && claim.value.tags) {
       tags = claim.value.tags;
+    }
+
+    if (!isResolvingUri && this.state.isRepost) {
+      return null;
+    }
+
+    // in case we somehow get here without the uri pushed to the drawer stack
+    if (!isResolvingUri && !this.state.isRepost && !this.state.uriPushedToDrawerStack) {
+      this.setState({ uriPushedToDrawerStack: true }, () => {
+        pushDrawerStack(uri);
+      });
     }
 
     const completed = fileInfo && fileInfo.completed;

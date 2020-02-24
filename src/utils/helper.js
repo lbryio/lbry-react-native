@@ -116,7 +116,15 @@ function parseUriVars(vars) {
   return uriVars;
 }
 
-export function navigateToUri(navigation, uri, additionalParams, isNavigatingBack, fullUri, setPlayerVisible) {
+export function navigateToUri(
+  navigation,
+  uri,
+  additionalParams,
+  isNavigatingBack,
+  fullUri,
+  setPlayerVisible,
+  pushStack = false,
+) {
   if (!navigation) {
     return;
   }
@@ -154,7 +162,7 @@ export function navigateToUri(navigation, uri, additionalParams, isNavigatingBac
   }
 
   navigation.navigate({ routeName: 'File', key: uri, params });
-  if (store && store.dispatch && !isNavigatingBack) {
+  if (pushStack && store && store.dispatch && !isNavigatingBack) {
     store.dispatch(doPushDrawerStack(uri));
   }
 }
