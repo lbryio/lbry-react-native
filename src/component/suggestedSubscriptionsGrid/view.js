@@ -34,9 +34,9 @@ class SuggestedSubscriptionsGrid extends React.PureComponent {
     if (!showNsfwContent) {
       options.not_tags = MATURE_TAGS;
     }
-    /* if (subscriptions && subscriptions.length > 0) {
+    if (subscriptions && subscriptions.length > 0) {
       options.not_channel_ids = subscriptions.map(subscription => subscription.uri.split('#')[1]);
-    } */
+    }
 
     return options;
   }
