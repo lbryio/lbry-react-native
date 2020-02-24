@@ -63,7 +63,7 @@ class SuggestedSubscriptionItem extends React.PureComponent {
         </View>
 
         <View style={subscriptionsStyle.suggestedItemDetails}>
-          <Text style={subscriptionsStyle.suggestedItemTitle} numberOfLines={1}>
+          <Text style={subscriptionsStyle.suggestedItemTitle} numberOfLines={2}>
             {title || claim.name}
           </Text>
           {tags && (

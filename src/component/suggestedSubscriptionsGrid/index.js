@@ -6,12 +6,13 @@ import {
   selectClaimSearchByQueryLastPageReached,
   selectFollowedTags,
 } from 'lbry-redux';
-import { selectSuggestedChannels, selectIsFetchingSuggested } from 'lbryinc';
+import { selectSubscriptions, selectSuggestedChannels, selectIsFetchingSuggested } from 'lbryinc';
 import { selectShowNsfw } from 'redux/selectors/settings';
 import SuggestedSubscriptionsGrid from './view';
 
 const select = state => ({
   followedTags: selectFollowedTags(state),
+  subscriptions: selectSubscriptions(state),
   suggested: selectSuggestedChannels(state),
   loading: selectIsFetchingSuggested(state) || selectFetchingClaimSearch(state),
   claimSearchByQuery: selectClaimSearchByQuery(state),

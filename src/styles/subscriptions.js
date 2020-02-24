@@ -38,7 +38,7 @@ const subscriptionsStyle = StyleSheet.create({
   },
   infoText: {
     fontFamily: 'Inter-Regular',
-    fontSize: 16,
+    fontSize: 14,
     marginTop: 8,
     marginBottom: 8,
   },
@@ -194,7 +194,7 @@ const subscriptionsStyle = StyleSheet.create({
     marginBottom: 16,
     marginLeft: 16,
     marginRight: 16,
-    height: 120,
+    height: 140,
   },
   suggestedItemThumbnailContainer: {
     width: 70,
@@ -211,6 +211,7 @@ const subscriptionsStyle = StyleSheet.create({
   suggestedItemDetails: {
     marginLeft: 16,
     marginRight: 16,
+    alignItems: 'center',
   },
   suggestedItemSubscribe: {
     backgroundColor: Colors.White,
@@ -227,8 +228,10 @@ const subscriptionsStyle = StyleSheet.create({
   },
   suggestedItemTitle: {
     fontFamily: 'Inter-Regular',
-    fontSize: 16,
-    marginBottom: 4,
+    textAlign: 'center',
+    fontSize: 14,
+    marginTop: 4,
+    marginBottom: 2,
   },
   suggestedItemName: {
     fontFamily: 'Inter-SemiBold',
@@ -283,6 +286,11 @@ const subscriptionsStyle = StyleSheet.create({
     position: 'absolute',
     right: 24,
     bottom: 22,
+  },
+  modalLoading: {
+    position: 'absolute',
+    right: 7,
+    bottom: 7,
   },
 });
 

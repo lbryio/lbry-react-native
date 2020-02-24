@@ -207,7 +207,7 @@ class SubscriptionsPage extends React.PureComponent {
 
             <Link
               style={subscriptionsStyle.suggestedLink}
-              text={__('Suggested')}
+              text={__('Discover')}
               onPress={() => this.setState({ showModalSuggestedSubs: true })}
             />
           </View>
@@ -239,7 +239,7 @@ class SubscriptionsPage extends React.PureComponent {
           <View style={subscriptionsStyle.suggestedSubsContainer}>
             <View style={subscriptionsStyle.infoArea}>
               <Text style={subscriptionsStyle.infoText}>
-                {__('LBRY works better if you find and follow at least 5 creators you like.')}
+                {__('LBRY works better if you follow at least 5 creators you like.')}
               </Text>
             </View>
 
@@ -269,9 +269,6 @@ class SubscriptionsPage extends React.PureComponent {
           </View>
         )}
 
-        {false && !showSortPicker && !showTimePicker && !showModalSuggestedSubs && (
-          <FloatingWalletBalance navigation={navigation} />
-        )}
         {showSortPicker && (
           <ModalPicker
             title={__('Sort content by')}

@@ -22,20 +22,12 @@ class SubscribeButtonOverlay extends React.PureComponent {
 
   render() {
     const { uri, isSubscribed, style } = this.props;
-
-    let styles = [];
-    if (style) {
-      if (style.length) {
-        styles = styles.concat(style);
-      } else {
-        styles.push(style);
-      }
-    }
+    let styles = style.length ? style : [style];
 
     return (
-      <TouchableOpacity style={styles} opacity={0.8} onPress={this.handlePress}>
-        {isSubscribed && <Icon name={'heart-broken'} size={20} color={Colors.DarkGrey} />}
-        {!isSubscribed && <Icon name={'heart'} size={20} solid color={Colors.Red} />}
+      <TouchableOpacity style={styles} opacity={0.7} onPress={this.handlePress}>
+        {isSubscribed && <Icon name={'heart'} size={20} solid color={Colors.Red} />}
+        {!isSubscribed && <Icon name={'heart'} size={20} color={Colors.Red} />}
       </TouchableOpacity>
     );
   }

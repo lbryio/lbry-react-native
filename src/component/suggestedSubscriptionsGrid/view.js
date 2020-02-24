@@ -21,7 +21,7 @@ class SuggestedSubscriptionsGrid extends React.PureComponent {
   };
 
   buildClaimSearchOptions() {
-    const { showNsfwContent } = this.props;
+    const { showNsfwContent, subscriptions } = this.props;
     const { currentPage } = this.state;
 
     const options = {
@@ -34,6 +34,9 @@ class SuggestedSubscriptionsGrid extends React.PureComponent {
     if (!showNsfwContent) {
       options.not_tags = MATURE_TAGS;
     }
+    /* if (subscriptions && subscriptions.length > 0) {
+      options.not_channel_ids = subscriptions.map(subscription => subscription.uri.split('#')[1]);
+    } */
 
     return options;
   }
