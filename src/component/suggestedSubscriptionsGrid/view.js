@@ -18,10 +18,12 @@ class SuggestedSubscriptionsGrid extends React.PureComponent {
   state = {
     currentPage: 1,
     options: {},
+    // maintain a local state of subscriptions so that changes don't affect the search
+    subscriptionIds: [],
   };
 
   buildClaimSearchOptions() {
-    const { showNsfwContent, subscriptions } = this.props;
+    const { showNsfwContent } = this.props;
     const { currentPage } = this.state;
 
     const options = {
@@ -34,8 +36,8 @@ class SuggestedSubscriptionsGrid extends React.PureComponent {
     if (!showNsfwContent) {
       options.not_tags = MATURE_TAGS;
     }
-    if (subscriptions && subscriptions.length > 0) {
-      options.not_channel_ids = subscriptions.map(subscription => subscription.uri.split('#')[1]);
+    if (this.state.subscriptionIds.length > 0) {
+      options.not_channel_ids = this.state.subscriptionIds;
     }
 
     return options;
@@ -65,8 +67,17 @@ class SuggestedSubscriptionsGrid extends React.PureComponent {
   };
 
   componentDidMount() {
-    const { claimSearch, followedTags, showNsfwContent } = this.props;
-    this.doClaimSearch();
+    const { claimSearch, followedTags, showNsfwContent, subscriptions } = this.props;
+    if (subscriptions && subscriptions.length > 0) {
+      this.setState(
+        {
+          subscriptionIds: subscriptions.map(subscription => subscription.uri.split('#')[1]),
+        },
+        () => this.doClaimSearch(),
+      );
+    } else {
+      this.doClaimSearch();
+    }
   }
 
   render() {
