@@ -239,7 +239,9 @@ class SubscriptionsPage extends React.PureComponent {
           <View style={subscriptionsStyle.suggestedSubsContainer}>
             <View style={subscriptionsStyle.infoArea}>
               <Text style={subscriptionsStyle.infoText}>
-                {__('LBRY works better if you follow at least 5 creators you like.')}
+                {__(
+                  'LBRY works better if you follow at least 5 creators you like. Sign in to show creators you follow if you already have an account.',
+                )}
               </Text>
             </View>
 
