@@ -20,7 +20,17 @@ const languageOptions = [
   { code: 'tr', name: 'Turkish' },
   { code: 'pl', name: 'Polish' },
   { code: 'pt', name: 'Portuguese' },
-  { code: 'es', name: 'Spanish' },
+  { code: 'da', name: 'Danish' },
+  { code: 'jv', name: 'Basa Jawa' },
+  { code: 'nl', name: 'Dutch' },
+  { code: 'hi', name: 'Hindi' },
+  { code: 'fr', name: 'French' },
+  { code: 'et', name: 'Estonian' },
+  { code: 'kn', name: 'Kannada' },
+  { code: 'mr', name: 'Marathi' },
+  { code: 'ru', name: 'Russian' },
+  { code: 'ro', name: 'Romanian' },
+  { code: 'sk', name: 'Slovak' },
 ];
 
 class SettingsPage extends React.PureComponent {
