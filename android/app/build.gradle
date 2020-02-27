@@ -77,17 +77,21 @@ import com.android.build.OutputFile
 
 task buildReactNativeBundle(type:Exec) {
     println("Building React Native bundle")
-    workingDir '../../'
+    workingDir new File(rootProject.projectDir, '../')
     commandLine './bundle-android.sh'
 }
 preBuild.dependsOn buildReactNativeBundle
+
+task printVersionName {
+    doLast {
+        println android.defaultConfig.versionName
+    }
+}
 
 project.ext.react = [
     entryFile: "index.js",
     enableHermes: false,  // clean and rebuild if changing
 ]
-
-apply from: "../../node_modules/react-native/react.gradle"
 
 /**
  * Set this to true to create two separate APKs instead of one:
@@ -142,6 +146,10 @@ android {
         versionCode 1302
         versionName "0.13.2"
         missingDimensionStrategy 'react-native-camera', 'general'
+        multiDexEnabled true
+    }
+    dexOptions {
+        jumboMode true
     }
     productFlavors {
         __32bit {

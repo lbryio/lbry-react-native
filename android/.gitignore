@@ -59,8 +59,9 @@ buck-out/
 /ios/Pods/
 
 # Other Files
-android/app/google-services.json
+app/google-services.json
 *.log
 .vagrant
-android/app/build/*
-android/bin
+*.hprof
+app/build
+app/bin
