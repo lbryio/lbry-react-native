@@ -30,6 +30,10 @@ git submodule update --init --recursive
 ```
 * Install `react-native-cli` globally using `npm install -g react-native-cli`.
 * Install the required package modules by running `yarn` in the cloned repository folder.
+* Download a `google-services.json` from the Firebase console (https://console.firebase.google.com/) and place it in the `android/app` folder. Alternatively, use the included sample JSON file.
+```
+cp android/app/google-services.sample.json android/app/google-services.json
+```
 * Open Android Studio and click File > Open...
 * Navigate to the cloned repository on your local filesystem and select the `android` subfolder.
 * Connect your Android device in USB debugging mode, or create an ARM emulator (slower) to run the app.
