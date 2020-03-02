@@ -165,6 +165,21 @@ const fileListStyle = StyleSheet.create({
     marginRight: 2,
     color: '#0c604b',
   },
+  repostChannelName: {
+    color: Colors.DescriptionGrey,
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+  },
+  repostIcon: {
+    color: Colors.DescriptionGrey,
+    marginRight: 4,
+  },
+  repostInfo: {
+    marginLeft: 16,
+    marginRight: 16,
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
 });
 
 export default fileListStyle;
