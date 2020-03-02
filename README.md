@@ -1,7 +1,7 @@
-# LBRY Android
+# LBRY React Native
 [![pipeline status](https://ci.lbry.tech/lbry/lbry-android/badges/master/pipeline.svg)](https://ci.lbry.tech/lbry/lbry-android/commits/master)
 
-An Android browser and wallet for the [LBRY](https://lbry.com) network. This app bundles [lbrynet-daemon](https://github.com/lbryio/lbry) as a background service with a UI layer built with React Native. The APK is built using buildozer and the Gradle build tool.
+A mobile browser and wallet for the [LBRY](https://lbry.com) network. This app bundles [lbrynet-daemon](https://github.com/lbryio/lbry) as a background service with a UI layer built with React Native.
 
 <img src="https://spee.ch/8/lbry-android.png" alt="LBRY Android Screenshot" width="384px" />
 
@@ -12,10 +12,24 @@ The minimum supported Android version is 5.0 Lollipop. There are two ways to ins
 1. Direct APK install available at [http://build.lbry.io/android/latest.apk](http://build.lbry.io/android/latest.apk). You will need to enable installation from third-party sources on your device in order to install from this source.
 
 ## Usage
-The app can be launched by opening **LBRY Browser** from the device's app drawer or via the shortcut on the home screen if that was created upon installation.
+The app can be launched by opening **LBRY** from the device's app drawer or via the shortcut on the home screen if that was created upon installation.
 
 ## Running from Source
-The app is built from source via [Buildozer](https://github.com/kivy/buildozer). After cloning the repository, copy `buildozer.spec.sample` to `buildozer.spec` and modify this file as necessary for your environment. Please see [BUILD.md](BUILD.md) for detailed build instructions.
+### Software Requirements
+* Android Studio
+* WebStorm (or other IDE for editing React Native / JavaScript code)
+
+### Android Steps
+* Clone the repository using `git clone https://github.com/lbryio/lbry-react-native`
+* Initialise the submodules. ```
+cd lbry-react-native
+git submodule update --init --recursive
+```
+* Open Android Studio and click File > Open...
+* Navigate to the cloned repository on your local filesystem and select the `android` subfolder.
+* Connect your Android device in USB debugging mode, or create an ARM emulator (slower) to run the app.
+* Click Run > Run... and select the corresponding app configuration. Note that it may take a while for the project files to sync before you can run the app
+* In order to edit the React Native / JavaScript files, open the cloned repository folder using WebStorm (or your favourite IDE).
 
 ## Contributing
 Contributions to this project are welcome, encouraged, and compensated. For more details, see https://lbry.io/faq/contributing
