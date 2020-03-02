@@ -18,6 +18,7 @@ The app can be launched by opening **LBRY** from the device's app drawer or via 
 ### Software Requirements
 * Android Studio
 * WebStorm (or other IDE for editing React Native / JavaScript code)
+* npm
 * yarn
 
 ### Android Steps
@@ -27,6 +28,7 @@ The app can be launched by opening **LBRY** from the device's app drawer or via 
 cd lbry-react-native
 git submodule update --init --recursive
 ```
+* Install `react-native-cli` globally using `npm install -g react-native-cli`.
 * Install the required package modules by running `yarn` in the cloned repository folder.
 * Open Android Studio and click File > Open...
 * Navigate to the cloned repository on your local filesystem and select the `android` subfolder.
