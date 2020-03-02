@@ -18,18 +18,29 @@ The app can be launched by opening **LBRY** from the device's app drawer or via 
 ### Software Requirements
 * Android Studio
 * WebStorm (or other IDE for editing React Native / JavaScript code)
+* yarn
 
 ### Android Steps
 * Clone the repository using `git clone https://github.com/lbryio/lbry-react-native`
-* Initialise the submodules. ```
+* Initialise the submodules.
+```
 cd lbry-react-native
 git submodule update --init --recursive
 ```
+* Install the required package modules by running `yarn` in the cloned repository folder.
 * Open Android Studio and click File > Open...
 * Navigate to the cloned repository on your local filesystem and select the `android` subfolder.
 * Connect your Android device in USB debugging mode, or create an ARM emulator (slower) to run the app.
 * Click Run > Run... and select the corresponding app configuration. Note that it may take a while for the project files to sync before you can run the app
 * In order to edit the React Native / JavaScript files, open the cloned repository folder using WebStorm (or your favourite IDE).
+
+### React Native Fast Refresh
+In order to enable fast refresh when updating React Native code
+* Connect your Android device in USB debugging mode, or create an ARM emulator
+* Run `adb reverse tcp:8081 tcp:8081` (`adb` can be found in the `platform-tools` folder of your Android SDK installation)
+* Run `yarn start`
+* Press `r` to reload the app.
+* Anytime you make an update to the React Native code, the app should automatically refresh.
 
 ## Contributing
 Contributions to this project are welcome, encouraged, and compensated. For more details, see https://lbry.io/faq/contributing
