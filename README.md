@@ -1,7 +1,7 @@
 # LBRY React Native
 [![pipeline status](https://ci.lbry.tech/lbry/lbry-android/badges/master/pipeline.svg)](https://ci.lbry.tech/lbry/lbry-android/commits/master)
 
-A mobile browser and wallet for the [LBRY](https://lbry.com) network. This app bundles [lbrynet-daemon](https://github.com/lbryio/lbry) as a background service with a UI layer built with React Native.
+A mobile browser and wallet for the [LBRY](https://lbry.com) network. This app bundles [LBRY SDK](https://github.com/lbryio/lbry) as a background service with a UI layer built with React Native.
 
 <img src="https://spee.ch/8/lbry-android.png" alt="LBRY Android Screenshot" width="384px" />
 
