@@ -1,13 +1,14 @@
 // @flow
 import React from 'react';
 import { SEARCH_TYPES, isNameValid, isURIValid, normalizeURI } from 'lbry-redux';
-import { Dimensions, FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, FlatList, Keyboard, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { navigateToUri, transformUrl } from 'utils/helper';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import UriBarItem from './internal/uri-bar-item';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import NavigationButton from 'component/navigationButton';
 import uriBarStyle from 'styles/uriBar';
+import { NavigationActions, StackActions } from 'react-navigation';
 
 class UriBar extends React.PureComponent {
   static INPUT_TIMEOUT = 2500; // 2.5 seconds
@@ -183,6 +184,29 @@ class UriBar extends React.PureComponent {
     });
   };
 
+  handleNavigationButtonPress = () => {
+    const { navigation } = this.props;
+    if (!navigation.openDrawer) {
+      Alert.alert(__('Switch to full mode'),
+        'This will reload the app in full mode. Do you wish to continue?',
+        [
+          { text: __('No') },
+          {
+            text: __('Yes'),
+            onPress: () => {
+              const resetAction = StackActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'Splash' })],
+              });
+              navigation.dispatch(resetAction);
+            },
+          },
+        ]);
+    } else {
+      navigation.openDrawer();
+    }
+  }
+
   render() {
     const {
       allowEdit,
@@ -262,7 +286,7 @@ class UriBar extends React.PureComponent {
               size={24}
               style={uriBarStyle.drawerMenuButton}
               iconStyle={uriBarStyle.drawerHamburger}
-              onPress={() => navigation.openDrawer()}
+              onPress={this.handleNavigationButtonPress}
             />
           )}
           {!selectionMode && (

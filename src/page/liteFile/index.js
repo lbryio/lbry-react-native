@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { makeSelectContentPositionForUri, selectBalance } from 'lbry-redux';
-import { doClaimEligiblePurchaseRewards, makeSelectViewCountForUri } from 'lbryinc';
+import { doClaimEligiblePurchaseRewards, makeSelectViewCountForUri, selectRewardContentClaimIds } from 'lbryinc';
 import { doSetPlayerVisible } from 'redux/actions/drawer';
 import { makeSelectPlayerVisible } from 'redux/selectors/drawer';
 import { doToggleFullscreenMode } from 'redux/actions/settings';
@@ -15,6 +15,7 @@ const select = (state, props) => {
     isPlayerVisible: makeSelectPlayerVisible(uri)(state), // use navigation uri for this selector
     position: makeSelectContentPositionForUri(contentUri)(state),
     viewCount: makeSelectViewCountForUri(contentUri)(state),
+    rewardedContentClaimIds: selectRewardContentClaimIds(state),
   };
 };
 

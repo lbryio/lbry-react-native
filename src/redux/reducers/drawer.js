@@ -50,8 +50,10 @@ reducers[Constants.ACTION_PUSH_DRAWER_STACK] = (state, action) => {
   if (canPushStack) {
     newStack.push({ route: routeName, params });
 
-    // save the route
-    lastRouteInStack = { route: routeName, params };
+    // save the route (if it's not lite mode)
+    if (routeName.toLowerCase() !== 'litefile') {
+      lastRouteInStack = { route: routeName, params };
+    }
   }
 
   return {

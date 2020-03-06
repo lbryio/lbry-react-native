@@ -116,7 +116,7 @@ class SplashScreen extends React.PureComponent {
     const { navigation } = this.props;
     const resetAction = StackActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'LiteFile', params: { uri: this.state.launchUrl } })],
+      actions: [NavigationActions.navigate({ routeName: 'LiteFile', params: { uri: this.state.launchUrl.replace(/liteMode=1/gi, '') } })],
     });
     navigation.dispatch(resetAction);
   };
@@ -171,6 +171,7 @@ class SplashScreen extends React.PureComponent {
         this.setState({ shouldAuthenticate: true }, () => {
           NativeModules.Firebase.getMessagingToken()
             .then(firebaseToken => {
+              console.log('firebaseToken=' + firebaseToken);
               authenticate(appVersion, Platform.OS, firebaseToken);
             })
             .catch(() => authenticate(appVersion, Platform.OS));

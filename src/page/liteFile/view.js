@@ -20,9 +20,15 @@ import {
   View,
 } from 'react-native';
 import UriBar from 'component/uriBar';
+import Link from 'component/link';
 import MediaPlayer from 'component/mediaPlayer';
+import RelatedContent from 'component/relatedContent';
 import filePageStyle from 'styles/filePage';
+import { formatLbryUrlForWeb, navigateToUri } from 'utils/helper';
 import uriBarStyle from 'styles/uriBar';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import ProgressCircle from 'react-native-progress-circle';
+import Constants from "constants";
 
 // This page will only be used for playing audio / video content from a remote stream URL
 class LiteFilePage extends React.PureComponent {
@@ -36,6 +42,8 @@ class LiteFilePage extends React.PureComponent {
     fullscreenMode: false,
     playerHeight: null,
     isLandscape: false,
+    showRecommended: false,
+    viewCount: 0,
   };
 
   checkOrientation = () => {
@@ -84,14 +92,25 @@ class LiteFilePage extends React.PureComponent {
     StatusBar.setHidden(isFullscreen);
   };
 
-  getStreamUrl = uri => {
-    const { claimName, claimId } = parseURI(uri);
+  getStreamUrl = url => {
+    const { claimName, claimId } = parseURI(url);
     return `https://player.lbry.tv/content/claims/${claimName}/${claimId}/stream`;
   };
 
+  handleSharePress = url => {
+    const shareUrl = Constants.SHARE_BASE_URL + formatLbryUrlForWeb(url);
+    NativeModules.UtilityModule.shareUrl(shareUrl);
+  };
+
   render() {
-    const { navigation } = this.props;
+    const { navigation, rewardedContentClaimIds, title } = this.props;
+    const { viewCount } = this.state;
     const { uri } = navigation.state.params;
+
+    const { claimName, claimId } = parseURI(uri);
+    const isRewardContent = rewardedContentClaimIds.includes(claimId);
+    const channelName = null;
+    const channelUri = null;
 
     const playerStyle = [
       filePageStyle.player,
@@ -126,6 +145,88 @@ class LiteFilePage extends React.PureComponent {
             }}
           />
         </View>
+
+        <ScrollView
+          contentContainerstyle={filePageStyle.scrollContent}
+          keyboardShouldPersistTaps={'handled'}
+          ref={ref => {
+            this.scrollView = ref;
+          }}
+        >
+          <TouchableWithoutFeedback
+            style={filePageStyle.titleTouch}
+            onPress={() => this.setState({ showDescription: !this.state.showDescription })}
+          >
+            <View style={filePageStyle.titleArea}>
+              <View style={filePageStyle.titleRow}>
+                <Text style={filePageStyle.title} selectable>
+                  {title}
+                </Text>
+                {isRewardContent && <Icon name="award" style={filePageStyle.rewardIcon} size={16} />}
+              </View>
+              <Text style={filePageStyle.viewCount}>
+                {viewCount === 1 && __('%view% view', { view: viewCount })}
+                {viewCount > 1 && __('%view% views', { view: viewCount })}
+              </Text>
+            </View>
+          </TouchableWithoutFeedback>
+
+          <View style={filePageStyle.largeButtonsRow}>
+            <TouchableOpacity style={filePageStyle.largeButton} onPress={() => this.handleSharePress(uri)}>
+              <Icon name={'share-alt'} size={16} style={filePageStyle.largeButtonIcon} />
+              <Text style={filePageStyle.largeButtonText}>{__('Share')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={filePageStyle.largeButton}
+              onPress={() => this.setState({ showTipView: true })}
+            >
+              <Icon name={'gift'} size={16} style={filePageStyle.largeButtonIcon} />
+              <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={filePageStyle.channelRow}>
+            <View style={filePageStyle.publishInfo}>
+              {channelName && (
+                <Link
+                  style={filePageStyle.channelName}
+                  selectable
+                  text={channelName}
+                  numberOfLines={1}
+                  ellipsizeMode={'tail'}
+                  onPress={() => {
+                    navigateToUri(
+                      navigation,
+                      normalizeURI(channelUri),
+                      null,
+                      false,
+                      null,
+                      false,
+                    );
+                  }}
+                />
+              )}
+              {!channelName && (
+                <Text style={filePageStyle.anonChannelName} selectable ellipsizeMode={'tail'}>
+                  {__('Anonymous')}
+                </Text>
+              )}
+            </View>
+          </View>
+
+          <View onLayout={this.setRelatedContentPosition} />
+
+          {this.state.showRecommended && (
+            <RelatedContent
+              navigation={navigation}
+              claimId={claimId}
+              title={title}
+              uri={uri}
+              fullUri={uri}
+            />
+          )}
+        </ScrollView>
       </View>
     );
   }

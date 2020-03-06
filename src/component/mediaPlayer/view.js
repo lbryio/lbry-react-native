@@ -36,7 +36,7 @@ class MediaPlayer extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      buffering: false,
+      buffering: true,
       backgroundPlayEnabled: false,
       autoPaused: false,
       rate: 1,
@@ -45,9 +45,9 @@ class MediaPlayer extends React.PureComponent {
       resizeMode: 'contain',
       duration: 0.0,
       currentTime: 0.0,
-      paused: !props.autoPlay,
+      paused: true,
       fullscreenMode: false,
-      areControlsVisible: true,
+      areControlsVisible: false,
       controlsTimeout: -1,
       seekerOffset: 0,
       seekerPosition: 0,
@@ -87,7 +87,9 @@ class MediaPlayer extends React.PureComponent {
   }
 
   onLoad = data => {
+    const { autoPlay } = this.props;
     this.setState({
+      buffering: false,
       duration: data.duration,
     });
 
@@ -99,6 +101,10 @@ class MediaPlayer extends React.PureComponent {
 
     if (this.props.onMediaLoaded) {
       this.props.onMediaLoaded();
+    }
+
+    if (autoPlay) {
+      this.setState({ paused: false });
     }
   };
 
