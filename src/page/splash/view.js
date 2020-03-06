@@ -35,20 +35,37 @@ class SplashScreen extends React.PureComponent {
     shouldAuthenticate: false,
     subscriptionsFetched: false,
     liteMode: false,
+    liteModeParams: {},
   };
 
-  updateStatus() {
-    const { authenticate } = this.props;
+  initLiteMode = () => {};
 
-    if (this.state.liteMode) {
+  updateStatus() {
+    const { authenticate, installNewWithParams } = this.props;
+    const { liteMode, liteModeParams } = this.state;
+    const { installationId, nodeId, lbrynetVersion, platform } = liteModeParams;
+
+    if (liteMode) {
       // authenticate immediately
       NativeModules.VersionInfo.getAppVersion().then(appVersion => {
         this.setState({ shouldAuthenticate: true });
         NativeModules.Firebase.getMessagingToken()
           .then(firebaseToken => {
-            authenticate(appVersion, Platform.OS, firebaseToken);
+            authenticate(appVersion, Platform.OS, firebaseToken, false);
+            installNewWithParams(
+              appVersion,
+              installationId,
+              nodeId,
+              lbrynetVersion,
+              Platform.OS,
+              platform,
+              firebaseToken,
+            );
           })
-          .catch(() => authenticate(appVersion, Platform.OS));
+          .catch(() => {
+            authenticate(appVersion, Platform.OS, null, false);
+            installNewWithParams(appVersion, installationId, nodeId, lbrynetVersion, Platform.OS, platform, null);
+          });
       });
     } else {
       Lbry.status().then(status => {
@@ -116,7 +133,12 @@ class SplashScreen extends React.PureComponent {
     const { navigation } = this.props;
     const resetAction = StackActions.reset({
       index: 0,
-      actions: [NavigationActions.navigate({ routeName: 'LiteFile', params: { uri: this.state.launchUrl.replace(/liteMode=1/gi, '') } })],
+      actions: [
+        NavigationActions.navigate({
+          routeName: 'LiteFile',
+          params: { uri: this.state.launchUrl.replace(/liteMode=1/gi, '') },
+        }),
+      ],
     });
     navigation.dispatch(resetAction);
   };
@@ -171,7 +193,6 @@ class SplashScreen extends React.PureComponent {
         this.setState({ shouldAuthenticate: true }, () => {
           NativeModules.Firebase.getMessagingToken()
             .then(firebaseToken => {
-              console.log('firebaseToken=' + firebaseToken);
               authenticate(appVersion, Platform.OS, firebaseToken);
             })
             .catch(() => authenticate(appVersion, Platform.OS));
@@ -296,25 +317,18 @@ class SplashScreen extends React.PureComponent {
       }
 
       NativeModules.UtilityModule.getNotificationLaunchTarget().then(target => {
+        let liteMode;
         if (target) {
-          const liteMode = target.indexOf('liteMode=1') > -1;
+          liteMode = target.indexOf('liteMode=1') > -1;
           this.setState({ launchUrl: target, liteMode });
         }
 
         // Only connect after checking initial launch url / notification launch target
-        Lbry.connect()
-          .then(() => {
-            this.updateStatus();
-          })
-          .catch(e => {
-            this.setState({
-              isLagging: true,
-              message: __('Connection Failure'),
-              details: __(
-                'We could not establish a connection to the SDK. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.',
-              ),
-            });
-          });
+        if (liteMode) {
+          this.initLiteMode();
+        } else {
+          this.lbryConnect();
+        }
       });
     });
 
@@ -328,6 +342,22 @@ class SplashScreen extends React.PureComponent {
       }
     });
   }
+
+  lbryConnect = () => {
+    Lbry.connect()
+      .then(() => {
+        this.updateStatus();
+      })
+      .catch(e => {
+        this.setState({
+          isLagging: true,
+          message: __('Connection Failure'),
+          details: __(
+            'We could not establish a connection to the SDK. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.',
+          ),
+        });
+      });
+  };
 
   handleContinueAnywayPressed = () => {
     this.setState(
