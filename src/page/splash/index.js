@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { SETTINGS, doBalanceSubscribe, doUpdateBlockHeight, doPopulateSharedUserState, doToast } from 'lbry-redux';
 import {
   doAuthenticate,
+  doInstallNew,
   doInstallNewWithParams,
   doBlackListedOutpointsSubscribe,
   doFilteredOutpointsSubscribe,
@@ -18,7 +19,6 @@ import {
 import { doSetClientSetting } from 'redux/actions/settings';
 import { selectLastRouteInStack } from 'redux/selectors/drawer';
 import SplashScreen from './view';
-import { doInstallNew } from 'lbryinc/src/redux/actions/user';
 
 const select = state => ({
   authIsPending: selectAuthenticationIsPending(state),

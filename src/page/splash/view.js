@@ -24,8 +24,10 @@ class SplashScreen extends React.PureComponent {
 
   state = {
     accountUnlockFailed: false,
+    appVersion: null,
     daemonReady: false,
     details: __('Starting up'),
+    firebaseToken: null,
     message: __('Connecting'),
     isRunning: false,
     isLagging: false,
@@ -38,33 +40,46 @@ class SplashScreen extends React.PureComponent {
     liteModeParams: {},
   };
 
-  initLiteMode = () => {};
+  initLiteMode = () => {
+    NativeModules.UtilityModule.getLbrynetDirectory().then(path => {
+      NativeModules.UtilityModule.getPlatform().then(platform => {
+        RNFS.readFile(`${path}/install_id`, 'utf8')
+          .then(installIdContent => {
+            // node_id is actually optional (won't be present if dht is disabled)
+            // RNFS.readFile(`${path}/node_id`, 'utf8').then(nodeIdContent => {
+            // TODO: Load proper lbrynetVersion value
+            this.setState(
+              {
+                liteModeParams: {
+                  installationId: installIdContent,
+                  nodeId: null,
+                  lbrynetVersion: '0.62.0',
+                  platform,
+                },
+              },
+              () => this.updateStatus(),
+            );
+            // }).catch((err) => { console.log(err); console.log('node_id not found.'); this.lbryConnect() });
+          })
+          .catch(() => this.lbryConnect());
+      });
+    });
+  };
 
   updateStatus() {
-    const { authenticate, installNewWithParams } = this.props;
-    const { liteMode, liteModeParams } = this.state;
-    const { installationId, nodeId, lbrynetVersion, platform } = liteModeParams;
+    const { authenticate } = this.props;
+    const { liteMode } = this.state;
 
     if (liteMode) {
       // authenticate immediately
       NativeModules.VersionInfo.getAppVersion().then(appVersion => {
-        this.setState({ shouldAuthenticate: true });
+        this.setState({ appVersion, shouldAuthenticate: true });
         NativeModules.Firebase.getMessagingToken()
           .then(firebaseToken => {
-            authenticate(appVersion, Platform.OS, firebaseToken, false);
-            installNewWithParams(
-              appVersion,
-              installationId,
-              nodeId,
-              lbrynetVersion,
-              Platform.OS,
-              platform,
-              firebaseToken,
-            );
+            this.setState({ firebaseToken }, () => authenticate(appVersion, Platform.OS, firebaseToken, false));
           })
           .catch(() => {
             authenticate(appVersion, Platform.OS, null, false);
-            installNewWithParams(appVersion, installationId, nodeId, lbrynetVersion, Platform.OS, platform, null);
           });
       });
     } else {
@@ -105,14 +120,28 @@ class SplashScreen extends React.PureComponent {
   };
 
   componentWillReceiveProps(nextProps) {
-    const { emailToVerify, getSync, setEmailToVerify, verifyUserEmail, verifyUserEmailFailure } = this.props;
-    const { daemonReady, shouldAuthenticate, liteMode } = this.state;
+    const { getSync, installNewWithParams } = this.props;
+    const { daemonReady, shouldAuthenticate, liteMode, liteModeParams, appVersion, firebaseToken } = this.state;
     const { user } = nextProps;
 
     if (liteMode && user && user.id) {
       this.navigateToLiteMode();
     } else if (daemonReady && shouldAuthenticate && user && user.id) {
       this.setState({ shouldAuthenticate: false }, () => {
+        // call install new after successful authentication
+        if (liteMode) {
+          const { installationId, nodeId, lbrynetVersion, platform } = liteModeParams;
+          installNewWithParams(
+            appVersion,
+            installationId,
+            nodeId,
+            lbrynetVersion,
+            Platform.OS,
+            platform,
+            firebaseToken,
+          );
+        }
+
         // user is authenticated, navigate to the main view
         if (user.has_verified_email) {
           NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
@@ -311,13 +340,13 @@ class SplashScreen extends React.PureComponent {
 
     this.props.fetchRewardedContent();
     Linking.getInitialURL().then(url => {
+      let liteMode;
       if (url) {
-        const liteMode = url.indexOf('liteMode=1') > -1;
+        liteMode = url.indexOf('liteMode=1') > -1;
         this.setState({ launchUrl: url, liteMode });
       }
 
       NativeModules.UtilityModule.getNotificationLaunchTarget().then(target => {
-        let liteMode;
         if (target) {
           liteMode = target.indexOf('liteMode=1') > -1;
           this.setState({ launchUrl: target, liteMode });
