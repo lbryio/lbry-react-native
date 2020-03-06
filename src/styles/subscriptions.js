@@ -38,11 +38,13 @@ const subscriptionsStyle = StyleSheet.create({
   },
   infoText: {
     fontFamily: 'Inter-Regular',
-    fontSize: 16,
+    fontSize: 14,
     marginTop: 8,
     marginBottom: 8,
   },
   infoArea: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginLeft: 16,
     marginRight: 16,
     paddingBottom: 4,
@@ -188,11 +190,11 @@ const subscriptionsStyle = StyleSheet.create({
     justifyContent: 'center',
   },
   suggestedItem: {
-    flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
     marginLeft: 16,
     marginRight: 16,
+    height: 140,
   },
   suggestedItemThumbnailContainer: {
     width: 70,
@@ -209,30 +211,37 @@ const subscriptionsStyle = StyleSheet.create({
   suggestedItemDetails: {
     marginLeft: 16,
     marginRight: 16,
-    flex: 0.8,
+    alignItems: 'center',
   },
   suggestedItemSubscribe: {
     backgroundColor: Colors.White,
+  },
+  suggestedItemSubscribeOverlay: {
     position: 'absolute',
+    left: 0,
     right: 0,
     top: 0,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingBottom: 4,
+    height: 70,
   },
   suggestedItemTitle: {
     fontFamily: 'Inter-Regular',
-    fontSize: 16,
-    marginBottom: 4,
-    width: '85%',
+    textAlign: 'center',
+    fontSize: 14,
+    marginTop: 4,
+    marginBottom: 2,
   },
   suggestedItemName: {
     fontFamily: 'Inter-SemiBold',
     fontSize: 14,
     marginBottom: 4,
     color: Colors.LbryGreen,
-    width: '95%',
   },
   suggestedItemTagList: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    justifyContent: 'center',
   },
   suggestedSubTitle: {
     fontFamily: 'Inter-Regular',
@@ -265,6 +274,23 @@ const subscriptionsStyle = StyleSheet.create({
   },
   modalSuggestedScrollContent: {
     paddingTop: 16,
+  },
+  suggestedDoneButton: {
+    backgroundColor: Colors.LbryGreen,
+    margin: 16,
+  },
+  mainSuggested: {
+    flex: 1,
+  },
+  suggestedLoading: {
+    position: 'absolute',
+    right: 24,
+    bottom: 22,
+  },
+  modalLoading: {
+    position: 'absolute',
+    right: 7,
+    bottom: 7,
   },
 });
 

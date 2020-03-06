@@ -47,7 +47,7 @@ import Tag from 'component/tag';
 import TagSearch from 'component/tagSearch';
 import UriBar from 'component/uriBar';
 import publishStyle from 'styles/publish';
-import { navigateToUri, logPublish, uploadImageAsset } from 'utils/helper';
+import { navigateToUri, navigateBack, logPublish, uploadImageAsset } from 'utils/helper';
 
 const languages = {
   en: 'English',
@@ -141,6 +141,8 @@ class PublishPage extends React.PureComponent {
     // other
     publishStarted: false,
     storagePermissionRequired: false,
+    hasReturnedBack: false,
+    returnUrl: null,
   };
 
   didFocusListener;
@@ -236,7 +238,7 @@ class PublishPage extends React.PureComponent {
       let isEditMode = false,
         vanityUrlSet = false;
       if (navigation.state.params) {
-        const { displayForm, editMode, claimToEdit, vanityUrl } = navigation.state.params;
+        const { displayForm, editMode, claimToEdit, vanityUrl, returnUrl } = navigation.state.params;
         if (editMode) {
           this.prepareEdit(claimToEdit);
           isEditMode = true;
@@ -250,6 +252,7 @@ class PublishPage extends React.PureComponent {
             vanityUrl: claimName,
           });
         }
+        this.setState({ returnUrl });
       }
 
       if (!isEditMode && hasFormState) {
@@ -472,7 +475,15 @@ class PublishPage extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { currentRoute: prevRoute, drawerStack: prevDrawerStack, notify, updatePublishFormState } = this.props;
+    const {
+      currentRoute: prevRoute,
+      drawerStack: prevDrawerStack,
+      popDrawerStack,
+      setPlayerVisible,
+      navigation,
+      notify,
+      updatePublishFormState,
+    } = this.props;
     const { currentRoute, drawerStack, publishFormValues } = nextProps;
 
     if (Constants.DRAWER_ROUTE_PUBLISH === currentRoute && currentRoute !== prevRoute) {
@@ -486,6 +497,11 @@ class PublishPage extends React.PureComponent {
     ) {
       // navigated back from the form
       this.showSelector();
+      if (!this.state.hasReturnedBack && this.state.returnUrl) {
+        this.setState({ hasReturnedBack: true }, () => {
+          navigateBack(navigation, drawerStack, popDrawerStack, setPlayerVisible);
+        });
+      }
     }
   }
 

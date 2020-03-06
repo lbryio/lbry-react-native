@@ -3,6 +3,7 @@ import { NativeModules, ScrollView, Text, View } from 'react-native';
 import TransactionListRecent from 'component/transactionListRecent';
 import WalletAddress from 'component/walletAddress';
 import WalletBalance from 'component/walletBalance';
+import WalletBalanceExtra from 'component/walletBalanceExtra';
 import WalletSend from 'component/walletSend';
 import WalletRewardsDriver from 'component/walletRewardsDriver';
 import WalletSignIn from 'component/walletSignIn';
@@ -90,6 +91,7 @@ class WalletPage extends React.PureComponent {
         >
           {!rewardsNotInterested && (!balance || balance === 0) && <WalletRewardsDriver navigation={navigation} />}
           <WalletBalance />
+          <WalletBalanceExtra />
           <WalletAddress />
           <WalletSend />
           <TransactionListRecent navigation={navigation} />

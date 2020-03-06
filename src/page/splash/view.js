@@ -67,6 +67,9 @@ class SplashScreen extends React.PureComponent {
         }
       }
     }
+
+    // splash screen is done at this point, next page to be displayed will be user-interactable
+    NativeModules.Firebase.logLaunchTiming();
   };
 
   componentWillReceiveProps(nextProps) {

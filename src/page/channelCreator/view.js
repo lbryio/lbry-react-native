@@ -14,7 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { navigateToUri, logPublish, uploadImageAsset } from 'utils/helper';
+import { navigateBack, navigateToUri, logPublish, uploadImageAsset } from 'utils/helper';
 import Button from 'component/button';
 import ChannelIconItem from 'component/channelIconItem';
 import ChannelRewardsDriver from 'component/channelRewardsDriver';
@@ -37,6 +37,7 @@ export default class ChannelCreator extends React.PureComponent {
 
   state = {
     autoStyle: null,
+    returnUrl: null,
     canSave: true,
     claimId: null,
     creditsInputFocused: false,
@@ -77,6 +78,7 @@ export default class ChannelCreator extends React.PureComponent {
     descriptionFocused: false,
     websiteFocused: false,
     emailFocused: false,
+    hasReturnedBack: false,
   };
 
   didFocusListener;
@@ -118,7 +120,14 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   componentWillReceiveProps(nextProps) {
-    const { currentRoute: prevRoute, drawerStack: prevDrawerStack, notify } = this.props;
+    const {
+      currentRoute: prevRoute,
+      drawerStack: prevDrawerStack,
+      popDrawerStack,
+      setPlayerVisible,
+      navigation,
+      notify,
+    } = this.props;
     const { currentRoute, drawerStack, updatingChannel, updateChannelError } = nextProps;
 
     if (Constants.DRAWER_ROUTE_CHANNEL_CREATOR === currentRoute && currentRoute !== prevRoute) {
@@ -142,6 +151,11 @@ export default class ChannelCreator extends React.PureComponent {
     ) {
       // navigated back from the form
       this.setState({ currentPhase: Constants.PHASE_LIST });
+      if (!this.state.hasReturnedBack && this.state.returnUrl) {
+        this.setState({ hasReturnedBack: true }, () => {
+          navigateBack(navigation, drawerStack, popDrawerStack, setPlayerVisible);
+        });
+      }
     }
   }
 
@@ -171,11 +185,12 @@ export default class ChannelCreator extends React.PureComponent {
 
       let isEditMode = false;
       if (navigation.state.params) {
-        const { editChannelUrl, displayForm } = navigation.state.params;
+        const { editChannelUrl, displayForm, returnUrl } = navigation.state.params;
         if (editChannelUrl) {
           isEditMode = true;
           this.setState({ editChannelUrl, currentPhase: Constants.PHASE_CREATE });
         }
+        this.setState({ returnUrl });
       }
 
       if (!isEditMode && hasFormState) {

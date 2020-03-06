@@ -7,13 +7,13 @@ import {
   selectSubscriptionClaims,
   selectSubscriptions,
   selectIsFetchingSubscriptions,
-  selectIsFetchingSuggested,
   selectSuggestedChannels,
   selectUnreadSubscriptions,
   selectViewMode,
   selectFirstRunCompleted,
   selectShowSuggestedSubs,
 } from 'lbryinc';
+import { doToast, selectFetchingClaimSearch } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doSetClientSetting, doSetTimeItem } from 'redux/actions/settings';
 import { makeSelectClientSetting, selectTimeItem } from 'redux/selectors/settings';
@@ -24,7 +24,7 @@ import SubscriptionsPage from './view';
 const select = state => ({
   currentRoute: selectCurrentRoute(state),
   loading: selectIsFetchingSubscriptions(state),
-  loadingSuggested: selectIsFetchingSuggested(state),
+  loadingSuggested: selectFetchingClaimSearch(state),
   subscribedChannels: selectSubscriptions(state),
   suggestedChannels: selectSuggestedChannels(state),
   subscriptionsViewMode: makeSelectClientSetting(Constants.SETTING_SUBSCRIPTIONS_VIEW_MODE)(state),
@@ -41,6 +41,7 @@ const perform = dispatch => ({
   doFetchMySubscriptions: () => dispatch(doFetchMySubscriptions()),
   doFetchRecommendedSubscriptions: () => dispatch(doFetchRecommendedSubscriptions()),
   doSetViewMode: viewMode => dispatch(doSetViewMode(viewMode)),
+  notify: data => dispatch(doToast(data)),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_SUBSCRIPTIONS)),
   setClientSetting: (key, value) => dispatch(doSetClientSetting(key, value)),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
@@ -49,5 +50,5 @@ const perform = dispatch => ({
 
 export default connect(
   select,
-  perform
+  perform,
 )(SubscriptionsPage);

@@ -167,7 +167,7 @@ class MediaPlayer extends React.PureComponent {
 
   togglePlay = () => {
     this.showPlayerControls();
-    this.setState({ paused: !this.state.paused }, this.handlePausedState);
+    this.setState({ paused: !this.state.paused }, this.updateBackgroundMediaNotification);
   };
 
   handlePausedState = () => {
@@ -188,7 +188,7 @@ class MediaPlayer extends React.PureComponent {
   };
 
   onEnd = () => {
-    this.setState({ paused: true });
+    this.setState({ paused: true }, this.updateBackgroundMediaNotification);
     if (this.props.onPlaybackFinished) {
       this.props.onPlaybackFinished();
     }
@@ -325,6 +325,10 @@ class MediaPlayer extends React.PureComponent {
         this.setState({ paused: false, autoPaused: false });
       }
     }
+  };
+
+  onFocusChanged = evt => {
+    this.setState({ paused: !(this.state.paused && evt.hasAudioFocus) }, this.updateBackgroundMediaNotification);
   };
 
   onBuffer = () => {
@@ -469,6 +473,7 @@ class MediaPlayer extends React.PureComponent {
           onEnd={this.onEnd}
           onError={this.onError}
           minLoadRetryCount={999}
+          onAudioFocusChanged={this.onFocusChanged}
         />
 
         {this.state.firstPlay && thumbnail && (

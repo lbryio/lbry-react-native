@@ -82,7 +82,7 @@ const perform = dispatch => ({
   fetchFileInfo: uri => dispatch(doFetchFileInfo(uri)),
   fetchCostInfo: uri => dispatch(doFetchCostInfoForUri(uri)),
   fetchMyClaims: () => dispatch(doFetchClaimListMine()),
-  fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
+  fetchChannelListMine: () => dispatch(doFetchChannelListMine(1, 99999, true)),
   fetchViewCount: claimId => dispatch(doFetchViewCount(claimId)),
   fileGet: (uri, saveFile) => dispatch(doFileGet(uri, saveFile)),
   notify: data => dispatch(doToast(data)),

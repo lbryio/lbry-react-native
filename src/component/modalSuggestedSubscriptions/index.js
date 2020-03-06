@@ -1,4 +1,9 @@
 import { connect } from 'react-redux';
+import { selectFetchingClaimSearch } from 'lbry-redux';
 import ModalSuggestedSubscriptions from './view';
 
-export default connect()(ModalSuggestedSubscriptions);
+const select = state => ({
+  loadingSuggested: selectFetchingClaimSearch(state),
+});
+
+export default connect(select)(ModalSuggestedSubscriptions);

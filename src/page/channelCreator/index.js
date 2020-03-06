@@ -13,7 +13,12 @@ import {
   doToast,
 } from 'lbry-redux';
 import { doGetSync } from 'lbryinc';
-import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
+import {
+  doPushDrawerStack,
+  doPopDrawerStack,
+  doSetPlayerVisible,
+  doSetExplicitNavigateBack,
+} from 'redux/actions/drawer';
 import { doUpdateChannelFormState, doClearChannelFormState } from 'redux/actions/form';
 import { selectDrawerStack } from 'redux/selectors/drawer';
 import { selectChannelFormState, selectHasChannelFormState } from 'redux/selectors/form';
@@ -37,16 +42,17 @@ const perform = dispatch => ({
   notify: data => dispatch(doToast(data)),
   clearChannelFormState: () => dispatch(doClearChannelFormState()),
   createChannel: (name, amount, optionalParams) => dispatch(doCreateChannel(name, amount, optionalParams)),
-  fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
+  fetchChannelListMine: () => dispatch(doFetchChannelListMine(1, 99999, true)),
   getSync: (password, callback) => dispatch(doGetSync(password, callback)),
   updateChannel: params => dispatch(doUpdateChannel(params)),
   updateChannelFormState: data => dispatch(doUpdateChannelFormState(data)),
   pushDrawerStack: (routeName, params) => dispatch(doPushDrawerStack(routeName, params)),
   popDrawerStack: () => dispatch(doPopDrawerStack()),
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
+  setExplicitNavigateBack: flag => dispatch(doSetExplicitNavigateBack(flag)),
 });
 
 export default connect(
   select,
-  perform
+  perform,
 )(ChannelCreator);

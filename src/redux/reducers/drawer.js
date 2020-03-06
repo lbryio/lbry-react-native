@@ -2,7 +2,7 @@ import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 
 const reducers = {};
 const defaultState = {
-  stack: [{ route: Constants.DRAWER_ROUTE_DISCOVER, params: {} }], // Discover is always the first drawer route
+  stack: [{ route: Constants.DRAWER_ROUTE_SUBSCRIPTIONS, params: {} }], // Following is always the first drawer route
   lastRouteInStack: {},
   playerVisible: false,
   playerVisibleByUri: {},
@@ -40,6 +40,9 @@ reducers[Constants.ACTION_PUSH_DRAWER_STACK] = (state, action) => {
     canPushStack = false;
   }
   if (lastRoute === Constants.DRAWER_ROUTE_PUBLISH_FORM && routeName === Constants.DRAWER_ROUTE_PUBLISH) {
+    canPushStack = false;
+  }
+  if (routeName === Constants.DRAWER_ROUTE_SUBSCRIPTIONS && newStack.length === 1) {
     canPushStack = false;
   }
 

@@ -9,8 +9,8 @@ import discoverStyle from 'styles/discover';
 
 const groupedMenuItems = {
   'Find content': [
-    { icon: 'hashtag', label: 'Your Tags', route: Constants.DRAWER_ROUTE_DISCOVER },
     { icon: 'heart', solid: true, label: 'Following', route: Constants.DRAWER_ROUTE_SUBSCRIPTIONS },
+    { icon: 'hashtag', label: 'Your Tags', route: Constants.DRAWER_ROUTE_DISCOVER },
     { icon: 'globe-americas', label: 'All Content', route: Constants.DRAWER_ROUTE_TRENDING },
   ],
   'Your content': [
@@ -145,7 +145,7 @@ class DrawerContent extends React.PureComponent {
                     const focused =
                       activeItemKey === item.route ||
                       (activeItemKey === Constants.FULL_ROUTE_NAME_DISCOVER &&
-                        item.route === Constants.DRAWER_ROUTE_DISCOVER) ||
+                        item.route === Constants.DRAWER_ROUTE_SUBSCRIPTIONS) ||
                       (activeItemKey === Constants.FULL_ROUTE_NAME_WALLET &&
                         item.route === Constants.DRAWER_ROUTE_WALLET);
                     return (
