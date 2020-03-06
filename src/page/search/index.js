@@ -15,6 +15,7 @@ import {
 } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
+import { selectShowNsfw } from 'redux/selectors/settings';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import SearchPage from './view';
 
@@ -24,15 +25,20 @@ const select = state => ({
   isSearching: selectIsSearching(state),
   query: selectSearchValue(state),
   resolvingUris: selectResolvingUris(state),
-  uris: makeSelectSearchUris(makeSelectQueryWithOptions(null, Constants.DEFAULT_PAGE_SIZE)(state))(state),
-  results: makeSelectResolvedSearchResults(makeSelectQueryWithOptions(null, Constants.DEFAULT_PAGE_SIZE)(state))(state),
+  showNsfwContent: selectShowNsfw(state),
+  uris: makeSelectSearchUris(
+    makeSelectQueryWithOptions(null, { size: Constants.DEFAULT_PAGE_SIZE, isBackgroundSearch: false })(state),
+  )(state),
+  results: makeSelectResolvedSearchResults(
+    makeSelectQueryWithOptions(null, { size: Constants.DEFAULT_PAGE_SIZE, isBackgroundSearch: false })(state),
+  )(state),
   lastPageReached: makeSelectResolvedSearchResultsLastPageReached(
-    makeSelectQueryWithOptions(null, Constants.DEFAULT_PAGE_SIZE)(state),
+    makeSelectQueryWithOptions(null, { size: Constants.DEFAULT_PAGE_SIZE, isBackgroundSearch: false })(state),
   )(state),
 });
 
 const perform = dispatch => ({
-  search: (query, from) => dispatch(doResolvedSearch(query, Constants.DEFAULT_PAGE_SIZE, from, false, {})),
+  search: (query, from, nsfw) => dispatch(doResolvedSearch(query, Constants.DEFAULT_PAGE_SIZE, from, false, {}, nsfw)),
   claimSearch: options => dispatch(doClaimSearch(options)),
   updateSearchQuery: query => dispatch(doUpdateSearchQuery(query)),
   pushDrawerStack: (routeName, params) => dispatch(doPushDrawerStack(routeName, params)),

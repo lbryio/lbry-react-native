@@ -21,6 +21,7 @@ import RewardCard from 'component/rewardCard';
 import RewardEnrolment from 'component/rewardEnrolment';
 import UriBar from 'component/uriBar';
 import invitesStyle from 'styles/invites';
+import { fetchReferralCode, logPublish } from 'utils/helper';
 
 class InvitesPage extends React.PureComponent {
   state = {
@@ -47,7 +48,19 @@ class InvitesPage extends React.PureComponent {
     pushDrawerStack();
     setPlayerVisible();
     NativeModules.Firebase.setCurrentScreen('Invites').then(result => {
-      fetchChannelListMine();
+      fetchReferralCode(
+        response => {
+          if (response && response.length > 0) {
+            // only need to use the first referral code.
+            // inviteLink will be updated after channels are loaded (if the user has created at least one channel)
+            this.setState({ inviteLink: `https://lbry.tv/$/invite/${response[0]}` });
+          }
+          fetchChannelListMine();
+        },
+        error => {
+          fetchChannelListMine();
+        },
+      );
       fetchInviteStatus();
     });
   };
@@ -62,13 +75,15 @@ class InvitesPage extends React.PureComponent {
       const filtered = channels.filter(c => c.name === channelName);
       if (filtered.length > 0) {
         const channel = filtered[0];
+        logPublish(channel);
         this.setState({ channelName, inviteLink: this.getLinkForChannel(channel) });
       }
     }
   };
 
   getLinkForChannel = channel => {
-    const { claimId, claimName } = parseURI(channel.permanent_url);
+    const parsedUrl = channel.canonical_url ? parseURI(channel.canonical_url) : parseURI(channel.permanent_url);
+    const { claimId, claimName } = parsedUrl;
     return `https://lbry.tv/$/invite/${claimName}:${claimId}`;
   };
 
@@ -96,6 +111,7 @@ class InvitesPage extends React.PureComponent {
 
     if (!this.state.channelName && channels && channels.length > 0) {
       const firstChannel = channels[0];
+      logPublish(firstChannel);
       this.setState({ channelName: firstChannel.name, inviteLink: this.getLinkForChannel(firstChannel) });
     }
 

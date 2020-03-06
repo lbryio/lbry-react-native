@@ -99,9 +99,12 @@ class FileListItem extends React.PureComponent {
       isRewardContent,
       channelClaimId,
       fullChannelUri,
+      repostChannel,
+      repostChannelUrl,
       shortChannelUri,
       shouldHide,
-      signingChannel;
+      signingChannel,
+      isRepost;
     if (claim) {
       name = claim.name;
       signingChannel = claim.signing_channel;
@@ -111,6 +114,12 @@ class FileListItem extends React.PureComponent {
       channelClaimId = signingChannel ? signingChannel.claim_id : null;
       fullChannelUri = channelClaimId ? `${channel}#${channelClaimId}` : channel;
       shortChannelUri = signingChannel ? signingChannel.short_url : null;
+      repostChannelUrl = claim.repost_channel_url;
+      if (repostChannelUrl) {
+        const { claimName: repostChannelName } = parseURI(repostChannelUrl);
+        repostChannel = repostChannelName;
+      }
+      isRepost = !!repostChannelUrl;
 
       if (blackListedOutpoints || filteredOutpoints) {
         const outpointsToHide = !blackListedOutpoints
@@ -127,11 +136,20 @@ class FileListItem extends React.PureComponent {
       return null;
     }
 
+    const actualHideChannel = !isRepost && hideChannel;
     const isChannel = name && name.startsWith('@');
     const hasThumbnail = !!thumbnail;
-
     return (
-      <View style={style}>
+      <View>
+        {isRepost && (
+          <View style={fileListStyle.repostInfo}>
+            <Icon name={"retweet"} size={14} style={fileListStyle.repostIcon} />
+            <Text style={fileListStyle.repostChannelName}>
+              <Link text={repostChannel}
+                onPress={() => navigateToUri(navigation, normalizeURI(repostChannelUrl), null, false, null, false)} /> reposted</Text>
+          </View>
+        )}
+
         <TouchableOpacity
           style={[style, isChannel ? fileListStyle.channelContainer : null]}
           onPress={this.onPressHandler}
@@ -212,7 +230,7 @@ class FileListItem extends React.PureComponent {
               <View style={fileListStyle.titleContainer}>
                 <Text
                   style={featuredResult ? fileListStyle.featuredTitle : fileListStyle.title}
-                  numberOfLines={hideChannel ? 4 : 3}
+                  numberOfLines={actualHideChannel ? 4 : 3}
                 >
                   {title || name}
                 </Text>
@@ -226,7 +244,7 @@ class FileListItem extends React.PureComponent {
               </View>
             )}
 
-            {(channel || isChannel) && !hideChannel && (
+            {(channel || isChannel) && !actualHideChannel && (
               <Link
                 style={fileListStyle.publisher}
                 text={isChannel ? name : channel}

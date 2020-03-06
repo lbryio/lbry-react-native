@@ -37,8 +37,20 @@ const modalPickerStyle = StyleSheet.create({
     bottom: 8,
     position: 'absolute',
   },
+  wideButtons: {
+    marginTop: 16,
+    left: 8,
+    bottom: 8,
+    right: 8,
+    position: 'absolute',
+  },
   doneButton: {
     alignSelf: 'flex-start',
+    backgroundColor: Colors.LbryGreen,
+    paddingLeft: 16,
+    paddingRight: 16,
+  },
+  wideDoneButton: {
     backgroundColor: Colors.LbryGreen,
     paddingLeft: 16,
     paddingRight: 16,

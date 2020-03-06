@@ -82,6 +82,9 @@ class SplashScreen extends React.PureComponent {
         }
       }
     }
+
+    // splash screen is done at this point, next page to be displayed will be user-interactable
+    NativeModules.Firebase.logLaunchTiming();
   };
 
   componentWillReceiveProps(nextProps) {
@@ -165,12 +168,13 @@ class SplashScreen extends React.PureComponent {
       this.navigateToMain();
     } else {
       NativeModules.VersionInfo.getAppVersion().then(appVersion => {
-        this.setState({ shouldAuthenticate: true });
-        NativeModules.Firebase.getMessagingToken()
-          .then(firebaseToken => {
-            authenticate(appVersion, Platform.OS, firebaseToken);
-          })
-          .catch(() => authenticate(appVersion, Platform.OS));
+        this.setState({ shouldAuthenticate: true }, () => {
+          NativeModules.Firebase.getMessagingToken()
+            .then(firebaseToken => {
+              authenticate(appVersion, Platform.OS, firebaseToken);
+            })
+            .catch(() => authenticate(appVersion, Platform.OS));
+        });
       });
     }
     // });

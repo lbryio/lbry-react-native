@@ -32,7 +32,7 @@ const select = state => ({
 });
 
 const perform = dispatch => ({
-  fetchChannelListMine: () => dispatch(doFetchChannelListMine()),
+  fetchChannelListMine: () => dispatch(doFetchChannelListMine(1, 99999, true)),
   fetchInviteStatus: () => dispatch(doFetchInviteStatus()),
   inviteNew: email => dispatch(doUserInviteNew(email)),
   pushDrawerStack: () => dispatch(doPushDrawerStack(Constants.DRAWER_ROUTE_INVITES)),

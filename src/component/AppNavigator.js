@@ -89,12 +89,13 @@ const menuNavigationButton = navigation => (
 
 const discoverStack = createStackNavigator(
   {
-    Discover: {
-      screen: DiscoverPage,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Explore',
+    Subscriptions: {
+      screen: SubscriptionsPage,
+      navigationOptions: {
+        title: 'Following',
         header: null,
-      }),
+        drawerIcon: ({ tintColor }) => <Icon name="heart" solid size={drawerIconSize} style={{ color: tintColor }} />,
+      },
     },
     File: {
       screen: FilePage,
@@ -161,22 +162,22 @@ const drawer = createDrawerNavigator(
     DiscoverStack: {
       screen: discoverStack,
       navigationOptions: {
-        title: 'Explore',
+        title: 'Following',
         drawerIcon: ({ tintColor }) => <Icon name="home" size={drawerIconSize} style={{ color: tintColor }} />,
       },
+    },
+    Discover: {
+      screen: DiscoverPage,
+      navigationOptions: ({ navigation }) => ({
+        title: 'Your Tags',
+        header: null,
+      }),
     },
     Trending: {
       screen: TrendingPage,
       navigationOptions: {
         title: 'All Content',
         drawerIcon: ({ tintColor }) => <Icon name="fire" size={drawerIconSize} style={{ color: tintColor }} />,
-      },
-    },
-    Subscriptions: {
-      screen: SubscriptionsPage,
-      navigationOptions: {
-        title: 'Subscriptions',
-        drawerIcon: ({ tintColor }) => <Icon name="heart" solid size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
     WalletStack: {

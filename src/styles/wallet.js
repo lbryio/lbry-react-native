@@ -103,6 +103,12 @@ const walletStyle = StyleSheet.create({
     marginLeft: 16,
     marginRight: 16,
   },
+  balanceExtraCard: {
+    backgroundColor: Colors.White,
+    marginLeft: 16,
+    marginRight: 16,
+    padding: 16,
+  },
   balanceBackground: {
     position: 'absolute',
     alignSelf: 'stretch',
@@ -191,6 +197,7 @@ const walletStyle = StyleSheet.create({
     paddingRight: 18,
   },
   currency: {
+    fontFamily: 'Inter-Regular',
     alignSelf: 'flex-start',
     fontSize: 12,
     marginTop: 16,
@@ -365,6 +372,39 @@ const walletStyle = StyleSheet.create({
     color: Colors.White,
     fontFamily: 'Inter-Regular',
     fontSize: 28,
+  },
+  walletExtraRow: {
+    flexDirection: 'row',
+  },
+  walletExtraCol: {
+    flex: 0.5,
+    paddingLeft: 24,
+  },
+  walletExtraBalance: {
+    fontFamily: 'Inter-SemiBold',
+    fontSize: 28,
+  },
+  balanceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  walletExtraCaption: {
+    fontFamily: 'Inter-Medium',
+    fontSize: 14,
+  },
+  walletExtraCurrency: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+    marginTop: 8,
+    marginLeft: 4,
+  },
+  walletExtraTopMargin: {
+    marginTop: 16,
+  },
+  walletExtraIcon: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
   },
 });
 

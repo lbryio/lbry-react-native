@@ -104,6 +104,8 @@ class FilePage extends React.PureComponent {
       stopDownloadConfirmed: false,
       streamingMode: false,
       viewCountFetched: false,
+      isRepost: false,
+      uriPushedToDrawerStack: false,
     };
   }
 
@@ -113,6 +115,22 @@ class FilePage extends React.PureComponent {
     const { navigation } = this.props;
     // this.didFocusListener = navigation.addListener('didFocus', this.onComponentFocused);
   }
+
+  checkRepost = () => {
+    const { claim, isResolvingUri, navigation, pushDrawerStack } = this.props;
+    const { uri } = this.state;
+    if (!isResolvingUri) {
+      if (claim && claim.repost_url) {
+        // redirect to canonical url
+        this.setState({ isRepost: true });
+        navigateToUri(navigation, claim.canonical_url, null, false, claim.permanent_url, false, true);
+      } else {
+        this.setState({ uriPushedToDrawerStack: true }, () => {
+          pushDrawerStack(uri);
+        });
+      }
+    }
+  };
 
   onComponentFocused = () => {
     StatusBar.setHidden(false);
@@ -129,6 +147,8 @@ class FilePage extends React.PureComponent {
 
       setPlayerVisible(true, uri);
       if (!isResolvingUri && !claim) resolveUri(uri);
+
+      this.checkRepost();
 
       this.fetchFileInfo(uri, this.props);
       this.fetchCostInfo(uri, this.props);
@@ -283,6 +303,11 @@ class FilePage extends React.PureComponent {
       resolveUri(uri);
     }
 
+    if (!prevProps.claim && claim) {
+      this.checkRepost();
+      return;
+    }
+
     // Returned to the page. If mediaLoaded, and currentMediaInfo is different, update
     if (this.state.mediaLoaded && window.currentMediaInfo && window.currentMediaInfo.uri !== this.state.uri) {
       const { metadata } = this.props;
@@ -360,7 +385,11 @@ class FilePage extends React.PureComponent {
 
   onEditPressed = () => {
     const { claim, navigation } = this.props;
-    navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISH, params: { editMode: true, claimToEdit: claim } });
+    const uri = this.state.uri || this.getPurchaseUrl();
+    navigation.navigate({
+      routeName: Constants.DRAWER_ROUTE_PUBLISH,
+      params: { editMode: true, claimToEdit: claim, returnUrl: uri },
+    });
   };
 
   onDeletePressed = () => {
@@ -606,7 +635,7 @@ class FilePage extends React.PureComponent {
     let timeToStartMillis, timeToStart;
     if (this.startTime) {
       timeToStartMillis = Date.now() - this.startTime;
-      timeToStart = Math.ceil(timeToStartMillis / 1000);
+      timeToStart = Math.ceil(timeToStartMillis / 1000.0);
       this.startTime = null;
     }
 
@@ -616,8 +645,8 @@ class FilePage extends React.PureComponent {
 
     let payload = { uri: uri };
     if (!isNaN(timeToStart)) {
-      payload['time_to_start_seconds'] = timeToStart;
-      payload['time_to_start_ms'] = timeToStartMillis;
+      payload['time_to_start_seconds'] = parseInt(timeToStart, 10);
+      payload['time_to_start_ms'] = parseInt(timeToStartMillis, 10);
     }
     NativeModules.Firebase.track('play', payload);
 
@@ -698,19 +727,24 @@ class FilePage extends React.PureComponent {
         [
           {
             text: __('OK'),
-            onPress: () => purchaseUri(uri, costInfo, download),
+            onPress: () => {
+              this.startTime = Date.now();
+              purchaseUri(uri, costInfo, download);
+            },
           },
           { text: __('Cancel') },
         ],
       );
     } else {
       // Free content. Just call purchaseUri directly.
+      this.startTime = Date.now();
       purchaseUri(uri, costInfo, download);
     }
   };
 
   onFileDownloadButtonPressed = () => {
-    const { claim, costInfo, contentType, purchaseUri, setPlayerVisible } = this.props;
+    this.startTime = Date.now();
+    const { claim, costInfo, contentType, setPlayerVisible } = this.props;
     const mediaType = Lbry.getMediaType(contentType);
     const isPlayable = mediaType === 'video' || mediaType === 'audio';
     const isViewable = mediaType === 'image' || mediaType === 'text';
@@ -725,7 +759,6 @@ class FilePage extends React.PureComponent {
     }
 
     if (isPlayable) {
-      this.startTime = Date.now();
       this.setState({ downloadPressed: true, autoPlayMedia: true, stopDownloadConfirmed: false });
     }
     if (isViewable) {
@@ -965,6 +998,12 @@ class FilePage extends React.PureComponent {
 
     let innerContent = null;
     if ((isResolvingUri && !claim) || !claim) {
+      if (!isResolvingUri && !claim && !this.state.uriPushedToDrawerStack) {
+        this.setState({ uriPushedToDrawerStack: true }, () => {
+          pushDrawerStack(uri);
+        });
+      }
+
       return (
         <View style={filePageStyle.pageContainer}>
           <UriBar value={uri} navigation={navigation} />
@@ -1031,6 +1070,17 @@ class FilePage extends React.PureComponent {
     let tags = [];
     if (claim && claim.value && claim.value.tags) {
       tags = claim.value.tags;
+    }
+
+    if (!isResolvingUri && this.state.isRepost) {
+      return null;
+    }
+
+    // in case we somehow get here without the uri pushed to the drawer stack
+    if (!isResolvingUri && !this.state.isRepost && !this.state.uriPushedToDrawerStack) {
+      this.setState({ uriPushedToDrawerStack: true }, () => {
+        pushDrawerStack(uri);
+      });
     }
 
     const completed = fileInfo && fileInfo.completed;
