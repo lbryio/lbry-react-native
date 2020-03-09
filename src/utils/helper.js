@@ -432,3 +432,7 @@ export function fetchReferralCode(successCallback, errorCallback) {
       }
     });
 }
+
+export function decode(value) {
+  return decodeURIComponent(value).replace(/\+/g, ' ');
+}

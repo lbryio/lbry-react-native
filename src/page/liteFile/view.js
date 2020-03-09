@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry, formatCredits, normalizeURI, parseURI } from 'lbry-redux';
+import { Lbry, formatCredits, normalizeURI, parseURI, parseQueryParams } from 'lbry-redux';
 import { Lbryio } from 'lbryinc';
 import {
   ActivityIndicator,
@@ -24,11 +24,10 @@ import Link from 'component/link';
 import MediaPlayer from 'component/mediaPlayer';
 import RelatedContent from 'component/relatedContent';
 import filePageStyle from 'styles/filePage';
-import { formatLbryUrlForWeb, navigateToUri } from 'utils/helper';
-import uriBarStyle from 'styles/uriBar';
+import { decode, formatLbryUrlForWeb, navigateToUri } from 'utils/helper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import ProgressCircle from 'react-native-progress-circle';
-import Constants from "constants";
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
+import uriBarStyle from 'styles/uriBar';
 
 // This page will only be used for playing audio / video content from a remote stream URL
 class LiteFilePage extends React.PureComponent {
@@ -39,6 +38,9 @@ class LiteFilePage extends React.PureComponent {
   player = null;
 
   state = {
+    channelName: null,
+    channelUrl: null,
+    contentTitle: null,
     fullscreenMode: false,
     playerHeight: null,
     isLandscape: false,
@@ -102,15 +104,33 @@ class LiteFilePage extends React.PureComponent {
     NativeModules.UtilityModule.shareUrl(shareUrl);
   };
 
-  render() {
-    const { navigation, rewardedContentClaimIds, title } = this.props;
-    const { viewCount } = this.state;
+  componentDidUpdate() {
+    const { navigation } = this.props;
     const { uri } = navigation.state.params;
 
+    if (!this.state.contentTitle) {
+      const params = parseQueryParams(uri);
+      const { channelUrl, contentTitle } = params;
+      const channelName = channelUrl ? parseURI(decode(channelUrl)).claimName : null;
+
+      this.setState({
+        title: decode(contentTitle),
+        channelUrl,
+        channelName,
+        showRecommended: true,
+      });
+    }
+  }
+
+  render() {
+    const { navigation, rewardedContentClaimIds } = this.props;
+    const { channelName, channelUrl, title, viewCount } = this.state;
+    const { uri } = navigation.state.params;
     const { claimName, claimId } = parseURI(uri);
     const isRewardContent = rewardedContentClaimIds.includes(claimId);
-    const channelName = null;
-    const channelUri = null;
+
+    const playerBgStyle = [filePageStyle.playerBackground, filePageStyle.containedPlayerBackground];
+    const fsPlayerBgStyle = [filePageStyle.playerBackground, filePageStyle.fullscreenPlayerBackground];
 
     const playerStyle = [
       filePageStyle.player,
@@ -123,12 +143,27 @@ class LiteFilePage extends React.PureComponent {
 
     return (
       <View style={filePageStyle.pageContainer}>
-        {!this.state.fullscreenMode && <UriBar value={uri} navigation={navigation} />}
+        {!this.state.fullscreenMode && <UriBar value={uri.split('?')[0]} navigation={navigation} />}
 
         <View
           style={this.state.fullscreenMode ? filePageStyle.innerPageContainerFsMode : filePageStyle.innerPageContainer}
           onLayout={this.checkOrientation}
         >
+          <TouchableOpacity activeOpacity={0.5} style={filePageStyle.mediaContainer} />
+
+          <View
+            style={playerBgStyle}
+            ref={ref => {
+              this.playerBackground = ref;
+            }}
+            onLayout={evt => {
+              if (!this.state.playerBgHeight) {
+                this.setState({ playerBgHeight: evt.nativeEvent.layout.height });
+              }
+            }}
+          />
+
+          {this.state.fullscreenMode && <View style={fsPlayerBgStyle} />}
           <MediaPlayer
             assignPlayer={ref => {
               this.player = ref;
@@ -144,89 +179,74 @@ class LiteFilePage extends React.PureComponent {
               }
             }}
           />
-        </View>
 
-        <ScrollView
-          contentContainerstyle={filePageStyle.scrollContent}
-          keyboardShouldPersistTaps={'handled'}
-          ref={ref => {
-            this.scrollView = ref;
-          }}
-        >
-          <TouchableWithoutFeedback
-            style={filePageStyle.titleTouch}
-            onPress={() => this.setState({ showDescription: !this.state.showDescription })}
+          <ScrollView
+            style={filePageStyle.scrollContainer}
+            contentContainerStyle={filePageStyle.scrollContent}
+            keyboardShouldPersistTaps={'handled'}
+            ref={ref => {
+              this.scrollView = ref;
+            }}
           >
-            <View style={filePageStyle.titleArea}>
-              <View style={filePageStyle.titleRow}>
-                <Text style={filePageStyle.title} selectable>
-                  {title}
-                </Text>
-                {isRewardContent && <Icon name="award" style={filePageStyle.rewardIcon} size={16} />}
-              </View>
-              <Text style={filePageStyle.viewCount}>
-                {viewCount === 1 && __('%view% view', { view: viewCount })}
-                {viewCount > 1 && __('%view% views', { view: viewCount })}
-              </Text>
-            </View>
-          </TouchableWithoutFeedback>
-
-          <View style={filePageStyle.largeButtonsRow}>
-            <TouchableOpacity style={filePageStyle.largeButton} onPress={() => this.handleSharePress(uri)}>
-              <Icon name={'share-alt'} size={16} style={filePageStyle.largeButtonIcon} />
-              <Text style={filePageStyle.largeButtonText}>{__('Share')}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={filePageStyle.largeButton}
-              onPress={() => this.setState({ showTipView: true })}
+            <TouchableWithoutFeedback
+              style={filePageStyle.titleTouch}
+              onPress={() => this.setState({ showDescription: !this.state.showDescription })}
             >
-              <Icon name={'gift'} size={16} style={filePageStyle.largeButtonIcon} />
-              <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={filePageStyle.channelRow}>
-            <View style={filePageStyle.publishInfo}>
-              {channelName && (
-                <Link
-                  style={filePageStyle.channelName}
-                  selectable
-                  text={channelName}
-                  numberOfLines={1}
-                  ellipsizeMode={'tail'}
-                  onPress={() => {
-                    navigateToUri(
-                      navigation,
-                      normalizeURI(channelUri),
-                      null,
-                      false,
-                      null,
-                      false,
-                    );
-                  }}
-                />
-              )}
-              {!channelName && (
-                <Text style={filePageStyle.anonChannelName} selectable ellipsizeMode={'tail'}>
-                  {__('Anonymous')}
+              <View style={filePageStyle.titleArea}>
+                <View style={filePageStyle.titleRow}>
+                  <Text style={filePageStyle.title} selectable>
+                    {title}
+                  </Text>
+                  {isRewardContent && <Icon name="award" style={filePageStyle.rewardIcon} size={16} />}
+                </View>
+                <Text style={filePageStyle.viewCount}>
+                  {viewCount === 1 && __('%view% view', { view: viewCount })}
+                  {viewCount > 1 && __('%view% views', { view: viewCount })}
                 </Text>
-              )}
+              </View>
+            </TouchableWithoutFeedback>
+
+            <View style={filePageStyle.largeButtonsRow}>
+              <TouchableOpacity style={filePageStyle.largeButton} onPress={() => this.handleSharePress(uri)}>
+                <Icon name={'share-alt'} size={16} style={filePageStyle.largeButtonIcon} />
+                <Text style={filePageStyle.largeButtonText}>{__('Share')}</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={filePageStyle.largeButton} onPress={() => this.setState({ showTipView: true })}>
+                <Icon name={'gift'} size={16} style={filePageStyle.largeButtonIcon} />
+                <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
+              </TouchableOpacity>
             </View>
-          </View>
 
-          <View onLayout={this.setRelatedContentPosition} />
+            <View style={filePageStyle.channelRow}>
+              <View style={filePageStyle.publishInfo}>
+                {channelName && (
+                  <Link
+                    style={filePageStyle.channelName}
+                    selectable
+                    text={channelName}
+                    numberOfLines={1}
+                    ellipsizeMode={'tail'}
+                    onPress={() => {
+                      navigateToUri(navigation, normalizeURI(channelUrl), null, false, null, false);
+                    }}
+                  />
+                )}
+                {!channelName && (
+                  <Text style={filePageStyle.anonChannelName} selectable ellipsizeMode={'tail'}>
+                    {__('Anonymous')}
+                  </Text>
+                )}
+              </View>
+            </View>
 
-          {this.state.showRecommended && (
-            <RelatedContent
-              navigation={navigation}
-              claimId={claimId}
-              title={title}
-              uri={uri}
-              fullUri={uri}
-            />
-          )}
-        </ScrollView>
+            <View onLayout={this.setRelatedContentPosition} />
+
+            {this.state.showRecommended && (
+              <RelatedContent navigation={navigation} claimId={claimId} title={title} uri={uri} fullUri={uri} />
+            )}
+          </ScrollView>
+        </View>
       </View>
     );
   }

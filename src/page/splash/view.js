@@ -160,12 +160,13 @@ class SplashScreen extends React.PureComponent {
 
   navigateToLiteMode = () => {
     const { navigation } = this.props;
+    const { launchUrl } = this.state;
     const resetAction = StackActions.reset({
       index: 0,
       actions: [
         NavigationActions.navigate({
-          routeName: 'LiteFile',
-          params: { uri: this.state.launchUrl.replace(/liteMode=1/gi, '') },
+          routeName: Constants.DRAWER_ROUTE_LITE_FILE,
+          params: { uri: launchUrl },
         }),
       ],
     });
