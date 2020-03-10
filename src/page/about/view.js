@@ -10,6 +10,7 @@ import aboutStyle from 'styles/about';
 class AboutPage extends React.PureComponent {
   state = {
     appVersion: null,
+    firebaseToken: null,
     lbryId: null,
     versionInfo: null,
   };
@@ -45,11 +46,12 @@ class AboutPage extends React.PureComponent {
     setPlayerVisible();
 
     NativeModules.Firebase.setCurrentScreen('About').then(result => {
-      if (NativeModules.VersionInfo) {
-        NativeModules.VersionInfo.getAppVersion().then(version => {
-          this.setState({ appVersion: version });
-        });
-      }
+      NativeModules.VersionInfo.getAppVersion().then(version => {
+        this.setState({ appVersion: version });
+      });
+      NativeModules.Firebase.getMessagingToken().then(firebaseToken => {
+        this.setState({ firebaseToken });
+      });
       Lbry.version().then(info => {
         this.setState({
           versionInfo: info,
@@ -77,7 +79,7 @@ class AboutPage extends React.PureComponent {
           <Text style={aboutStyle.title}>{__('Content Freedom')}</Text>
           <Text style={aboutStyle.paragraph}>
             {__(
-              'LBRY is a free, open, and community-run digital marketplace. It is a decentralized peer-to-peer content distribution platform for creators to upload and share content, and earn LBRY credits for their effort. Users will be able to find a wide selection of videos, music, ebooks and other digital content they are interested in.'
+              'LBRY is a free, open, and community-run digital marketplace. It is a decentralized peer-to-peer content distribution platform for creators to upload and share content, and earn LBRY credits for their effort. Users will be able to find a wide selection of videos, music, ebooks and other digital content they are interested in.',
             )}
           </Text>
           <View style={aboutStyle.links}>
@@ -88,7 +90,7 @@ class AboutPage extends React.PureComponent {
           <Text style={aboutStyle.socialTitle}>{__('Get Social')}</Text>
           <Text style={aboutStyle.paragraph}>
             {__(
-              'You can interact with the LBRY team and members of the community on Discord, Facebook, Instagram, Twitter or Reddit.'
+              'You can interact with the LBRY team and members of the community on Discord, Facebook, Instagram, Twitter or Reddit.',
             )}
           </Text>
           <View style={aboutStyle.links}>
@@ -160,6 +162,15 @@ class AboutPage extends React.PureComponent {
               <Text style={aboutStyle.text}>{__('Installation ID')}</Text>
               <Text selectable style={aboutStyle.lineValueText}>
                 {this.state.lbryId ? this.state.lbryId : loading}
+              </Text>
+            </View>
+          </View>
+
+          <View style={aboutStyle.row}>
+            <View style={aboutStyle.col}>
+              <Text style={aboutStyle.text}>{__('Firebase Token')}</Text>
+              <Text selectable style={aboutStyle.lineValueText}>
+                {this.state.firebaseToken ? this.state.firebaseToken : loading}
               </Text>
             </View>
           </View>
