@@ -28,6 +28,7 @@ import { decode, formatLbryUrlForWeb, navigateToUri } from 'utils/helper';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import uriBarStyle from 'styles/uriBar';
+import { NavigationActions, StackActions } from 'react-navigation';
 
 // This page will only be used for playing audio / video content from a remote stream URL
 class LiteFilePage extends React.PureComponent {
@@ -40,10 +41,11 @@ class LiteFilePage extends React.PureComponent {
   state = {
     channelName: null,
     channelUrl: null,
-    contentTitle: null,
+    title: null,
     fullscreenMode: false,
     playerHeight: null,
     isLandscape: false,
+    sdkReady: false, // TODO: progressively enable features (e.g. tip) when sdk is ready
     showRecommended: false,
     viewCount: 0,
   };
@@ -104,11 +106,32 @@ class LiteFilePage extends React.PureComponent {
     NativeModules.UtilityModule.shareUrl(shareUrl);
   };
 
+  handleOpenUrl = url => {
+    const { navigation } = this.props;
+    Alert.alert(
+      __('Stop watching?'),
+      'The LBRY service is still loading stuff in the background. Would you like to continue?',
+      [
+        { text: __('No') },
+        {
+          text: __('Yes'),
+          onPress: () => {
+            const resetAction = StackActions.reset({
+              index: 0,
+              actions: [NavigationActions.navigate({ routeName: 'Splash', params: { resetUrl: url } })],
+            });
+            navigation.dispatch(resetAction);
+          },
+        },
+      ],
+    );
+  };
+
   componentDidUpdate() {
     const { navigation } = this.props;
     const { uri } = navigation.state.params;
 
-    if (!this.state.contentTitle) {
+    if (!this.state.title) {
       const params = parseQueryParams(uri);
       const { channelUrl, contentTitle } = params;
       const channelName = channelUrl ? parseURI(decode(channelUrl)).claimName : null;
@@ -124,7 +147,7 @@ class LiteFilePage extends React.PureComponent {
 
   render() {
     const { navigation, rewardedContentClaimIds } = this.props;
-    const { channelName, channelUrl, title, viewCount } = this.state;
+    const { channelName, channelUrl, title, sdkReady, viewCount } = this.state;
     const { uri } = navigation.state.params;
     const { claimName, claimId } = parseURI(uri);
     const isRewardContent = rewardedContentClaimIds.includes(claimId);
@@ -212,10 +235,15 @@ class LiteFilePage extends React.PureComponent {
                 <Text style={filePageStyle.largeButtonText}>{__('Share')}</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={filePageStyle.largeButton} onPress={() => this.setState({ showTipView: true })}>
-                <Icon name={'gift'} size={16} style={filePageStyle.largeButtonIcon} />
-                <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
-              </TouchableOpacity>
+              {sdkReady && (
+                <TouchableOpacity
+                  style={filePageStyle.largeButton}
+                  onPress={() => this.setState({ showTipView: true })}
+                >
+                  <Icon name={'gift'} size={16} style={filePageStyle.largeButtonIcon} />
+                  <Text style={filePageStyle.largeButtonText}>{__('Tip')}</Text>
+                </TouchableOpacity>
+              )}
             </View>
 
             <View style={filePageStyle.channelRow}>
@@ -227,9 +255,7 @@ class LiteFilePage extends React.PureComponent {
                     text={channelName}
                     numberOfLines={1}
                     ellipsizeMode={'tail'}
-                    onPress={() => {
-                      navigateToUri(navigation, normalizeURI(channelUrl), null, false, null, false);
-                    }}
+                    onPress={() => this.handleOpenUrl(channelUrl)}
                   />
                 )}
                 {!channelName && (
@@ -243,7 +269,15 @@ class LiteFilePage extends React.PureComponent {
             <View onLayout={this.setRelatedContentPosition} />
 
             {this.state.showRecommended && (
-              <RelatedContent navigation={navigation} claimId={claimId} title={title} uri={uri} fullUri={uri} />
+              <RelatedContent
+                navigation={navigation}
+                claimId={claimId}
+                claimName={claimName}
+                title={title}
+                urlOpenHandler={this.handleOpenUrl}
+                uri={uri}
+                fullUri={uri}
+              />
             )}
           </ScrollView>
         </View>

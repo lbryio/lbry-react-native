@@ -338,19 +338,22 @@ class SplashScreen extends React.PureComponent {
   componentDidMount() {
     NativeModules.Firebase.track('app_launch', null);
     NativeModules.Firebase.setCurrentScreen('Splash');
+    const { navigation } = this.props;
+    const { resetUrl } = navigation.state.params;
+    const isResetUrlSet = !!resetUrl;
 
     this.props.fetchRewardedContent();
     Linking.getInitialURL().then(url => {
       let liteMode;
       if (url) {
-        liteMode = url.indexOf('liteMode=1') > -1;
-        this.setState({ launchUrl: url, liteMode });
+        liteMode = !isResetUrlSet && url.indexOf('liteMode=1') > -1;
+        this.setState({ launchUrl: resetUrl || url, liteMode });
       }
 
       NativeModules.UtilityModule.getNotificationLaunchTarget().then(target => {
         if (target) {
-          liteMode = target.indexOf('liteMode=1') > -1;
-          this.setState({ launchUrl: target, liteMode });
+          liteMode = !isResetUrlSet && target.indexOf('liteMode=1') > -1;
+          this.setState({ launchUrl: resetUrl || target, liteMode });
         }
 
         // Only connect after checking initial launch url / notification launch target

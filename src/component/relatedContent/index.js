@@ -15,7 +15,13 @@ const RESULT_SIZE = 16;
 const select = (state, props) => ({
   claim: makeSelectClaimForUri(props.uri)(state),
   isSearching: selectIsSearching(state),
-  recommendedContent: makeSelectResolvedRecommendedContentForUri(props.uri, RESULT_SIZE)(state),
+  recommendedContent: makeSelectResolvedRecommendedContentForUri(
+    props.uri,
+    RESULT_SIZE,
+    props.claimId,
+    props.claimName,
+    props.title,
+  )(state),
   resolvingUris: selectResolvingUris(state),
   showNsfwContent: selectShowNsfw(state),
 });
@@ -26,7 +32,4 @@ const perform = dispatch => ({
     dispatch(doResolvedSearch(query, RESULT_SIZE, undefined, true, { related_to: claimId }, nsfw)),
 });
 
-export default connect(
-  select,
-  perform,
-)(RelatedContent);
+export default connect(select, perform)(RelatedContent);

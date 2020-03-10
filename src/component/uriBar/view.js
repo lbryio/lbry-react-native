@@ -187,8 +187,9 @@ class UriBar extends React.PureComponent {
   handleNavigationButtonPress = () => {
     const { navigation } = this.props;
     if (!navigation.openDrawer) {
-      Alert.alert(__('Switch to full mode'),
-        'This will reload the app in full mode. Do you wish to continue?',
+      Alert.alert(
+        __('Stop watching?'),
+        'The LBRY service is still loading stuff in the background. Would you like to continue?',
         [
           { text: __('No') },
           {
@@ -196,16 +197,19 @@ class UriBar extends React.PureComponent {
             onPress: () => {
               const resetAction = StackActions.reset({
                 index: 0,
-                actions: [NavigationActions.navigate({ routeName: 'Splash' })],
+                actions: [
+                  NavigationActions.navigate({ routeName: 'Splash', params: { resetUrl: 'lbry://?subscriptions' } }),
+                ],
               });
               navigation.dispatch(resetAction);
             },
           },
-        ]);
+        ],
+      );
     } else {
       navigation.openDrawer();
     }
-  }
+  };
 
   render() {
     const {

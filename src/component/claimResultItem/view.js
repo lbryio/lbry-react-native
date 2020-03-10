@@ -39,10 +39,14 @@ class ClaimResultItem extends React.PureComponent {
   }
 
   onPressHandler = () => {
-    const { autoplay, navigation, result, setPlayerVisible } = this.props;
+    const { autoplay, navigation, result, urlOpenHandler, setPlayerVisible } = this.props;
     const { claimId, name } = result;
     const url = normalizeURI(`${name}#${claimId}`);
-    navigateToUri(navigation, url, { autoplay }, false, url, setPlayerVisible);
+    if (urlOpenHandler) {
+      urlOpenHandler(url);
+    } else {
+      navigateToUri(navigation, url, { autoplay }, false, url, setPlayerVisible);
+    }
   };
 
   render() {
