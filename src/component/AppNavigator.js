@@ -312,8 +312,6 @@ class AppWithNavigationState extends React.Component {
       'hardwareBackPress',
       function() {
         const { dispatch, nav, drawerStack } = this.props;
-        console.log(nav);
-
         if (drawerStack.length > 1) {
           dispatchNavigateBack(dispatch, nav, drawerStack);
           return true;

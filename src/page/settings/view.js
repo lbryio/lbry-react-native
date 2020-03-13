@@ -10,28 +10,28 @@ import RNFS from 'react-native-fs';
 import settingsStyle from 'styles/settings';
 
 const languageOptions = [
-    { code: 'default', name: 'Use device language' },
-    { code: 'jv', name: 'Basa Jawa' },
-    { code: 'da', name: 'Danish' },
-    { code: 'nl', name: 'Dutch' },
-    { code: 'en', name: 'English' },
-    { code: 'et', name: 'Estonian' },
-    { code: 'fr', name: 'French' },
-    { code: 'gu', name: 'Gujarati' },
-    { code: 'hi', name: 'Hindi' },
-    { code: 'id', name: 'Indonesian' },
-    { code: 'it', name: 'Italian' },
-    { code: 'kn', name: 'Kannada' },
-    { code: 'ms', name: 'Malay' },
-    { code: 'mr', name: 'Marathi' },
-    { code: 'pl', name: 'Polish' },
-    { code: 'pt', name: 'Portuguese' },
-    { code: 'ro', name: 'Romanian' },
-    { code: 'ru', name: 'Russian' },
-    { code: 'sk', name: 'Slovak' },
-    { code: 'es', name: 'Spanish' },
-    { code: 'tr', name: 'Turkish' },
-    { code: 'uk', name: 'Ukrainian' },
+  { code: 'default', name: 'Use device language' },
+  { code: 'jv', name: 'Basa Jawa' },
+  { code: 'da', name: 'Danish' },
+  { code: 'nl', name: 'Dutch' },
+  { code: 'en', name: 'English' },
+  { code: 'et', name: 'Estonian' },
+  { code: 'fr', name: 'French' },
+  { code: 'gu', name: 'Gujarati' },
+  { code: 'hi', name: 'Hindi' },
+  { code: 'id', name: 'Indonesian' },
+  { code: 'it', name: 'Italian' },
+  { code: 'kn', name: 'Kannada' },
+  { code: 'ms', name: 'Malay' },
+  { code: 'mr', name: 'Marathi' },
+  { code: 'pl', name: 'Polish' },
+  { code: 'pt', name: 'Portuguese' },
+  { code: 'ro', name: 'Romanian' },
+  { code: 'ru', name: 'Russian' },
+  { code: 'sk', name: 'Slovak' },
+  { code: 'es', name: 'Spanish' },
+  { code: 'tr', name: 'Turkish' },
+  { code: 'uk', name: 'Ukrainian' },
 ];
 
 class SettingsPage extends React.PureComponent {
@@ -151,6 +151,7 @@ class SettingsPage extends React.PureComponent {
   render() {
     const {
       backgroundPlayEnabled,
+      enableDht,
       keepDaemonRunning,
       receiveSubscriptionNotifications,
       receiveRewardNotifications,
@@ -168,6 +169,7 @@ class SettingsPage extends React.PureComponent {
     const actualReceiveRewardNotifications = this.getBooleanSetting(receiveRewardNotifications, true);
     const actualReceiveInterestsNotifications = this.getBooleanSetting(receiveInterestsNotifications, true);
     const actualReceiveCreatorNotifications = this.getBooleanSetting(receiveCreatorNotifications, true);
+    const actualEnableDht = this.getBooleanSetting(enableDht, false);
 
     return (
       <View style={settingsStyle.container}>
@@ -305,7 +307,7 @@ class SettingsPage extends React.PureComponent {
               </Text>
               <Text style={settingsStyle.description}>
                 {__(
-                  'Enable this option for quicker app launch and to keep the synchronisation with the blockchain up to date.'
+                  'Enable this option for quicker app launch and to keep the synchronisation with the blockchain up to date.',
                 )}
               </Text>
             </View>
@@ -317,6 +319,23 @@ class SettingsPage extends React.PureComponent {
                   if (NativeModules.DaemonServiceControl) {
                     NativeModules.DaemonServiceControl.setKeepDaemonRunning(value);
                   }
+                }}
+              />
+            </View>
+          </View>
+
+          <View style={settingsStyle.row}>
+            <View style={settingsStyle.switchText}>
+              <Text style={settingsStyle.label}>{__('Participate in the data network')}</Text>
+              <Text style={settingsStyle.description}>
+                {__('Enable DHT (this will take effect upon app and background service restart)')}
+              </Text>
+            </View>
+            <View style={settingsStyle.switchContainer}>
+              <Switch
+                value={actualEnableDht}
+                onValueChange={value => {
+                  this.setNativeBooleanSetting(Constants.SETTING_DHT_ENABLED, value);
                 }}
               />
             </View>

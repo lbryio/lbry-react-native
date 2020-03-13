@@ -25,7 +25,4 @@ const perform = dispatch => ({
   toggleFullscreenMode: mode => dispatch(doToggleFullscreenMode(mode)),
 });
 
-export default connect(
-  select,
-  perform,
-)(LiteFilePage);
+export default connect(select, perform)(LiteFilePage);
