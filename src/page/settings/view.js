@@ -158,7 +158,7 @@ class SettingsPage extends React.PureComponent {
     const actualReceiveRewardNotifications = this.getBooleanSetting(receiveRewardNotifications, true);
     const actualReceiveInterestsNotifications = this.getBooleanSetting(receiveInterestsNotifications, true);
     const actualReceiveCreatorNotifications = this.getBooleanSetting(receiveCreatorNotifications, true);
-    const actualEnableDht = this.getBooleanSetting(enableDht, true);
+    const actualEnableDht = this.getBooleanSetting(enableDht, false);
 
     return (
       <View style={settingsStyle.container}>
@@ -315,16 +315,16 @@ class SettingsPage extends React.PureComponent {
 
           <View style={settingsStyle.row}>
             <View style={settingsStyle.switchText}>
-              <Text style={settingsStyle.label}>{__('Enable DHT')}</Text>
+              <Text style={settingsStyle.label}>{__('Participate in the data network')}</Text>
               <Text style={settingsStyle.description}>
-                {__('Participate in the data network (requires app and service restart)')}
+                {__('Enable DHT (this will take effect upon app and background service restart)')}
               </Text>
             </View>
             <View style={settingsStyle.switchContainer}>
               <Switch
-                value={actualKeepDaemonRunning}
+                value={actualEnableDht}
                 onValueChange={value => {
-                  this.setNativeBooleanSetting(SETTINGS.SETTING_DHT_ENABLED, value);
+                  this.setNativeBooleanSetting(Constants.SETTING_DHT_ENABLED, value);
                 }}
               />
             </View>
