@@ -22,7 +22,7 @@ export default class RelatedContent extends React.PureComponent {
   }
 
   render() {
-    const { isSearching, recommendedContent, navigation, uri, fullUri } = this.props;
+    const { isSearching, recommendedContent, navigation, urlOpenHandler, uri, fullUri } = this.props;
 
     return (
       <View style={relatedContentStyle.container}>
@@ -33,6 +33,7 @@ export default class RelatedContent extends React.PureComponent {
             <ClaimResultItem
               style={fileListStyle.item}
               uri={result ? normalizeURI(`${result.name}#${result.claimId}`) : null}
+              urlOpenHandler={urlOpenHandler}
               key={result.claimId}
               result={result}
               navigation={navigation}

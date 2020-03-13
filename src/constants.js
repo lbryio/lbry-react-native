@@ -94,6 +94,7 @@ const Constants = {
   DRAWER_ROUTE_CHANNEL_CREATOR: 'ChannelCreator',
   DRAWER_ROUTE_CHANNEL_CREATOR_FORM: 'ChannnelCreatorForm',
   DRAWER_ROUTE_INVITES: 'Invites',
+  DRAWER_ROUTE_LITE_FILE: 'LiteFile',
 
   FULL_ROUTE_NAME_DISCOVER: 'DiscoverStack',
   FULL_ROUTE_NAME_WALLET: 'WalletStack',

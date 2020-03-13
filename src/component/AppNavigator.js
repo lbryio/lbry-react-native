@@ -5,6 +5,7 @@ import DiscoverPage from 'page/discover';
 import DownloadsPage from 'page/downloads';
 import DrawerContent from 'component/drawerContent';
 import FilePage from 'page/file';
+import LiteFilePage from 'page/liteFile';
 import FirstRunScreen from 'page/firstRun';
 import InvitesPage from 'page/invites';
 import PublishPage from 'page/publish';
@@ -19,7 +20,7 @@ import SubscriptionsPage from 'page/subscriptions';
 import TransactionHistoryPage from 'page/transactionHistory';
 import VerificationScreen from 'page/verification';
 import WalletPage from 'page/wallet';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions, StackActions } from 'react-navigation';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 import { createStackNavigator } from 'react-navigation-stack';
 import {
@@ -30,6 +31,7 @@ import {
 import { connect } from 'react-redux';
 import {
   AppState,
+  Alert,
   BackHandler,
   DeviceEventEmitter,
   Linking,
@@ -75,16 +77,6 @@ import SearchRightHeaderIcon from 'component/searchRightHeaderIcon';
 import Snackbar from 'react-native-snackbar';
 
 const SYNC_GET_INTERVAL = 1000 * 60 * 5; // every 5 minutes
-
-const menuNavigationButton = navigation => (
-  <NavigationButton
-    name="bars"
-    size={24}
-    style={discoverStyle.drawerMenuButton}
-    iconStyle={discoverStyle.drawerHamburger}
-    onPress={() => navigation.openDrawer()}
-  />
-);
 
 const discoverStack = createStackNavigator(
   {
@@ -274,6 +266,12 @@ const mainStackNavigator = new createStackNavigator(
     },
     Verification: {
       screen: VerificationScreen,
+      navigationOptions: {
+        drawerLockMode: 'locked-closed',
+      },
+    },
+    LiteFile: {
+      screen: LiteFilePage,
       navigationOptions: {
         drawerLockMode: 'locked-closed',
       },

@@ -45,12 +45,13 @@ reducers[Constants.ACTION_PUSH_DRAWER_STACK] = (state, action) => {
   if (routeName === Constants.DRAWER_ROUTE_SUBSCRIPTIONS && newStack.length === 1) {
     canPushStack = false;
   }
+  if (routeName === Constants.DRAWER_ROUTE_LITE_FILE) {
+    canPushStack = false;
+  }
 
   let lastRouteInStack;
   if (canPushStack) {
     newStack.push({ route: routeName, params });
-
-    // save the route
     lastRouteInStack = { route: routeName, params };
   }
 

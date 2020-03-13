@@ -11,16 +11,27 @@ import settingsStyle from 'styles/settings';
 
 const languageOptions = [
   { code: 'default', name: 'Use device language' },
+  { code: 'jv', name: 'Basa Jawa' },
+  { code: 'da', name: 'Danish' },
+  { code: 'nl', name: 'Dutch' },
   { code: 'en', name: 'English' },
+  { code: 'et', name: 'Estonian' },
+  { code: 'fr', name: 'French' },
   { code: 'gu', name: 'Gujarati' },
   { code: 'hi', name: 'Hindi' },
   { code: 'id', name: 'Indonesian' },
   { code: 'it', name: 'Italian' },
+  { code: 'kn', name: 'Kannada' },
   { code: 'ms', name: 'Malay' },
-  { code: 'tr', name: 'Turkish' },
+  { code: 'mr', name: 'Marathi' },
   { code: 'pl', name: 'Polish' },
   { code: 'pt', name: 'Portuguese' },
+  { code: 'ro', name: 'Romanian' },
+  { code: 'ru', name: 'Russian' },
+  { code: 'sk', name: 'Slovak' },
   { code: 'es', name: 'Spanish' },
+  { code: 'tr', name: 'Turkish' },
+  { code: 'uk', name: 'Ukrainian' },
 ];
 
 class SettingsPage extends React.PureComponent {

@@ -24,8 +24,10 @@ class SplashScreen extends React.PureComponent {
 
   state = {
     accountUnlockFailed: false,
+    appVersion: null,
     daemonReady: false,
     details: __('Starting up'),
+    firebaseToken: null,
     message: __('Connecting'),
     isRunning: false,
     isLagging: false,
@@ -34,12 +36,57 @@ class SplashScreen extends React.PureComponent {
     headersDownloadProgress: 0,
     shouldAuthenticate: false,
     subscriptionsFetched: false,
+    liteMode: false,
+    liteModeParams: {},
+  };
+
+  initLiteMode = () => {
+    NativeModules.UtilityModule.getLbrynetDirectory().then(path => {
+      NativeModules.UtilityModule.getPlatform().then(platform => {
+        RNFS.readFile(`${path}/install_id`, 'utf8')
+          .then(installIdContent => {
+            // node_id is actually optional (won't be present if dht is disabled)
+            // RNFS.readFile(`${path}/node_id`, 'utf8').then(nodeIdContent => {
+            // TODO: Load proper lbrynetVersion value
+            this.setState(
+              {
+                liteModeParams: {
+                  installationId: installIdContent,
+                  nodeId: null,
+                  lbrynetVersion: '0.62.0',
+                  platform,
+                },
+              },
+              () => this.updateStatus(),
+            );
+            // }).catch((err) => { console.log(err); console.log('node_id not found.'); this.lbryConnect() });
+          })
+          .catch(() => this.lbryConnect());
+      });
+    });
   };
 
   updateStatus() {
-    Lbry.status().then(status => {
-      this._updateStatusCallback(status);
-    });
+    const { authenticate } = this.props;
+    const { liteMode } = this.state;
+
+    if (liteMode) {
+      // authenticate immediately
+      NativeModules.VersionInfo.getAppVersion().then(appVersion => {
+        this.setState({ appVersion, shouldAuthenticate: true });
+        NativeModules.Firebase.getMessagingToken()
+          .then(firebaseToken => {
+            this.setState({ firebaseToken }, () => authenticate(appVersion, Platform.OS, firebaseToken, false));
+          })
+          .catch(() => {
+            authenticate(appVersion, Platform.OS, null, false);
+          });
+      });
+    } else {
+      Lbry.status().then(status => {
+        this._updateStatusCallback(status);
+      });
+    }
   }
 
   navigateToMain = () => {
@@ -73,12 +120,28 @@ class SplashScreen extends React.PureComponent {
   };
 
   componentWillReceiveProps(nextProps) {
-    const { emailToVerify, getSync, setEmailToVerify, verifyUserEmail, verifyUserEmailFailure } = this.props;
-    const { daemonReady, shouldAuthenticate } = this.state;
+    const { getSync, installNewWithParams } = this.props;
+    const { daemonReady, shouldAuthenticate, liteMode, liteModeParams, appVersion, firebaseToken } = this.state;
     const { user } = nextProps;
 
-    if (daemonReady && shouldAuthenticate && user && user.id) {
+    if (liteMode && user && user.id) {
+      this.navigateToLiteMode();
+    } else if (daemonReady && shouldAuthenticate && user && user.id) {
       this.setState({ shouldAuthenticate: false }, () => {
+        // call install new after successful authentication
+        if (liteMode) {
+          const { installationId, nodeId, lbrynetVersion, platform } = liteModeParams;
+          installNewWithParams(
+            appVersion,
+            installationId,
+            nodeId,
+            lbrynetVersion,
+            Platform.OS,
+            platform,
+            firebaseToken,
+          );
+        }
+
         // user is authenticated, navigate to the main view
         if (user.has_verified_email) {
           NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
@@ -94,6 +157,21 @@ class SplashScreen extends React.PureComponent {
       });
     }
   }
+
+  navigateToLiteMode = () => {
+    const { navigation } = this.props;
+    const { launchUrl } = this.state;
+    const resetAction = StackActions.reset({
+      index: 0,
+      actions: [
+        NavigationActions.navigate({
+          routeName: Constants.DRAWER_ROUTE_LITE_FILE,
+          params: { uri: launchUrl },
+        }),
+      ],
+    });
+    navigation.dispatch(resetAction);
+  };
 
   getUserSettings = () => {
     const { populateSharedUserState } = this.props;
@@ -260,32 +338,30 @@ class SplashScreen extends React.PureComponent {
   componentDidMount() {
     NativeModules.Firebase.track('app_launch', null);
     NativeModules.Firebase.setCurrentScreen('Splash');
+    const { navigation } = this.props;
+    const { resetUrl } = navigation.state.params;
+    const isResetUrlSet = !!resetUrl;
 
     this.props.fetchRewardedContent();
     Linking.getInitialURL().then(url => {
+      let liteMode;
       if (url) {
-        this.setState({ launchUrl: url });
+        liteMode = !isResetUrlSet && url.indexOf('liteMode=1') > -1;
+        this.setState({ launchUrl: resetUrl || url, liteMode });
       }
 
       NativeModules.UtilityModule.getNotificationLaunchTarget().then(target => {
         if (target) {
-          this.setState({ launchUrl: target });
+          liteMode = !isResetUrlSet && target.indexOf('liteMode=1') > -1;
+          this.setState({ launchUrl: resetUrl || target, liteMode });
         }
 
         // Only connect after checking initial launch url / notification launch target
-        Lbry.connect()
-          .then(() => {
-            this.updateStatus();
-          })
-          .catch(e => {
-            this.setState({
-              isLagging: true,
-              message: __('Connection Failure'),
-              details: __(
-                'We could not establish a connection to the SDK. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.',
-              ),
-            });
-          });
+        if (liteMode) {
+          this.initLiteMode();
+        } else {
+          this.lbryConnect();
+        }
       });
     });
 
@@ -299,6 +375,22 @@ class SplashScreen extends React.PureComponent {
       }
     });
   }
+
+  lbryConnect = () => {
+    Lbry.connect()
+      .then(() => {
+        this.updateStatus();
+      })
+      .catch(e => {
+        this.setState({
+          isLagging: true,
+          message: __('Connection Failure'),
+          details: __(
+            'We could not establish a connection to the SDK. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.',
+          ),
+        });
+      });
+  };
 
   handleContinueAnywayPressed = () => {
     this.setState(

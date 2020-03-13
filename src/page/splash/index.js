@@ -2,6 +2,8 @@ import { connect } from 'react-redux';
 import { SETTINGS, doBalanceSubscribe, doUpdateBlockHeight, doPopulateSharedUserState, doToast } from 'lbry-redux';
 import {
   doAuthenticate,
+  doInstallNew,
+  doInstallNewWithParams,
   doBlackListedOutpointsSubscribe,
   doFilteredOutpointsSubscribe,
   doFetchMySubscriptions,
@@ -27,6 +29,8 @@ const select = state => ({
 
 const perform = dispatch => ({
   authenticate: (appVersion, os, firebaseToken) => dispatch(doAuthenticate(appVersion, os, firebaseToken)),
+  installNewWithParams: (appVersion, installationId, nodeId, lbrynetVersion, os, platform, firebaseToken) =>
+    dispatch(doInstallNewWithParams(appVersion, installationId, nodeId, lbrynetVersion, os, platform, firebaseToken)),
   balanceSubscribe: () => dispatch(doBalanceSubscribe()),
   blacklistedOutpointsSubscribe: () => dispatch(doBlackListedOutpointsSubscribe()),
   filteredOutpointsSubscribe: () => dispatch(doFilteredOutpointsSubscribe()),
@@ -42,7 +46,4 @@ const perform = dispatch => ({
   verifyUserEmailFailure: error => dispatch(doUserEmailVerifyFailure(error)),
 });
 
-export default connect(
-  select,
-  perform,
-)(SplashScreen);
+export default connect(select, perform)(SplashScreen);
