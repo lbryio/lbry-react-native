@@ -20,10 +20,7 @@ const select = state => ({
 });
 
 const perform = dispatch => ({
-  claimSearch: options => dispatch(doClaimSearch(options)),
+  claimSearch: options => dispatch(doClaimSearch(options, 'https://api.lbry.tv/api/v1/proxy')),
 });
 
-export default connect(
-  select,
-  perform,
-)(ClaimList);
+export default connect(select, perform)(ClaimList);

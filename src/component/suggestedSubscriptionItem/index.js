@@ -18,12 +18,9 @@ const select = (state, props) => ({
 });
 
 const perform = dispatch => ({
-  resolveUri: uri => dispatch(doResolveUri(uri)),
+  resolveUri: uri => dispatch(doResolveUri(uri, 'https://api.lbry.tv/api/v1/proxy')),
   subscribe: subscription => doChannelSubscribe(subscription),
   unsubscribe: subscription => doChannelUnsubscribe(subscription),
 });
 
-export default connect(
-  select,
-  perform,
-)(SuggestedSubscriptionItem);
+export default connect(select, perform)(SuggestedSubscriptionItem);

@@ -23,6 +23,7 @@ class SplashScreen extends React.PureComponent {
   };
 
   state = {
+    authWithoutSdk: false,
     accountUnlockFailed: false,
     appVersion: null,
     daemonReady: false,
@@ -53,7 +54,7 @@ class SplashScreen extends React.PureComponent {
                 liteModeParams: {
                   installationId: installIdContent,
                   nodeId: null,
-                  lbrynetVersion: '0.62.0',
+                  lbrynetVersion: '0.64.0',
                   platform,
                 },
               },
@@ -66,27 +67,25 @@ class SplashScreen extends React.PureComponent {
     });
   };
 
-  updateStatus() {
+  authenticateWithoutSdk() {
     const { authenticate } = this.props;
+    NativeModules.VersionInfo.getAppVersion().then(appVersion => {
+      this.setState({ appVersion, shouldAuthenticate: true, authWithoutSdk: true });
+      NativeModules.Firebase.getMessagingToken()
+        .then(firebaseToken => {
+          this.setState({ firebaseToken }, () => authenticate(appVersion, Platform.OS, firebaseToken, false));
+        })
+        .catch(() => {
+          authenticate(appVersion, Platform.OS, null, false);
+        });
+    });
+  }
+
+  updateStatus() {
     const { liteMode } = this.state;
 
-    if (liteMode) {
-      // authenticate immediately
-      NativeModules.VersionInfo.getAppVersion().then(appVersion => {
-        this.setState({ appVersion, shouldAuthenticate: true });
-        NativeModules.Firebase.getMessagingToken()
-          .then(firebaseToken => {
-            this.setState({ firebaseToken }, () => authenticate(appVersion, Platform.OS, firebaseToken, false));
-          })
-          .catch(() => {
-            authenticate(appVersion, Platform.OS, null, false);
-          });
-      });
-    } else {
-      Lbry.status().then(status => {
-        this._updateStatusCallback(status);
-      });
-    }
+    // authenticate immediately
+    this.authenticateWithoutSdk();
   }
 
   navigateToMain = () => {
@@ -121,40 +120,50 @@ class SplashScreen extends React.PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { getSync, installNewWithParams } = this.props;
-    const { daemonReady, shouldAuthenticate, liteMode, liteModeParams, appVersion, firebaseToken } = this.state;
+    const {
+      daemonReady,
+      authWithoutSdk,
+      shouldAuthenticate,
+      liteMode,
+      liteModeParams,
+      appVersion,
+      firebaseToken,
+    } = this.state;
     const { user } = nextProps;
 
     if (liteMode && user && user.id) {
       this.navigateToLiteMode();
-    } else if (daemonReady && shouldAuthenticate && user && user.id) {
-      this.setState({ shouldAuthenticate: false }, () => {
-        // call install new after successful authentication
-        if (liteMode) {
-          const { installationId, nodeId, lbrynetVersion, platform } = liteModeParams;
-          installNewWithParams(
-            appVersion,
-            installationId,
-            nodeId,
-            lbrynetVersion,
-            Platform.OS,
-            platform,
-            firebaseToken,
-          );
-        }
+    } else if (shouldAuthenticate && user && user.id) {
+      if (daemonReady || authWithoutSdk) {
+        this.setState({ shouldAuthenticate: false }, () => {
+          // call install new after successful authentication
+          if (authWithoutSdk) {
+            const { installationId, nodeId, lbrynetVersion, platform } = liteModeParams;
+            installNewWithParams(
+              appVersion,
+              installationId,
+              nodeId,
+              lbrynetVersion,
+              Platform.OS,
+              platform,
+              firebaseToken,
+            );
+          }
 
-        // user is authenticated, navigate to the main view
-        if (user.has_verified_email) {
-          NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
-            getSync(walletPassword, () => {
-              this.getUserSettings();
+          // user is authenticated, navigate to the main view
+          if (user.has_verified_email) {
+            NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
+              getSync(walletPassword, () => {
+                this.getUserSettings();
+              });
             });
-          });
-          this.navigateToMain();
-          return;
-        }
+            this.navigateToMain();
+            return;
+          }
 
-        this.navigateToMain();
-      });
+          this.navigateToMain();
+        });
+      }
     }
   }
 
@@ -357,11 +366,7 @@ class SplashScreen extends React.PureComponent {
         }
 
         // Only connect after checking initial launch url / notification launch target
-        if (liteMode) {
-          this.initLiteMode();
-        } else {
-          this.lbryConnect();
-        }
+        this.initLiteMode();
       });
     });
 
@@ -377,6 +382,8 @@ class SplashScreen extends React.PureComponent {
   }
 
   lbryConnect = () => {
+    this.updateStatus(); // skip lbry.connect for now (unless dht flag is enabled)
+    /*
     Lbry.connect()
       .then(() => {
         this.updateStatus();
@@ -390,6 +397,7 @@ class SplashScreen extends React.PureComponent {
           ),
         });
       });
+      */
   };
 
   handleContinueAnywayPressed = () => {
