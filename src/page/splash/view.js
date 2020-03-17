@@ -223,9 +223,9 @@ class SplashScreen extends React.PureComponent {
         this.setState({ shouldAuthenticate: true }, () => {
           NativeModules.Firebase.getMessagingToken()
             .then(firebaseToken => {
-              authenticate(appVersion, Platform.OS, firebaseToken);
+              authenticate(appVersion, Platform.OS, firebaseToken, true);
             })
-            .catch(() => authenticate(appVersion, Platform.OS));
+            .catch(() => authenticate(appVersion, Platform.OS, null, true));
         });
       });
     }

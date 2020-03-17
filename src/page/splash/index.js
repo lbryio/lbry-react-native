@@ -28,7 +28,8 @@ const select = state => ({
 });
 
 const perform = dispatch => ({
-  authenticate: (appVersion, os, firebaseToken) => dispatch(doAuthenticate(appVersion, os, firebaseToken)),
+  authenticate: (appVersion, os, firebaseToken, callInstall) =>
+    dispatch(doAuthenticate(appVersion, os, firebaseToken, true, null, callInstall)),
   installNewWithParams: (appVersion, installationId, nodeId, lbrynetVersion, os, platform, firebaseToken) =>
     dispatch(doInstallNewWithParams(appVersion, installationId, nodeId, lbrynetVersion, os, platform, firebaseToken)),
   balanceSubscribe: () => dispatch(doBalanceSubscribe()),
