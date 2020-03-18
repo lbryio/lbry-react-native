@@ -43,7 +43,6 @@ import RelatedContent from 'component/relatedContent';
 import SubscribeButton from 'component/subscribeButton';
 import SubscribeNotificationButton from 'component/subscribeNotificationButton';
 import UriBar from 'component/uriBar';
-import Video from 'react-native-video';
 import FileRewardsDriver from 'component/fileRewardsDriver';
 import filePageStyle from 'styles/filePage';
 import uriBarStyle from 'styles/uriBar';
@@ -73,7 +72,7 @@ class FilePage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      attemptAutoGet: false,
+      autoGetAttempted: false,
       autoOpened: false,
       autoDownloadStarted: false,
       autoPlayMedia: false,
@@ -297,7 +296,17 @@ class FilePage extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { claim, contentType, costInfo, fileInfo, isResolvingUri, resolveUri, navigation, title } = this.props;
+    const {
+      claim,
+      contentType,
+      costInfo,
+      fileInfo,
+      isResolvingUri,
+      resolveUri,
+      sdkReady,
+      navigation,
+      title,
+    } = this.props;
     const { uri } = this.state;
     if (!isResolvingUri && claim === undefined && uri) {
       resolveUri(uri);
@@ -323,10 +332,12 @@ class FilePage extends React.PureComponent {
     const isPlayable = mediaType === 'video' || mediaType === 'audio';
     const isViewable = mediaType === 'image' || mediaType === 'text';
     if (claim && costInfo && costInfo.cost === 0 && !this.state.autoGetAttempted && isViewable) {
-      this.setState({ autoGetAttempted: true }, () => this.checkStoragePermissionForDownload());
+      this.setState({ autoGetAttempted: true }, () => {
+        this.checkStoragePermissionForDownload();
+      });
     }
 
-    if (((costInfo && costInfo.cost > 0) || !isPlayable) && (!fileInfo && !isViewable) && !this.state.showRecommended) {
+    if (((costInfo && costInfo.cost > 0) || !isPlayable) && !fileInfo && !isViewable && !this.state.showRecommended) {
       this.setState({ showRecommended: true });
     }
 
@@ -706,7 +717,7 @@ class FilePage extends React.PureComponent {
   };
 
   confirmPurchaseUri = (uri, costInfo, download) => {
-    const { notify, purchaseUri, title } = this.props;
+    const { notify, purchaseUri, sdkReady, title } = this.props;
     if (!costInfo) {
       notify({ message: __('This content cannot be viewed at this time. Please try again in a bit.'), isError: true });
       this.setState({ downloadPressed: false });
@@ -715,6 +726,11 @@ class FilePage extends React.PureComponent {
     }
 
     const { cost } = costInfo;
+    if (!NativeModules.UtilityModule.dhtEnabled && !sdkReady && parseFloat(cost) === 0) {
+      this.attemptLbryTvPlayback();
+      return;
+    }
+
     if (costInfo.cost > 0) {
       Alert.alert(
         __('Confirm Purchase'),
@@ -742,21 +758,39 @@ class FilePage extends React.PureComponent {
     }
   };
 
+  getStreamUrlForClaim = claim => {
+    const { name, claim_id: claimId } = claim;
+    return `https://player.lbry.tv/content/claims/${name}/${claimId}/stream`;
+  };
+
+  attemptLbryTvPlayback = () => {
+    const { claim } = this.props;
+    if (claim) {
+      this.setState({ streamingMode: true, currentStreamUrl: this.getStreamUrlForClaim(claim) });
+    }
+  };
+
   onFileDownloadButtonPressed = () => {
     this.startTime = Date.now();
-    const { claim, costInfo, contentType, setPlayerVisible } = this.props;
+    const { claim, costInfo, contentType, notify, sdkReady, setPlayerVisible } = this.props;
     const mediaType = Lbry.getMediaType(contentType);
     const isPlayable = mediaType === 'video' || mediaType === 'audio';
     const isViewable = mediaType === 'image' || mediaType === 'text';
-
     const purchaseUrl = this.getPurchaseUrl();
-    NativeModules.Firebase.track('purchase_uri', { uri: purchaseUrl });
 
     if (!isPlayable) {
+      if (!sdkReady) {
+        notify({
+          message: __('The LBRY background service is still initializing. Please wait a few moments and try again.'),
+        });
+        return;
+      }
       this.onDownloadPressed();
     } else {
       this.confirmPurchaseUri(purchaseUrl, costInfo, !isPlayable);
     }
+
+    NativeModules.Firebase.track('purchase_uri', { uri: purchaseUrl });
 
     if (isPlayable) {
       this.setState({ downloadPressed: true, autoPlayMedia: true, stopDownloadConfirmed: false });
@@ -1177,7 +1211,7 @@ class FilePage extends React.PureComponent {
               style={filePageStyle.mediaContainer}
               onPress={this.onFileDownloadButtonPressed}
             >
-              {(canOpen || (!fileInfo || (isPlayable && !canLoadMedia)) || (!canOpen && fileInfo)) && (
+              {(canOpen || !fileInfo || (isPlayable && !canLoadMedia) || (!canOpen && fileInfo)) && (
                 <FileItemMedia
                   duration={duration}
                   style={filePageStyle.thumbnail}

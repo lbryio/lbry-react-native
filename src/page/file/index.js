@@ -41,6 +41,7 @@ import { doDeleteFile, doStopDownloadingFile } from 'redux/actions/file';
 import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doToggleFullscreenMode } from 'redux/actions/settings';
 import { selectDrawerStack, makeSelectPlayerVisible } from 'redux/selectors/drawer';
+import { selectSdkReady } from 'redux/selectors/settings';
 import FilePage from './view';
 
 const select = (state, props) => {
@@ -66,6 +67,7 @@ const select = (state, props) => {
     failedPurchaseUris: selectFailedPurchaseUris(state),
     myClaimUris: selectMyClaimUrisWithoutChannels(state),
     purchaseUriErrorMessage: selectPurchaseUriErrorMessage(state),
+    sdkReady: selectSdkReady(state),
     streamingUrl: makeSelectStreamingUrlForUri(contentUri)(state),
     thumbnail: makeSelectThumbnailForUri(contentUri)(state),
     title: makeSelectTitleForUri(contentUri)(state),
@@ -99,7 +101,4 @@ const perform = dispatch => ({
   toggleFullscreenMode: mode => dispatch(doToggleFullscreenMode(mode)),
 });
 
-export default connect(
-  select,
-  perform,
-)(FilePage);
+export default connect(select, perform)(FilePage);

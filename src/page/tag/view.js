@@ -14,6 +14,7 @@ import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import Link from 'component/link';
 import ModalPicker from 'component/modalPicker';
+import SdkLoadingStatus from 'component/sdkLoadingStatus';
 import UriBar from 'component/uriBar';
 
 class TagPage extends React.PureComponent {
@@ -127,7 +128,7 @@ class TagPage extends React.PureComponent {
   };
 
   render() {
-    const { navigation, sortByItem, timeItem } = this.props;
+    const { navigation, sdkReady, sortByItem, timeItem } = this.props;
     const { tag, showSortPicker, showTimePicker } = this.state;
 
     return (
@@ -144,7 +145,7 @@ class TagPage extends React.PureComponent {
             orientation={Constants.ORIENTATION_VERTICAL}
           />
         )}
-        {!showSortPicker && !showTimePicker && <FloatingWalletBalance navigation={navigation} />}
+        {sdkReady && !showSortPicker && !showTimePicker && <FloatingWalletBalance navigation={navigation} />}
         {showSortPicker && (
           <ModalPicker
             title={__('Sort content by')}
@@ -163,6 +164,7 @@ class TagPage extends React.PureComponent {
             items={Constants.CLAIM_SEARCH_TIME_ITEMS}
           />
         )}
+        {!sdkReady && <SdkLoadingStatus />}
       </View>
     );
   }

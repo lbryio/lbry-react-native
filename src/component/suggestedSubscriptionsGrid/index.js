@@ -21,7 +21,7 @@ const select = state => ({
 });
 
 const perform = dispatch => ({
-  claimSearch: options => dispatch(doClaimSearch(options, 'https://api.lbry.tv/api/v1/proxy')),
+  claimSearch: options => dispatch(doClaimSearch(options)),
 });
 
 export default connect(select, perform)(SuggestedSubscriptionsGrid);

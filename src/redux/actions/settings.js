@@ -17,6 +17,14 @@ export function doSetClientSetting(key, value) {
   };
 }
 
+export function doSetSdkReady() {
+  return dispatch => {
+    dispatch({
+      type: Constants.ACTION_SDK_READY,
+    });
+  };
+}
+
 export function doSetSortByItem(item) {
   return dispatch => {
     dispatch({

@@ -213,12 +213,7 @@ class SplashScreen extends React.PureComponent {
       user,
     } = this.props;
 
-    // Lbry.resolve({ urls: 'lbry://one' }).then(() => {
     // Leave the splash screen
-    balanceSubscribe();
-    blacklistedOutpointsSubscribe();
-    filteredOutpointsSubscribe();
-
     if (user && user.id && user.has_verified_email) {
       // user already authenticated
       NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {

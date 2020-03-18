@@ -31,7 +31,7 @@ const select = (state, props) => ({
 });
 
 const perform = dispatch => ({
-  resolveUri: uri => dispatch(doResolveUri(uri, 'https://api.lbry.tv/api/v1/proxy')),
+  resolveUri: uri => dispatch(doResolveUri(uri)),
   setPlayerVisible: (visible, uri) => dispatch(doSetPlayerVisible(visible, uri)),
 });
 

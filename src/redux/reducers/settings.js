@@ -4,6 +4,7 @@ import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 const reducers = {};
 const defaultState = {
   clientSettings: {},
+  sdkReady: false,
   sortByItemName: Constants.SORT_BY_HOT,
   timeItemName: Constants.TIME_WEEK,
   fullscreenMode: false,
@@ -19,6 +20,11 @@ reducers[ACTIONS.CLIENT_SETTING_CHANGED] = (state, action) => {
     clientSettings,
   });
 };
+
+reducers[Constants.ACTION_SDK_READY] = (state, action) =>
+  Object.assign({}, state, {
+    sdkReady: true,
+  });
 
 reducers[Constants.ACTION_SORT_BY_ITEM_CHANGED] = (state, action) =>
   Object.assign({}, state, {

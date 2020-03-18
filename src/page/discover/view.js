@@ -23,6 +23,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
 import ModalTagSelector from 'component/modalTagSelector';
 import ModalPicker from 'component/modalPicker';
+import SdkLoadingStatus from 'component/sdkLoadingStatus';
 import UriBar from 'component/uriBar';
 import _ from 'lodash';
 
@@ -268,8 +269,8 @@ class DiscoverPage extends React.PureComponent {
   );
 
   render() {
-    const { currentRoute, navigation, sortByItem, timeItem } = this.props;
-    const { orderBy, showModalTagSelector, showSortPicker, showTimePicker } = this.state;
+    const { currentRoute, navigation, sdkReady, sortByItem, timeItem } = this.props;
+    const { showModalTagSelector, showSortPicker, showTimePicker } = this.state;
 
     return (
       <View style={discoverStyle.container}>
@@ -289,7 +290,7 @@ class DiscoverPage extends React.PureComponent {
             keyExtractor={(item, index) => item}
           />
         )}
-        {!showModalTagSelector && !showSortPicker && !showTimePicker && (
+        {sdkReady && !showModalTagSelector && !showSortPicker && !showTimePicker && (
           <FloatingWalletBalance navigation={navigation} />
         )}
         {showModalTagSelector && (
@@ -316,6 +317,8 @@ class DiscoverPage extends React.PureComponent {
             items={Constants.CLAIM_SEARCH_TIME_ITEMS}
           />
         )}
+
+        {!sdkReady && <SdkLoadingStatus />}
       </View>
     );
   }
