@@ -9,6 +9,7 @@ import {
   selectIsFetchingClaimListMine,
 } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
+import { selectSdkReady } from 'redux/selectors/settings';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PublishesPage from './view';
 
@@ -16,6 +17,7 @@ const select = state => ({
   uris: selectMyClaimUrisWithoutChannels(state),
   fetching: selectIsFetchingClaimListMine(state),
   pendingClaims: selectPendingClaims(state),
+  sdkReady: selectSdkReady(state),
 });
 
 const perform = dispatch => ({
@@ -27,7 +29,4 @@ const perform = dispatch => ({
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
 });
 
-export default connect(
-  select,
-  perform
-)(PublishesPage);
+export default connect(select, perform)(PublishesPage);

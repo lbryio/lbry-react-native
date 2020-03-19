@@ -68,7 +68,7 @@ class DrawerContent extends React.PureComponent {
 
   handleItemPress = routeName => {
     const { navigation, notify, sdkReady } = this.props;
-    if (true && routesRequiringSdkReady.includes(routeName)) {
+    if (!sdkReady && routesRequiringSdkReady.includes(routeName)) {
       if (navigation.closeDrawer) {
         navigation.closeDrawer();
       }

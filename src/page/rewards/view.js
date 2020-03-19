@@ -5,7 +5,7 @@ import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Link from 'component/link';
 import CustomRewardCard from 'component/customRewardCard';
-import PageHeader from 'component/pageHeader';
+import EmptyStateView from 'component/emptyStateView';
 import RewardCard from 'component/rewardCard';
 import RewardEnrolment from 'component/rewardEnrolment';
 import UriBar from 'component/uriBar';
@@ -192,8 +192,21 @@ class RewardsPage extends React.PureComponent {
   };
 
   render() {
-    const { user, navigation } = this.props;
+    const { navigation, sdkReady } = this.props;
     const { currentFilter } = this.state;
+
+    if (!sdkReady) {
+      return (
+        <View style={rewardStyle.container}>
+          <UriBar navigation={navigation} />
+          <EmptyStateView
+            message={__(
+              'The background service is still initializing. You can still explore and watch content during the initialization process.',
+            )}
+          />
+        </View>
+      );
+    }
 
     return (
       <View style={rewardStyle.container}>

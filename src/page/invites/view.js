@@ -11,14 +11,10 @@ import {
   View,
 } from 'react-native';
 import Colors from 'styles/colors';
-import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import Link from 'component/link';
 import Button from 'component/button';
 import ChannelSelector from 'component/channelSelector';
-import PageHeader from 'component/pageHeader';
-import RewardCard from 'component/rewardCard';
-import RewardEnrolment from 'component/rewardEnrolment';
+import EmptyStateView from 'component/emptyStateView';
 import UriBar from 'component/uriBar';
 import invitesStyle from 'styles/invites';
 import { fetchReferralCode, logPublish } from 'utils/helper';
@@ -134,9 +130,22 @@ class InvitesPage extends React.PureComponent {
   };
 
   render() {
-    const { fetchingInvitees, user, navigation, notify, isPending, invitees } = this.props;
-    const { email, inviteLink } = this.state;
+    const { fetchingInvitees, invitees, isPending, navigation, sdkReady } = this.props;
+    const { email } = this.state;
     const hasInvitees = invitees && invitees.length > 0;
+
+    if (!sdkReady) {
+      return (
+        <View style={invitesStyle.container}>
+          <UriBar navigation={navigation} />
+          <EmptyStateView
+            message={__(
+              'The background service is still initializing. You can still explore and watch content during the initialization process.',
+            )}
+          />
+        </View>
+      );
+    }
 
     return (
       <View style={invitesStyle.container}>

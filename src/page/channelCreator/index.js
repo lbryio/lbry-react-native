@@ -22,6 +22,7 @@ import {
 import { doUpdateChannelFormState, doClearChannelFormState } from 'redux/actions/form';
 import { selectDrawerStack } from 'redux/selectors/drawer';
 import { selectChannelFormState, selectHasChannelFormState } from 'redux/selectors/form';
+import { selectSdkReady } from 'redux/selectors/settings';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import ChannelCreator from './view';
 
@@ -33,6 +34,7 @@ const select = state => ({
   fetchingChannels: selectFetchingMyChannels(state),
   balance: selectBalance(state),
   hasFormState: selectHasChannelFormState(state),
+  sdkReady: selectSdkReady(state),
   updatingChannel: selectUpdatingChannel(state),
   updateChannelError: selectUpdateChannelError(state),
 });
@@ -52,7 +54,4 @@ const perform = dispatch => ({
   setExplicitNavigateBack: flag => dispatch(doSetExplicitNavigateBack(flag)),
 });
 
-export default connect(
-  select,
-  perform,
-)(ChannelCreator);
+export default connect(select, perform)(ChannelCreator);
