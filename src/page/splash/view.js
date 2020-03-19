@@ -85,7 +85,9 @@ class SplashScreen extends React.PureComponent {
     const { liteMode } = this.state;
 
     // authenticate immediately
-    this.authenticateWithoutSdk();
+    if (!NativeModules.UtilityModule.dhtEnabled) {
+      this.authenticateWithoutSdk();
+    }
   }
 
   navigateToMain = () => {
@@ -203,15 +205,7 @@ class SplashScreen extends React.PureComponent {
   };
 
   finishSplashScreen = () => {
-    const {
-      authenticate,
-      balanceSubscribe,
-      blacklistedOutpointsSubscribe,
-      filteredOutpointsSubscribe,
-      getSync,
-      updateBlockHeight,
-      user,
-    } = this.props;
+    const { authenticate, getSync, user } = this.props;
 
     // Leave the splash screen
     if (user && user.id && user.has_verified_email) {
@@ -233,31 +227,14 @@ class SplashScreen extends React.PureComponent {
         });
       });
     }
-    // });
   };
 
   handleAccountUnlockFailed() {
     this.setState({ accountUnlockFailed: true });
   }
 
-  _updateStatusCallback(status) {
-    const { fetchSubscriptions, getSync, setClientSetting } = this.props;
-    const startupStatus = status.startup_status;
-    const walletStatus = status.wallet;
-
-    // At the minimum, wallet should be started and blocks_behind equal to 0 before calling resolve
-    const hasStarted = startupStatus.stream_manager && startupStatus.wallet && status.wallet.blocks_behind <= 0;
-    if (hasStarted) {
-      // Wait until we are able to resolve a name before declaring
-      // that we are done.
-      // TODO: This is a hack, and the logic should live in the daemon
-      // to give us a better sense of when we are actually started
-      this.setState({
-        daemonReady: true,
-        isLagging: false,
-        isRunning: true,
-      });
-
+  handleSdkReady = () => {
+    this.setState({ daemonReady: true }, () => {
       Lbry.wallet_status().then(secureWalletStatus => {
         // For now, automatically unlock the wallet if a password is set so that downloads work
         NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password => {
@@ -288,9 +265,12 @@ class SplashScreen extends React.PureComponent {
           }
         });
       });
+    });
+  };
 
-      return;
-    }
+  handleSdkStatusResponse = evt => {
+    const { status } = evt;
+    const walletStatus = status.wallet;
 
     const headerSyncProgress = walletStatus ? walletStatus.headers_synchronization_progress : null;
     if (headerSyncProgress && headerSyncProgress < 100) {
@@ -325,23 +305,24 @@ class SplashScreen extends React.PureComponent {
         details: __('Initializing LBRY service'),
       });
     }
-
-    setTimeout(() => {
-      this.updateStatus();
-    }, 1000);
-  }
+  };
 
   componentWillMount() {
     DeviceEventEmitter.addListener('onNotificationTargetLaunch', this.onNotificationTargetLaunch);
+    DeviceEventEmitter.addListener('onSdkReady', this.handleSdkReady);
+    DeviceEventEmitter.addListener('onSdkStatusResponse', this.handleSdkStatusResponse);
   }
 
   componentWillUnmount() {
     DeviceEventEmitter.removeListener('onNotificationTargetLaunch', this.onNotificationTargetLaunch);
+    DeviceEventEmitter.removeListener('onSdkReady', this.handleSdkReady);
+    DeviceEventEmitter.removeListener('onSdkStatusResponse', this.handleSdkStatusResponse);
   }
 
   componentDidMount() {
     NativeModules.Firebase.track('app_launch', null);
     NativeModules.Firebase.setCurrentScreen('Splash');
+
     const { navigation } = this.props;
     const { resetUrl } = navigation.state.params;
     const isResetUrlSet = !!resetUrl;
@@ -377,22 +358,23 @@ class SplashScreen extends React.PureComponent {
   }
 
   lbryConnect = () => {
-    this.updateStatus(); // skip lbry.connect for now (unless dht flag is enabled)
-    /*
-    Lbry.connect()
-      .then(() => {
-        this.updateStatus();
-      })
-      .catch(e => {
-        this.setState({
-          isLagging: true,
-          message: __('Connection Failure'),
-          details: __(
-            'We could not establish a connection to the SDK. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.',
-          ),
+    if (NativeModules.UtilityModule.dhtEnabled) {
+      Lbry.connect()
+        .then(() => {
+          this.updateStatus();
+        })
+        .catch(e => {
+          this.setState({
+            isLagging: true,
+            message: __('Connection Failure'),
+            details: __(
+              'We could not establish a connection to the SDK. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.',
+            ),
+          });
         });
-      });
-      */
+    } else {
+      this.updateStatus(); // skip lbry.connect for now (unless dht flag is enabled)
+    }
   };
 
   handleContinueAnywayPressed = () => {

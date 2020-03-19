@@ -447,6 +447,7 @@ class AppWithNavigationState extends React.Component {
   };
 
   componentWillUnmount() {
+    DeviceEventEmitter.removeListener('onSdkReady', this.handleSdkReady);
     DeviceEventEmitter.removeListener('onDownloadAborted', this.handleDownloadAborted);
     DeviceEventEmitter.removeListener('onDownloadStarted', this.handleDownloadStarted);
     DeviceEventEmitter.removeListener('onDownloadUpdated', this.handleDownloadUpdated);
