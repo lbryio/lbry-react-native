@@ -44,6 +44,10 @@ const modalRepostStyle = StyleSheet.create({
   cancelLink: {
     color: Colors.Grey,
   },
+  advancedLink: {
+    color: Colors.Grey,
+    marginRight: 16,
+  },
   balance: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -73,6 +77,10 @@ const modalRepostStyle = StyleSheet.create({
     marginTop: 8,
   },
   nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rightButtonRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },

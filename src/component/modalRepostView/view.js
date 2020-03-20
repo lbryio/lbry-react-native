@@ -15,11 +15,12 @@ export default class ModalRepostView extends React.PureComponent {
   depositAmountInput;
 
   state = {
-    repostName: null,
     channelName: null,
     creditsInputFocused: false,
     depositAmount: '0.1',
+    repostName: null,
     repostStarted: false,
+    showAdvanced: false,
   };
 
   componentDidMount() {
@@ -92,6 +93,7 @@ export default class ModalRepostView extends React.PureComponent {
     const { balance, channels, reposting, title, onCancelPress, onOverlayPress } = this.props;
     const canRepost = !!this.state.channelName && !!this.state.repostName;
     const channelsLoaded = channels && channels.length > 0;
+    const processing = this.state.repostStarted || reposting || !channelsLoaded;
 
     return (
       <TouchableOpacity style={modalStyle.overlay} activeOpacity={1} onPress={onOverlayPress}>
@@ -118,66 +120,81 @@ export default class ModalRepostView extends React.PureComponent {
               onChannelChange={this.handleChannelChange}
             />
 
-            <Text style={modalRepostStyle.label}>{__('Name')}</Text>
-            <View style={modalRepostStyle.nameRow}>
-              <TextInput
-                editable={false}
-                value={this.state.channelName ? `lbry://${this.state.channelName}/` : ''}
-                style={modalRepostStyle.input}
-              />
-              <TextInput
-                editable={canRepost}
-                value={this.state.repostName}
-                underlineColorAndroid={Colors.NextLbryGreen}
-                selectTextOnFocus
-                onChangeText={value => this.setState({ repostName: value })}
-                style={modalRepostStyle.input}
-              />
-            </View>
+            {this.state.showAdvanced && (
+              <View>
+                <Text style={modalRepostStyle.label}>{__('Name')}</Text>
+                <View style={modalRepostStyle.nameRow}>
+                  <TextInput
+                    editable={false}
+                    value={this.state.channelName ? `lbry://${this.state.channelName}/` : ''}
+                    style={modalRepostStyle.input}
+                  />
+                  <TextInput
+                    editable={canRepost}
+                    value={this.state.repostName}
+                    underlineColorAndroid={Colors.NextLbryGreen}
+                    selectTextOnFocus
+                    onChangeText={value => this.setState({ repostName: value })}
+                    style={modalRepostStyle.input}
+                  />
+                </View>
 
-            <Text style={modalRepostStyle.label}>{__('Deposit')}</Text>
-            <View style={modalRepostStyle.row}>
-              <View style={modalRepostStyle.amountRow}>
-                <TextInput
-                  editable={!this.state.repostStarted}
-                  ref={ref => (this.depositAmountInput = ref)}
-                  onChangeText={value => this.setState({ tipAmount: value })}
-                  underlineColorAndroid={Colors.NextLbryGreen}
-                  keyboardType={'numeric'}
-                  onFocus={() => this.setState({ creditsInputFocused: true })}
-                  onBlur={() => this.setState({ creditsInputFocused: false })}
-                  placeholder={'0'}
-                  value={this.state.depositAmount}
-                  selectTextOnFocus
-                  style={modalRepostStyle.depositAmountInput}
-                />
-                <Text style={modalRepostStyle.currency}>LBC</Text>
-                <View style={modalRepostStyle.balance}>
-                  {this.state.creditsInputFocused && <Icon name="coins" size={12} />}
-                  {this.state.creditsInputFocused && (
-                    <Text style={modalRepostStyle.balanceText}>{formatCredits(parseFloat(balance), 1, true)}</Text>
-                  )}
+                <Text style={modalRepostStyle.label}>{__('Deposit')}</Text>
+                <View style={modalRepostStyle.row}>
+                  <View style={modalRepostStyle.amountRow}>
+                    <TextInput
+                      editable={!this.state.repostStarted}
+                      ref={ref => (this.depositAmountInput = ref)}
+                      onChangeText={value => this.setState({ tipAmount: value })}
+                      underlineColorAndroid={Colors.NextLbryGreen}
+                      keyboardType={'numeric'}
+                      onFocus={() => this.setState({ creditsInputFocused: true })}
+                      onBlur={() => this.setState({ creditsInputFocused: false })}
+                      placeholder={'0'}
+                      value={this.state.depositAmount}
+                      selectTextOnFocus
+                      style={modalRepostStyle.depositAmountInput}
+                    />
+                    <Text style={modalRepostStyle.currency}>LBC</Text>
+                    <View style={modalRepostStyle.balance}>
+                      {this.state.creditsInputFocused && <Icon name="coins" size={12} />}
+                      {this.state.creditsInputFocused && (
+                        <Text style={modalRepostStyle.balanceText}>{formatCredits(parseFloat(balance), 1, true)}</Text>
+                      )}
+                    </View>
+                  </View>
                 </View>
               </View>
-              {(this.state.repostStarted || reposting || !channelsLoaded) && (
-                <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />
-              )}
-            </View>
+            )}
 
             <View style={modalRepostStyle.buttonRow}>
-              <Link
-                style={modalRepostStyle.cancelLink}
-                text={__('Cancel')}
-                onPress={() => {
-                  if (onCancelPress) onCancelPress();
-                }}
-              />
-              <Button
-                text={__('Repost')}
-                style={modalRepostStyle.button}
-                disabled={!canRepost || this.state.repostStarted || reposting}
-                onPress={this.handleRepost}
-              />
+              {!processing && (
+                <Link
+                  style={modalRepostStyle.cancelLink}
+                  text={__('Cancel')}
+                  onPress={() => {
+                    if (onCancelPress) onCancelPress();
+                  }}
+                />
+              )}
+
+              {processing && <ActivityIndicator size={'small'} color={Colors.NextLbryGreen} />}
+
+              <View style={modalRepostStyle.rightButtonRow}>
+                <Link
+                  style={modalRepostStyle.advancedLink}
+                  text={this.state.showAdvanced ? __('Hide advanced') : __('Show advanced')}
+                  onPress={() => {
+                    this.setState({ showAdvanced: !this.state.showAdvanced });
+                  }}
+                />
+                <Button
+                  text={__('Repost')}
+                  style={modalRepostStyle.button}
+                  disabled={!canRepost || this.state.repostStarted || reposting}
+                  onPress={this.handleRepost}
+                />
+              </View>
             </View>
           </View>
         </TouchableOpacity>
