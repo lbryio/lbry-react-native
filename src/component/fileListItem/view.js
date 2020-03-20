@@ -99,6 +99,7 @@ class FileListItem extends React.PureComponent {
       isRewardContent,
       channelClaimId,
       fullChannelUri,
+      repostUrl,
       repostChannel,
       repostChannelUrl,
       shortChannelUri,
@@ -114,12 +115,13 @@ class FileListItem extends React.PureComponent {
       channelClaimId = signingChannel ? signingChannel.claim_id : null;
       fullChannelUri = channelClaimId ? `${channel}#${channelClaimId}` : channel;
       shortChannelUri = signingChannel ? signingChannel.short_url : null;
+      repostUrl = claim.repost_url;
       repostChannelUrl = claim.repost_channel_url;
-      if (repostChannelUrl) {
-        const { claimName: repostChannelName } = parseURI(repostChannelUrl);
-        repostChannel = repostChannelName;
+      if (repostUrl) {
+        const { claimName: repostName, channelName } = parseURI(repostUrl);
+        repostChannel = channelName;
       }
-      isRepost = !!repostChannelUrl;
+      isRepost = !!repostUrl;
 
       if (blackListedOutpoints || filteredOutpoints) {
         const outpointsToHide = !blackListedOutpoints
@@ -148,8 +150,17 @@ class FileListItem extends React.PureComponent {
             <Icon name={'retweet'} size={14} style={fileListStyle.repostIcon} />
             <Text style={fileListStyle.repostChannelName}>
               <Link
-                text={repostChannel}
-                onPress={() => navigateToUri(navigation, normalizeURI(repostChannelUrl), null, false, null, false)}
+                text={`@${repostChannel}`}
+                onPress={() =>
+                  navigateToUri(
+                    navigation,
+                    normalizeURI(repostChannelUrl || `@${repostChannel}`),
+                    null,
+                    false,
+                    null,
+                    false,
+                  )
+                }
               />{' '}
               reposted
             </Text>
