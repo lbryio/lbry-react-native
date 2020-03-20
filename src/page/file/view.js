@@ -1130,7 +1130,8 @@ class FilePage extends React.PureComponent {
     const channelName = signingChannel && signingChannel.name;
     const channelClaimId = claim && claim.signing_channel && claim.signing_channel.claim_id;
     const fullUri = `${claim.name}#${claim.claim_id}`;
-    const canEdit = myClaimUris.includes(normalizeURI(fullUri));
+    const canEdit =
+      myClaimUris.includes(normalizeURI(fullUri)) || myClaimUris.includes(normalizeURI(claim.canonical_url));
     const showActions =
       (canEdit || (fileInfo && fileInfo.download_path)) &&
       !this.state.fullscreenMode &&
