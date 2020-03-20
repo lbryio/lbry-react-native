@@ -411,6 +411,7 @@ const publishStyle = StyleSheet.create({
     marginTop: 60,
   },
   publishesScrollPadding: {
+    paddingTop: 16,
     paddingBottom: 16,
   },
   listItem: {
@@ -418,8 +419,9 @@ const publishStyle = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 8,
-    marginLeft: 8,
-    marginRight: 8,
+    marginLeft: 16,
+    marginRight: 16,
+    marginBottom: 12,
   },
   noVideos: {
     color: Colors.White,
@@ -443,13 +445,13 @@ const publishStyle = StyleSheet.create({
   },
   publishesFooter: {
     marginTop: 2,
-    marginLeft: 16,
-    marginRight: 16,
+    marginLeft: 8,
+    marginRight: 8,
   },
   publishesFooterButton: {
     alignSelf: 'flex-start',
     backgroundColor: Colors.LbryGreen,
-    marginTop: 16,
+    marginTop: 8,
   },
   thumbnailEditOverlay: {
     alignItems: 'center',

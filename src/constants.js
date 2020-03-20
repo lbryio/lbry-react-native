@@ -149,7 +149,7 @@ const Constants = {
 
   TRUE_STRING: 'true',
 
-  MINIMUM_TRANSACTION_BALANCE: 0.1,
+  MINIMUM_TRANSACTION_BALANCE: 0.01,
 
   SHARE_BASE_URL: 'https://open.lbry.com',
 };

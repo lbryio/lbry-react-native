@@ -5,7 +5,6 @@ import modalStyle from 'styles/modal';
 import modalTipStyle from 'styles/modalTip';
 import Button from 'component/button';
 import Colors from 'styles/colors';
-import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
 
@@ -25,6 +24,7 @@ export default class ModalTipView extends React.PureComponent {
     if (tipAmount > balance) {
       notify({
         message: 'Insufficient credits',
+        isError: true,
       });
       return;
     }
@@ -56,13 +56,13 @@ export default class ModalTipView extends React.PureComponent {
                 () => {
                   // error
                   if (onSendTipFailed) onSendTipFailed();
-                }
-              )
+                },
+              ),
             );
           },
         },
       ],
-      { cancelable: true }
+      { cancelable: true },
     );
   };
 
@@ -115,7 +115,7 @@ export default class ModalTipView extends React.PureComponent {
               <Text style={modalTipStyle.infoText}>
                 {__(
                   'This will appear as a tip for %content%, which will boost its ability to be discovered while active.',
-                  { content: contentName }
+                  { content: contentName },
                 )}{' '}
                 <Link
                   style={modalTipStyle.learnMoreLink}

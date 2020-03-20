@@ -37,6 +37,7 @@ import FilePrice from 'component/filePrice';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import Link from 'component/link';
 import MediaPlayer from 'component/mediaPlayer';
+import ModalRepostView from 'component/modalRepostView';
 import ModalTipView from 'component/modalTipView';
 import ProgressCircle from 'react-native-progress-circle';
 import RelatedContent from 'component/relatedContent';
@@ -94,6 +95,7 @@ class FilePage extends React.PureComponent {
       showImageViewer: false,
       showWebView: false,
       showTipView: false,
+      showRepostView: false,
       playbackStarted: false,
       playerBgHeight: 0,
       playerHeight: 0,
@@ -265,6 +267,7 @@ class FilePage extends React.PureComponent {
       'playerBgHeighht',
       'playerHeight',
       'relatedY',
+      'showRepostView',
       'showTipView',
       'showImageViewer',
       'showWebView',
@@ -1127,7 +1130,8 @@ class FilePage extends React.PureComponent {
     const channelName = signingChannel && signingChannel.name;
     const channelClaimId = claim && claim.signing_channel && claim.signing_channel.claim_id;
     const fullUri = `${claim.name}#${claim.claim_id}`;
-    const canEdit = myClaimUris.includes(normalizeURI(fullUri));
+    const canEdit =
+      myClaimUris.includes(normalizeURI(fullUri)) || myClaimUris.includes(normalizeURI(claim.canonical_url));
     const showActions =
       (canEdit || (fileInfo && fileInfo.download_path)) &&
       !this.state.fullscreenMode &&
@@ -1350,6 +1354,14 @@ class FilePage extends React.PureComponent {
 
                   <TouchableOpacity
                     style={filePageStyle.largeButton}
+                    onPress={() => this.setState({ showRepostView: true })}
+                  >
+                    <Icon name={'retweet'} size={16} style={filePageStyle.largeButtonIcon} />
+                    <Text style={filePageStyle.largeButtonText}>{__('Repost')}</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={filePageStyle.largeButton}
                     onPress={() => this.setState({ showTipView: true })}
                   >
                     <Icon name={'gift'} size={16} style={filePageStyle.largeButtonIcon} />
@@ -1522,7 +1534,17 @@ class FilePage extends React.PureComponent {
             onSendTipSuccessful={() => this.setState({ showTipView: false })}
           />
         )}
+        {this.state.showRepostView && (
+          <ModalRepostView
+            claim={claim}
+            title={title}
+            onCancelPress={() => this.setState({ showRepostView: false })}
+            onOverlayPress={() => this.setState({ showRepostView: false })}
+            onRepostSuccessful={() => this.setState({ showRepostView: false })}
+          />
+        )}
         {!this.state.fullscreenMode &&
+          !this.state.showRepostView &&
           !this.state.showTipView &&
           !this.state.showImageViewer &&
           !this.state.showWebView && <FloatingWalletBalance navigation={navigation} />}
