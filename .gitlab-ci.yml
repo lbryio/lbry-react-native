@@ -1,0 +1,8 @@
+stages:
+  - build
+
+build:
+  variables:
+    REACT_NATIVE_BRANCH: $CI_COMMIT_REF_NAME
+  stage: build
+  trigger: lbry/lbry-android
