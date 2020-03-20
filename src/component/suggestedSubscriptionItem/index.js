@@ -23,7 +23,4 @@ const perform = dispatch => ({
   unsubscribe: subscription => doChannelUnsubscribe(subscription),
 });
 
-export default connect(
-  select,
-  perform,
-)(SuggestedSubscriptionItem);
+export default connect(select, perform)(SuggestedSubscriptionItem);

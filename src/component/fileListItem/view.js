@@ -125,7 +125,9 @@ class FileListItem extends React.PureComponent {
         const outpointsToHide = !blackListedOutpoints
           ? filteredOutpoints
           : blackListedOutpoints.concat(filteredOutpoints);
-        shouldHide = outpointsToHide.some(outpoint => outpoint.txid === claim.txid && outpoint.nout === claim.nout);
+        shouldHide = outpointsToHide.some(
+          outpoint => outpoint && outpoint.txid === claim.txid && outpoint.nout === claim.nout,
+        );
       }
 
       // TODO: hide channels on tag pages?
@@ -143,10 +145,14 @@ class FileListItem extends React.PureComponent {
       <View>
         {isRepost && (
           <View style={fileListStyle.repostInfo}>
-            <Icon name={"retweet"} size={14} style={fileListStyle.repostIcon} />
+            <Icon name={'retweet'} size={14} style={fileListStyle.repostIcon} />
             <Text style={fileListStyle.repostChannelName}>
-              <Link text={repostChannel}
-                onPress={() => navigateToUri(navigation, normalizeURI(repostChannelUrl), null, false, null, false)} /> reposted</Text>
+              <Link
+                text={repostChannel}
+                onPress={() => navigateToUri(navigation, normalizeURI(repostChannelUrl), null, false, null, false)}
+              />{' '}
+              reposted
+            </Text>
           </View>
         )}
 

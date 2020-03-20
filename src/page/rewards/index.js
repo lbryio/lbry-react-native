@@ -12,7 +12,8 @@ import {
 import { doToast } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
-import Constants from 'constants';
+import { selectSdkReady } from 'redux/selectors/settings';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import RewardsPage from './view';
 
 const select = state => ({
@@ -22,6 +23,7 @@ const select = state => ({
   emailVerifyPending: selectEmailVerifyIsPending(state),
   fetching: selectFetchingRewards(state),
   rewards: selectUnclaimedRewards(state),
+  sdkReady: selectSdkReady(state),
   user: selectUser(state),
 });
 
@@ -33,7 +35,4 @@ const perform = dispatch => ({
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
 });
 
-export default connect(
-  select,
-  perform
-)(RewardsPage);
+export default connect(select, perform)(RewardsPage);

@@ -3,11 +3,12 @@ import { selectFollowedTags, doToggleTagFollow } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doSetSortByItem, doSetTimeItem } from 'redux/actions/settings';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
-import { selectSortByItem, selectTimeItem } from 'redux/selectors/settings';
+import { selectSdkReady, selectSortByItem, selectTimeItem } from 'redux/selectors/settings';
 import TagPage from './view';
 
 const select = state => ({
   currentRoute: selectCurrentRoute(state),
+  sdkReady: selectSdkReady(state),
   sortByItem: selectSortByItem(state),
   timeItem: selectTimeItem(state),
   followedTags: selectFollowedTags(state),
@@ -21,7 +22,4 @@ const perform = dispatch => ({
   toggleTagFollow: tag => dispatch(doToggleTagFollow(tag)),
 });
 
-export default connect(
-  select,
-  perform
-)(TagPage);
+export default connect(select, perform)(TagPage);

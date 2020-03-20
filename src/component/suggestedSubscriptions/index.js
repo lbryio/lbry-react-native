@@ -16,7 +16,4 @@ const perform = dispatch => ({
   claimSearch: options => dispatch(doClaimSearch(options)),
 });
 
-export default connect(
-  select,
-  perform
-)(SuggestedSubscriptions);
+export default connect(select, perform)(SuggestedSubscriptions);

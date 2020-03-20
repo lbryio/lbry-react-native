@@ -176,9 +176,7 @@ export default class ChannelCreator extends React.PureComponent {
     NativeModules.Firebase.setCurrentScreen('Channels').then(result => {
       pushDrawerStack(Constants.DRAWER_ROUTE_CHANNEL_CREATOR, navigation.state.params ? navigation.state.params : null);
       setPlayerVisible();
-      if (!fetchingChannels) {
-        fetchChannelListMine();
-      }
+      fetchChannelListMine();
 
       DeviceEventEmitter.addListener('onDocumentPickerFilePicked', this.onFilePicked);
       DeviceEventEmitter.addListener('onDocumentPickerCanceled', this.onPickerCanceled);
@@ -802,7 +800,15 @@ export default class ChannelCreator extends React.PureComponent {
   };
 
   render() {
-    const { abandoningClaimIds, balance, fetchingChannels, updatingChannel, channels = [], navigation } = this.props;
+    const {
+      abandoningClaimIds,
+      balance,
+      fetchingChannels,
+      sdkReady,
+      updatingChannel,
+      channels = [],
+      navigation,
+    } = this.props;
     const {
       autoStyle,
       autoStyles,
@@ -825,6 +831,19 @@ export default class ChannelCreator extends React.PureComponent {
     } = this.state;
 
     const hasChannels = channels && channels.length > 0;
+
+    if (!sdkReady) {
+      return (
+        <View style={channelCreatorStyle.container}>
+          <UriBar navigation={navigation} />
+          <EmptyStateView
+            message={__(
+              'The background service is still initializing. You can still explore and watch content during the initialization process.',
+            )}
+          />
+        </View>
+      );
+    }
 
     return (
       <View style={channelCreatorStyle.container}>

@@ -13,7 +13,7 @@ import {
 } from 'lbryinc';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doSetClientSetting, doSetSortByItem, doSetTimeItem } from 'redux/actions/settings';
-import { makeSelectClientSetting, selectSortByItem, selectTimeItem } from 'redux/selectors/settings';
+import { makeSelectClientSetting, selectSdkReady, selectSortByItem, selectTimeItem } from 'redux/selectors/settings';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import DiscoverPage from './view';
 
@@ -27,6 +27,7 @@ const select = state => ({
   followedTags: selectFollowedTags(state),
   ratingReminderDisabled: makeSelectClientSetting(Constants.SETTING_RATING_REMINDER_DISABLED)(state),
   ratingReminderLastShown: makeSelectClientSetting(Constants.SETTING_RATING_REMINDER_LAST_SHOWN)(state),
+  sdkReady: selectSdkReady(state),
   sortByItem: selectSortByItem(state),
   timeItem: selectTimeItem(state),
   unreadSubscriptions: selectUnreadSubscriptions(state),
@@ -46,7 +47,4 @@ const perform = dispatch => ({
   setTimeItem: item => dispatch(doSetTimeItem(item)),
 });
 
-export default connect(
-  select,
-  perform,
-)(DiscoverPage);
+export default connect(select, perform)(DiscoverPage);

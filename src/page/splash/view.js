@@ -23,6 +23,7 @@ class SplashScreen extends React.PureComponent {
   };
 
   state = {
+    authWithoutSdk: false,
     accountUnlockFailed: false,
     appVersion: null,
     daemonReady: false,
@@ -53,7 +54,7 @@ class SplashScreen extends React.PureComponent {
                 liteModeParams: {
                   installationId: installIdContent,
                   nodeId: null,
-                  lbrynetVersion: '0.62.0',
+                  lbrynetVersion: '0.64.0',
                   platform,
                 },
               },
@@ -66,26 +67,26 @@ class SplashScreen extends React.PureComponent {
     });
   };
 
-  updateStatus() {
+  authenticateWithoutSdk() {
     const { authenticate } = this.props;
+    NativeModules.VersionInfo.getAppVersion().then(appVersion => {
+      this.setState({ appVersion, shouldAuthenticate: true, authWithoutSdk: true });
+      NativeModules.Firebase.getMessagingToken()
+        .then(firebaseToken => {
+          this.setState({ firebaseToken }, () => authenticate(appVersion, Platform.OS, firebaseToken, false));
+        })
+        .catch(() => {
+          authenticate(appVersion, Platform.OS, null, false);
+        });
+    });
+  }
+
+  updateStatus() {
     const { liteMode } = this.state;
 
-    if (liteMode) {
-      // authenticate immediately
-      NativeModules.VersionInfo.getAppVersion().then(appVersion => {
-        this.setState({ appVersion, shouldAuthenticate: true });
-        NativeModules.Firebase.getMessagingToken()
-          .then(firebaseToken => {
-            this.setState({ firebaseToken }, () => authenticate(appVersion, Platform.OS, firebaseToken, false));
-          })
-          .catch(() => {
-            authenticate(appVersion, Platform.OS, null, false);
-          });
-      });
-    } else {
-      Lbry.status().then(status => {
-        this._updateStatusCallback(status);
-      });
+    // authenticate immediately
+    if (!NativeModules.UtilityModule.dhtEnabled) {
+      this.authenticateWithoutSdk();
     }
   }
 
@@ -121,40 +122,50 @@ class SplashScreen extends React.PureComponent {
 
   componentWillReceiveProps(nextProps) {
     const { getSync, installNewWithParams } = this.props;
-    const { daemonReady, shouldAuthenticate, liteMode, liteModeParams, appVersion, firebaseToken } = this.state;
+    const {
+      daemonReady,
+      authWithoutSdk,
+      shouldAuthenticate,
+      liteMode,
+      liteModeParams,
+      appVersion,
+      firebaseToken,
+    } = this.state;
     const { user } = nextProps;
 
     if (liteMode && user && user.id) {
       this.navigateToLiteMode();
-    } else if (daemonReady && shouldAuthenticate && user && user.id) {
-      this.setState({ shouldAuthenticate: false }, () => {
-        // call install new after successful authentication
-        if (liteMode) {
-          const { installationId, nodeId, lbrynetVersion, platform } = liteModeParams;
-          installNewWithParams(
-            appVersion,
-            installationId,
-            nodeId,
-            lbrynetVersion,
-            Platform.OS,
-            platform,
-            firebaseToken,
-          );
-        }
+    } else if (shouldAuthenticate && user && user.id) {
+      if (daemonReady || authWithoutSdk) {
+        this.setState({ shouldAuthenticate: false }, () => {
+          // call install new after successful authentication
+          if (authWithoutSdk) {
+            const { installationId, nodeId, lbrynetVersion, platform } = liteModeParams;
+            installNewWithParams(
+              appVersion,
+              installationId,
+              nodeId,
+              lbrynetVersion,
+              Platform.OS,
+              platform,
+              firebaseToken,
+            );
+          }
 
-        // user is authenticated, navigate to the main view
-        if (user.has_verified_email) {
-          NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
-            getSync(walletPassword, () => {
-              this.getUserSettings();
+          // user is authenticated, navigate to the main view
+          if (user.has_verified_email) {
+            NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
+              getSync(walletPassword, () => {
+                this.getUserSettings();
+              });
             });
-          });
-          this.navigateToMain();
-          return;
-        }
+            this.navigateToMain();
+            return;
+          }
 
-        this.navigateToMain();
-      });
+          this.navigateToMain();
+        });
+      }
     }
   }
 
@@ -194,22 +205,9 @@ class SplashScreen extends React.PureComponent {
   };
 
   finishSplashScreen = () => {
-    const {
-      authenticate,
-      balanceSubscribe,
-      blacklistedOutpointsSubscribe,
-      filteredOutpointsSubscribe,
-      getSync,
-      updateBlockHeight,
-      user,
-    } = this.props;
+    const { authenticate, getSync, user } = this.props;
 
-    // Lbry.resolve({ urls: 'lbry://one' }).then(() => {
     // Leave the splash screen
-    balanceSubscribe();
-    blacklistedOutpointsSubscribe();
-    filteredOutpointsSubscribe();
-
     if (user && user.id && user.has_verified_email) {
       // user already authenticated
       NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(walletPassword => {
@@ -223,37 +221,20 @@ class SplashScreen extends React.PureComponent {
         this.setState({ shouldAuthenticate: true }, () => {
           NativeModules.Firebase.getMessagingToken()
             .then(firebaseToken => {
-              authenticate(appVersion, Platform.OS, firebaseToken);
+              authenticate(appVersion, Platform.OS, firebaseToken, true);
             })
-            .catch(() => authenticate(appVersion, Platform.OS));
+            .catch(() => authenticate(appVersion, Platform.OS, null, true));
         });
       });
     }
-    // });
   };
 
   handleAccountUnlockFailed() {
     this.setState({ accountUnlockFailed: true });
   }
 
-  _updateStatusCallback(status) {
-    const { fetchSubscriptions, getSync, setClientSetting } = this.props;
-    const startupStatus = status.startup_status;
-    const walletStatus = status.wallet;
-
-    // At the minimum, wallet should be started and blocks_behind equal to 0 before calling resolve
-    const hasStarted = startupStatus.stream_manager && startupStatus.wallet && status.wallet.blocks_behind <= 0;
-    if (hasStarted) {
-      // Wait until we are able to resolve a name before declaring
-      // that we are done.
-      // TODO: This is a hack, and the logic should live in the daemon
-      // to give us a better sense of when we are actually started
-      this.setState({
-        daemonReady: true,
-        isLagging: false,
-        isRunning: true,
-      });
-
+  handleSdkReady = () => {
+    this.setState({ daemonReady: true }, () => {
       Lbry.wallet_status().then(secureWalletStatus => {
         // For now, automatically unlock the wallet if a password is set so that downloads work
         NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password => {
@@ -284,9 +265,12 @@ class SplashScreen extends React.PureComponent {
           }
         });
       });
+    });
+  };
 
-      return;
-    }
+  handleSdkStatusResponse = evt => {
+    const { status } = evt;
+    const walletStatus = status.wallet;
 
     const headerSyncProgress = walletStatus ? walletStatus.headers_synchronization_progress : null;
     if (headerSyncProgress && headerSyncProgress < 100) {
@@ -321,23 +305,24 @@ class SplashScreen extends React.PureComponent {
         details: __('Initializing LBRY service'),
       });
     }
-
-    setTimeout(() => {
-      this.updateStatus();
-    }, 1000);
-  }
+  };
 
   componentWillMount() {
     DeviceEventEmitter.addListener('onNotificationTargetLaunch', this.onNotificationTargetLaunch);
+    DeviceEventEmitter.addListener('onSdkReady', this.handleSdkReady);
+    DeviceEventEmitter.addListener('onSdkStatusResponse', this.handleSdkStatusResponse);
   }
 
   componentWillUnmount() {
     DeviceEventEmitter.removeListener('onNotificationTargetLaunch', this.onNotificationTargetLaunch);
+    DeviceEventEmitter.removeListener('onSdkReady', this.handleSdkReady);
+    DeviceEventEmitter.removeListener('onSdkStatusResponse', this.handleSdkStatusResponse);
   }
 
   componentDidMount() {
     NativeModules.Firebase.track('app_launch', null);
     NativeModules.Firebase.setCurrentScreen('Splash');
+
     const { navigation } = this.props;
     const { resetUrl } = navigation.state.params;
     const isResetUrlSet = !!resetUrl;
@@ -357,11 +342,7 @@ class SplashScreen extends React.PureComponent {
         }
 
         // Only connect after checking initial launch url / notification launch target
-        if (liteMode) {
-          this.initLiteMode();
-        } else {
-          this.lbryConnect();
-        }
+        this.initLiteMode();
       });
     });
 
@@ -377,19 +358,23 @@ class SplashScreen extends React.PureComponent {
   }
 
   lbryConnect = () => {
-    Lbry.connect()
-      .then(() => {
-        this.updateStatus();
-      })
-      .catch(e => {
-        this.setState({
-          isLagging: true,
-          message: __('Connection Failure'),
-          details: __(
-            'We could not establish a connection to the SDK. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.',
-          ),
+    if (NativeModules.UtilityModule.dhtEnabled) {
+      Lbry.connect()
+        .then(() => {
+          this.updateStatus();
+        })
+        .catch(e => {
+          this.setState({
+            isLagging: true,
+            message: __('Connection Failure'),
+            details: __(
+              'We could not establish a connection to the SDK. Your data connection may be preventing LBRY from connecting. Contact hello@lbry.com if you think this is a software bug.',
+            ),
+          });
         });
-      });
+    } else {
+      this.updateStatus(); // skip lbry.connect for now (unless dht flag is enabled)
+    }
   };
 
   handleContinueAnywayPressed = () => {

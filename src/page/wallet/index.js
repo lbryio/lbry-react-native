@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { doSetClientSetting } from 'redux/actions/settings';
-import { makeSelectClientSetting } from 'redux/selectors/settings';
+import { makeSelectClientSetting, selectSdkReady } from 'redux/selectors/settings';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
 import { selectBalance } from 'lbry-redux';
@@ -15,6 +15,7 @@ const select = state => ({
   deviceWalletSynced: makeSelectClientSetting(Constants.SETTING_DEVICE_WALLET_SYNCED)(state),
   hasSyncedWallet: selectHasSyncedWallet(state),
   rewardsNotInterested: makeSelectClientSetting(Constants.SETTING_REWARDS_NOT_INTERESTED)(state),
+  sdkReady: selectSdkReady(state),
   understandsRisks: makeSelectClientSetting(Constants.SETTING_ALPHA_UNDERSTANDS_RISKS)(state),
   user: selectUser(state),
 });
@@ -27,7 +28,4 @@ const perform = dispatch => ({
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
 });
 
-export default connect(
-  select,
-  perform
-)(WalletPage);
+export default connect(select, perform)(WalletPage);

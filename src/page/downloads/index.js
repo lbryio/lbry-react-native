@@ -11,15 +11,17 @@ import {
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doDeleteFile } from 'redux/actions/file';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
+import { selectSdkReady } from 'redux/selectors/settings';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import DownloadsPage from './view';
 
 const select = state => ({
   claims: selectMyClaimsWithoutChannels(state),
   currentRoute: selectCurrentRoute(state),
-  fileInfos: selectFileInfosDownloaded(state),
   downloadedUris: selectDownloadedUris(state),
+  fileInfos: selectFileInfosDownloaded(state),
   fetching: selectIsFetchingFileList(state) || selectIsFetchingClaimListMine(state),
+  sdkReady: selectSdkReady(state),
 });
 
 const perform = dispatch => ({
@@ -32,7 +34,4 @@ const perform = dispatch => ({
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
 });
 
-export default connect(
-  select,
-  perform
-)(DownloadsPage);
+export default connect(select, perform)(DownloadsPage);

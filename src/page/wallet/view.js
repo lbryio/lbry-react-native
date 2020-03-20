@@ -1,5 +1,6 @@
 import React from 'react';
 import { NativeModules, ScrollView, Text, View } from 'react-native';
+import EmptyStateView from 'component/emptyStateView';
 import TransactionListRecent from 'component/transactionListRecent';
 import WalletAddress from 'component/walletAddress';
 import WalletBalance from 'component/walletBalance';
@@ -8,8 +9,6 @@ import WalletSend from 'component/walletSend';
 import WalletRewardsDriver from 'component/walletRewardsDriver';
 import WalletSignIn from 'component/walletSignIn';
 import WalletSyncDriver from 'component/walletSyncDriver';
-import Button from 'component/button';
-import Link from 'component/link';
 import UriBar from 'component/uriBar';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import walletStyle from 'styles/wallet';
@@ -60,16 +59,20 @@ class WalletPage extends React.PureComponent {
   };
 
   render() {
-    const {
-      balance,
-      backupDismissed,
-      hasSyncedWallet,
-      rewardsNotInterested,
-      understandsRisks,
-      setClientSetting,
-      navigation,
-      user,
-    } = this.props;
+    const { balance, rewardsNotInterested, understandsRisks, navigation, sdkReady, user } = this.props;
+
+    if (!sdkReady) {
+      return (
+        <View style={walletStyle.container}>
+          <UriBar navigation={navigation} />
+          <EmptyStateView
+            message={__(
+              'The background service is still initializing. You can still explore and watch content during the initialization process.',
+            )}
+          />
+        </View>
+      );
+    }
 
     const signedIn = user && user.has_verified_email;
     if (!signedIn && !understandsRisks) {

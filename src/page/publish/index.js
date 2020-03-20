@@ -13,6 +13,7 @@ import { selectDrawerStack } from 'redux/selectors/drawer';
 import { doUpdatePublishFormState, doClearPublishFormState, doPendingPublishSuccess } from 'redux/actions/form';
 import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { selectPublishFormState, selectHasPublishFormState } from 'redux/selectors/form';
+import { selectSdkReady } from 'redux/selectors/settings';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import PublishPage from './view';
 
@@ -23,6 +24,7 @@ const select = state => ({
   myClaims: selectMyClaims(state),
   publishFormState: selectPublishFormState(state),
   publishFormValues: selectPublishFormValues(state),
+  sdkReady: selectSdkReady(state),
 });
 
 const perform = dispatch => ({
@@ -39,7 +41,4 @@ const perform = dispatch => ({
   setPlayerVisible: () => dispatch(doSetPlayerVisible(false)),
 });
 
-export default connect(
-  select,
-  perform,
-)(PublishPage);
+export default connect(select, perform)(PublishPage);
