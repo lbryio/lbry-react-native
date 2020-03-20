@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { SETTINGS, doUpdateBlockHeight, doPopulateSharedUserState, doToast } from 'lbry-redux';
 import {
   doAuthenticate,
+  doClaimRewardType,
   doInstallNewWithParams,
   doFetchMySubscriptions,
   doFetchRewardedContent,

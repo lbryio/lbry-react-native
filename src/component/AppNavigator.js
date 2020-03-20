@@ -54,7 +54,9 @@ import {
 } from 'lbry-redux';
 import {
   Lbryio,
+  rewards as REWARD_TYPES,
   doBlackListedOutpointsSubscribe,
+  doClaimRewardType,
   doFilteredOutpointsSubscribe,
   doGetSync,
   doUserCheckEmailVerified,
@@ -372,6 +374,28 @@ class AppWithNavigationState extends React.Component {
     );
   };
 
+  checkNewAndroidReward = () => {
+    const { dispatch, doToast } = this.props;
+    const claimRewardCallback = err => {
+      if (err) {
+        // an error occurred, do not display anything
+        return;
+      }
+      // reward successfully claimed
+      NativeModules.UtilityModule.setNativeBooleanSetting(Constants.SETTING_NEW_ANDROID_REWARD_CLAIMED, true);
+    };
+
+    NativeModules.UtilityModule.getNativeBooleanSetting(Constants.SETTING_NEW_ANDROID_REWARD_CLAIMED, false).then(
+      rewardClaimed => {
+        if (!rewardClaimed) {
+          dispatch(
+            doClaimRewardType(REWARD_TYPES.TYPE_NEW_ANDROID, { notifyError: false, callback: claimRewardCallback }),
+          );
+        }
+      },
+    );
+  };
+
   handleSdkReady = () => {
     const { dispatch } = this.props;
     dispatch(doSetSdkReady());
@@ -398,6 +422,8 @@ class AppWithNavigationState extends React.Component {
         }
       });
     });
+
+    this.checkNewAndroidReward();
   };
 
   handleAccountUnlockFailed() {

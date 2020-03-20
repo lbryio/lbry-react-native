@@ -159,6 +159,7 @@ class SplashScreen extends React.PureComponent {
                 this.getUserSettings();
               });
             });
+
             this.navigateToMain();
             return;
           }

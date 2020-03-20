@@ -45,6 +45,7 @@ const Constants = {
   SETTING_REWARDS_NOT_INTERESTED: 'rewardsNotInterested',
   SETTING_DEVICE_WALLET_SYNCED: 'deviceWalletSynced',
   SETTING_DHT_ENABLED: 'dhtEnabled',
+  SETTING_NEW_ANDROID_REWARD_CLAIMED: 'newAndroidRewardClaimed',
 
   ACTION_SDK_READY: 'SDK_READY',
 

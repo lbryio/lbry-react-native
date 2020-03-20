@@ -70,7 +70,9 @@ class FileItem extends React.PureComponent {
       const outpointsToHide = !blackListedOutpoints
         ? filteredOutpoints
         : blackListedOutpoints.concat(filteredOutpoints);
-      shouldHide = outpointsToHide.some(outpoint => outpoint.txid === claim.txid && outpoint.nout === claim.nout);
+      shouldHide = outpointsToHide.some(
+        outpoint => outpoint && outpoint.txid === claim.txid && outpoint.nout === claim.nout,
+      );
     }
     if (shouldHide) {
       // don't display blacklisted or filtered outpoints on the Your tags page
