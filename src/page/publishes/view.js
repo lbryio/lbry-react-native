@@ -114,13 +114,26 @@ class PublishesPage extends React.PureComponent {
           },
         },
       ],
-      { cancelable: true }
+      { cancelable: true },
     );
   };
 
   render() {
-    const { fetching, navigation, uris } = this.props;
+    const { fetching, navigation, sdkReady, uris } = this.props;
     const { selectionMode, selectedUris } = this.state;
+
+    if (!sdkReady) {
+      return (
+        <View style={publishStyle.container}>
+          <UriBar navigation={navigation} />
+          <EmptyStateView
+            message={__(
+              'The background service is still initializing. You can still explore and watch content during the initialization process.',
+            )}
+          />
+        </View>
+      );
+    }
 
     return (
       <View style={publishStyle.container}>

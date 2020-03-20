@@ -35,7 +35,4 @@ const perform = dispatch => ({
   setPlayerVisible: (visible, uri) => dispatch(doSetPlayerVisible(visible, uri)),
 });
 
-export default connect(
-  select,
-  perform,
-)(FileItem);
+export default connect(select, perform)(FileItem);

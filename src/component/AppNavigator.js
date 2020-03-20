@@ -42,8 +42,10 @@ import {
 } from 'react-native';
 import { selectDrawerStack } from 'redux/selectors/drawer';
 import {
+  Lbry,
   ACTIONS,
   SETTINGS,
+  doBalanceSubscribe,
   doDismissToast,
   doPopulateSharedUserState,
   doPreferenceGet,
@@ -52,6 +54,8 @@ import {
 } from 'lbry-redux';
 import {
   Lbryio,
+  doBlackListedOutpointsSubscribe,
+  doFilteredOutpointsSubscribe,
   doGetSync,
   doUserCheckEmailVerified,
   doUserEmailVerify,
@@ -75,6 +79,7 @@ import discoverStyle from 'styles/discover';
 import searchStyle from 'styles/search';
 import SearchRightHeaderIcon from 'component/searchRightHeaderIcon';
 import Snackbar from 'react-native-snackbar';
+import { doSetSdkReady } from 'redux/actions/settings';
 
 const SYNC_GET_INTERVAL = 1000 * 60 * 5; // every 5 minutes
 
@@ -327,6 +332,7 @@ class AppWithNavigationState extends React.Component {
     this.emailVerifyCheckInterval = setInterval(() => this.checkEmailVerification(), 5000);
     Linking.addEventListener('url', this._handleUrl);
 
+    DeviceEventEmitter.addListener('onSdkReady', this.handleSdkReady);
     DeviceEventEmitter.addListener('onDownloadAborted', this.handleDownloadAborted);
     DeviceEventEmitter.addListener('onDownloadStarted', this.handleDownloadStarted);
     DeviceEventEmitter.addListener('onDownloadUpdated', this.handleDownloadUpdated);
@@ -366,6 +372,46 @@ class AppWithNavigationState extends React.Component {
     );
   };
 
+  handleSdkReady = () => {
+    const { dispatch } = this.props;
+    dispatch(doSetSdkReady());
+    dispatch(doBalanceSubscribe());
+    dispatch(doBlackListedOutpointsSubscribe());
+    dispatch(doFilteredOutpointsSubscribe());
+
+    Lbry.wallet_status().then(secureWalletStatus => {
+      // For now, automatically unlock the wallet if a password is set so that downloads work
+      NativeModules.UtilityModule.getSecureValue(Constants.KEY_WALLET_PASSWORD).then(password => {
+        if ((secureWalletStatus.is_encrypted && !secureWalletStatus.is_locked) || secureWalletStatus.is_locked) {
+          this.setState({
+            message: __('Unlocking account'),
+            details: __('Decrypting wallet'),
+          });
+
+          // unlock the wallet and then finish the splash screen
+          Lbry.wallet_unlock({ password: password || '' }).then(unlocked => {
+            if (unlocked) {
+            } else {
+              // this.handleAccountUnlockFailed();
+            }
+          });
+        }
+      });
+    });
+  };
+
+  handleAccountUnlockFailed() {
+    const { dispatch } = this.props;
+    dispatch(
+      doToast({
+        message: __(
+          'Your wallet failed to unlock, which means you may not be able to play any videos or access your funds. Restart the app to fix this.',
+        ),
+        isError: true,
+      }),
+    );
+  }
+
   handleDownloadStarted = evt => {
     const { dispatch } = this.props;
     const { uri, outpoint, fileInfo } = evt;
@@ -401,6 +447,7 @@ class AppWithNavigationState extends React.Component {
   };
 
   componentWillUnmount() {
+    DeviceEventEmitter.removeListener('onSdkReady', this.handleSdkReady);
     DeviceEventEmitter.removeListener('onDownloadAborted', this.handleDownloadAborted);
     DeviceEventEmitter.removeListener('onDownloadStarted', this.handleDownloadStarted);
     DeviceEventEmitter.removeListener('onDownloadUpdated', this.handleDownloadUpdated);

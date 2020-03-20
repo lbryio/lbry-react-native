@@ -37,6 +37,7 @@ import Button from 'component/button';
 import ChannelSelector from 'component/channelSelector';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
+import EmptyStateView from 'component/emptyStateView';
 import FastImage from 'react-native-fast-image';
 import FloatingWalletBalance from 'component/floatingWalletBalance';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -974,7 +975,7 @@ class PublishPage extends React.PureComponent {
   };
 
   render() {
-    const { balance, navigation, notify, publishFormValues } = this.props;
+    const { balance, navigation, notify, sdkReady } = this.props;
     const {
       allThumbnailsChecked,
       canUseCamera,
@@ -986,6 +987,19 @@ class PublishPage extends React.PureComponent {
       thumbnailPath,
       videos,
     } = this.state;
+
+    if (!sdkReady) {
+      return (
+        <View style={publishStyle.container}>
+          <UriBar navigation={navigation} />
+          <EmptyStateView
+            message={__(
+              'The background service is still initializing. You can still explore and watch content during the initialization process.',
+            )}
+          />
+        </View>
+      );
+    }
 
     let content;
     if (Constants.PHASE_SELECTOR === currentPhase) {

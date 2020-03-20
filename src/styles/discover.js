@@ -398,6 +398,23 @@ const discoverStyle = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
   },
+  sdkLoading: {
+    position: 'absolute',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 8,
+    backgroundColor: Colors.LbryGreen,
+  },
+  sdkLoadingText: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+    color: Colors.White,
+    marginLeft: 8,
+  },
 });
 
 export default discoverStyle;

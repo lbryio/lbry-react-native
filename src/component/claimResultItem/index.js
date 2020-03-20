@@ -36,7 +36,4 @@ const perform = dispatch => ({
   setPlayerVisible: (visible, uri) => dispatch(doSetPlayerVisible(visible, uri)),
 });
 
-export default connect(
-  select,
-  perform,
-)(ClaimResultItem);
+export default connect(select, perform)(ClaimResultItem);

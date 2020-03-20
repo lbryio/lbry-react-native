@@ -16,7 +16,7 @@ import {
 import { doToast, selectFetchingClaimSearch } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
 import { doSetClientSetting, doSetTimeItem } from 'redux/actions/settings';
-import { makeSelectClientSetting, selectTimeItem } from 'redux/selectors/settings';
+import { makeSelectClientSetting, selectSdkReady, selectTimeItem } from 'redux/selectors/settings';
 import { selectCurrentRoute } from 'redux/selectors/drawer';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import SubscriptionsPage from './view';
@@ -34,6 +34,7 @@ const select = state => ({
   firstRunCompleted: selectFirstRunCompleted(state),
   showSuggestedSubs: selectShowSuggestedSubs(state),
   timeItem: selectTimeItem(state),
+  sdkReady: selectSdkReady(state),
 });
 
 const perform = dispatch => ({
@@ -48,7 +49,4 @@ const perform = dispatch => ({
   setTimeItem: item => dispatch(doSetTimeItem(item)),
 });
 
-export default connect(
-  select,
-  perform,
-)(SubscriptionsPage);
+export default connect(select, perform)(SubscriptionsPage);

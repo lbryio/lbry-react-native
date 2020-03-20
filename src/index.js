@@ -55,6 +55,10 @@ import settingsReducer from 'redux/reducers/settings';
 import thunk from 'redux-thunk';
 
 window.__ = __;
+if (!NativeModules.UtilityModule.dhtEnabled) {
+  Lbry.alternateConnectionString = 'https://api.lbry.tv/api/v1/proxy';
+  Lbry.methodsUsingAlternateConnectionString = ['claim_search', 'resolve'];
+}
 
 const globalExceptionHandler = (error, isFatal) => {
   if (error && NativeModules.Firebase) {

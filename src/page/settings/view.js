@@ -1,6 +1,16 @@
 import React from 'react';
 import { SETTINGS } from 'lbry-redux';
-import { ActivityIndicator, Picker, Platform, Text, View, ScrollView, Switch, NativeModules } from 'react-native';
+import {
+  ActivityIndicator,
+  Picker,
+  Platform,
+  Text,
+  TextInput,
+  View,
+  ScrollView,
+  Switch,
+  NativeModules,
+} from 'react-native';
 import { navigateBack } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import Colors from 'styles/colors';
@@ -328,7 +338,9 @@ class SettingsPage extends React.PureComponent {
             <View style={settingsStyle.switchText}>
               <Text style={settingsStyle.label}>{__('Participate in the data network')}</Text>
               <Text style={settingsStyle.description}>
-                {__('Enable DHT (this will take effect upon app and background service restart)')}
+                {__(
+                  'Enable peer-to-peer functionality (this will take effect upon app and background service restart)',
+                )}
               </Text>
             </View>
             <View style={settingsStyle.switchContainer}>

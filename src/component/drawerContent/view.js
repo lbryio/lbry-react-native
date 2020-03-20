@@ -31,13 +31,17 @@ const groupedMenuItems = {
 };
 
 const groupNames = Object.keys(groupedMenuItems);
+const routesRequiringSdkReady = [
+  Constants.DRAWER_ROUTE_CHANNEL_CREATOR,
+  Constants.DRAWER_ROUTE_MY_LBRY,
+  Constants.DRAWER_ROUTE_PUBLISHES,
+  Constants.DRAWER_ROUTE_PUBLISH,
+  Constants.DRAWER_ROUTE_WALLET,
+  Constants.DRAWER_ROUTE_REWARDS,
+  Constants.DRAWER_ROUTE_INVITES,
+];
 
 class DrawerContent extends React.PureComponent {
-  componentDidMount() {
-    const { fetchChannelListMine } = this.props;
-    fetchChannelListMine();
-  }
-
   getAvatarImageUrl = () => {
     const { channels = [] } = this.props;
     if (channels) {
@@ -60,6 +64,21 @@ class DrawerContent extends React.PureComponent {
       key: 'verification',
       params: { syncFlow: true, signInFlow: true },
     });
+  };
+
+  handleItemPress = routeName => {
+    const { navigation, notify, sdkReady } = this.props;
+    if (!sdkReady && routesRequiringSdkReady.includes(routeName)) {
+      if (navigation.closeDrawer) {
+        navigation.closeDrawer();
+      }
+      notify({
+        message: __('The background service is still initializing. Please try again when initialization is complete.'),
+      });
+      return;
+    }
+
+    navigation.navigate({ routeName: routeName });
   };
 
   render() {
@@ -157,7 +176,7 @@ class DrawerContent extends React.PureComponent {
                           focused ? discoverStyle.menuItemTouchAreaFocused : null,
                         ]}
                         key={item.label}
-                        onPress={() => navigation.navigate({ routeName: item.route })}
+                        onPress={() => this.handleItemPress(item.route)}
                         delayPressIn={0}
                       >
                         <View style={discoverStyle.menuItemIcon}>

@@ -30,6 +30,7 @@ import SubscribedChannelList from 'component/subscribedChannelList';
 import SuggestedSubscriptions from 'component/suggestedSubscriptions';
 import SuggestedSubscriptionsGrid from 'component/suggestedSubscriptionsGrid';
 import UriBar from 'component/uriBar';
+import SdkLoadingStatus from 'component/sdkLoadingStatus';
 
 class SubscriptionsPage extends React.PureComponent {
   state = {
@@ -137,21 +138,7 @@ class SubscriptionsPage extends React.PureComponent {
   };
 
   render() {
-    const {
-      suggestedChannels,
-      subscribedChannels,
-      allSubscriptions,
-      doCompleteFirstRun,
-      doShowSuggestedSubs,
-      loading,
-      loadingSuggested,
-      firstRunCompleted,
-      showSuggestedSubs,
-      timeItem,
-      unreadSubscriptions,
-      navigation,
-      notify,
-    } = this.props;
+    const { subscribedChannels, loading, loadingSuggested, sdkReady, timeItem, navigation, notify } = this.props;
     const { currentSortByItem, filteredChannels, showModalSuggestedSubs, showSortPicker, showTimePicker } = this.state;
 
     const numberOfSubscriptions = subscribedChannels ? subscribedChannels.length : 0;
@@ -296,6 +283,8 @@ class SubscriptionsPage extends React.PureComponent {
             onDonePress={() => this.setState({ showModalSuggestedSubs: false })}
           />
         )}
+
+        {!sdkReady && <SdkLoadingStatus />}
       </View>
     );
   }

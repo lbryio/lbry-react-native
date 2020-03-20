@@ -144,10 +144,23 @@ class DownloadsPage extends React.PureComponent {
   };
 
   render() {
-    const { fetching, claims, downloadedUris, fileInfos, navigation } = this.props;
+    const { downloadedUris, fetching, navigation, sdkReady } = this.props;
     const { selectionMode, selectedUris } = this.state;
     const filteredUris = this.getFilteredUris();
     const hasDownloads = filteredUris && filteredUris.length > 0;
+
+    if (!sdkReady) {
+      return (
+        <View style={downloadsStyle.container}>
+          <UriBar navigation={navigation} />
+          <EmptyStateView
+            message={__(
+              'The background service is still initializing. You can still explore and watch content during the initialization process.',
+            )}
+          />
+        </View>
+      );
+    }
 
     return (
       <View style={downloadsStyle.container}>

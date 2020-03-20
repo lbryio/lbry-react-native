@@ -12,23 +12,22 @@ import {
   doFetchInviteStatus,
   doUserInviteNew,
 } from 'lbryinc';
-import { doPushDrawerStack, doPopDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
-import { doUpdateChannelFormState, doClearChannelFormState } from 'redux/actions/form';
-import { selectDrawerStack } from 'redux/selectors/drawer';
-import { selectChannelFormState, selectHasChannelFormState } from 'redux/selectors/form';
+import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
+import { selectSdkReady } from 'redux/selectors/settings';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import InvitesPage from './view';
 
 const select = state => ({
   channels: selectMyChannelClaims(state),
+  errorMessage: selectUserInviteNewErrorMessage(state),
   fetchingChannels: selectFetchingMyChannels(state),
   fetchingInvitees: selectUserInviteStatusIsPending(state),
-  errorMessage: selectUserInviteNewErrorMessage(state),
-  invitesRemaining: selectUserInvitesRemaining(state),
-  referralCode: selectUserInviteReferralCode(state),
-  isPending: selectUserInviteNewIsPending(state),
   invitees: selectUserInvitees(state),
+  invitesRemaining: selectUserInvitesRemaining(state),
+  isPending: selectUserInviteNewIsPending(state),
+  referralCode: selectUserInviteReferralCode(state),
   referralReward: selectReferralReward(state),
+  sdkReady: selectSdkReady(state),
 });
 
 const perform = dispatch => ({
@@ -40,7 +39,4 @@ const perform = dispatch => ({
   notify: data => dispatch(doToast(data)),
 });
 
-export default connect(
-  select,
-  perform,
-)(InvitesPage);
+export default connect(select, perform)(InvitesPage);
