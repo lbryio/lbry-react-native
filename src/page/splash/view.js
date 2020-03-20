@@ -322,6 +322,7 @@ class SplashScreen extends React.PureComponent {
   componentDidMount() {
     NativeModules.Firebase.track('app_launch', null);
     NativeModules.Firebase.setCurrentScreen('Splash');
+    NativeModules.UtilityModule.checkSdkReady();
 
     const { navigation } = this.props;
     const { resetUrl } = navigation.state.params;
