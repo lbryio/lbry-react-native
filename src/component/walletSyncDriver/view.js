@@ -27,7 +27,7 @@ class WalletSyncDriver extends React.PureComponent<Props> {
             },
           },
         ],
-        { cancelable: true }
+        { cancelable: true },
       );
     }
   };
