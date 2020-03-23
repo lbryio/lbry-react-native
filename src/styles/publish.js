@@ -445,8 +445,8 @@ const publishStyle = StyleSheet.create({
   },
   publishesFooter: {
     marginTop: 2,
-    marginLeft: 8,
-    marginRight: 8,
+    marginLeft: 16,
+    marginRight: 16,
   },
   publishesFooterButton: {
     alignSelf: 'flex-start',

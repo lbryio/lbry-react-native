@@ -47,7 +47,7 @@ export default class ChannelCreator extends React.PureComponent {
     channelNameUserEdited: false,
     newChannelTitle: '',
     newChannelName: '',
-    newChannelBid: 0.1,
+    newChannelBid: 0.01,
     addingChannel: false,
     creatingChannel: false,
     editChannelUrl: null,
@@ -280,7 +280,7 @@ export default class ChannelCreator extends React.PureComponent {
   handleCreateCancel = () => {
     const { clearChannelFormState } = this.props;
     clearChannelFormState(); // explicitly clear state on cancel?
-    this.setState({ showCreateChannel: false, newChannelName: '', newChannelBid: 0.1 });
+    this.setState({ showCreateChannel: false, newChannelName: '', newChannelBid: 0.01 });
   };
 
   handlePickerValueChange = (itemValue, itemIndex) => {
@@ -589,7 +589,7 @@ export default class ChannelCreator extends React.PureComponent {
       channelNameUserEdited: false,
       newChannelTitle: '',
       newChannelName: '',
-      newChannelBid: 0.1,
+      newChannelBid: 0.01,
       addingChannel: false,
       creatingChannel: false,
       newChannelNameError: '',

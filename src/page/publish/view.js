@@ -121,7 +121,7 @@ class PublishPage extends React.PureComponent {
 
     // input data
     hasEditedContentAddress: false,
-    bid: 0.1,
+    bid: 0.01,
     description: null,
     title: null,
     language: 'en',

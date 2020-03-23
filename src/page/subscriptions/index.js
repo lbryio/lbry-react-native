@@ -12,6 +12,7 @@ import {
   selectViewMode,
   selectFirstRunCompleted,
   selectShowSuggestedSubs,
+  selectUser,
 } from 'lbryinc';
 import { doToast, selectFetchingClaimSearch } from 'lbry-redux';
 import { doPushDrawerStack, doSetPlayerVisible } from 'redux/actions/drawer';
@@ -35,6 +36,7 @@ const select = state => ({
   showSuggestedSubs: selectShowSuggestedSubs(state),
   timeItem: selectTimeItem(state),
   sdkReady: selectSdkReady(state),
+  user: selectUser(state),
 });
 
 const perform = dispatch => ({

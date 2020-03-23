@@ -194,7 +194,7 @@ class PublishesPage extends React.PureComponent {
                       });
                     } else {
                       // TODO: when shortUrl is available for my claims, navigate to that URL instead
-                      navigateToUri(navigation, item);
+                      navigateToUri(navigation, claim.permanent_url);
                     }
                   }
                 }}

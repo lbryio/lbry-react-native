@@ -17,7 +17,7 @@ export default class ModalRepostView extends React.PureComponent {
   state = {
     channelName: null,
     creditsInputFocused: false,
-    depositAmount: '0.1',
+    depositAmount: '0.01',
     repostName: null,
     repostStarted: false,
     showAdvanced: false,

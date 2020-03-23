@@ -1,9 +1,11 @@
 import { connect } from 'react-redux';
 import { doSendTip, doToast, selectBalance } from 'lbry-redux';
+import { selectSdkReady } from 'redux/selectors/settings';
 import ModalTipView from './view';
 
 const select = state => ({
   balance: selectBalance(state),
+  sdkReady: selectSdkReady(state),
 });
 
 const perform = dispatch => ({
@@ -12,7 +14,4 @@ const perform = dispatch => ({
     dispatch(doSendTip(amount, claimId, isSupport, successCallback, errorCallback)),
 });
 
-export default connect(
-  select,
-  perform
-)(ModalTipView);
+export default connect(select, perform)(ModalTipView);

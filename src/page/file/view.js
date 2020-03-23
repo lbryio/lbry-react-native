@@ -820,7 +820,16 @@ class FilePage extends React.PureComponent {
   };
 
   onDownloadPressed = () => {
-    const { claim, title } = this.props;
+    const { claim, notify, sdkReady, title } = this.props;
+    if (!sdkReady) {
+      notify({
+        message: __(
+          'The background service is still initializing. You can still explore and watch content during the initialization process.',
+        ),
+      });
+      return;
+    }
+
     const fileSize = claim && claim.value && claim.value.source ? claim.value.source.size : 0;
     Alert.alert(
       __('Download file'),
@@ -1020,7 +1029,6 @@ class FilePage extends React.PureComponent {
       myClaimUris,
       navigation,
       position,
-      purchaseUri,
       pushDrawerStack,
       setPlayerVisible,
       thumbnail,

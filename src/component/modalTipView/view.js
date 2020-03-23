@@ -18,8 +18,17 @@ export default class ModalTipView extends React.PureComponent {
   };
 
   handleSendTip = () => {
-    const { claim, balance, notify, onSendTipFailed, onSendTipSuccessful, sendTip } = this.props;
+    const { claim, balance, notify, onSendTipFailed, onSendTipSuccessful, sdkReady, sendTip } = this.props;
     const { tipAmount } = this.state;
+
+    if (!sdkReady) {
+      notify({
+        message: __(
+          'The background service is still initializing. You can still explore and watch content during the initialization process.',
+        ),
+      });
+      return;
+    }
 
     if (tipAmount > balance) {
       notify({

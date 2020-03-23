@@ -38,6 +38,7 @@ class SubscriptionsPage extends React.PureComponent {
     showSortPicker: false,
     showTimePicker: false,
     showModalSuggestedSubs: false,
+    userEmailVerified: false,
     orderBy: ['release_time'],
     filteredChannels: [],
     currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[1], // should always default to sorting subscriptions by new
@@ -57,21 +58,14 @@ class SubscriptionsPage extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const {
-      currentRoute,
-      doFetchMySubscriptions,
-      doFetchRecommendedSubscriptions,
-      doSetViewMode,
-      pushDrawerStack,
-      setPlayerVisible,
-      subscriptionsViewMode,
-    } = this.props;
+    const { currentRoute, doFetchMySubscriptions, pushDrawerStack, setPlayerVisible, user } = this.props;
 
     if (currentRoute === Constants.DRAWER_ROUTE_SUBSCRIPTIONS) {
       pushDrawerStack();
     }
     setPlayerVisible();
     NativeModules.Firebase.setCurrentScreen('Subscriptions');
+    this.setState({ userEmailVerified: user && user.has_verified_email });
 
     doFetchMySubscriptions();
   };
@@ -81,10 +75,17 @@ class SubscriptionsPage extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { currentRoute } = nextProps;
-    const { currentRoute: prevRoute } = this.props;
+    const { currentRoute, user } = nextProps;
+    const { currentRoute: prevRoute, doFetchMySubscriptions } = this.props;
     if (Constants.DRAWER_ROUTE_SUBSCRIPTIONS === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
+    }
+
+    if (user && user.has_verified_email && !this.state.userEmailVerified) {
+      // user just signed in
+      this.setState({ showingSuggestedSubs: false, userEmailVerified: true }, () => {
+        doFetchMySubscriptions();
+      });
     }
 
     this.unsubscribeShortChannelUrls();
