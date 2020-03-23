@@ -38,15 +38,19 @@ class LiteFilePage extends React.PureComponent {
 
   player = null;
 
+  startTime = null;
+
   state = {
     channelName: null,
     channelUrl: null,
-    title: null,
+    fileViewLogged: false,
     fullscreenMode: false,
+    playbackStarted: false,
     playerHeight: null,
     isLandscape: false,
     sdkReady: false, // TODO: progressively enable features (e.g. tip) when sdk is ready
     showRecommended: false,
+    title: null,
     viewCount: 0,
   };
 
@@ -126,6 +130,10 @@ class LiteFilePage extends React.PureComponent {
       ],
     );
   };
+
+  componentDidMount() {
+    this.startTime = Date.now();
+  }
 
   componentDidUpdate() {
     const { navigation } = this.props;
