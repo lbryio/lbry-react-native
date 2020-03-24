@@ -25,7 +25,7 @@ class WalletBalanceExtra extends React.PureComponent<Props> {
           <Text style={walletStyle.syncInfoText}>
             {deviceWalletSynced
               ? __('A backup of your wallet is synced with lbry.tv')
-              : __('Your wallet is not currently synced with lbry.tv. You are in control of backing up your wallet.')}
+              : __('Your wallet is not currently synced with lbry.tv. You are responsible for backing up your wallet.')}
           </Text>
           <Link
             text={__('What does this mean?')}
