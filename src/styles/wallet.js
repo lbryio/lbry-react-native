@@ -103,10 +103,12 @@ const walletStyle = StyleSheet.create({
     marginLeft: 16,
     marginRight: 16,
   },
-  balanceExtraCard: {
-    backgroundColor: Colors.White,
+  balanceExtra: {
     marginLeft: 16,
     marginRight: 16,
+  },
+  balanceExtraCard: {
+    backgroundColor: Colors.White,
     padding: 16,
   },
   balanceBackground: {
@@ -251,6 +253,22 @@ const walletStyle = StyleSheet.create({
     paddingBottom: 14,
     borderBottomWidth: 1,
     borderBottomColor: Colors.PageBackground,
+  },
+  syncDriverCustody: {
+    backgroundColor: Colors.LbryGreen,
+    padding: 16,
+  },
+  syncInfoText: {
+    color: Colors.White,
+    fontFamily: 'Inter-Regular',
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  syncInfoLink: {
+    color: Colors.White,
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+    textDecorationLine: 'underline',
   },
   syncDriverLink: {
     color: Colors.LbryGreen,
