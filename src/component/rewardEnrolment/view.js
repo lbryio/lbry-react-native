@@ -44,7 +44,7 @@ class RewardEnrolment extends React.Component {
 
         <View style={rewardStyle.onboarding}>
           <Text style={rewardStyle.enrollDescText}>
-            {__('LBRY credits allow you to purchase or publish content.')}
+            {__('LBRY credits allow you to publish or purchase content.')}
             {'\n\n'}
             {__('You can obtain free credits worth %amount% after you provide an email address.', {
               amount: formatUsd(parseFloat(unclaimedRewardAmount) * parseFloat(usdExchangeRate)),
