@@ -73,7 +73,7 @@ class SubscriptionsPage extends React.PureComponent {
     Lbryio.getExchangeRates().then(rates => {
       if (!isNaN(rates.LBC_USD)) {
         this.setState({ usdExchangeRate: rates.LBC_USD }, () => {
-          if (sdkReady) {
+          if (sdkReady && parseFloat(this.state.usdExchangeRate) > 0) {
             this.showRewardsAvailable();
           }
         });
@@ -102,7 +102,13 @@ class SubscriptionsPage extends React.PureComponent {
       });
     }
 
-    if (sdkReady && this.state.usdExchangeRate > 0 && this.state.showRewardsNag && user && !user.is_reward_approved) {
+    if (
+      sdkReady &&
+      parseFloat(this.state.usdExchangeRate) > 0 &&
+      this.state.showRewardsNag &&
+      user &&
+      !user.is_reward_approved
+    ) {
       this.showRewardsAvailable();
     }
 

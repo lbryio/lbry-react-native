@@ -462,6 +462,7 @@ const walletStyle = StyleSheet.create({
     fontSize: 14,
     color: Colors.LbryGreen,
     marginTop: 12,
+    marginRight: 16,
   },
 });
 
