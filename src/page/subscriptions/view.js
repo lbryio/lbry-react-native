@@ -73,7 +73,7 @@ class SubscriptionsPage extends React.PureComponent {
     Lbryio.getExchangeRates().then(rates => {
       if (!isNaN(rates.LBC_USD)) {
         this.setState({ usdExchangeRate: rates.LBC_USD }, () => {
-          if (sdkReady && parseFloat(this.state.usdExchangeRate) > 0) {
+          if (sdkReady && parseFloat(this.state.usdExchangeRate) > 0 && user && !user.is_reward_approved) {
             this.showRewardsAvailable();
           }
         });
@@ -116,7 +116,12 @@ class SubscriptionsPage extends React.PureComponent {
   }
 
   showRewardsAvailable = () => {
-    const { navigation, unclaimedRewardAmount } = this.props;
+    const { navigation, unclaimedRewardAmount, rewardsNotInterested } = this.props;
+    if (rewardsNotInterested) {
+      this.setState({ showRewardsNag: false });
+      return;
+    }
+
     this.setState({ showRewardsNag: false }, () => {
       Snackbar.show({
         title: __('Did you know that you can earn free credits worth up to %amount%?', {
