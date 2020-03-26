@@ -8,6 +8,7 @@ import Colors from 'styles/colors';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Link from 'component/link';
 import walletStyle from 'styles/wallet';
+import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 
 type Props = {
   claimsBalance: number,
@@ -29,7 +30,7 @@ class WalletBalanceExtra extends React.PureComponent<Props> {
   }
 
   render() {
-    const { claimsBalance, deviceWalletSynced, supportsBalance, tipsBalance } = this.props;
+    const { claimsBalance, deviceWalletSynced, navigation, supportsBalance, tipsBalance } = this.props;
 
     return (
       <View style={walletStyle.balanceExtra}>
@@ -67,7 +68,7 @@ class WalletBalanceExtra extends React.PureComponent<Props> {
               <Link
                 style={walletStyle.earnTipsLink}
                 onPress={() => {
-                  // navigation.navigate({ })
+                  navigation.navigate({ routeName: Constants.DRAWER_ROUTE_PUBLISH });
                 }}
                 text={__('Earn more tips by uploading cool videos')}
               />

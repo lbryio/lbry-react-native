@@ -102,7 +102,7 @@ class SubscriptionsPage extends React.PureComponent {
       });
     }
 
-    if (sdkReady && this.state.showRewardsNag && user && !user.is_reward_approved) {
+    if (sdkReady && this.state.usdExchangeRate > 0 && this.state.showRewardsNag && user && !user.is_reward_approved) {
       this.showRewardsAvailable();
     }
 
