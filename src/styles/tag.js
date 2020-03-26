@@ -23,7 +23,7 @@ const tagStyle = StyleSheet.create({
   },
   text: {
     fontFamily: 'Inter-Regular',
-    fontSize: 14,
+    fontSize: 12,
     marginRight: 8,
   },
   tagResultsList: {

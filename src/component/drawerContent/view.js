@@ -6,6 +6,8 @@ import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import channelIconStyle from 'styles/channelIcon';
 import discoverStyle from 'styles/discover';
+import { Lbryio } from 'lbryinc';
+import { formatUsd } from 'utils/helper';
 
 const groupedMenuItems = {
   'Find content': [
@@ -42,6 +44,18 @@ const routesRequiringSdkReady = [
 ];
 
 class DrawerContent extends React.PureComponent {
+  state = {
+    usdExchangeRate: 0,
+  };
+
+  componentDidMount() {
+    Lbryio.getExchangeRates().then(rates => {
+      if (!isNaN(rates.LBC_USD)) {
+        this.setState({ usdExchangeRate: rates.LBC_USD });
+      }
+    });
+  }
+
   getAvatarImageUrl = () => {
     const { channels = [] } = this.props;
     if (channels) {
@@ -82,7 +96,7 @@ class DrawerContent extends React.PureComponent {
   };
 
   render() {
-    const { activeTintColor, navigation, user, onItemPress } = this.props;
+    const { activeTintColor, balance, navigation, unclaimedRewardAmount, user, onItemPress } = this.props;
     const { state } = navigation;
 
     const activeItemKey = state.routes[state.index] ? state.routes[state.index].key : null;
@@ -189,6 +203,15 @@ class DrawerContent extends React.PureComponent {
                         </View>
                         <Text style={[discoverStyle.menuItem, focused ? discoverStyle.menuItemFocused : null]}>
                           {__(item.label)}
+                          {item.label === 'Wallet' && this.state.usdExchangeRate > 0 && (
+                            <Text> ({formatUsd(parseFloat(balance) * parseFloat(this.state.usdExchangeRate))})</Text>
+                          )}
+                          {item.label === 'Rewards' && this.state.usdExchangeRate > 0 && (
+                            <Text>
+                              {' '}
+                              ({formatUsd(parseFloat(unclaimedRewardAmount) * parseFloat(this.state.usdExchangeRate))})
+                            </Text>
+                          )}
                         </Text>
                       </TouchableOpacity>
                     );

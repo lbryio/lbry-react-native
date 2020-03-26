@@ -58,7 +58,7 @@ class SuggestedSubscriptionsGrid extends React.PureComponent {
     const uris = claimSearchByQuery[claimSearchKey];
     if (
       lastPageReached[claimSearchKey] ||
-      ((uris.length > 0 && uris.length < suggestedPageSize) || uris.length >= softLimit)
+      (uris.length > 0 && uris.length < suggestedPageSize) || uris.length >= softLimit
     ) {
       return;
     }
@@ -81,7 +81,7 @@ class SuggestedSubscriptionsGrid extends React.PureComponent {
   }
 
   render() {
-    const { claimSearchByQuery, suggested, inModal, navigation } = this.props;
+    const { claimSearchByQuery, inModal, navigation } = this.props;
     const options = this.buildClaimSearchOptions();
     const claimSearchKey = createNormalizedClaimSearchKey(options);
     const claimSearchUris = claimSearchByQuery[claimSearchKey];
@@ -92,7 +92,7 @@ class SuggestedSubscriptionsGrid extends React.PureComponent {
         maxToRenderPerBatch={48}
         removeClippedSubviews
         itemDimension={120}
-        spacing={2}
+        spacing={1}
         items={claimSearchUris}
         style={inModal ? subscriptionsStyle.modalScrollContainer : subscriptionsStyle.scrollContainer}
         contentContainerStyle={

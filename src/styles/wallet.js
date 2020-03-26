@@ -137,6 +137,13 @@ const walletStyle = StyleSheet.create({
     fontFamily: 'Inter-Bold',
     fontSize: 36,
     marginLeft: 16,
+  },
+  usdBalance: {
+    color: Colors.White,
+    fontFamily: 'Inter-Regular',
+    fontSize: 20,
+    marginLeft: 16,
+    marginTop: 2,
     marginBottom: 16,
   },
   balanceFocus: {
@@ -402,6 +409,11 @@ const walletStyle = StyleSheet.create({
     fontFamily: 'Inter-SemiBold',
     fontSize: 28,
   },
+  usdWalletExtraBalance: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 16,
+    color: Colors.DescriptionGrey,
+  },
   balanceRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -423,6 +435,33 @@ const walletStyle = StyleSheet.create({
     position: 'absolute',
     left: 0,
     top: 0,
+  },
+  usdInfoCard: {
+    backgroundColor: Colors.White,
+    padding: 16,
+    borderBottomColor: Colors.VeryLightGrey,
+    borderBottomWidth: 1,
+  },
+  usdInfoText: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+    marginBottom: 8,
+  },
+  usdConvertLink: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 16,
+    color: Colors.LbryGreen,
+  },
+  usdConvertFaqLink: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+    color: Colors.LbryGreen,
+  },
+  earnTipsLink: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 14,
+    color: Colors.LbryGreen,
+    marginTop: 12,
   },
 });
 

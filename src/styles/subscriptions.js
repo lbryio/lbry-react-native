@@ -192,8 +192,6 @@ const subscriptionsStyle = StyleSheet.create({
   suggestedItem: {
     alignItems: 'center',
     marginBottom: 16,
-    marginLeft: 16,
-    marginRight: 16,
     height: 140,
   },
   suggestedItemThumbnailContainer: {
@@ -209,8 +207,8 @@ const subscriptionsStyle = StyleSheet.create({
     height: '100%',
   },
   suggestedItemDetails: {
-    marginLeft: 16,
-    marginRight: 16,
+    marginLeft: 8,
+    marginRight: 8,
     alignItems: 'center',
   },
   suggestedItemSubscribe: {
@@ -229,7 +227,7 @@ const subscriptionsStyle = StyleSheet.create({
   suggestedItemTitle: {
     fontFamily: 'Inter-Regular',
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 13,
     marginTop: 4,
     marginBottom: 2,
   },

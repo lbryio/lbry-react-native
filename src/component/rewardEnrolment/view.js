@@ -7,6 +7,7 @@ import Link from 'component/link';
 import Colors from 'styles/colors';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import rewardStyle from 'styles/reward';
+import { formatUsd } from '../../utils/helper';
 
 class RewardEnrolment extends React.Component {
   componentDidMount() {
@@ -29,7 +30,7 @@ class RewardEnrolment extends React.Component {
   };
 
   render() {
-    const { fetching, navigation, unclaimedRewardAmount, user } = this.props;
+    const { unclaimedRewardAmount, usdExchangeRate } = this.props;
 
     return (
       <View style={rewardStyle.enrollContainer}>
@@ -43,9 +44,11 @@ class RewardEnrolment extends React.Component {
 
         <View style={rewardStyle.onboarding}>
           <Text style={rewardStyle.enrollDescText}>
-            {__('LBRY credits allow you to purchase content, publish content, and influence the network.')}
+            {__('LBRY credits allow you to purchase or publish content.')}
             {'\n\n'}
-            {__('You get credits for free for providing an email address and taking other basic actions.')}
+            {__('You can obtain free credits worth %amount% after you provide an email address.', {
+              amount: formatUsd(parseFloat(unclaimedRewardAmount) * parseFloat(usdExchangeRate)),
+            })}
             {'\n\n'}
             <Link style={rewardStyle.learnMoreLink} text={__('Learn more')} onPress={this.onLearnMorePressed} />.
           </Text>
