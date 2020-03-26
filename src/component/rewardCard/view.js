@@ -1,10 +1,11 @@
 // @flow
 import React from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
-import Colors from '../../styles/colors';
+import { formatUsd } from 'utils/helper';
+import Colors from 'styles/colors';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import Link from '../link';
-import rewardStyle from '../../styles/reward';
+import Link from 'component/link';
+import rewardStyle from 'styles/reward';
 
 type Props = {
   canClaim: boolean,
@@ -61,7 +62,7 @@ class RewardCard extends React.PureComponent<Props> {
     if (reward) {
       const claimed = !!reward.transaction_id;
       if (!claimed && reward.reward_range && reward.reward_range.includes('-')) {
-        return reward.reward_range.split('-')[0] + '+'; // ex: 5+
+        return reward.reward_range.split('-')[1];
       } else if (reward.reward_amount > 0) {
         return reward.reward_amount;
       }
@@ -72,7 +73,7 @@ class RewardCard extends React.PureComponent<Props> {
   };
 
   render() {
-    const { canClaim, isPending, onClaimPress, reward } = this.props;
+    const { canClaim, isPending, onClaimPress, reward, usdExchangeRate } = this.props;
     const claimed = !!reward.transaction_id;
 
     return (
@@ -117,8 +118,16 @@ class RewardCard extends React.PureComponent<Props> {
           )}
         </View>
         <View style={rewardStyle.rightCol}>
+          {reward.reward_range && reward.reward_range.indexOf('-') > -1 && (
+            <Text style={rewardStyle.rightColHeader}>{__('up to')}</Text>
+          )}
           <Text style={rewardStyle.rewardAmount}>{this.getDisplayAmount()}</Text>
           <Text style={rewardStyle.rewardCurrency}>LBC</Text>
+          {usdExchangeRate > 0 && (
+            <Text style={rewardStyle.rewardUsd}>
+              &asymp;{formatUsd(parseFloat(this.getDisplayAmount()) * parseFloat(usdExchangeRate))}
+            </Text>
+          )}
         </View>
       </TouchableOpacity>
     );

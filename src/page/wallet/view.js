@@ -94,7 +94,7 @@ class WalletPage extends React.PureComponent {
         >
           {!rewardsNotInterested && (!balance || balance === 0) && <WalletRewardsDriver navigation={navigation} />}
           <WalletBalance />
-          <WalletBalanceExtra />
+          <WalletBalanceExtra navigation={navigation} />
           <WalletAddress />
           <WalletSend />
           <TransactionListRecent navigation={navigation} />

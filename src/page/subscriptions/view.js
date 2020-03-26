@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import { buildURI, parseURI } from 'lbry-redux';
-import { getOrderBy } from 'utils/helper';
+import { formatUsd, getOrderBy } from 'utils/helper';
 import AsyncStorage from '@react-native-community/async-storage';
 import moment from 'moment';
 import Button from 'component/button';
@@ -31,17 +31,21 @@ import SuggestedSubscriptions from 'component/suggestedSubscriptions';
 import SuggestedSubscriptionsGrid from 'component/suggestedSubscriptionsGrid';
 import UriBar from 'component/uriBar';
 import SdkLoadingStatus from 'component/sdkLoadingStatus';
+import Snackbar from 'react-native-snackbar';
+import { Lbryio } from 'lbryinc';
 
 class SubscriptionsPage extends React.PureComponent {
   state = {
+    currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[1], // should always default to sorting subscriptions by new
+    filteredChannels: [],
+    orderBy: ['release_time'],
+    showRewardsNag: true,
     showingSuggestedSubs: false,
     showSortPicker: false,
     showTimePicker: false,
     showModalSuggestedSubs: false,
+    usdExchangeRate: 0,
     userEmailVerified: false,
-    orderBy: ['release_time'],
-    filteredChannels: [],
-    currentSortByItem: Constants.CLAIM_SEARCH_SORT_BY_ITEMS[1], // should always default to sorting subscriptions by new
   };
 
   didFocusListener;
@@ -58,15 +62,25 @@ class SubscriptionsPage extends React.PureComponent {
   }
 
   onComponentFocused = () => {
-    const { currentRoute, doFetchMySubscriptions, pushDrawerStack, setPlayerVisible, user } = this.props;
+    const { currentRoute, doFetchMySubscriptions, pushDrawerStack, sdkReady, setPlayerVisible, user } = this.props;
 
     if (currentRoute === Constants.DRAWER_ROUTE_SUBSCRIPTIONS) {
       pushDrawerStack();
     }
     setPlayerVisible();
     NativeModules.Firebase.setCurrentScreen('Subscriptions');
-    this.setState({ userEmailVerified: user && user.has_verified_email });
 
+    Lbryio.getExchangeRates().then(rates => {
+      if (!isNaN(rates.LBC_USD)) {
+        this.setState({ usdExchangeRate: rates.LBC_USD }, () => {
+          if (sdkReady && parseFloat(this.state.usdExchangeRate) > 0 && user && !user.is_reward_approved) {
+            this.showRewardsAvailable();
+          }
+        });
+      }
+    });
+
+    this.setState({ userEmailVerified: user && user.has_verified_email });
     doFetchMySubscriptions();
   };
 
@@ -75,7 +89,7 @@ class SubscriptionsPage extends React.PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    const { currentRoute, user } = nextProps;
+    const { currentRoute, user, sdkReady } = nextProps;
     const { currentRoute: prevRoute, doFetchMySubscriptions } = this.props;
     if (Constants.DRAWER_ROUTE_SUBSCRIPTIONS === currentRoute && currentRoute !== prevRoute) {
       this.onComponentFocused();
@@ -88,8 +102,42 @@ class SubscriptionsPage extends React.PureComponent {
       });
     }
 
+    if (
+      sdkReady &&
+      parseFloat(this.state.usdExchangeRate) > 0 &&
+      this.state.showRewardsNag &&
+      user &&
+      !user.is_reward_approved
+    ) {
+      this.showRewardsAvailable();
+    }
+
     this.unsubscribeShortChannelUrls();
   }
+
+  showRewardsAvailable = () => {
+    const { navigation, unclaimedRewardAmount, rewardsNotInterested } = this.props;
+    if (rewardsNotInterested) {
+      this.setState({ showRewardsNag: false });
+      return;
+    }
+
+    this.setState({ showRewardsNag: false }, () => {
+      Snackbar.show({
+        title: __('Did you know that you can earn free credits worth up to %amount%?', {
+          amount: formatUsd(parseFloat(this.state.usdExchangeRate) * parseFloat(unclaimedRewardAmount)),
+        }),
+        duration: Snackbar.LENGTH_LONG,
+        action: {
+          title: __('SHOW ME'),
+          color: Colors.LbryGreen,
+          onPress: () => {
+            navigation.navigate({ routeName: Constants.DRAWER_ROUTE_REWARDS });
+          },
+        },
+      });
+    });
+  };
 
   handleSortByItemSelected = item => {
     this.setState({ currentSortByItem: item, orderBy: getOrderBy(item), showSortPicker: false });

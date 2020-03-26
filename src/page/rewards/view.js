@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lbry } from 'lbry-redux';
+import { Lbryio } from 'lbryinc';
 import { ActivityIndicator, NativeModules, ScrollView, Text, View } from 'react-native';
 import Colors from 'styles/colors';
 import Constants from 'constants'; // eslint-disable-line node/no-deprecated-api
@@ -17,13 +17,14 @@ const FILTER_CLAIMED = 'claimed';
 
 class RewardsPage extends React.PureComponent {
   state = {
+    currentFilter: FILTER_AVAILABLE,
+    firstRewardClaimed: false,
     isEmailVerified: false,
     isIdentityVerified: false,
     isRewardApproved: false,
-    verifyRequestStarted: false,
     revealVerification: true,
-    firstRewardClaimed: false,
-    currentFilter: FILTER_AVAILABLE,
+    usdExchangeRate: 0,
+    verifyRequestStarted: false,
   };
 
   scrollView = null;
@@ -47,6 +48,12 @@ class RewardsPage extends React.PureComponent {
     pushDrawerStack();
     setPlayerVisible();
     NativeModules.Firebase.setCurrentScreen('Rewards');
+
+    Lbryio.getExchangeRates().then(rates => {
+      if (!isNaN(rates.LBC_USD)) {
+        this.setState({ usdExchangeRate: rates.LBC_USD });
+      }
+    });
 
     fetchRewards();
 
@@ -158,6 +165,7 @@ class RewardsPage extends React.PureComponent {
             canClaim={!isNotEligible}
             reward={reward}
             reward_type={reward.reward_type}
+            usdExchangeRate={this.state.usdExchangeRate}
           />
         ))}
         <CustomRewardCard canClaim={!isNotEligible} showVerification={this.showVerification} />
@@ -211,7 +219,9 @@ class RewardsPage extends React.PureComponent {
     return (
       <View style={rewardStyle.container}>
         <UriBar navigation={navigation} />
-        {(!this.state.isEmailVerified || !this.state.isRewardApproved) && <RewardEnrolment navigation={navigation} />}
+        {(!this.state.isEmailVerified || !this.state.isRewardApproved) && (
+          <RewardEnrolment usdExchangeRate={this.state.usdExchangeRate} navigation={navigation} />
+        )}
 
         {this.state.isEmailVerified && this.state.isRewardApproved && (
           <ScrollView

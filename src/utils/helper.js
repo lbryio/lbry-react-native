@@ -436,3 +436,10 @@ export function fetchReferralCode(successCallback, errorCallback) {
 export function decode(value) {
   return decodeURIComponent(value).replace(/\+/g, ' ');
 }
+
+export function formatUsd(value) {
+  if (isNaN(parseFloat(value))) {
+    value = 0;
+  }
+  return '$' + parseFloat(value).toFixed(2);
+}

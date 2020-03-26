@@ -147,6 +147,10 @@ const rewardStyle = StyleSheet.create({
     width: '18%',
     alignItems: 'center',
   },
+  rightColHeader: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+  },
   rewardAmount: {
     fontFamily: 'Inter-Regular',
     fontSize: 26,
@@ -154,6 +158,7 @@ const rewardStyle = StyleSheet.create({
   },
   rewardCurrency: {
     fontFamily: 'Inter-Regular',
+    fontSize: 12,
   },
   rewardTitle: {
     fontFamily: 'Inter-Regular',
@@ -321,6 +326,12 @@ const rewardStyle = StyleSheet.create({
   },
   activeFilterLink: {
     fontFamily: 'Inter-SemiBold',
+  },
+  rewardUsd: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+    color: Colors.DescriptionGrey,
+    marginTop: 6,
   },
 });
 

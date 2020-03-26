@@ -12,6 +12,7 @@ import {
   selectViewMode,
   selectFirstRunCompleted,
   selectShowSuggestedSubs,
+  selectUnclaimedRewardValue,
   selectUser,
 } from 'lbryinc';
 import { doToast, selectFetchingClaimSearch } from 'lbry-redux';
@@ -33,9 +34,11 @@ const select = state => ({
   unreadSubscriptions: selectUnreadSubscriptions(state),
   viewMode: selectViewMode(state),
   firstRunCompleted: selectFirstRunCompleted(state),
+  rewardsNotInterested: makeSelectClientSetting(Constants.SETTING_REWARDS_NOT_INTERESTED)(state),
   showSuggestedSubs: selectShowSuggestedSubs(state),
   timeItem: selectTimeItem(state),
   sdkReady: selectSdkReady(state),
+  unclaimedRewardAmount: selectUnclaimedRewardValue(state),
   user: selectUser(state),
 });
 

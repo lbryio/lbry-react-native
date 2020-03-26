@@ -1,12 +1,14 @@
 import { connect } from 'react-redux';
-import { doToast, selectMyChannelClaims } from 'lbry-redux';
-import { selectUser } from 'lbryinc';
+import { doToast, selectBalance, selectMyChannelClaims } from 'lbry-redux';
+import { selectUnclaimedRewardValue, selectUser } from 'lbryinc';
 import { selectSdkReady } from 'redux/selectors/settings';
 import DrawerContent from './view';
 
 const select = state => ({
+  balance: selectBalance(state),
   channels: selectMyChannelClaims(state),
   sdkReady: selectSdkReady(state),
+  unclaimedRewardAmount: selectUnclaimedRewardValue(state),
   user: selectUser(state),
 });
 
