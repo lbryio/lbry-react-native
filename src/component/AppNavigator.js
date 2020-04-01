@@ -4,6 +4,7 @@ import ChannelCreatorPage from 'page/channelCreator';
 import DiscoverPage from 'page/discover';
 import DownloadsPage from 'page/downloads';
 import DrawerContent from 'component/drawerContent';
+import EditorsChoicePage from 'page/editorsChoice';
 import FilePage from 'page/file';
 import LiteFilePage from 'page/liteFile';
 import FirstRunScreen from 'page/firstRun';
@@ -162,6 +163,13 @@ const drawer = createDrawerNavigator(
       navigationOptions: {
         title: 'Following',
         drawerIcon: ({ tintColor }) => <Icon name="home" size={drawerIconSize} style={{ color: tintColor }} />,
+      },
+    },
+    EditorsChoice: {
+      screen: EditorsChoicePage,
+      navigationOptions: {
+        title: "Editor's Choice",
+        drawerIcon: ({ tintColor }) => <Icon name="star" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },
     Discover: {

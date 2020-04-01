@@ -81,6 +81,7 @@ const Constants = {
   PAGE_WALLET: 'wallet',
 
   DRAWER_ROUTE_DISCOVER: 'Discover',
+  DRAWER_ROUTE_EDITORS_CHOICE: 'EditorsChoice',
   DRAWER_ROUTE_TRENDING: 'Trending',
   DRAWER_ROUTE_SUBSCRIPTIONS: 'Subscriptions',
   DRAWER_ROUTE_MY_LBRY: 'Downloads',

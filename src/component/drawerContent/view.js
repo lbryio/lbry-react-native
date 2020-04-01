@@ -12,6 +12,7 @@ import { formatUsd } from 'utils/helper';
 const groupedMenuItems = {
   'Find content': [
     { icon: 'heart', solid: true, label: 'Following', route: Constants.DRAWER_ROUTE_SUBSCRIPTIONS },
+    { icon: 'star', solid: true, label: "Editor's Choice", route: Constants.DRAWER_ROUTE_EDITORS_CHOICE },
     { icon: 'hashtag', label: 'Your Tags', route: Constants.DRAWER_ROUTE_DISCOVER },
     { icon: 'globe-americas', label: 'All Content', route: Constants.DRAWER_ROUTE_TRENDING },
   ],

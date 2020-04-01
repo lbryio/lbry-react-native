@@ -3,6 +3,7 @@ import NavigationActions from 'react-navigation';
 import { ActivityIndicator, FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { MATURE_TAGS, normalizeURI, createNormalizedClaimSearchKey } from 'lbry-redux';
 import _ from 'lodash';
+import EditorsChoiceItem from 'component/editorsChoiceItem';
 import FileItem from 'component/fileItem';
 import FileListItem from 'component/fileListItem';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -72,7 +73,7 @@ class ClaimList extends React.PureComponent {
 
   buildClaimSearchOptions() {
     const { orderBy, channelIds, showNsfwContent, tags, time } = this.props;
-    const { currentPage, subscriptionsView } = this.state;
+    const { currentPage } = this.state;
 
     const options = {
       order_by: orderBy,
@@ -101,7 +102,7 @@ class ClaimList extends React.PureComponent {
     return `>${Math.floor(
       moment()
         .subtract(1, time)
-        .unix()
+        .unix(),
     )}`;
   };
 
@@ -120,7 +121,7 @@ class ClaimList extends React.PureComponent {
     const uris = claimSearchByQuery[claimSearchKey];
     if (
       lastPageReached[claimSearchKey] ||
-      ((uris.length > 0 && uris.length < Constants.DEFAULT_PAGE_SIZE) || uris.length >= softLimit)
+      (uris.length > 0 && uris.length < Constants.DEFAULT_PAGE_SIZE) || uris.length >= softLimit
     ) {
       return;
     }
@@ -174,6 +175,12 @@ class ClaimList extends React.PureComponent {
     );
   };
 
+  renderEditorsChoiceItem = ({ item }) => {
+    const { navigation } = this.props;
+
+    return <EditorsChoiceItem style={discoverStyle.fileItem} key={item} uri={normalizeURI(item)} />;
+  };
+
   renderHorizontalItem = ({ item }) => {
     const { navigation } = this.props;
 
@@ -195,6 +202,7 @@ class ClaimList extends React.PureComponent {
   render() {
     const {
       ListHeaderComponent,
+      editorsChoice,
       loading,
       morePlaceholder,
       navigation,
@@ -226,7 +234,7 @@ class ClaimList extends React.PureComponent {
             initialNumToRender={10}
             maxToRenderPerBatch={20}
             removeClippedSubviews
-            renderItem={this.renderVerticalItem}
+            renderItem={editorsChoice ? this.renderEditorsChoiceItem : this.renderVerticalItem}
             data={uris}
             keyExtractor={(item, index) => item}
             onEndReached={this.handleVerticalEndReached}
