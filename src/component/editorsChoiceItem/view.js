@@ -43,17 +43,21 @@ class EditorsChoiceItem extends React.PureComponent {
 
     return (
       <TouchableOpacity style={editorsChoiceStyle.item}>
-        <FastImage
-          style={editorsChoiceStyle.thumbnail}
-          resizeMode={FastImage.resizeMode.cover}
-          source={{ uri: thumbnail }}
-        />
+        <Text style={editorsChoiceStyle.title} numberOfLines={1}>
+          {title}
+        </Text>
+        <View style={editorsChoiceStyle.itemRow}>
+          <FastImage
+            style={editorsChoiceStyle.thumbnail}
+            resizeMode={FastImage.resizeMode.cover}
+            source={{ uri: thumbnail }}
+          />
 
-        <View style={editorsChoiceStyle.detailsContainer}>
-          <Text style={editorsChoiceStyle.title}>{title}</Text>
-          <Text style={editorsChoiceStyle.description}>
-            {metadata.description ? metadata.description.substring(0, 400) : __('No description available')}
-          </Text>
+          <View style={editorsChoiceStyle.detailsContainer}>
+            <Text style={editorsChoiceStyle.description} numberOfLines={5}>
+              {metadata.description ? metadata.description : __('No description available')}
+            </Text>
+          </View>
         </View>
       </TouchableOpacity>
     );

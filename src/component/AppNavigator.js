@@ -168,7 +168,7 @@ const drawer = createDrawerNavigator(
     EditorsChoice: {
       screen: EditorsChoicePage,
       navigationOptions: {
-        title: "Editor's Choice",
+        title: "Editors' Choice",
         drawerIcon: ({ tintColor }) => <Icon name="star" size={drawerIconSize} style={{ color: tintColor }} />,
       },
     },

@@ -160,6 +160,7 @@ export default Constants;
 
 export const DrawerRoutes = [
   Constants.DRAWER_ROUTE_DISCOVER,
+  Constants.DRAWER_ROUTE_EDITORS_CHOICE,
   Constants.DRAWER_ROUTE_TRENDING,
   Constants.DRAWER_ROUTE_SUBSCRIPTIONS,
   Constants.DRAWER_ROUTE_MY_LBRY,
