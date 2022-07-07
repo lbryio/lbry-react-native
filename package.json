@@ -19,7 +19,7 @@
     "lbryinc": "lbryio/lbryinc#667024ebb7cb207609273174ca422cee47469270",
     "lodash": ">=4.17.11",
     "merge": ">=1.2.1",
-    "moment": "^2.22.1",
+    "moment": "^2.29.4",
     "react": "16.9.0",
     "react-native": "0.61.5",
     "@react-native-community/async-storage": "^1.5.1",
